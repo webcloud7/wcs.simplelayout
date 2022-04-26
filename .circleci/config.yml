@@ -8,6 +8,7 @@ workflows:
 
 jobs:
   plone6py39:
+    resource_class: medium
     docker:
       - image: webcloud7/plone-test:6.0.0a4.2
     environment:
