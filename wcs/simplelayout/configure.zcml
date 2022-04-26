@@ -1,0 +1,30 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:upgrade-step="http://namespaces.zope.org/ftw.upgrade"
+    i18n_domain="wcs.simplelayout">
+
+    <include package="ftw.upgrade" file="meta.zcml" />
+
+    <five:registerPackage package="." initialize=".initialize" />
+    <i18n:registerTranslations directory="locales" />
+
+    <include package=".browser" />
+    <include package=".contenttypes" />
+
+    <genericsetup:registerProfile
+        name="default"
+        title="wcs.simplelayout base profile"
+        directory="profiles/default"
+        description=""
+        provides="Products.GenericSetup.interfaces.EXTENSION"
+        />
+
+    <upgrade-step:directory
+        profile="wcs.simplelayout:default"
+        directory="./upgrades"
+        />
+
+</configure>

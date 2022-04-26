@@ -1,0 +1,20 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    i18n_domain="wcs.simplelayout">
+
+    <include package="plone.behavior" file="meta.zcml" />
+
+    <plone:behavior
+        title="Simplelayout Content Page"
+        description="Makes this content a Simplelayout ConentPage"
+        provides="wcs.simplelayout.contenttypes.behaviors.ISimplelayoutMarker"
+        />
+
+    <plone:behavior
+        title="Simplelayout Block"
+        description="Makes this content a Simplelayout Block"
+        provides="wcs.simplelayout.contenttypes.behaviors.IBlockMarker"
+        />
+
+</configure>
