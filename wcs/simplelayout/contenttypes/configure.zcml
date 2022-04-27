@@ -8,7 +8,7 @@
     <plone:behavior
         title="Simplelayout Content Page"
         description="Makes this content a Simplelayout ConentPage"
-        provides="wcs.simplelayout.contenttypes.behaviors.ISimplelayoutMarker"
+        provides="wcs.simplelayout.contenttypes.behaviors.ISimplelayout"
         />
 
     <plone:behavior

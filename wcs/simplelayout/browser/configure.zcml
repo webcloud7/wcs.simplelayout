@@ -5,4 +5,10 @@
     xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="wcs.simplelayout">
 
+    <browser:page
+        for="wcs.simplelayout.contenttypes.behaviors.ISimplelayout"
+        name="simplelayout-view"
+        permission="zope2.View"
+        class=".simplelayout.SimplelayoutView"
+        />
 </configure>

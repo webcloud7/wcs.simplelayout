@@ -7,25 +7,25 @@
  <property
     name="add_view_expr">string:${folder_url}/++add++ContentPage</property>
  <property name="link_target"></property>
- <property name="immediate_view">view</property>
+ <property name="immediate_view">@@simplelayout-view</property>
  <property name="global_allow">True</property>
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types">
   <element value="Block"/>
  </property>
  <property name="allow_discussion">False</property>
- <property name="default_view">view</property>
+ <property name="default_view">@@simplelayout-view</property>
  <property name="view_methods">
-  <element value="view"/>
+  <element value="@@simplelayout-view"/>
  </property>
  <property name="default_view_fallback">False</property>
  <property name="add_permission">cmf.AddPortalContent</property>
- <property name="klass">plone.dexterity.content.Container</property>
+ <property name="klass">wcs.simplelayout.contenttypes.contentpage.ContentPage</property>
  <property name="behaviors">
   <element value="plone.namefromtitle"/>
   <element value="plone.basic"/>
   <element
-     value="wcs.simplelayout.contenttypes.behaviors.ISimplelayoutMarker"/>
+     value="wcs.simplelayout.contenttypes.behaviors.ISimplelayout"/>
  </property>
  <property name="schema"></property>
  <property
