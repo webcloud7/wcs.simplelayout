@@ -8,6 +8,7 @@ etc/
 var/
 instance/
 sources/
+node_modules/
 pip-selfcheck.json
 *.egg-info
 *.log
