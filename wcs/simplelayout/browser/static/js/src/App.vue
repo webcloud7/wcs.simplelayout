@@ -1,65 +1,56 @@
-<script setup>
-
-</script>
 <template>
-  <main>
-  
-  </main>
+  <div class="container">
+    <div
+      v-for="(row, rowIndex) in layouts"
+      class="row"
+      :key="`layout_${rowIndex}`"
+    >
+      <div
+        v-for="(column, Columnindex) in row.items"
+        :key="`column_${Columnindex}_${rowIndex}`"
+        :class="`col col-${column.width}`"
+      >
+        <template v-for="blockUID in column.items" :key="blockUID">
+          <BlockRenderer
+            v-if="blockUID in slblocks"
+            :block="slblocks[blockUID]"
+          />
+        </template>
+      </div>
+    </div>
+  </div>
 </template>
 
-<style>
-@import "./assets/base.css";
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
-}
+<script>
+import BlockRenderer from "@/components/BlockRenderer.vue";
+export default {
+  components: {
+    BlockRenderer,
+  },
+  data() {
+    return {
+      baseURL: "",
+      slblocks: {},
+      layouts: [],
+    };
+  },
+  created() {
+    this.baseURL = document.body.getAttribute("data-base-url");
+    this.fetchBlocks();
+  },
+  methods: {
+    async fetchBlocks() {
+      const response = await this.axios.get(this.baseURL);
+      console.info(response);
+      this.slblocks = response.data.slblocks;
 
-header {
-  line-height: 1.5;
-}
+      const layouts = response.data.slblocks_layout;
+      if ("items" in layouts) {
+        this.layouts = response.data.slblocks_layout["items"];
+      }
+    },
+  },
+};
+</script>
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-}
-</style>
+<style></style>

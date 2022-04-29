@@ -13,13 +13,15 @@
     }
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build --watch",
+    "dev": "vite build --watch --mode=development",
+    "build": "vite build",
     "preview": "vite preview --port 5050",
     "lint": "eslint ./wcs/simplelayout/browser/static/js/src --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "vue": "^3.2.33"
+    "axios": "^0.27.2",
+    "vue": "^3.2.33",
+    "vue-axios": "^3.4.1"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.0",
