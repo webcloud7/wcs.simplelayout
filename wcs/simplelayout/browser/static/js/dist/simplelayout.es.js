@@ -1,3 +1,22 @@
+var __defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 function makeMap(str, expectsLowerCase) {
   const map2 = /* @__PURE__ */ Object.create(null);
   const list = str.split(",");
@@ -5911,6 +5930,30 @@ const DOMTransitionPropsValidators = {
   leaveToClass: String
 };
 /* @__PURE__ */ extend$1({}, BaseTransition.props, DOMTransitionPropsValidators);
+const systemModifiers = ["ctrl", "shift", "alt", "meta"];
+const modifierGuards = {
+  stop: (e) => e.stopPropagation(),
+  prevent: (e) => e.preventDefault(),
+  self: (e) => e.target !== e.currentTarget,
+  ctrl: (e) => !e.ctrlKey,
+  shift: (e) => !e.shiftKey,
+  alt: (e) => !e.altKey,
+  meta: (e) => !e.metaKey,
+  left: (e) => "button" in e && e.button !== 0,
+  middle: (e) => "button" in e && e.button !== 1,
+  right: (e) => "button" in e && e.button !== 2,
+  exact: (e, modifiers) => systemModifiers.some((m) => e[`${m}Key`] && !modifiers.includes(m))
+};
+const withModifiers = (fn, modifiers) => {
+  return (event, ...args) => {
+    for (let i = 0; i < modifiers.length; i++) {
+      const guard = modifierGuards[modifiers[i]];
+      if (guard && guard(event, modifiers))
+        return;
+    }
+    return fn(event, ...args);
+  };
+};
 const rendererOptions = /* @__PURE__ */ extend$1({ patchProp }, nodeOps);
 let renderer;
 function ensureRenderer() {
@@ -6002,7 +6045,7 @@ var _export_sfc = (sfc, props) => {
   }
   return target;
 };
-const _sfc_main$1 = {
+const _sfc_main$3 = {
   props: {
     block: {
       type: Object,
@@ -6015,19 +6058,237 @@ const _sfc_main$1 = {
     };
   }
 };
-function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", null, toDisplayString($props.block.title), 1);
 }
-var BlockRenderer = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/BlockRenderer.vue"]]);
+var BlockRenderer = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/BlockRenderer.vue"]]);
+function column(col) {
+  return {
+    "@type": "col",
+    width: `${12 / parseInt(col)}`,
+    items: []
+  };
+}
+function row(cols) {
+  const colsArray = Array.from(new Array(cols), (x, i) => i);
+  return {
+    "@type": "row",
+    items: colsArray.map(() => column(cols))
+  };
+}
+var RowControls_vue_vue_type_style_index_0_lang = "";
+const _sfc_main$2 = {
+  props: {
+    index: {
+      type: Number,
+      required: true
+    }
+  },
+  data() {
+    return {
+      rows: [
+        { cols: 2, label: "2-column row (50%)" },
+        { cols: 3, label: "3-column row (33%)" },
+        { cols: 4, label: "4-column row (25%)" }
+      ]
+    };
+  },
+  methods: {
+    createRow(cols) {
+      this.$emit("addrow", row(cols), this.index);
+    }
+  },
+  computed: {
+    dropdownId() {
+      return `dropdownMenu_${this.index}`;
+    }
+  }
+};
+const _hoisted_1$2 = { class: "sl-add-row-controls" };
+const _hoisted_2$2 = { class: "btn-group btn-group-xs" };
+const _hoisted_3$2 = ["id"];
+const _hoisted_4$1 = /* @__PURE__ */ createBaseVNode("span", {
+  "aria-haspopup": "true",
+  class: "caret"
+}, null, -1);
+const _hoisted_5$1 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
+const _hoisted_6$1 = [
+  _hoisted_4$1,
+  _hoisted_5$1
+];
+const _hoisted_7 = ["aria-labelledby"];
+const _hoisted_8 = ["onClick"];
+function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$2, [
+    createBaseVNode("div", _hoisted_2$2, [
+      createBaseVNode("button", {
+        type: "button",
+        class: "btn btn-primary",
+        onClick: _cache[0] || (_cache[0] = () => $options.createRow(1))
+      }, " + "),
+      createBaseVNode("button", {
+        class: "btn btn-secondary dropdown-toggle",
+        type: "button",
+        id: $options.dropdownId,
+        "data-bs-toggle": "dropdown",
+        "data-bs-auto-close": "true",
+        "aria-expanded": "false"
+      }, _hoisted_6$1, 8, _hoisted_3$2),
+      createBaseVNode("ul", {
+        class: "dropdown-menu",
+        "aria-labelledby": $options.dropdownId
+      }, [
+        (openBlock(true), createElementBlock(Fragment, null, renderList($data.rows, (row2) => {
+          return openBlock(), createElementBlock("li", {
+            key: row2.cols
+          }, [
+            createBaseVNode("a", {
+              class: "dropdown-item",
+              onClick: withModifiers(() => $options.createRow(row2.cols), ["prevent"]),
+              href: "#"
+            }, toDisplayString(row2.label), 9, _hoisted_8)
+          ]);
+        }), 128))
+      ], 8, _hoisted_7)
+    ])
+  ]);
+}
+var RowControls = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/RowControls.vue"]]);
+function ColWidths(asMapping) {
+  const widths = [
+    { cols: 12, label: "100%" },
+    { cols: 9, label: "75%" },
+    { cols: 6, label: "50%" },
+    { cols: 4, label: "33%" },
+    { cols: 3, label: "25%" }
+  ];
+  if (asMapping !== void 0) {
+    return widths.reduce((a, b) => __spreadProps(__spreadValues({}, a), { [b.cols]: b.label }), {});
+  }
+  return widths;
+}
+var ColControls_vue_vue_type_style_index_0_lang = "";
+const _sfc_main$1 = {
+  emits: ["addcol", "removecol", "newwidth"],
+  props: {
+    rowIndex: {
+      type: Number,
+      required: true
+    },
+    colIndex: {
+      type: Number,
+      required: true
+    },
+    currentWidth: {
+      type: Number,
+      required: false
+    },
+    right: {
+      type: Boolean,
+      required: false,
+      default: () => false
+    }
+  },
+  methods: {
+    createCol() {
+      this.$emit("addcol", column(1), this.rowIndex, this.colIndex);
+    },
+    removeCol() {
+      this.$emit("removecol", this.rowIndex, this.colIndex);
+    },
+    newWidth(newWidth) {
+      this.$emit("newwidth", this.rowIndex, this.colIndex, newWidth);
+    }
+  },
+  computed: {
+    widths() {
+      return ColWidths();
+    },
+    widthsMapping() {
+      return ColWidths(true);
+    },
+    dropdownId() {
+      return `dropdownMenu_${this.colIndex}_${this.rowIndex}`;
+    },
+    cssClasses() {
+      let classes = "sl-col-controls";
+      if (this.right) {
+        classes = classes + " right";
+      }
+      return classes;
+    }
+  }
+};
+const _hoisted_1$1 = {
+  key: 0,
+  class: "sl-remove-col-controls"
+};
+const _hoisted_2$1 = { class: "btn-group btn-group-xs" };
+const _hoisted_3$1 = ["id"];
+const _hoisted_4 = ["aria-labelledby"];
+const _hoisted_5 = ["onClick"];
+const _hoisted_6 = { class: "btn-group btn-group-xs sl-row-controls" };
+function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock(Fragment, null, [
+    $props.currentWidth ? (openBlock(), createElementBlock("div", _hoisted_1$1, [
+      createBaseVNode("div", _hoisted_2$1, [
+        createBaseVNode("button", {
+          class: "btn btn-xs btn-danger",
+          type: "button",
+          onClick: _cache[0] || (_cache[0] = (...args) => $options.removeCol && $options.removeCol(...args))
+        }, " Remove column "),
+        createBaseVNode("button", {
+          class: "btn dropdown-toggle btn-primary btn-xs",
+          type: "button",
+          id: $options.dropdownId,
+          "data-bs-toggle": "dropdown",
+          "data-bs-auto-close": "true",
+          "aria-expanded": "false"
+        }, " Width: " + toDisplayString($options.widthsMapping[$props.currentWidth]), 9, _hoisted_3$1),
+        createBaseVNode("ul", {
+          class: "dropdown-menu",
+          "aria-labelledby": $options.dropdownId
+        }, [
+          (openBlock(true), createElementBlock(Fragment, null, renderList($options.widths, (width) => {
+            return openBlock(), createElementBlock("li", {
+              key: width.cols
+            }, [
+              createBaseVNode("a", {
+                class: "dropdown-item",
+                onClick: withModifiers(() => $options.newWidth(width.cols), ["stop", "prevent"]),
+                href: "#"
+              }, toDisplayString(width.label), 9, _hoisted_5)
+            ]);
+          }), 128))
+        ], 8, _hoisted_4)
+      ])
+    ])) : createCommentVNode("v-if", true),
+    createBaseVNode("div", {
+      class: normalizeClass($options.cssClasses)
+    }, [
+      createBaseVNode("div", _hoisted_6, [
+        createBaseVNode("button", {
+          type: "button",
+          class: "btn btn-primary sl-col-add-button",
+          onClick: _cache[1] || (_cache[1] = () => $options.createCol())
+        }, " + ")
+      ])
+    ], 2)
+  ], 64);
+}
+var ColControls = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/ColControls.vue"]]);
+var App_vue_vue_type_style_index_0_lang = "";
 const _sfc_main = {
   components: {
-    BlockRenderer
+    BlockRenderer,
+    RowControls,
+    ColControls
   },
   data() {
     return {
       baseURL: "",
       slblocks: {},
-      layouts: []
+      layouts: {}
     };
   },
   created() {
@@ -6035,41 +6296,104 @@ const _sfc_main = {
     this.fetchBlocks();
   },
   methods: {
+    addRowToLayout(row2, index) {
+      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
+      newLayouts.splice(index, 0, row2);
+      this.layouts.items = newLayouts;
+    },
+    removeRowFromLayout(rowIndex, colIndex) {
+      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
+      const row2 = newLayouts[rowIndex].items;
+      if (row2.length === 1) {
+        newLayouts.splice(rowIndex, 1);
+      } else {
+        const colWidth = 12 / (row2.length - 1);
+        row2.splice(colIndex, 1);
+        row2.map((col) => col.width = colWidth);
+      }
+      this.layouts.items = newLayouts;
+    },
+    addColumnToRow(col, rowIndex, colIndex) {
+      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
+      let row2 = newLayouts[rowIndex].items;
+      const colWidth = 12 / (row2.length + 1);
+      row2.map((col2) => col2.width = colWidth);
+      col.width = colWidth;
+      newLayouts[rowIndex].items.splice(colIndex, 0, col);
+      this.layouts.items = newLayouts;
+    },
+    setNewWidthOnColumn(rowIndex, colIndex, newWidth) {
+      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
+      newLayouts[rowIndex].items[colIndex].width = newWidth;
+      this.layouts.items = newLayouts;
+    },
     async fetchBlocks() {
       const response = await this.axios.get(this.baseURL);
       console.info(response);
       this.slblocks = response.data.slblocks;
       const layouts = response.data.slblocks_layout;
       if ("items" in layouts) {
-        this.layouts = response.data.slblocks_layout["items"];
+        this.layouts = response.data.slblocks_layout;
       }
     }
   }
 };
-const _hoisted_1 = { class: "container" };
+const _hoisted_1 = { class: "sl-container" };
+const _hoisted_2 = { class: "row" };
+const _hoisted_3 = /* @__PURE__ */ createBaseVNode("br", null, null, -1);
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_RowControls = resolveComponent("RowControls");
+  const _component_ColControls = resolveComponent("ColControls");
   const _component_BlockRenderer = resolveComponent("BlockRenderer");
   return openBlock(), createElementBlock("div", _hoisted_1, [
-    (openBlock(true), createElementBlock(Fragment, null, renderList($data.layouts, (row, rowIndex) => {
+    (openBlock(true), createElementBlock(Fragment, null, renderList($data.layouts.items, (row2, rowIndex) => {
       return openBlock(), createElementBlock("div", {
-        class: "row",
-        key: `layout_${rowIndex}`
+        key: `layout_${rowIndex}`,
+        class: "sl-row"
       }, [
-        (openBlock(true), createElementBlock(Fragment, null, renderList(row.items, (column, Columnindex) => {
-          return openBlock(), createElementBlock("div", {
-            key: `column_${Columnindex}_${rowIndex}`,
-            class: normalizeClass(`col col-${column.width}`)
-          }, [
-            (openBlock(true), createElementBlock(Fragment, null, renderList(column.items, (blockUID) => {
-              return openBlock(), createElementBlock(Fragment, { key: blockUID }, [
-                blockUID in $data.slblocks ? (openBlock(), createBlock(_component_BlockRenderer, {
-                  key: 0,
-                  block: $data.slblocks[blockUID]
-                }, null, 8, ["block"])) : createCommentVNode("v-if", true)
-              ], 64);
-            }), 128))
-          ], 2);
-        }), 128))
+        createVNode(_component_RowControls, {
+          onAddrow: $options.addRowToLayout,
+          index: rowIndex
+        }, null, 8, ["onAddrow", "index"]),
+        createBaseVNode("div", _hoisted_2, [
+          (openBlock(true), createElementBlock(Fragment, null, renderList(row2.items, (column2, columnIndex) => {
+            return openBlock(), createElementBlock("div", {
+              key: `column_${columnIndex}_${rowIndex}`,
+              class: normalizeClass(`sl-col col col-${column2.width}`)
+            }, [
+              createVNode(_component_ColControls, {
+                onAddcol: $options.addColumnToRow,
+                onRemovecol: $options.removeRowFromLayout,
+                onNewwidth: $options.setNewWidthOnColumn,
+                rowIndex,
+                colIndex: columnIndex,
+                currentWidth: parseInt(column2.width)
+              }, null, 8, ["onAddcol", "onRemovecol", "onNewwidth", "rowIndex", "colIndex", "currentWidth"]),
+              (openBlock(true), createElementBlock(Fragment, null, renderList(column2.items, (blockUID) => {
+                return openBlock(), createElementBlock(Fragment, { key: blockUID }, [
+                  blockUID in $data.slblocks ? (openBlock(), createBlock(_component_BlockRenderer, {
+                    key: 0,
+                    block: $data.slblocks[blockUID]
+                  }, null, 8, ["block"])) : createCommentVNode("v-if", true)
+                ], 64);
+              }), 128)),
+              createTextVNode(" " + toDisplayString(columnIndex), 1),
+              _hoisted_3,
+              row2.items.length === columnIndex + 1 ? (openBlock(), createBlock(_component_ColControls, {
+                key: 0,
+                onAddcol: $options.addColumnToRow,
+                rowIndex,
+                colIndex: columnIndex + 1,
+                right: ""
+              }, null, 8, ["onAddcol", "rowIndex", "colIndex"])) : createCommentVNode("v-if", true)
+            ], 2);
+          }), 128))
+        ]),
+        $data.layouts.items.length === rowIndex + 1 ? (openBlock(), createBlock(_component_RowControls, {
+          key: 0,
+          onAddrow: $options.addRowToLayout,
+          index: rowIndex + 1
+        }, null, 8, ["onAddrow", "index"])) : createCommentVNode("v-if", true)
       ]);
     }), 128))
   ]);
