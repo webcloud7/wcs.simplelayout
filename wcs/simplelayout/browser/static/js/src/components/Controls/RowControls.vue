@@ -82,8 +82,8 @@ export default {
     }
   }
 }
-.sl-row:hover {
-  .sl-row-controls {
+.sl-container:hover {
+  .sl-add-row-controls {
     visibility: visible;
   }
 }

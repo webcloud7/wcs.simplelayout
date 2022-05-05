@@ -114,7 +114,7 @@ export default {
   position: absolute;
   height: 100%;
   left: 0;
-  // visibility: hidden;
+  visibility: hidden;
   > .btn-group {
     height: 100%;
   }
@@ -137,10 +137,11 @@ export default {
   bottom: 10px;
   transform: translate(-50%, 0);
   z-index: 1;
+  visibility: hidden;
 }
 
 .sl-row:hover {
-  .sl-col-controls {
+  .sl-col-controls, .sl-remove-col-controls {
     visibility: visible;
   }
 }
