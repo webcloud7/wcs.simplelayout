@@ -48,8 +48,12 @@
 <script>
 import { column } from "@/template.js";
 import { ColWidths } from "@/vocabs.js";
+import { useSimplelayoutStore } from "@/store.js";
 export default {
-  emits: ["addcol", "removecol", "newwidth"],
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
+  },
   props: {
     rowIndex: {
       type: Number,
@@ -71,13 +75,13 @@ export default {
   },
   methods: {
     createCol() {
-      this.$emit("addcol", column(1), this.rowIndex, this.colIndex);
+      this.sl.addColumnToRow(column(1), this.rowIndex, this.colIndex)
     },
     removeCol() {
-      this.$emit("removecol", this.rowIndex, this.colIndex);
+      this.sl.removeRowFromLayout(this.rowIndex, this.colIndex)
     },
     newWidth(newWidth) {
-      this.$emit("newwidth", this.rowIndex, this.colIndex, newWidth);
+      this.sl.setNewWidthOnColumn(this.rowIndex, this.colIndex, newWidth)
     },
   },
   computed: {

@@ -102,7 +102,7 @@ const replacer = (_key, val) => {
     return {
       [`Set(${val.size})`]: [...val.values()]
     };
-  } else if (isObject$1(val) && !isArray$1(val) && !isPlainObject$1(val)) {
+  } else if (isObject$1(val) && !isArray$1(val) && !isPlainObject$2(val)) {
     return String(val);
   }
   return val;
@@ -139,7 +139,7 @@ const toTypeString = (value) => objectToString.call(value);
 const toRawType = (value) => {
   return toTypeString(value).slice(8, -1);
 };
-const isPlainObject$1 = (val) => toTypeString(val) === "[object Object]";
+const isPlainObject$2 = (val) => toTypeString(val) === "[object Object]";
 const isIntegerKey = (key) => isString$1(key) && key !== "NaN" && key[0] !== "-" && "" + parseInt(key, 10) === key;
 const isReservedProp = /* @__PURE__ */ makeMap(",key,ref,ref_for,ref_key,onVnodeBeforeMount,onVnodeMounted,onVnodeBeforeUpdate,onVnodeUpdated,onVnodeBeforeUnmount,onVnodeUnmounted");
 const isBuiltInDirective = /* @__PURE__ */ makeMap("bind,cloak,else-if,else,for,html,if,model,on,once,pre,show,slot,text,memo");
@@ -236,6 +236,9 @@ class EffectScope {
       this.active = false;
     }
   }
+}
+function effectScope(detached) {
+  return new EffectScope(detached);
 }
 function recordEffectScope(effect, scope = activeEffectScope) {
   if (scope && scope.active) {
@@ -534,7 +537,7 @@ function createGetter(isReadonly2 = false, shallow = false) {
     return res;
   };
 }
-const set = /* @__PURE__ */ createSetter();
+const set$1 = /* @__PURE__ */ createSetter();
 const shallowSet = /* @__PURE__ */ createSetter(true);
 function createSetter(shallow = false) {
   return function set2(target, key, value, receiver) {
@@ -586,7 +589,7 @@ function ownKeys(target) {
 }
 const mutableHandlers = {
   get,
-  set,
+  set: set$1,
   deleteProperty,
   has,
   ownKeys
@@ -659,7 +662,7 @@ function add(value) {
   }
   return this;
 }
-function set$1(key, value) {
+function set$1$1(key, value) {
   value = toRaw(value);
   const target = toRaw(this);
   const { has: has2, get: get2 } = getProto(target);
@@ -761,7 +764,7 @@ function createInstrumentations() {
     },
     has: has$1,
     add,
-    set: set$1,
+    set: set$1$1,
     delete: deleteEntry,
     clear,
     forEach: createForEach(false, false)
@@ -775,7 +778,7 @@ function createInstrumentations() {
     },
     has: has$1,
     add,
-    set: set$1,
+    set: set$1$1,
     delete: deleteEntry,
     clear,
     forEach: createForEach(false, true)
@@ -942,24 +945,24 @@ function markRaw(value) {
 }
 const toReactive = (value) => isObject$1(value) ? reactive(value) : value;
 const toReadonly = (value) => isObject$1(value) ? readonly(value) : value;
-function trackRefValue(ref) {
+function trackRefValue(ref2) {
   if (shouldTrack && activeEffect) {
-    ref = toRaw(ref);
+    ref2 = toRaw(ref2);
     {
-      trackEffects(ref.dep || (ref.dep = createDep()), {
-        target: ref,
+      trackEffects(ref2.dep || (ref2.dep = createDep()), {
+        target: ref2,
         type: "get",
         key: "value"
       });
     }
   }
 }
-function triggerRefValue(ref, newVal) {
-  ref = toRaw(ref);
-  if (ref.dep) {
+function triggerRefValue(ref2, newVal) {
+  ref2 = toRaw(ref2);
+  if (ref2.dep) {
     {
-      triggerEffects(ref.dep, {
-        target: ref,
+      triggerEffects(ref2.dep, {
+        target: ref2,
         type: "set",
         key: "value",
         newValue: newVal
@@ -970,8 +973,38 @@ function triggerRefValue(ref, newVal) {
 function isRef(r) {
   return !!(r && r.__v_isRef === true);
 }
-function unref(ref) {
-  return isRef(ref) ? ref.value : ref;
+function ref(value) {
+  return createRef(value, false);
+}
+function createRef(rawValue, shallow) {
+  if (isRef(rawValue)) {
+    return rawValue;
+  }
+  return new RefImpl(rawValue, shallow);
+}
+class RefImpl {
+  constructor(value, __v_isShallow) {
+    this.__v_isShallow = __v_isShallow;
+    this.dep = void 0;
+    this.__v_isRef = true;
+    this._rawValue = __v_isShallow ? value : toRaw(value);
+    this._value = __v_isShallow ? value : toReactive(value);
+  }
+  get value() {
+    trackRefValue(this);
+    return this._value;
+  }
+  set value(newVal) {
+    newVal = this.__v_isShallow ? newVal : toRaw(newVal);
+    if (hasChanged(newVal, this._rawValue)) {
+      this._rawValue = newVal;
+      this._value = this.__v_isShallow ? newVal : toReactive(newVal);
+      triggerRefValue(this, newVal);
+    }
+  }
+}
+function unref(ref2) {
+  return isRef(ref2) ? ref2.value : ref2;
 }
 const shallowUnwrapHandlers = {
   get: (target, key, receiver) => unref(Reflect.get(target, key, receiver)),
@@ -987,6 +1020,35 @@ const shallowUnwrapHandlers = {
 };
 function proxyRefs(objectWithRefs) {
   return isReactive(objectWithRefs) ? objectWithRefs : new Proxy(objectWithRefs, shallowUnwrapHandlers);
+}
+function toRefs(object) {
+  if (!isProxy(object)) {
+    console.warn(`toRefs() expects a reactive object but received a plain one.`);
+  }
+  const ret = isArray$1(object) ? new Array(object.length) : {};
+  for (const key in object) {
+    ret[key] = toRef(object, key);
+  }
+  return ret;
+}
+class ObjectRefImpl {
+  constructor(_object, _key, _defaultValue) {
+    this._object = _object;
+    this._key = _key;
+    this._defaultValue = _defaultValue;
+    this.__v_isRef = true;
+  }
+  get value() {
+    const val = this._object[this._key];
+    return val === void 0 ? this._defaultValue : val;
+  }
+  set value(newVal) {
+    this._object[this._key] = newVal;
+  }
+}
+function toRef(object, key, defaultValue) {
+  const val = object[key];
+  return isRef(val) ? val : new ObjectRefImpl(object, key, defaultValue);
 }
 class ComputedRefImpl {
   constructor(getter, _setter, isReadonly2, isSSR) {
@@ -1098,9 +1160,9 @@ function formatTrace(trace) {
 function formatTraceEntry({ vnode, recurseCount }) {
   const postfix = recurseCount > 0 ? `... (${recurseCount} recursive calls)` : ``;
   const isRoot = vnode.component ? vnode.component.parent == null : false;
-  const open = ` at <${formatComponentName(vnode.component, vnode.type, isRoot)}`;
+  const open2 = ` at <${formatComponentName(vnode.component, vnode.type, isRoot)}`;
   const close = `>` + postfix;
-  return vnode.props ? [open, ...formatProps(vnode.props), close] : [open + close];
+  return vnode.props ? [open2, ...formatProps(vnode.props), close] : [open2 + close];
 }
 function formatProps(props) {
   const res = [];
@@ -2150,7 +2212,7 @@ function traverse(value, seen) {
     value.forEach((v) => {
       traverse(v, seen);
     });
-  } else if (isPlainObject$1(value)) {
+  } else if (isPlainObject$2(value)) {
     for (const key in value) {
       traverse(value[key], seen);
     }
@@ -3472,7 +3534,7 @@ function setRef(rawRef, oldRawRef, parentSuspense, vnode, isUnmount = false) {
   }
   const refValue = vnode.shapeFlag & 4 ? getExposeProxy(vnode.component) || vnode.component.proxy : vnode.el;
   const value = isUnmount ? null : refValue;
-  const { i: owner, r: ref } = rawRef;
+  const { i: owner, r: ref2 } = rawRef;
   if (!owner) {
     warn(`Missing ref owner context. ref cannot be used on hoisted vnodes. A vnode with ref must be created inside the render function.`);
     return;
@@ -3480,7 +3542,7 @@ function setRef(rawRef, oldRawRef, parentSuspense, vnode, isUnmount = false) {
   const oldRef = oldRawRef && oldRawRef.r;
   const refs = owner.refs === EMPTY_OBJ ? owner.refs = {} : owner.refs;
   const setupState = owner.setupState;
-  if (oldRef != null && oldRef !== ref) {
+  if (oldRef != null && oldRef !== ref2) {
     if (isString$1(oldRef)) {
       refs[oldRef] = null;
       if (hasOwn(setupState, oldRef)) {
@@ -3490,44 +3552,44 @@ function setRef(rawRef, oldRawRef, parentSuspense, vnode, isUnmount = false) {
       oldRef.value = null;
     }
   }
-  if (isFunction$1(ref)) {
-    callWithErrorHandling(ref, owner, 12, [value, refs]);
+  if (isFunction$1(ref2)) {
+    callWithErrorHandling(ref2, owner, 12, [value, refs]);
   } else {
-    const _isString = isString$1(ref);
-    const _isRef = isRef(ref);
+    const _isString = isString$1(ref2);
+    const _isRef = isRef(ref2);
     if (_isString || _isRef) {
       const doSet = () => {
         if (rawRef.f) {
-          const existing = _isString ? refs[ref] : ref.value;
+          const existing = _isString ? refs[ref2] : ref2.value;
           if (isUnmount) {
             isArray$1(existing) && remove(existing, refValue);
           } else {
             if (!isArray$1(existing)) {
               if (_isString) {
-                refs[ref] = [refValue];
-                if (hasOwn(setupState, ref)) {
-                  setupState[ref] = refs[ref];
+                refs[ref2] = [refValue];
+                if (hasOwn(setupState, ref2)) {
+                  setupState[ref2] = refs[ref2];
                 }
               } else {
-                ref.value = [refValue];
+                ref2.value = [refValue];
                 if (rawRef.k)
-                  refs[rawRef.k] = ref.value;
+                  refs[rawRef.k] = ref2.value;
               }
             } else if (!existing.includes(refValue)) {
               existing.push(refValue);
             }
           }
         } else if (_isString) {
-          refs[ref] = value;
-          if (hasOwn(setupState, ref)) {
-            setupState[ref] = value;
+          refs[ref2] = value;
+          if (hasOwn(setupState, ref2)) {
+            setupState[ref2] = value;
           }
-        } else if (isRef(ref)) {
-          ref.value = value;
+        } else if (isRef(ref2)) {
+          ref2.value = value;
           if (rawRef.k)
             refs[rawRef.k] = value;
         } else {
-          warn("Invalid template ref type:", ref, `(${typeof ref})`);
+          warn("Invalid template ref type:", ref2, `(${typeof ref2})`);
         }
       };
       if (value) {
@@ -3537,44 +3599,44 @@ function setRef(rawRef, oldRawRef, parentSuspense, vnode, isUnmount = false) {
         doSet();
       }
     } else {
-      warn("Invalid template ref type:", ref, `(${typeof ref})`);
+      warn("Invalid template ref type:", ref2, `(${typeof ref2})`);
     }
   }
 }
-let supported;
-let perf;
+let supported$1;
+let perf$1;
 function startMeasure(instance, type) {
   if (instance.appContext.config.performance && isSupported()) {
-    perf.mark(`vue-${type}-${instance.uid}`);
+    perf$1.mark(`vue-${type}-${instance.uid}`);
   }
   {
-    devtoolsPerfStart(instance, type, isSupported() ? perf.now() : Date.now());
+    devtoolsPerfStart(instance, type, isSupported() ? perf$1.now() : Date.now());
   }
 }
 function endMeasure(instance, type) {
   if (instance.appContext.config.performance && isSupported()) {
     const startTag = `vue-${type}-${instance.uid}`;
     const endTag = startTag + `:end`;
-    perf.mark(endTag);
-    perf.measure(`<${formatComponentName(instance, instance.type)}> ${type}`, startTag, endTag);
-    perf.clearMarks(startTag);
-    perf.clearMarks(endTag);
+    perf$1.mark(endTag);
+    perf$1.measure(`<${formatComponentName(instance, instance.type)}> ${type}`, startTag, endTag);
+    perf$1.clearMarks(startTag);
+    perf$1.clearMarks(endTag);
   }
   {
-    devtoolsPerfEnd(instance, type, isSupported() ? perf.now() : Date.now());
+    devtoolsPerfEnd(instance, type, isSupported() ? perf$1.now() : Date.now());
   }
 }
 function isSupported() {
-  if (supported !== void 0) {
-    return supported;
+  if (supported$1 !== void 0) {
+    return supported$1;
   }
   if (typeof window !== "undefined" && window.performance) {
-    supported = true;
-    perf = window.performance;
+    supported$1 = true;
+    perf$1 = window.performance;
   } else {
-    supported = false;
+    supported$1 = false;
   }
-  return supported;
+  return supported$1;
 }
 function initFeatureFlags() {
   const needWarn = [];
@@ -3612,7 +3674,7 @@ function baseCreateRenderer(options, createHydrationFns) {
       optimized = false;
       n2.dynamicChildren = null;
     }
-    const { type, ref, shapeFlag } = n2;
+    const { type, ref: ref2, shapeFlag } = n2;
     switch (type) {
       case Text:
         processText(n1, n2, container, anchor);
@@ -3643,8 +3705,8 @@ function baseCreateRenderer(options, createHydrationFns) {
           warn("Invalid VNode type:", type, `(${typeof type})`);
         }
     }
-    if (ref != null && parentComponent) {
-      setRef(ref, n1 && n1.ref, parentSuspense, n2 || n1, !n2);
+    if (ref2 != null && parentComponent) {
+      setRef(ref2, n1 && n1.ref, parentSuspense, n2 || n1, !n2);
     }
   };
   const processText = (n1, n2, container, anchor) => {
@@ -4344,9 +4406,9 @@ function baseCreateRenderer(options, createHydrationFns) {
     }
   };
   const unmount = (vnode, parentComponent, parentSuspense, doRemove = false, optimized = false) => {
-    const { type, props, ref, children, dynamicChildren, shapeFlag, patchFlag, dirs } = vnode;
-    if (ref != null) {
-      setRef(ref, null, parentSuspense, vnode, true);
+    const { type, props, ref: ref2, children, dynamicChildren, shapeFlag, patchFlag, dirs } = vnode;
+    if (ref2 != null) {
+      setRef(ref2, null, parentSuspense, vnode, true);
     }
     if (shapeFlag & 256) {
       parentComponent.ctx.deactivate(vnode);
@@ -4652,8 +4714,8 @@ const createVNodeWithArgsTransform = (...args) => {
 };
 const InternalObjectKey = `__vInternal`;
 const normalizeKey = ({ key }) => key != null ? key : null;
-const normalizeRef = ({ ref, ref_key, ref_for }) => {
-  return ref != null ? isString$1(ref) || isRef(ref) || isFunction$1(ref) ? { i: currentRenderingInstance, r: ref, k: ref_key, f: !!ref_for } : ref : null;
+const normalizeRef = ({ ref: ref2, ref_key, ref_for }) => {
+  return ref2 != null ? isString$1(ref2) || isRef(ref2) || isFunction$1(ref2) ? { i: currentRenderingInstance, r: ref2, k: ref_key, f: !!ref_for } : ref2 : null;
 };
 function createBaseVNode(type, props = null, children = null, patchFlag = 0, dynamicProps = null, shapeFlag = type === Fragment ? 0 : 1, isBlockNode = false, needFullChildrenNormalization = false) {
   const vnode = {
@@ -4744,7 +4806,7 @@ function guardReactiveProps(props) {
   return isProxy(props) || InternalObjectKey in props ? extend$1({}, props) : props;
 }
 function cloneVNode(vnode, extraProps, mergeRef = false) {
-  const { props, ref, patchFlag, children } = vnode;
+  const { props, ref: ref2, patchFlag, children } = vnode;
   const mergedProps = extraProps ? mergeProps(props || {}, extraProps) : props;
   const cloned = {
     __v_isVNode: true,
@@ -4752,7 +4814,7 @@ function cloneVNode(vnode, extraProps, mergeRef = false) {
     type: vnode.type,
     props: mergedProps,
     key: mergedProps && normalizeKey(mergedProps),
-    ref: extraProps && extraProps.ref ? mergeRef && ref ? isArray$1(ref) ? ref.concat(normalizeRef(extraProps)) : [ref, normalizeRef(extraProps)] : normalizeRef(extraProps) : ref,
+    ref: extraProps && extraProps.ref ? mergeRef && ref2 ? isArray$1(ref2) ? ref2.concat(normalizeRef(extraProps)) : [ref2, normalizeRef(extraProps)] : normalizeRef(extraProps) : ref2,
     scopeId: vnode.scopeId,
     slotScopeIds: vnode.slotScopeIds,
     children: patchFlag === -1 && isArray$1(children) ? children.map(deepCloneVNode) : children,
@@ -6076,6 +6138,1417 @@ function row(cols) {
     items: colsArray.map(() => column(cols))
   };
 }
+var isVue2 = false;
+function set(target, key, val) {
+  if (Array.isArray(target)) {
+    target.length = Math.max(target.length, key);
+    target.splice(key, 1, val);
+    return val;
+  }
+  target[key] = val;
+  return val;
+}
+function del(target, key) {
+  if (Array.isArray(target)) {
+    target.splice(key, 1);
+    return;
+  }
+  delete target[key];
+}
+function getDevtoolsGlobalHook() {
+  return getTarget().__VUE_DEVTOOLS_GLOBAL_HOOK__;
+}
+function getTarget() {
+  return typeof navigator !== "undefined" && typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : {};
+}
+const isProxyAvailable = typeof Proxy === "function";
+const HOOK_SETUP = "devtools-plugin:setup";
+const HOOK_PLUGIN_SETTINGS_SET = "plugin:settings:set";
+let supported;
+let perf;
+function isPerformanceSupported() {
+  var _a;
+  if (supported !== void 0) {
+    return supported;
+  }
+  if (typeof window !== "undefined" && window.performance) {
+    supported = true;
+    perf = window.performance;
+  } else if (typeof global !== "undefined" && ((_a = global.perf_hooks) === null || _a === void 0 ? void 0 : _a.performance)) {
+    supported = true;
+    perf = global.perf_hooks.performance;
+  } else {
+    supported = false;
+  }
+  return supported;
+}
+function now() {
+  return isPerformanceSupported() ? perf.now() : Date.now();
+}
+class ApiProxy {
+  constructor(plugin2, hook) {
+    this.target = null;
+    this.targetQueue = [];
+    this.onQueue = [];
+    this.plugin = plugin2;
+    this.hook = hook;
+    const defaultSettings = {};
+    if (plugin2.settings) {
+      for (const id in plugin2.settings) {
+        const item = plugin2.settings[id];
+        defaultSettings[id] = item.defaultValue;
+      }
+    }
+    const localSettingsSaveId = `__vue-devtools-plugin-settings__${plugin2.id}`;
+    let currentSettings = Object.assign({}, defaultSettings);
+    try {
+      const raw = localStorage.getItem(localSettingsSaveId);
+      const data2 = JSON.parse(raw);
+      Object.assign(currentSettings, data2);
+    } catch (e) {
+    }
+    this.fallbacks = {
+      getSettings() {
+        return currentSettings;
+      },
+      setSettings(value) {
+        try {
+          localStorage.setItem(localSettingsSaveId, JSON.stringify(value));
+        } catch (e) {
+        }
+        currentSettings = value;
+      },
+      now() {
+        return now();
+      }
+    };
+    if (hook) {
+      hook.on(HOOK_PLUGIN_SETTINGS_SET, (pluginId, value) => {
+        if (pluginId === this.plugin.id) {
+          this.fallbacks.setSettings(value);
+        }
+      });
+    }
+    this.proxiedOn = new Proxy({}, {
+      get: (_target, prop) => {
+        if (this.target) {
+          return this.target.on[prop];
+        } else {
+          return (...args) => {
+            this.onQueue.push({
+              method: prop,
+              args
+            });
+          };
+        }
+      }
+    });
+    this.proxiedTarget = new Proxy({}, {
+      get: (_target, prop) => {
+        if (this.target) {
+          return this.target[prop];
+        } else if (prop === "on") {
+          return this.proxiedOn;
+        } else if (Object.keys(this.fallbacks).includes(prop)) {
+          return (...args) => {
+            this.targetQueue.push({
+              method: prop,
+              args,
+              resolve: () => {
+              }
+            });
+            return this.fallbacks[prop](...args);
+          };
+        } else {
+          return (...args) => {
+            return new Promise((resolve2) => {
+              this.targetQueue.push({
+                method: prop,
+                args,
+                resolve: resolve2
+              });
+            });
+          };
+        }
+      }
+    });
+  }
+  async setRealTarget(target) {
+    this.target = target;
+    for (const item of this.onQueue) {
+      this.target.on[item.method](...item.args);
+    }
+    for (const item of this.targetQueue) {
+      item.resolve(await this.target[item.method](...item.args));
+    }
+  }
+}
+function setupDevtoolsPlugin(pluginDescriptor, setupFn) {
+  const descriptor = pluginDescriptor;
+  const target = getTarget();
+  const hook = getDevtoolsGlobalHook();
+  const enableProxy = isProxyAvailable && descriptor.enableEarlyProxy;
+  if (hook && (target.__VUE_DEVTOOLS_PLUGIN_API_AVAILABLE__ || !enableProxy)) {
+    hook.emit(HOOK_SETUP, pluginDescriptor, setupFn);
+  } else {
+    const proxy = enableProxy ? new ApiProxy(descriptor, hook) : null;
+    const list = target.__VUE_DEVTOOLS_PLUGINS__ = target.__VUE_DEVTOOLS_PLUGINS__ || [];
+    list.push({
+      pluginDescriptor: descriptor,
+      setupFn,
+      proxy
+    });
+    if (proxy)
+      setupFn(proxy.proxiedTarget);
+  }
+}
+/*!
+  * pinia v2.0.0-rc.10
+  * (c) 2021 Eduardo San Martin Morote
+  * @license MIT
+  */
+let activePinia;
+const setActivePinia = (pinia2) => activePinia = pinia2;
+const piniaSymbol = Symbol("pinia");
+function isPlainObject$1(o) {
+  return o && typeof o === "object" && Object.prototype.toString.call(o) === "[object Object]" && typeof o.toJSON !== "function";
+}
+var MutationType;
+(function(MutationType2) {
+  MutationType2["direct"] = "direct";
+  MutationType2["patchObject"] = "patch object";
+  MutationType2["patchFunction"] = "patch function";
+})(MutationType || (MutationType = {}));
+const IS_CLIENT = typeof window !== "undefined";
+const _global = /* @__PURE__ */ (() => typeof window === "object" && window.window === window ? window : typeof self === "object" && self.self === self ? self : typeof global === "object" && global.global === global ? global : typeof globalThis === "object" ? globalThis : { HTMLElement: null })();
+function bom(blob, { autoBom = false } = {}) {
+  if (autoBom && /^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(blob.type)) {
+    return new Blob([String.fromCharCode(65279), blob], { type: blob.type });
+  }
+  return blob;
+}
+function download(url, name, opts) {
+  const xhr2 = new XMLHttpRequest();
+  xhr2.open("GET", url);
+  xhr2.responseType = "blob";
+  xhr2.onload = function() {
+    saveAs(xhr2.response, name, opts);
+  };
+  xhr2.onerror = function() {
+    console.error("could not download file");
+  };
+  xhr2.send();
+}
+function corsEnabled(url) {
+  const xhr2 = new XMLHttpRequest();
+  xhr2.open("HEAD", url, false);
+  try {
+    xhr2.send();
+  } catch (e) {
+  }
+  return xhr2.status >= 200 && xhr2.status <= 299;
+}
+function click(node) {
+  try {
+    node.dispatchEvent(new MouseEvent("click"));
+  } catch (e) {
+    const evt = document.createEvent("MouseEvents");
+    evt.initMouseEvent("click", true, true, window, 0, 0, 0, 80, 20, false, false, false, false, 0, null);
+    node.dispatchEvent(evt);
+  }
+}
+const _navigator = typeof navigator === "object" ? navigator : { userAgent: "" };
+const isMacOSWebView = /* @__PURE__ */ (() => /Macintosh/.test(_navigator.userAgent) && /AppleWebKit/.test(_navigator.userAgent) && !/Safari/.test(_navigator.userAgent))();
+const saveAs = !IS_CLIENT ? () => {
+} : "download" in HTMLAnchorElement.prototype && !isMacOSWebView ? downloadSaveAs : "msSaveOrOpenBlob" in _navigator ? msSaveAs : fileSaverSaveAs;
+function downloadSaveAs(blob, name = "download", opts) {
+  const a = document.createElement("a");
+  a.download = name;
+  a.rel = "noopener";
+  if (typeof blob === "string") {
+    a.href = blob;
+    if (a.origin !== location.origin) {
+      if (corsEnabled(a.href)) {
+        download(blob, name, opts);
+      } else {
+        a.target = "_blank";
+        click(a);
+      }
+    } else {
+      click(a);
+    }
+  } else {
+    a.href = URL.createObjectURL(blob);
+    setTimeout(function() {
+      URL.revokeObjectURL(a.href);
+    }, 4e4);
+    setTimeout(function() {
+      click(a);
+    }, 0);
+  }
+}
+function msSaveAs(blob, name = "download", opts) {
+  if (typeof blob === "string") {
+    if (corsEnabled(blob)) {
+      download(blob, name, opts);
+    } else {
+      const a = document.createElement("a");
+      a.href = blob;
+      a.target = "_blank";
+      setTimeout(function() {
+        click(a);
+      });
+    }
+  } else {
+    navigator.msSaveOrOpenBlob(bom(blob, opts), name);
+  }
+}
+function fileSaverSaveAs(blob, name, opts, popup) {
+  popup = popup || open("", "_blank");
+  if (popup) {
+    popup.document.title = popup.document.body.innerText = "downloading...";
+  }
+  if (typeof blob === "string")
+    return download(blob, name, opts);
+  const force = blob.type === "application/octet-stream";
+  const isSafari = /constructor/i.test(String(_global.HTMLElement)) || "safari" in _global;
+  const isChromeIOS = /CriOS\/[\d]+/.test(navigator.userAgent);
+  if ((isChromeIOS || force && isSafari || isMacOSWebView) && typeof FileReader !== "undefined") {
+    const reader = new FileReader();
+    reader.onloadend = function() {
+      let url = reader.result;
+      if (typeof url !== "string") {
+        popup = null;
+        throw new Error("Wrong reader.result type");
+      }
+      url = isChromeIOS ? url : url.replace(/^data:[^;]*;/, "data:attachment/file;");
+      if (popup) {
+        popup.location.href = url;
+      } else {
+        location.assign(url);
+      }
+      popup = null;
+    };
+    reader.readAsDataURL(blob);
+  } else {
+    const url = URL.createObjectURL(blob);
+    if (popup)
+      popup.location.assign(url);
+    else
+      location.href = url;
+    popup = null;
+    setTimeout(function() {
+      URL.revokeObjectURL(url);
+    }, 4e4);
+  }
+}
+function toastMessage(message, type) {
+  const piniaMessage = "\u{1F34D} " + message;
+  if (typeof __VUE_DEVTOOLS_TOAST__ === "function") {
+    __VUE_DEVTOOLS_TOAST__(piniaMessage, type);
+  } else if (type === "error") {
+    console.error(piniaMessage);
+  } else if (type === "warn") {
+    console.warn(piniaMessage);
+  } else {
+    console.log(piniaMessage);
+  }
+}
+function isPinia(o) {
+  return "_a" in o && "install" in o;
+}
+function checkClipboardAccess() {
+  if (!("clipboard" in navigator)) {
+    toastMessage(`Your browser doesn't support the Clipboard API`, "error");
+    return true;
+  }
+}
+function checkNotFocusedError(error) {
+  if (error instanceof Error && error.message.toLowerCase().includes("document is not focused")) {
+    toastMessage('You need to activate the "Emulate a focused page" setting in the "Rendering" panel of devtools.', "warn");
+    return true;
+  }
+  return false;
+}
+async function actionGlobalCopyState(pinia2) {
+  if (checkClipboardAccess())
+    return;
+  try {
+    await navigator.clipboard.writeText(JSON.stringify(pinia2.state.value));
+    toastMessage("Global state copied to clipboard.");
+  } catch (error) {
+    if (checkNotFocusedError(error))
+      return;
+    toastMessage(`Failed to serialize the state. Check the console for more details.`, "error");
+    console.error(error);
+  }
+}
+async function actionGlobalPasteState(pinia2) {
+  if (checkClipboardAccess())
+    return;
+  try {
+    pinia2.state.value = JSON.parse(await navigator.clipboard.readText());
+    toastMessage("Global state pasted from clipboard.");
+  } catch (error) {
+    if (checkNotFocusedError(error))
+      return;
+    toastMessage(`Failed to deserialize the state from clipboard. Check the console for more details.`, "error");
+    console.error(error);
+  }
+}
+async function actionGlobalSaveState(pinia2) {
+  try {
+    saveAs(new Blob([JSON.stringify(pinia2.state.value)], {
+      type: "text/plain;charset=utf-8"
+    }), "pinia-state.json");
+  } catch (error) {
+    toastMessage(`Failed to export the state as JSON. Check the console for more details.`, "error");
+    console.error(error);
+  }
+}
+let fileInput;
+function getFileOpener() {
+  if (!fileInput) {
+    fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".json";
+  }
+  function openFile() {
+    return new Promise((resolve2, reject) => {
+      fileInput.onchange = async () => {
+        const files = fileInput.files;
+        if (!files)
+          return resolve2(null);
+        const file = files.item(0);
+        if (!file)
+          return resolve2(null);
+        return resolve2({ text: await file.text(), file });
+      };
+      fileInput.oncancel = () => resolve2(null);
+      fileInput.onerror = reject;
+      fileInput.click();
+    });
+  }
+  return openFile;
+}
+async function actionGlobalOpenStateFile(pinia2) {
+  try {
+    const open2 = await getFileOpener();
+    const result = await open2();
+    if (!result)
+      return;
+    const { text, file } = result;
+    pinia2.state.value = JSON.parse(text);
+    toastMessage(`Global state imported from "${file.name}".`);
+  } catch (error) {
+    toastMessage(`Failed to export the state as JSON. Check the console for more details.`, "error");
+    console.error(error);
+  }
+}
+function formatDisplay(display) {
+  return {
+    _custom: {
+      display
+    }
+  };
+}
+const PINIA_ROOT_LABEL = "\u{1F34D} Pinia (root)";
+const PINIA_ROOT_ID = "_root";
+function formatStoreForInspectorTree(store) {
+  return "$id" in store ? {
+    id: store.$id,
+    label: store.$id
+  } : {
+    id: PINIA_ROOT_ID,
+    label: PINIA_ROOT_LABEL
+  };
+}
+function formatStoreForInspectorState(store) {
+  if (isPinia(store)) {
+    const state2 = {
+      state: Object.keys(store.state.value).map((storeId) => ({
+        editable: true,
+        key: storeId,
+        value: store.state.value[storeId]
+      }))
+    };
+    return state2;
+  }
+  const state = {
+    state: Object.keys(store.$state).map((key) => ({
+      editable: true,
+      key,
+      value: store.$state[key]
+    }))
+  };
+  if (store._getters && store._getters.length) {
+    state.getters = store._getters.map((getterName) => ({
+      editable: false,
+      key: getterName,
+      value: store[getterName]
+    }));
+  }
+  if (store._customProperties.size) {
+    state.customProperties = Array.from(store._customProperties).map((key) => ({
+      editable: true,
+      key,
+      value: store[key]
+    }));
+  }
+  return state;
+}
+function formatEventData(events) {
+  if (!events)
+    return {};
+  if (Array.isArray(events)) {
+    return events.reduce((data2, event) => {
+      data2.keys.push(event.key);
+      data2.operations.push(event.type);
+      data2.oldValue[event.key] = event.oldValue;
+      data2.newValue[event.key] = event.newValue;
+      return data2;
+    }, {
+      oldValue: {},
+      keys: [],
+      operations: [],
+      newValue: {}
+    });
+  } else {
+    return {
+      operation: formatDisplay(events.type),
+      key: formatDisplay(events.key),
+      oldValue: events.oldValue,
+      newValue: events.newValue
+    };
+  }
+}
+function formatMutationType(type) {
+  switch (type) {
+    case MutationType.direct:
+      return "mutation";
+    case MutationType.patchFunction:
+      return "$patch";
+    case MutationType.patchObject:
+      return "$patch";
+    default:
+      return "unknown";
+  }
+}
+let isTimelineActive = true;
+const componentStateTypes = [];
+const MUTATIONS_LAYER_ID = "pinia:mutations";
+const INSPECTOR_ID = "pinia";
+const getStoreType = (id) => "\u{1F34D} " + id;
+function registerPiniaDevtools(app2, pinia2) {
+  setupDevtoolsPlugin({
+    id: "dev.esm.pinia",
+    label: "Pinia \u{1F34D}",
+    logo: "https://pinia.esm.dev/logo.svg",
+    packageName: "pinia",
+    homepage: "https://pinia.esm.dev",
+    componentStateTypes,
+    app: app2
+  }, (api) => {
+    api.addTimelineLayer({
+      id: MUTATIONS_LAYER_ID,
+      label: `Pinia \u{1F34D}`,
+      color: 15064968
+    });
+    api.addInspector({
+      id: INSPECTOR_ID,
+      label: "Pinia \u{1F34D}",
+      icon: "storage",
+      treeFilterPlaceholder: "Search stores",
+      actions: [
+        {
+          icon: "content_copy",
+          action: () => {
+            actionGlobalCopyState(pinia2);
+          },
+          tooltip: "Serialize and copy the state"
+        },
+        {
+          icon: "content_paste",
+          action: async () => {
+            await actionGlobalPasteState(pinia2);
+            api.sendInspectorTree(INSPECTOR_ID);
+            api.sendInspectorState(INSPECTOR_ID);
+          },
+          tooltip: "Replace the state with the content of your clipboard"
+        },
+        {
+          icon: "save",
+          action: () => {
+            actionGlobalSaveState(pinia2);
+          },
+          tooltip: "Save the state as a JSON file"
+        },
+        {
+          icon: "folder_open",
+          action: async () => {
+            await actionGlobalOpenStateFile(pinia2);
+            api.sendInspectorTree(INSPECTOR_ID);
+            api.sendInspectorState(INSPECTOR_ID);
+          },
+          tooltip: "Import the state from a JSON file"
+        }
+      ]
+    });
+    api.on.inspectComponent((payload, ctx) => {
+      const proxy = payload.componentInstance && payload.componentInstance.proxy;
+      if (proxy && proxy._pStores) {
+        const piniaStores = payload.componentInstance.proxy._pStores;
+        Object.values(piniaStores).forEach((store) => {
+          payload.instanceData.state.push({
+            type: getStoreType(store.$id),
+            key: "state",
+            editable: true,
+            value: store.$state
+          });
+          if (store._getters && store._getters.length) {
+            payload.instanceData.state.push({
+              type: getStoreType(store.$id),
+              key: "getters",
+              editable: false,
+              value: store._getters.reduce((getters, key) => {
+                getters[key] = store[key];
+                return getters;
+              }, {})
+            });
+          }
+        });
+      }
+    });
+    api.on.getInspectorTree((payload) => {
+      if (payload.app === app2 && payload.inspectorId === INSPECTOR_ID) {
+        let stores = [pinia2];
+        stores = stores.concat(Array.from(pinia2._s.values()));
+        payload.rootNodes = (payload.filter ? stores.filter((store) => "$id" in store ? store.$id.toLowerCase().includes(payload.filter.toLowerCase()) : PINIA_ROOT_LABEL.toLowerCase().includes(payload.filter.toLowerCase())) : stores).map(formatStoreForInspectorTree);
+      }
+    });
+    api.on.getInspectorState((payload) => {
+      if (payload.app === app2 && payload.inspectorId === INSPECTOR_ID) {
+        const inspectedStore = payload.nodeId === PINIA_ROOT_ID ? pinia2 : pinia2._s.get(payload.nodeId);
+        if (!inspectedStore) {
+          return;
+        }
+        if (inspectedStore) {
+          payload.state = formatStoreForInspectorState(inspectedStore);
+        }
+      }
+    });
+    api.on.editInspectorState((payload, ctx) => {
+      if (payload.app === app2 && payload.inspectorId === INSPECTOR_ID) {
+        const inspectedStore = payload.nodeId === PINIA_ROOT_ID ? pinia2 : pinia2._s.get(payload.nodeId);
+        if (!inspectedStore) {
+          return toastMessage(`store "${payload.nodeId}" not found`, "error");
+        }
+        const { path } = payload;
+        if (!isPinia(inspectedStore)) {
+          if (path.length !== 1 || !inspectedStore._customProperties.has(path[0]) || path[0] in inspectedStore.$state) {
+            path.unshift("$state");
+          }
+        } else {
+          path.unshift("state", "value");
+        }
+        isTimelineActive = false;
+        payload.set(inspectedStore, path, payload.state.value);
+        isTimelineActive = true;
+      }
+    });
+    api.on.editComponentState((payload) => {
+      if (payload.type.startsWith("\u{1F34D}")) {
+        const storeId = payload.type.replace(/^🍍\s*/, "");
+        const store = pinia2._s.get(storeId);
+        if (!store) {
+          return toastMessage(`store "${storeId}" not found`, "error");
+        }
+        const { path } = payload;
+        if (path[0] !== "state") {
+          return toastMessage(`Invalid path for store "${storeId}":
+${path}
+Only state can be modified.`);
+        }
+        path[0] = "$state";
+        isTimelineActive = false;
+        payload.set(store, path, payload.state.value);
+        isTimelineActive = true;
+      }
+    });
+  });
+}
+function addStoreToDevtools(app2, store) {
+  if (!componentStateTypes.includes(getStoreType(store.$id))) {
+    componentStateTypes.push(getStoreType(store.$id));
+  }
+  setupDevtoolsPlugin({
+    id: "dev.esm.pinia",
+    label: "Pinia \u{1F34D}",
+    logo: "https://pinia.esm.dev/logo.svg",
+    packageName: "pinia",
+    homepage: "https://pinia.esm.dev",
+    componentStateTypes,
+    app: app2
+  }, (api) => {
+    store.$onAction(({ after, onError, name, args }) => {
+      const groupId = runningActionId++;
+      api.addTimelineEvent({
+        layerId: MUTATIONS_LAYER_ID,
+        event: {
+          time: Date.now(),
+          title: "\u{1F6EB} " + name,
+          subtitle: "start",
+          data: {
+            store: formatDisplay(store.$id),
+            action: formatDisplay(name),
+            args
+          },
+          groupId
+        }
+      });
+      after((result) => {
+        activeAction = void 0;
+        api.addTimelineEvent({
+          layerId: MUTATIONS_LAYER_ID,
+          event: {
+            time: Date.now(),
+            title: "\u{1F6EC} " + name,
+            subtitle: "end",
+            data: {
+              store: formatDisplay(store.$id),
+              action: formatDisplay(name),
+              args,
+              result
+            },
+            groupId
+          }
+        });
+      });
+      onError((error) => {
+        activeAction = void 0;
+        api.addTimelineEvent({
+          layerId: MUTATIONS_LAYER_ID,
+          event: {
+            time: Date.now(),
+            logType: "error",
+            title: "\u{1F4A5} " + name,
+            subtitle: "end",
+            data: {
+              store: formatDisplay(store.$id),
+              action: formatDisplay(name),
+              args,
+              error
+            },
+            groupId
+          }
+        });
+      });
+    }, true);
+    store._customProperties.forEach((name) => {
+      watch(() => unref(store[name]), (newValue, oldValue) => {
+        api.notifyComponentUpdate();
+        api.sendInspectorState(INSPECTOR_ID);
+        if (isTimelineActive) {
+          api.addTimelineEvent({
+            layerId: MUTATIONS_LAYER_ID,
+            event: {
+              time: Date.now(),
+              title: "Change",
+              subtitle: name,
+              data: {
+                newValue,
+                oldValue
+              },
+              groupId: activeAction
+            }
+          });
+        }
+      }, { deep: true });
+    });
+    store.$subscribe(({ events, type }, state) => {
+      api.notifyComponentUpdate();
+      api.sendInspectorState(INSPECTOR_ID);
+      if (!isTimelineActive)
+        return;
+      const eventData = {
+        time: Date.now(),
+        title: formatMutationType(type),
+        data: __spreadValues({
+          store: formatDisplay(store.$id)
+        }, formatEventData(events)),
+        groupId: activeAction
+      };
+      activeAction = void 0;
+      if (type === MutationType.patchFunction) {
+        eventData.subtitle = "\u2935\uFE0F";
+      } else if (type === MutationType.patchObject) {
+        eventData.subtitle = "\u{1F9E9}";
+      } else if (events && !Array.isArray(events)) {
+        eventData.subtitle = events.type;
+      }
+      if (events) {
+        eventData.data["rawEvent(s)"] = {
+          _custom: {
+            display: "DebuggerEvent",
+            type: "object",
+            tooltip: "raw DebuggerEvent[]",
+            value: events
+          }
+        };
+      }
+      api.addTimelineEvent({
+        layerId: MUTATIONS_LAYER_ID,
+        event: eventData
+      });
+    }, { detached: true, flush: "sync" });
+    const hotUpdate = store._hotUpdate;
+    store._hotUpdate = markRaw((newStore) => {
+      hotUpdate(newStore);
+      api.addTimelineEvent({
+        layerId: MUTATIONS_LAYER_ID,
+        event: {
+          time: Date.now(),
+          title: "\u{1F525} " + store.$id,
+          subtitle: "HMR update",
+          data: {
+            store: formatDisplay(store.$id),
+            info: formatDisplay(`HMR update`)
+          }
+        }
+      });
+      api.notifyComponentUpdate();
+      api.sendInspectorTree(INSPECTOR_ID);
+      api.sendInspectorState(INSPECTOR_ID);
+    });
+    const { $dispose } = store;
+    store.$dispose = () => {
+      $dispose();
+      api.notifyComponentUpdate();
+      api.sendInspectorTree(INSPECTOR_ID);
+      api.sendInspectorState(INSPECTOR_ID);
+      toastMessage(`Disposed "${store.$id}" store \u{1F5D1}`);
+    };
+    api.notifyComponentUpdate();
+    api.sendInspectorTree(INSPECTOR_ID);
+    api.sendInspectorState(INSPECTOR_ID);
+    toastMessage(`"${store.$id}" store installed \u{1F195}`);
+  });
+}
+let runningActionId = 0;
+let activeAction;
+function patchActionForGrouping(store, actionNames) {
+  const actions = actionNames.reduce((storeActions, actionName) => {
+    storeActions[actionName] = toRaw(store)[actionName];
+    return storeActions;
+  }, {});
+  for (const actionName in actions) {
+    store[actionName] = function() {
+      const _actionId = runningActionId;
+      const trackedStore = new Proxy(store, {
+        get(...args) {
+          activeAction = _actionId;
+          return Reflect.get(...args);
+        },
+        set(...args) {
+          activeAction = _actionId;
+          return Reflect.set(...args);
+        }
+      });
+      return actions[actionName].apply(trackedStore, arguments);
+    };
+  }
+}
+function devtoolsPlugin({ app: app2, store, options }) {
+  if (store.$id.startsWith("__hot:")) {
+    return;
+  }
+  if (typeof options.state === "function") {
+    patchActionForGrouping(store, Object.keys(options.actions));
+    const originalHotUpdate = store._hotUpdate;
+    toRaw(store)._hotUpdate = function(newStore) {
+      originalHotUpdate.apply(this, arguments);
+      patchActionForGrouping(store, Object.keys(newStore._hmrPayload.actions));
+    };
+  }
+  addStoreToDevtools(app2, store);
+}
+function createPinia() {
+  const scope = effectScope(true);
+  const state = scope.run(() => ref({}));
+  let _p = [];
+  const toBeInstalled = [];
+  const pinia2 = markRaw({
+    install(app2) {
+      setActivePinia(pinia2);
+      {
+        pinia2._a = app2;
+        app2.provide(piniaSymbol, pinia2);
+        app2.config.globalProperties.$pinia = pinia2;
+        if (IS_CLIENT) {
+          registerPiniaDevtools(app2, pinia2);
+        }
+        toBeInstalled.forEach((plugin2) => _p.push(plugin2));
+      }
+    },
+    use(plugin2) {
+      if (!this._a && !isVue2) {
+        toBeInstalled.push(plugin2);
+      } else {
+        _p.push(plugin2);
+      }
+      return this;
+    },
+    _p,
+    _a: null,
+    _e: scope,
+    _s: /* @__PURE__ */ new Map(),
+    state
+  });
+  if (IS_CLIENT) {
+    pinia2.use(devtoolsPlugin);
+  }
+  return pinia2;
+}
+function patchObject(newState, oldState) {
+  for (const key in oldState) {
+    const subPatch = oldState[key];
+    if (!(key in newState)) {
+      continue;
+    }
+    const targetValue = newState[key];
+    if (isPlainObject$1(targetValue) && isPlainObject$1(subPatch) && !isRef(subPatch) && !isReactive(subPatch)) {
+      newState[key] = patchObject(targetValue, subPatch);
+    } else {
+      {
+        newState[key] = subPatch;
+      }
+    }
+  }
+  return newState;
+}
+function addSubscription(subscriptions, callback, detached) {
+  subscriptions.push(callback);
+  const removeSubscription = () => {
+    const idx = subscriptions.indexOf(callback);
+    if (idx > -1) {
+      subscriptions.splice(idx, 1);
+    }
+  };
+  if (!detached && getCurrentInstance()) {
+    onUnmounted(removeSubscription);
+  }
+  return removeSubscription;
+}
+function triggerSubscriptions(subscriptions, ...args) {
+  subscriptions.forEach((callback) => {
+    callback(...args);
+  });
+}
+function innerPatch(target, patchToApply) {
+  for (const key in patchToApply) {
+    const subPatch = patchToApply[key];
+    const targetValue = target[key];
+    if (isPlainObject$1(targetValue) && isPlainObject$1(subPatch) && !isRef(subPatch) && !isReactive(subPatch)) {
+      target[key] = innerPatch(targetValue, subPatch);
+    } else {
+      target[key] = subPatch;
+    }
+  }
+  return target;
+}
+const { assign } = Object;
+function isComputed(o) {
+  return o && o.effect;
+}
+function createOptionsStore(id, options, pinia2, hot) {
+  const { state, actions, getters } = options;
+  const initialState = pinia2.state.value[id];
+  let store;
+  function setup() {
+    if (!initialState && !hot) {
+      {
+        pinia2.state.value[id] = state ? state() : {};
+      }
+    }
+    const localState = hot ? toRefs(ref(state ? state() : {}).value) : toRefs(pinia2.state.value[id]);
+    return assign(localState, actions, Object.keys(getters || {}).reduce((computedGetters, name) => {
+      computedGetters[name] = markRaw(computed(() => {
+        setActivePinia(pinia2);
+        const store2 = pinia2._s.get(id);
+        return getters[name].call(store2, store2);
+      }));
+      return computedGetters;
+    }, {}));
+  }
+  store = createSetupStore(id, setup, options, pinia2, hot);
+  store.$reset = function $reset() {
+    const newState = state ? state() : {};
+    this.$patch(($state) => {
+      assign($state, newState);
+    });
+  };
+  return store;
+}
+const noop = () => {
+};
+function createSetupStore($id, setup, options = {}, pinia2, hot) {
+  let scope;
+  const buildState = options.state;
+  const optionsForPlugin = __spreadValues({
+    actions: {}
+  }, options);
+  if (!pinia2._e.active) {
+    throw new Error("Pinia destroyed");
+  }
+  const $subscribeOptions = {
+    deep: true
+  };
+  {
+    $subscribeOptions.onTrigger = (event) => {
+      if (isListening) {
+        debuggerEvents = event;
+      } else if (isListening == false && !store._hotUpdating) {
+        if (Array.isArray(debuggerEvents)) {
+          debuggerEvents.push(event);
+        } else {
+          console.error("\u{1F34D} debuggerEvents should be an array. This is most likely an internal Pinia bug.");
+        }
+      }
+    };
+  }
+  let isListening;
+  let subscriptions = markRaw([]);
+  let actionSubscriptions = markRaw([]);
+  let debuggerEvents;
+  const initialState = pinia2.state.value[$id];
+  if (!initialState && !hot) {
+    {
+      pinia2.state.value[$id] = {};
+    }
+  }
+  const hotState = ref({});
+  function $patch(partialStateOrMutator) {
+    let subscriptionMutation;
+    isListening = false;
+    {
+      debuggerEvents = [];
+    }
+    if (typeof partialStateOrMutator === "function") {
+      partialStateOrMutator(pinia2.state.value[$id]);
+      subscriptionMutation = {
+        type: MutationType.patchFunction,
+        storeId: $id,
+        events: debuggerEvents
+      };
+    } else {
+      innerPatch(pinia2.state.value[$id], partialStateOrMutator);
+      subscriptionMutation = {
+        type: MutationType.patchObject,
+        payload: partialStateOrMutator,
+        storeId: $id,
+        events: debuggerEvents
+      };
+    }
+    isListening = true;
+    triggerSubscriptions(subscriptions, subscriptionMutation, pinia2.state.value[$id]);
+  }
+  const $reset = () => {
+    throw new Error(`\u{1F34D}: Store "${$id}" is build using the setup syntax and does not implement $reset().`);
+  };
+  function $dispose() {
+    scope.stop();
+    subscriptions = [];
+    actionSubscriptions = [];
+    pinia2._s.delete($id);
+  }
+  function wrapAction(name, action) {
+    return function() {
+      setActivePinia(pinia2);
+      const args = Array.from(arguments);
+      let afterCallback = noop;
+      let onErrorCallback = noop;
+      function after(callback) {
+        afterCallback = callback;
+      }
+      function onError(callback) {
+        onErrorCallback = callback;
+      }
+      triggerSubscriptions(actionSubscriptions, {
+        args,
+        name,
+        store,
+        after,
+        onError
+      });
+      let ret;
+      try {
+        ret = action.apply(this && this.$id === $id ? this : store, args);
+      } catch (error) {
+        if (onErrorCallback(error) !== false) {
+          throw error;
+        }
+      }
+      if (ret instanceof Promise) {
+        return ret.then((value) => {
+          const newRet2 = afterCallback(value);
+          return newRet2 === void 0 ? value : newRet2;
+        }).catch((error) => {
+          if (onErrorCallback(error) !== false) {
+            return Promise.reject(error);
+          }
+        });
+      }
+      const newRet = afterCallback(ret);
+      return newRet === void 0 ? ret : newRet;
+    };
+  }
+  const _hmrPayload = /* @__PURE__ */ markRaw({
+    actions: {},
+    getters: {},
+    state: [],
+    hotState
+  });
+  const partialStore = {
+    _p: pinia2,
+    $id,
+    $onAction: addSubscription.bind(null, actionSubscriptions),
+    $patch,
+    $reset,
+    $subscribe(callback, options2 = {}) {
+      if (typeof options2 === "boolean") {
+        console.warn(`[\u{1F34D}]: store.$subscribe() no longer accepts a boolean as the 2nd parameter:
+Replace "store.$subscribe(fn, ${String(options2)})" with "store.$subscribe(fn, { detached: ${String(options2)} })".
+This will fail in production.`);
+        options2 = { detached: options2 };
+      }
+      const _removeSubscription = addSubscription(subscriptions, callback, options2.detached);
+      const stopWatcher = scope.run(() => watch(() => pinia2.state.value[$id], (state, oldState) => {
+        if (isListening) {
+          callback({
+            storeId: $id,
+            type: MutationType.direct,
+            events: debuggerEvents
+          }, state);
+        }
+      }, assign({}, $subscribeOptions, options2)));
+      const removeSubscription = () => {
+        stopWatcher();
+        _removeSubscription();
+      };
+      return removeSubscription;
+    },
+    $dispose
+  };
+  const store = reactive(assign(IS_CLIENT ? {
+    _customProperties: markRaw(/* @__PURE__ */ new Set()),
+    _hmrPayload
+  } : {}, partialStore));
+  pinia2._s.set($id, store);
+  const setupStore = pinia2._e.run(() => {
+    scope = effectScope();
+    return scope.run(() => setup());
+  });
+  for (const key in setupStore) {
+    const prop = setupStore[key];
+    if (isRef(prop) && !isComputed(prop) || isReactive(prop)) {
+      if (hot) {
+        set(hotState.value, key, toRef(setupStore, key));
+      } else if (!buildState) {
+        if (initialState) {
+          if (isRef(prop)) {
+            prop.value = initialState[key];
+          } else {
+            innerPatch(prop, initialState[key]);
+          }
+        }
+        {
+          pinia2.state.value[$id][key] = prop;
+        }
+      }
+      {
+        _hmrPayload.state.push(key);
+      }
+    } else if (typeof prop === "function") {
+      const actionValue = hot ? prop : wrapAction(key, prop);
+      {
+        setupStore[key] = actionValue;
+      }
+      {
+        _hmrPayload.actions[key] = prop;
+      }
+      optionsForPlugin.actions[key] = prop;
+    } else {
+      if (isComputed(prop)) {
+        _hmrPayload.getters[key] = buildState ? options.getters[key] : prop;
+        if (IS_CLIENT) {
+          const getters = setupStore._getters || (setupStore._getters = markRaw([]));
+          getters.push(key);
+        }
+      }
+    }
+  }
+  {
+    assign(store, setupStore);
+  }
+  Object.defineProperty(store, "$state", {
+    get: () => hot ? hotState.value : pinia2.state.value[$id],
+    set: (state) => {
+      if (hot) {
+        throw new Error("cannot set hotState");
+      }
+      $patch(($state) => {
+        assign($state, state);
+      });
+    }
+  });
+  {
+    store._hotUpdate = markRaw((newStore) => {
+      store._hotUpdating = true;
+      newStore._hmrPayload.state.forEach((stateKey) => {
+        if (stateKey in store.$state) {
+          const newStateTarget = newStore.$state[stateKey];
+          const oldStateSource = store.$state[stateKey];
+          if (typeof newStateTarget === "object" && isPlainObject$1(newStateTarget) && isPlainObject$1(oldStateSource)) {
+            patchObject(newStateTarget, oldStateSource);
+          } else {
+            newStore.$state[stateKey] = oldStateSource;
+          }
+        }
+        set(store, stateKey, toRef(newStore.$state, stateKey));
+      });
+      Object.keys(store.$state).forEach((stateKey) => {
+        if (!(stateKey in newStore.$state)) {
+          del(store, stateKey);
+        }
+      });
+      isListening = false;
+      pinia2.state.value[$id] = toRef(newStore._hmrPayload, "hotState");
+      isListening = true;
+      for (const actionName in newStore._hmrPayload.actions) {
+        const action = newStore[actionName];
+        set(store, actionName, wrapAction(actionName, action));
+      }
+      for (const getterName in newStore._hmrPayload.getters) {
+        const getter = newStore._hmrPayload.getters[getterName];
+        const getterValue = buildState ? computed(() => {
+          setActivePinia(pinia2);
+          return getter.call(store, store);
+        }) : getter;
+        set(store, getterName, getterValue);
+      }
+      Object.keys(store._hmrPayload.getters).forEach((key) => {
+        if (!(key in newStore._hmrPayload.getters)) {
+          del(store, key);
+        }
+      });
+      Object.keys(store._hmrPayload.actions).forEach((key) => {
+        if (!(key in newStore._hmrPayload.actions)) {
+          del(store, key);
+        }
+      });
+      store._hmrPayload = newStore._hmrPayload;
+      store._getters = newStore._getters;
+      store._hotUpdating = false;
+    });
+    const nonEnumerable = {
+      writable: true,
+      configurable: true,
+      enumerable: false
+    };
+    if (IS_CLIENT) {
+      ["_p", "_hmrPayload", "_getters", "_customProperties"].forEach((p2) => {
+        Object.defineProperty(store, p2, __spreadValues({
+          value: store[p2]
+        }, nonEnumerable));
+      });
+    }
+  }
+  pinia2._p.forEach((extender) => {
+    if (IS_CLIENT) {
+      const extensions = scope.run(() => extender({
+        store,
+        app: pinia2._a,
+        pinia: pinia2,
+        options: optionsForPlugin
+      }));
+      Object.keys(extensions || {}).forEach((key) => store._customProperties.add(key));
+      assign(store, extensions);
+    } else {
+      assign(store, scope.run(() => extender({
+        store,
+        app: pinia2._a,
+        pinia: pinia2,
+        options: optionsForPlugin
+      })));
+    }
+  });
+  if (store.$state && typeof store.$state === "object" && typeof store.$state.constructor === "function" && !store.$state.constructor.toString().includes("[native code]")) {
+    console.warn(`[\u{1F34D}]: The "state" must be a plain object. It cannot be
+	state: () => new MyClass()`);
+  }
+  if (initialState && buildState) {
+    (options.hydrate || innerPatch)(store, initialState);
+  }
+  isListening = true;
+  return store;
+}
+function defineStore(idOrOptions, setup, setupOptions) {
+  let id;
+  let options;
+  const isSetupStore = typeof setup === "function";
+  if (typeof idOrOptions === "string") {
+    id = idOrOptions;
+    options = isSetupStore ? setupOptions : setup;
+  } else {
+    options = idOrOptions;
+    id = idOrOptions.id;
+  }
+  function useStore(pinia2, hot) {
+    const currentInstance2 = getCurrentInstance();
+    pinia2 = pinia2 || currentInstance2 && inject(piniaSymbol);
+    if (pinia2)
+      setActivePinia(pinia2);
+    if (!activePinia) {
+      throw new Error(`[\u{1F34D}]: getActivePinia was called with no active Pinia. Did you forget to install pinia?
+
+const pinia = createPinia()
+app.use(pinia)
+
+This will fail in production.`);
+    }
+    pinia2 = activePinia;
+    if (!pinia2._s.has(id)) {
+      if (isSetupStore) {
+        createSetupStore(id, setup, options, pinia2);
+      } else {
+        createOptionsStore(id, options, pinia2);
+      }
+      {
+        useStore._pinia = pinia2;
+      }
+    }
+    const store = pinia2._s.get(id);
+    if (hot) {
+      const hotId = "__hot:" + id;
+      const newStore = isSetupStore ? createSetupStore(hotId, setup, options, pinia2, true) : createOptionsStore(hotId, assign({}, options), pinia2, true);
+      hot._hotUpdate(newStore);
+      delete pinia2.state.value[hotId];
+      pinia2._s.delete(hotId);
+    }
+    if (IS_CLIENT && currentInstance2 && currentInstance2.proxy && !hot) {
+      const vm = currentInstance2.proxy;
+      const cache = "_pStores" in vm ? vm._pStores : vm._pStores = {};
+      cache[id] = store;
+    }
+    return store;
+  }
+  useStore.$id = id;
+  return useStore;
+}
+const useSimplelayoutStore = defineStore({
+  id: "simplelayoutStore",
+  state: () => ({
+    layouts: { items: [] },
+    blocks: {},
+    loading: false,
+    baseURL: document.body.getAttribute("data-base-url")
+  }),
+  getters: {},
+  actions: {
+    async fetchBlocks() {
+      this.loading = true;
+      try {
+        const response = await this.axios.get(this.baseURL);
+        this.blocks = response.data.slblocks;
+        const layouts = response.data.slblocks_layout;
+        if ("items" in layouts) {
+          this.layouts = response.data.slblocks_layout;
+        }
+      } catch (error) {
+        console.info(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async addRowToLayout(row2, index) {
+      this.loading = true;
+      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
+      newLayouts.splice(index, 0, row2);
+      try {
+        const data2 = { slblocks_layout: { items: newLayouts } };
+        const response = await this.axios.patch(this.baseURL, data2);
+        this.blocks = response.data.slblocks;
+        const layouts = response.data.slblocks_layout;
+        if ("items" in layouts) {
+          this.layouts = response.data.slblocks_layout;
+        }
+      } catch (error) {
+        console.info(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async removeRowFromLayout(rowIndex, colIndex) {
+      this.loading = true;
+      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
+      const row2 = newLayouts[rowIndex].items;
+      try {
+        if (row2.length === 1) {
+          newLayouts.splice(rowIndex, 1);
+        } else {
+          const colWidth = 12 / (row2.length - 1);
+          row2.splice(colIndex, 1);
+          row2.map((col) => col.width = colWidth);
+        }
+        const data2 = { slblocks_layout: { items: newLayouts } };
+        const response = await this.axios.patch(this.baseURL, data2);
+        this.layouts = response.data.slblocks_layout;
+      } catch (error) {
+        console.info(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async addColumnToRow(col, rowIndex, colIndex) {
+      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
+      let row2 = newLayouts[rowIndex].items;
+      const colWidth = 12 / (row2.length + 1);
+      row2.map((col2) => col2.width = colWidth);
+      col.width = colWidth;
+      newLayouts[rowIndex].items.splice(colIndex, 0, col);
+      try {
+        const data2 = { slblocks_layout: { items: newLayouts } };
+        const response = await this.axios.patch(this.baseURL, data2);
+        this.blocks = response.data.slblocks;
+        const layouts = response.data.slblocks_layout;
+        if ("items" in layouts) {
+          this.layouts = response.data.slblocks_layout;
+        }
+      } catch (error) {
+        console.info(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async setNewWidthOnColumn(rowIndex, colIndex, newWidth) {
+      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
+      newLayouts[rowIndex].items[colIndex].width = newWidth;
+      try {
+        const data2 = { slblocks_layout: { items: newLayouts } };
+        const response = await this.axios.patch(this.baseURL, data2);
+        this.blocks = response.data.slblocks;
+        const layouts = response.data.slblocks_layout;
+        if ("items" in layouts) {
+          this.layouts = response.data.slblocks_layout;
+        }
+      } catch (error) {
+        console.info(error);
+      } finally {
+        this.loading = false;
+      }
+    }
+  }
+});
 var RowControls_vue_vue_type_style_index_0_lang = "";
 const _sfc_main$2 = {
   props: {
@@ -6083,6 +7556,10 @@ const _sfc_main$2 = {
       type: Number,
       required: true
     }
+  },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
   },
   data() {
     return {
@@ -6095,7 +7572,7 @@ const _sfc_main$2 = {
   },
   methods: {
     createRow(cols) {
-      this.$emit("addrow", row(cols), this.index);
+      this.sl.addRowToLayout(row(cols), this.index);
     }
   },
   computed: {
@@ -6171,7 +7648,10 @@ function ColWidths(asMapping) {
 }
 var ColControls_vue_vue_type_style_index_0_lang = "";
 const _sfc_main$1 = {
-  emits: ["addcol", "removecol", "newwidth"],
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
+  },
   props: {
     rowIndex: {
       type: Number,
@@ -6193,13 +7673,13 @@ const _sfc_main$1 = {
   },
   methods: {
     createCol() {
-      this.$emit("addcol", column(1), this.rowIndex, this.colIndex);
+      this.sl.addColumnToRow(column(1), this.rowIndex, this.colIndex);
     },
     removeCol() {
-      this.$emit("removecol", this.rowIndex, this.colIndex);
+      this.sl.removeRowFromLayout(this.rowIndex, this.colIndex);
     },
     newWidth(newWidth) {
-      this.$emit("newwidth", this.rowIndex, this.colIndex, newWidth);
+      this.sl.setNewWidthOnColumn(this.rowIndex, this.colIndex, newWidth);
     }
   },
   computed: {
@@ -6286,58 +7766,12 @@ const _sfc_main = {
     RowControls,
     ColControls
   },
-  data() {
-    return {
-      baseURL: "",
-      slblocks: {},
-      layouts: {}
-    };
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
   },
   created() {
-    this.baseURL = document.body.getAttribute("data-base-url");
-    this.fetchBlocks();
-  },
-  methods: {
-    addRowToLayout(row2, index) {
-      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
-      newLayouts.splice(index, 0, row2);
-      this.layouts.items = newLayouts;
-    },
-    removeRowFromLayout(rowIndex, colIndex) {
-      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
-      const row2 = newLayouts[rowIndex].items;
-      if (row2.length === 1) {
-        newLayouts.splice(rowIndex, 1);
-      } else {
-        const colWidth = 12 / (row2.length - 1);
-        row2.splice(colIndex, 1);
-        row2.map((col) => col.width = colWidth);
-      }
-      this.layouts.items = newLayouts;
-    },
-    addColumnToRow(col, rowIndex, colIndex) {
-      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
-      let row2 = newLayouts[rowIndex].items;
-      const colWidth = 12 / (row2.length + 1);
-      row2.map((col2) => col2.width = colWidth);
-      col.width = colWidth;
-      newLayouts[rowIndex].items.splice(colIndex, 0, col);
-      this.layouts.items = newLayouts;
-    },
-    setNewWidthOnColumn(rowIndex, colIndex, newWidth) {
-      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
-      newLayouts[rowIndex].items[colIndex].width = newWidth;
-      this.layouts.items = newLayouts;
-    },
-    async fetchBlocks() {
-      const response = await this.axios.get(this.baseURL);
-      console.info(response);
-      this.slblocks = response.data.slblocks;
-      const layouts = response.data.slblocks_layout;
-      if ("items" in layouts) {
-        this.layouts = response.data.slblocks_layout;
-      }
-    }
+    this.sl.fetchBlocks();
   }
 };
 const _hoisted_1 = { class: "sl-container" };
@@ -6348,15 +7782,12 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_ColControls = resolveComponent("ColControls");
   const _component_BlockRenderer = resolveComponent("BlockRenderer");
   return openBlock(), createElementBlock("div", _hoisted_1, [
-    (openBlock(true), createElementBlock(Fragment, null, renderList($data.layouts.items, (row2, rowIndex) => {
+    (openBlock(true), createElementBlock(Fragment, null, renderList($setup.sl.layouts.items, (row2, rowIndex) => {
       return openBlock(), createElementBlock("div", {
         key: `layout_${rowIndex}`,
         class: "sl-row"
       }, [
-        createVNode(_component_RowControls, {
-          onAddrow: $options.addRowToLayout,
-          index: rowIndex
-        }, null, 8, ["onAddrow", "index"]),
+        createVNode(_component_RowControls, { index: rowIndex }, null, 8, ["index"]),
         createBaseVNode("div", _hoisted_2, [
           (openBlock(true), createElementBlock(Fragment, null, renderList(row2.items, (column2, columnIndex) => {
             return openBlock(), createElementBlock("div", {
@@ -6364,18 +7795,15 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
               class: normalizeClass(`sl-col col col-${column2.width}`)
             }, [
               createVNode(_component_ColControls, {
-                onAddcol: $options.addColumnToRow,
-                onRemovecol: $options.removeRowFromLayout,
-                onNewwidth: $options.setNewWidthOnColumn,
                 rowIndex,
                 colIndex: columnIndex,
                 currentWidth: parseInt(column2.width)
-              }, null, 8, ["onAddcol", "onRemovecol", "onNewwidth", "rowIndex", "colIndex", "currentWidth"]),
+              }, null, 8, ["rowIndex", "colIndex", "currentWidth"]),
               (openBlock(true), createElementBlock(Fragment, null, renderList(column2.items, (blockUID) => {
                 return openBlock(), createElementBlock(Fragment, { key: blockUID }, [
-                  blockUID in $data.slblocks ? (openBlock(), createBlock(_component_BlockRenderer, {
+                  blockUID in $setup.sl.blocks ? (openBlock(), createBlock(_component_BlockRenderer, {
                     key: 0,
-                    block: $data.slblocks[blockUID]
+                    block: $setup.sl.blocks[blockUID]
                   }, null, 8, ["block"])) : createCommentVNode("v-if", true)
                 ], 64);
               }), 128)),
@@ -6383,19 +7811,17 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
               _hoisted_3,
               row2.items.length === columnIndex + 1 ? (openBlock(), createBlock(_component_ColControls, {
                 key: 0,
-                onAddcol: $options.addColumnToRow,
                 rowIndex,
                 colIndex: columnIndex + 1,
                 right: ""
-              }, null, 8, ["onAddcol", "rowIndex", "colIndex"])) : createCommentVNode("v-if", true)
+              }, null, 8, ["rowIndex", "colIndex"])) : createCommentVNode("v-if", true)
             ], 2);
           }), 128))
         ]),
-        $data.layouts.items.length === rowIndex + 1 ? (openBlock(), createBlock(_component_RowControls, {
+        $setup.sl.layouts.items.length === rowIndex + 1 ? (openBlock(), createBlock(_component_RowControls, {
           key: 0,
-          onAddrow: $options.addRowToLayout,
           index: rowIndex + 1
-        }, null, 8, ["onAddrow", "index"])) : createCommentVNode("v-if", true)
+        }, null, 8, ["index"])) : createCommentVNode("v-if", true)
       ]);
     }), 128))
   ]);
@@ -7624,7 +9050,8 @@ function axiosInstance() {
   const instance = axios.create({
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      Prefer: "return=representation"
     }
   });
   return instance;
@@ -7679,4 +9106,9 @@ function getVueVersion(e) {
 }) : window.Vue && window.axios && window.Vue.use && Vue.use(plugin, window.axios);
 const app = createApp(App);
 app.use(plugin, { axios: axiosInstance() });
+const pinia = createPinia();
+pinia.use(({ store }) => {
+  store.axios = axiosInstance();
+});
+app.use(pinia);
 app.mount("#app");
