@@ -6104,23 +6104,25 @@ const _sfc_main$2 = {
     }
   }
 };
-const _hoisted_1$2 = { class: "sl-add-row-controls" };
-const _hoisted_2$2 = { class: "btn-group btn-group-xs" };
-const _hoisted_3$2 = ["id"];
-const _hoisted_4$1 = /* @__PURE__ */ createBaseVNode("span", {
+const _hoisted_1$2 = { class: "btn-group btn-group-xs" };
+const _hoisted_2$2 = ["id"];
+const _hoisted_3$2 = /* @__PURE__ */ createBaseVNode("span", {
   "aria-haspopup": "true",
   class: "caret"
 }, null, -1);
-const _hoisted_5$1 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
-const _hoisted_6$1 = [
-  _hoisted_4$1,
-  _hoisted_5$1
+const _hoisted_4$1 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
+const _hoisted_5$1 = [
+  _hoisted_3$2,
+  _hoisted_4$1
 ];
-const _hoisted_7 = ["aria-labelledby"];
-const _hoisted_8 = ["onClick"];
+const _hoisted_6 = ["aria-labelledby"];
+const _hoisted_7 = ["onClick"];
 function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$2, [
-    createBaseVNode("div", _hoisted_2$2, [
+  return openBlock(), createElementBlock("div", {
+    class: "sl-add-row-controls",
+    style: normalizeStyle(`z-index:${1e3 - $props.index * 2}`)
+  }, [
+    createBaseVNode("div", _hoisted_1$2, [
       createBaseVNode("button", {
         type: "button",
         class: "btn btn-primary",
@@ -6133,7 +6135,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
         "data-bs-toggle": "dropdown",
         "data-bs-auto-close": "true",
         "aria-expanded": "false"
-      }, _hoisted_6$1, 8, _hoisted_3$2),
+      }, _hoisted_5$1, 8, _hoisted_2$2),
       createBaseVNode("ul", {
         class: "dropdown-menu",
         "aria-labelledby": $options.dropdownId
@@ -6146,12 +6148,12 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
               class: "dropdown-item",
               onClick: withModifiers(() => $options.createRow(row2.cols), ["prevent"]),
               href: "#"
-            }, toDisplayString(row2.label), 9, _hoisted_8)
+            }, toDisplayString(row2.label), 9, _hoisted_7)
           ]);
         }), 128))
-      ], 8, _hoisted_7)
+      ], 8, _hoisted_6)
     ])
-  ]);
+  ], 4);
 }
 var RowControls = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/RowControls.vue"]]);
 function ColWidths(asMapping) {
@@ -6219,19 +6221,19 @@ const _sfc_main$1 = {
     }
   }
 };
-const _hoisted_1$1 = {
-  key: 0,
-  class: "sl-remove-col-controls"
-};
-const _hoisted_2$1 = { class: "btn-group btn-group-xs" };
-const _hoisted_3$1 = ["id"];
-const _hoisted_4 = ["aria-labelledby"];
-const _hoisted_5 = ["onClick"];
-const _hoisted_6 = { class: "btn-group btn-group-xs sl-row-controls" };
+const _hoisted_1$1 = { class: "btn-group btn-group-xs" };
+const _hoisted_2$1 = ["id"];
+const _hoisted_3$1 = ["aria-labelledby"];
+const _hoisted_4 = ["onClick"];
+const _hoisted_5 = { class: "btn-group btn-group-xs sl-row-controls" };
 function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(Fragment, null, [
-    $props.currentWidth ? (openBlock(), createElementBlock("div", _hoisted_1$1, [
-      createBaseVNode("div", _hoisted_2$1, [
+    $props.currentWidth ? (openBlock(), createElementBlock("div", {
+      key: 0,
+      class: "sl-remove-col-controls",
+      style: normalizeStyle(`z-index:${1e3 - 1 - $props.rowIndex * 2}`)
+    }, [
+      createBaseVNode("div", _hoisted_1$1, [
         createBaseVNode("button", {
           class: "btn btn-xs btn-danger",
           type: "button",
@@ -6244,7 +6246,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
           "data-bs-toggle": "dropdown",
           "data-bs-auto-close": "true",
           "aria-expanded": "false"
-        }, " Width: " + toDisplayString($options.widthsMapping[$props.currentWidth]), 9, _hoisted_3$1),
+        }, " Width: " + toDisplayString($options.widthsMapping[$props.currentWidth]), 9, _hoisted_2$1),
         createBaseVNode("ul", {
           class: "dropdown-menu",
           "aria-labelledby": $options.dropdownId
@@ -6255,18 +6257,18 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
             }, [
               createBaseVNode("a", {
                 class: "dropdown-item",
-                onClick: withModifiers(() => $options.newWidth(width.cols), ["stop", "prevent"]),
+                onClick: () => $options.newWidth(width.cols),
                 href: "#"
-              }, toDisplayString(width.label), 9, _hoisted_5)
+              }, toDisplayString(width.label), 9, _hoisted_4)
             ]);
           }), 128))
-        ], 8, _hoisted_4)
+        ], 8, _hoisted_3$1)
       ])
-    ])) : createCommentVNode("v-if", true),
+    ], 4)) : createCommentVNode("v-if", true),
     createBaseVNode("div", {
       class: normalizeClass($options.cssClasses)
     }, [
-      createBaseVNode("div", _hoisted_6, [
+      createBaseVNode("div", _hoisted_5, [
         createBaseVNode("button", {
           type: "button",
           class: "btn btn-primary sl-col-add-button",

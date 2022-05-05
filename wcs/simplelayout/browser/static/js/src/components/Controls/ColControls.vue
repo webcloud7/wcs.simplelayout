@@ -2,6 +2,7 @@
   <div
     v-if="currentWidth"
     class="sl-remove-col-controls"
+    :style="`z-index:${1000 - 1 - (rowIndex * 2)}`"
   >
     <div class="btn-group btn-group-xs">
       <button class="btn btn-xs btn-danger" type="button" @click="removeCol">
@@ -22,7 +23,7 @@
           <li>
             <a
               class="dropdown-item"
-              @click.stop.prevent="() => newWidth(width.cols)"
+              @click="() => newWidth(width.cols)"
               href="#"
               >{{ width.label }}</a
             >

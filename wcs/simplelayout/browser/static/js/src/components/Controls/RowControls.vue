@@ -1,5 +1,5 @@
 <template>
-  <div class="sl-add-row-controls">
+  <div class="sl-add-row-controls" :style="`z-index:${1000 - (index * 2)}`">
     <div class="btn-group btn-group-xs">
       <button type="button" class="btn btn-primary" @click="() => createRow(1)">
         +
@@ -65,7 +65,6 @@ export default {
 .sl-add-row-controls {
   position: relative;
   // visibility: hidden;
-  z-index: 1;
   > .btn-group {
     width: 120px;
     left: 50%;
