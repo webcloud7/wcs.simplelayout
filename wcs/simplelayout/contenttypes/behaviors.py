@@ -87,50 +87,13 @@ LAYOUT_SCHEMA = json.dumps(
 @provider(IFormFieldProvider)
 class ISimplelayout(model.Schema):
 
-    model.fieldset("layout", label=_("Layout"), fields=["blocks", "blocks_layout"])
+    model.fieldset("layout", label=_("Layout"), fields=["slblocks_layout"])
 
-    blocks = JSONField(
-        title="Blocks",
-        description="The JSON representation of the object blocks information. Must be a JSON object.",  # noqa
-        schema=BLOCKS_SCHEMA,
-        default={},
-        required=False,
-    )
-
-    blocks_layout = JSONField(
+    slblocks_layout = JSONField(
         title="Blocks Layout",
         description="The JSON representation of the object blocks layout. Must be a JSON array.",  # noqa
         schema=LAYOUT_SCHEMA,
-        default={
-            "items": [
-                {
-                    "@type": "row",
-                    "items": [
-                        {
-                            "@type": "col",
-                            "attr1": "width-12",
-                            "items": ["uuid1"]
-                        }
-                    ]
-                },
-
-                {
-                    "@type": "row",
-                    "items": [
-                        {
-                            "@type": "col",
-                            "attr1": "width-8",
-                            "items": ["uuid1"]
-                        },
-                        {
-                            "@type": "col",
-                            "attr1": "width-4",
-                            "items": ["uuid2", "uuid3"]
-                        }
-                    ]
-                }
-            ]
-        },
+        default={},
         required=False,
     )
 

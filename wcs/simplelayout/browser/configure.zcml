@@ -5,6 +5,11 @@
     xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="wcs.simplelayout">
 
+    <browser:resourceDirectory
+        name="simplelayout"
+        directory="static"
+        />
+
     <browser:page
         for="wcs.simplelayout.contenttypes.behaviors.ISimplelayout"
         name="simplelayout-view"

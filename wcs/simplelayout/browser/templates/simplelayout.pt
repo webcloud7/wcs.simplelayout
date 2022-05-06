@@ -5,6 +5,11 @@
       i18n:domain="ftw.simplelayout">
 
     <div metal:fill-slot="content-core">
-        <span tal:replace="structure context/@@authenticator/authenticator"/>
+        
+        <link rel="stylesheet" type="text/css" tal:attributes="href string:${here/portal_url}/++resource++simplelayout/js/dist/style.css" />
+
+        <div id="app"></div>
+
+        <script type="module" tal:attributes="src string:${here/portal_url}/++resource++simplelayout/js/dist/simplelayout.es.js"></script>
     </div>
 </html>

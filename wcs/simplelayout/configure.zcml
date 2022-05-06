@@ -13,6 +13,7 @@
 
     <include package=".browser" />
     <include package=".contenttypes" />
+    <include package=".restapi" />
 
     <genericsetup:registerProfile
         name="default"
