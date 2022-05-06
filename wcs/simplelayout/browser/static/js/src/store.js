@@ -26,13 +26,9 @@ export const useSimplelayoutStore = defineStore({
         this.loading = false;
       }
     },
-    async addRowToLayout(row, index) {
+    async modifyLayouts(data) {
       this.loading = true;
-      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
-      newLayouts.splice(index, 0, row);
-
       try {
-        const data = { slblocks_layout: { items: newLayouts } };
         const response = await this.axios.patch(this.baseURL, data);
         this.blocks = response.data.slblocks;
         const layouts = response.data.slblocks_layout;
@@ -45,27 +41,24 @@ export const useSimplelayoutStore = defineStore({
         this.loading = false;
       }
     },
+    async addRowToLayout(row, index) {
+      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
+      newLayouts.splice(index, 0, row);
+      const data = { slblocks_layout: { items: newLayouts } };
+      this.modifyLayouts(data);
+    },
     async removeRowFromLayout(rowIndex, colIndex) {
-      this.loading = true;
       let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
       const row = newLayouts[rowIndex].items;
-
-      try {
-        if (row.length === 1) {
-          newLayouts.splice(rowIndex, 1);
-        } else {
-          const colWidth = 12 / (row.length - 1);
-          row.splice(colIndex, 1);
-          row.map((col) => (col.width = colWidth));
-        }
-        const data = { slblocks_layout: { items: newLayouts } };
-        const response = await this.axios.patch(this.baseURL, data);
-        this.layouts = response.data.slblocks_layout;
-      } catch (error) {
-        console.info(error);
-      } finally {
-        this.loading = false;
+      if (row.length === 1) {
+        newLayouts.splice(rowIndex, 1);
+      } else {
+        const colWidth = 12 / (row.length - 1);
+        row.splice(colIndex, 1);
+        row.map((col) => (col.width = colWidth));
       }
+      const data = { slblocks_layout: { items: newLayouts } };
+      this.modifyLayouts(data);
     },
     async addColumnToRow(col, rowIndex, colIndex) {
       let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
@@ -75,36 +68,15 @@ export const useSimplelayoutStore = defineStore({
       col.width = colWidth;
       newLayouts[rowIndex].items.splice(colIndex, 0, col);
 
-      try {
-        const data = { slblocks_layout: { items: newLayouts } };
-        const response = await this.axios.patch(this.baseURL, data);
-        this.blocks = response.data.slblocks;
-        const layouts = response.data.slblocks_layout;
-        if ("items" in layouts) {
-          this.layouts = response.data.slblocks_layout;
-        }
-      } catch (error) {
-        console.info(error);
-      } finally {
-        this.loading = false;
-      }
+      const data = { slblocks_layout: { items: newLayouts } };
+      this.modifyLayouts(data);
     },
     async setNewWidthOnColumn(rowIndex, colIndex, newWidth) {
       let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
       newLayouts[rowIndex].items[colIndex].width = newWidth;
-      try {
-        const data = { slblocks_layout: { items: newLayouts } };
-        const response = await this.axios.patch(this.baseURL, data);
-        this.blocks = response.data.slblocks;
-        const layouts = response.data.slblocks_layout;
-        if ("items" in layouts) {
-          this.layouts = response.data.slblocks_layout;
-        }
-      } catch (error) {
-        console.info(error);
-      } finally {
-        this.loading = false;
-      }
+
+      const data = { slblocks_layout: { items: newLayouts } };
+      this.modifyLayouts(data);
     },
   },
 });
