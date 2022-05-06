@@ -71,6 +71,12 @@ export const useSimplelayoutStore = defineStore({
       const data = { slblocks_layout: { items: newLayouts } };
       this.modifyLayouts(data);
     },
+    async addBlockToColumn(rowIndex, colIndex, uuid) {
+      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
+      newLayouts[rowIndex].items[colIndex].items.push(uuid);
+      const data = { slblocks_layout: { items: newLayouts } };
+      this.modifyLayouts(data);
+    },
     async setNewWidthOnColumn(rowIndex, colIndex, newWidth) {
       let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
       newLayouts[rowIndex].items[colIndex].width = newWidth;

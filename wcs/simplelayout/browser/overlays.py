@@ -22,7 +22,7 @@ class AddableBlocks(BrowserView):
             if fti in allowed_types:
                 add_url = Expression(fti.add_view_expr)(
                     getExprContext(self.context, self.context))
-
+                add_url = add_url.replace('++add++', '++add_block++')
                 yield {
                     'title': translate(msgid=fti.Title(),
                                        domain=fti.i18n_domain,

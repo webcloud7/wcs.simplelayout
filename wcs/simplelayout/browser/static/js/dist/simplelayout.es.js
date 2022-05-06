@@ -4847,6 +4847,11 @@ function deepCloneVNode(vnode) {
 function createTextVNode(text = " ", flag = 0) {
   return createVNode(Text, null, text, flag);
 }
+function createStaticVNode(content, numberOfNodes) {
+  const vnode = createVNode(Static, null, content);
+  vnode.staticCount = numberOfNodes;
+  return vnode;
+}
 function createCommentVNode(text = "", asBlock = false) {
   return asBlock ? (openBlock(), createBlock(Comment, null, text)) : createVNode(Comment, null, text);
 }
@@ -7514,6 +7519,12 @@ const useSimplelayoutStore = defineStore({
       const data2 = { slblocks_layout: { items: newLayouts } };
       this.modifyLayouts(data2);
     },
+    async addBlockToColumn(rowIndex, colIndex, uuid) {
+      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
+      newLayouts[rowIndex].items[colIndex].items.push(uuid);
+      const data2 = { slblocks_layout: { items: newLayouts } };
+      this.modifyLayouts(data2);
+    },
     async setNewWidthOnColumn(rowIndex, colIndex, newWidth) {
       let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
       newLayouts[rowIndex].items[colIndex].width = newWidth;
@@ -7560,12 +7571,12 @@ const _hoisted_3$2 = /* @__PURE__ */ createBaseVNode("span", {
   "aria-haspopup": "true",
   class: "caret"
 }, null, -1);
-const _hoisted_4$1 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
-const _hoisted_5$1 = [
+const _hoisted_4$2 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
+const _hoisted_5$2 = [
   _hoisted_3$2,
-  _hoisted_4$1
+  _hoisted_4$2
 ];
-const _hoisted_6 = ["aria-labelledby"];
+const _hoisted_6$1 = ["aria-labelledby"];
 const _hoisted_7 = ["onClick"];
 function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", {
@@ -7585,7 +7596,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
         "data-bs-toggle": "dropdown",
         "data-bs-auto-close": "true",
         "aria-expanded": "false"
-      }, _hoisted_5$1, 8, _hoisted_2$2),
+      }, _hoisted_5$2, 8, _hoisted_2$2),
       createBaseVNode("ul", {
         class: "dropdown-menu",
         "aria-labelledby": $options.dropdownId
@@ -7601,7 +7612,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
             }, toDisplayString(row2.label), 9, _hoisted_7)
           ]);
         }), 128))
-      ], 8, _hoisted_6)
+      ], 8, _hoisted_6$1)
     ])
   ], 4);
 }
@@ -7677,8 +7688,8 @@ const _sfc_main$1 = {
 const _hoisted_1$1 = { class: "btn-group btn-group-xs" };
 const _hoisted_2$1 = ["id"];
 const _hoisted_3$1 = ["aria-labelledby"];
-const _hoisted_4 = ["onClick"];
-const _hoisted_5 = { class: "btn-group btn-group-xs sl-row-controls" };
+const _hoisted_4$1 = ["onClick"];
+const _hoisted_5$1 = { class: "btn-group btn-group-xs sl-row-controls" };
 function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(Fragment, null, [
     $props.currentWidth ? (openBlock(), createElementBlock("div", {
@@ -7712,7 +7723,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
                 class: "dropdown-item",
                 onClick: () => $options.newWidth(width.cols),
                 href: "#"
-              }, toDisplayString(width.label), 9, _hoisted_4)
+              }, toDisplayString(width.label), 9, _hoisted_4$1)
             ]);
           }), 128))
         ], 8, _hoisted_3$1)
@@ -7721,7 +7732,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
     createBaseVNode("div", {
       class: normalizeClass($options.cssClasses)
     }, [
-      createBaseVNode("div", _hoisted_5, [
+      createBaseVNode("div", _hoisted_5$1, [
         createBaseVNode("button", {
           type: "button",
           class: "btn btn-primary sl-col-add-button",
@@ -7743,13 +7754,108 @@ const _sfc_main = {
     const sl = useSimplelayoutStore();
     return { sl };
   },
+  data() {
+    return {
+      addableBlocksModal: null,
+      addRow: null,
+      addCol: null
+    };
+  },
   created() {
     this.sl.fetchBlocks();
+  },
+  mounted() {
+    const options = {};
+    this.addableBlocksModal = new window.bootstrap.Modal(this.$refs["addable-blocks-modal"], options);
+  },
+  methods: {
+    async openAddableBlocksModal(event) {
+      const button = event.currentTarget;
+      this.addRow = parseInt(button.getAttribute("data-row"));
+      this.addCol = parseInt(button.getAttribute("data-col"));
+      this.addableBlocksModal.hide();
+      const url = `${this.sl.baseURL}/@@sl-addable-blocks`;
+      const response = await this.axioshtml.get(url);
+      this.replaceModalContent(response);
+      const body = this.addableBlocksModal._element.querySelector(".modal-body");
+      [...body.querySelectorAll("a")].forEach((link) => {
+        link.addEventListener("click", (event2) => {
+          event2.preventDefault();
+          event2.stopPropagation();
+          this.openAddFormModal(link.getAttribute("href"));
+        });
+      });
+      this.addableBlocksModal.show();
+    },
+    async openAddFormModal(url) {
+      const response = await this.axioshtml.get(url);
+      console.info(response);
+      this.replaceModalContent(response);
+      this.handleFormButtons();
+    },
+    async handleSubmit(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      const form = this.addableBlocksModal._element.querySelector("#form");
+      const url = form.getAttribute("action");
+      const button = event.currentTarget;
+      let formData = new FormData(form);
+      formData.append(button.getAttribute("name"), button.value);
+      const response = await this.axioshtml.post(url, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Accept: "text/html,application/json"
+        }
+      });
+      if (response.headers["content-type"] === "application/json") {
+        const data2 = response.data;
+        console.info(data2["@id"], data2["UID"]);
+        console.info(this.addRow, this.addCol);
+        this.sl.addBlockToColumn(this.addRow, this.addCol, data2["UID"]);
+        this.addableBlocksModal.hide();
+      } else {
+        this.replaceModalContent(response);
+        this.handleFormButtons();
+      }
+    },
+    replaceModalContent(response) {
+      const parser = new DOMParser();
+      const doc2 = parser.parseFromString(response.data, "text/html");
+      const body = this.addableBlocksModal._element.querySelector(".modal-body");
+      const title = this.addableBlocksModal._element.querySelector(".modal-title");
+      title.innerHTML = doc2.querySelector("h1").innerHTML;
+      body.innerHTML = doc2.getElementById("content").innerHTML;
+    },
+    handleFormButtons() {
+      const saveButton = this.addableBlocksModal._element.querySelector("#form-buttons-save");
+      const cancelButton = this.addableBlocksModal._element.querySelector("#form-buttons-cancel");
+      const form = this.addableBlocksModal._element.querySelector("#form");
+      saveButton.addEventListener("click", this.handleSubmit);
+      form.addEventListener("submit", this.handleSubmit);
+      cancelButton.addEventListener("click", this.handleCancel);
+    },
+    handleCancel(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.addableBlocksModal.hide();
+    }
   }
 };
 const _hoisted_1 = { class: "sl-container" };
 const _hoisted_2 = { class: "row" };
-const _hoisted_3 = /* @__PURE__ */ createBaseVNode("br", null, null, -1);
+const _hoisted_3 = ["data-row", "data-col"];
+const _hoisted_4 = {
+  class: "modal fade",
+  id: "addable-blocks-modal",
+  tabindex: "-1",
+  "aria-labelledby": "modal-title",
+  "aria-hidden": "true",
+  ref: "addable-blocks-modal"
+};
+const _hoisted_5 = /* @__PURE__ */ createStaticVNode('<div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="modal-title">Addable Blocks</h5></div><div class="modal-body">Body</div></div></div>', 1);
+const _hoisted_6 = [
+  _hoisted_5
+];
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_RowControls = resolveComponent("RowControls");
   const _component_ColControls = resolveComponent("ColControls");
@@ -7772,6 +7878,13 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
                 colIndex: columnIndex,
                 currentWidth: parseInt(column2.width)
               }, null, 8, ["rowIndex", "colIndex", "currentWidth"]),
+              createBaseVNode("div", null, [
+                createBaseVNode("button", {
+                  onClick: _cache[0] || (_cache[0] = withModifiers((...args) => $options.openAddableBlocksModal && $options.openAddableBlocksModal(...args), ["stop", "prevent"])),
+                  "data-row": rowIndex,
+                  "data-col": columnIndex
+                }, " Overlay ", 8, _hoisted_3)
+              ]),
               (openBlock(true), createElementBlock(Fragment, null, renderList(column2.items, (blockUID) => {
                 return openBlock(), createElementBlock(Fragment, { key: blockUID }, [
                   blockUID in $setup.sl.blocks ? (openBlock(), createBlock(_component_BlockRenderer, {
@@ -7780,8 +7893,6 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
                   }, null, 8, ["block"])) : createCommentVNode("v-if", true)
                 ], 64);
               }), 128)),
-              createTextVNode(" " + toDisplayString(columnIndex), 1),
-              _hoisted_3,
               row2.items.length === columnIndex + 1 ? (openBlock(), createBlock(_component_ColControls, {
                 key: 0,
                 rowIndex,
@@ -7796,7 +7907,8 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
           index: rowIndex + 1
         }, null, 8, ["index"])) : createCommentVNode("v-if", true)
       ]);
-    }), 128))
+    }), 128)),
+    createBaseVNode("div", _hoisted_4, _hoisted_6, 512)
   ]);
 }
 var App = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/App.vue"]]);
@@ -9029,6 +9141,14 @@ function axiosInstance() {
   });
   return instance;
 }
+function axiosNeutralInstance() {
+  const instance = axios.create({
+    headers: {
+      Accept: "text/html"
+    }
+  });
+  return instance;
+}
 function _typeof(e) {
   return (_typeof = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(e2) {
     return typeof e2;
@@ -9078,7 +9198,10 @@ function getVueVersion(e) {
   return plugin;
 }) : window.Vue && window.axios && window.Vue.use && Vue.use(plugin, window.axios);
 const app = createApp(App);
-app.use(plugin, { axios: axiosInstance() });
+app.use(plugin, {
+  axios: axiosInstance(),
+  axioshtml: axiosNeutralInstance()
+});
 const pinia = createPinia();
 pinia.use(({ store }) => {
   store.axios = axiosInstance();

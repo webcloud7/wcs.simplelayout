@@ -11,4 +11,13 @@ function axiosInstance() {
   return instance;
 }
 
-export { axiosInstance };
+function axiosNeutralInstance() {
+  const instance = axios.create({
+    headers: {
+      Accept: "text/html",
+    },
+  });
+  return instance;
+}
+
+export { axiosInstance, axiosNeutralInstance };

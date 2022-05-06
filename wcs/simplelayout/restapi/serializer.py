@@ -42,7 +42,6 @@ def insert_simplelayout_blocks(context, result):
         (brains, context.REQUEST),
         ISerializeToJson
     )(fullobjects=True)["items"]
-
     result['slblocks'] = {block['UID']: block for block in blocks}
 
 
