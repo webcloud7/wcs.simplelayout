@@ -32,12 +32,17 @@
 </template>
 <script>
 import { row } from "@/template.js";
+import { useSimplelayoutStore } from "@/store.js";
 export default {
   props: {
     index: {
       type: Number,
       required: true,
     },
+  },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
   },
   data() {
     return {
@@ -50,7 +55,7 @@ export default {
   },
   methods: {
     createRow(cols) {
-      this.$emit("addrow", row(cols), this.index);
+      this.sl.addRowToLayout(row(cols), this.index)
     },
   },
   computed: {
