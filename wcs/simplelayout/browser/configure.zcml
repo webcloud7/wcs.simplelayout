@@ -16,4 +16,11 @@
         permission="zope2.View"
         class=".simplelayout.SimplelayoutView"
         />
+
+    <browser:page
+        for="wcs.simplelayout.contenttypes.behaviors.ISimplelayout"
+        name="sl-addable-blocks"
+        permission="cmf.AddPortalContent"
+        class=".overlays.AddableBlocks"
+        />
 </configure>
