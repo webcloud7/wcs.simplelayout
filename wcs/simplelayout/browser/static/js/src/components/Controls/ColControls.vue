@@ -75,13 +75,13 @@ export default {
   },
   methods: {
     createCol() {
-      this.sl.addColumnToRow(column(1), this.rowIndex, this.colIndex)
+      this.sl.addColumnToRow(column(1), this.rowIndex, this.colIndex);
     },
     removeCol() {
-      this.sl.removeRowFromLayout(this.rowIndex, this.colIndex)
+      this.sl.removeRowFromLayout(this.rowIndex, this.colIndex);
     },
     newWidth(newWidth) {
-      this.sl.setNewWidthOnColumn(this.rowIndex, this.colIndex, newWidth)
+      this.sl.setNewWidthOnColumn(this.rowIndex, this.colIndex, newWidth);
     },
   },
   computed: {
@@ -106,13 +106,6 @@ export default {
 </script>
 
 <style lang="scss">
-.btn-xs {
-  font-size: 12px;
-  line-height: 1rem;
-  padding: 0;
-  height: 20px;
-}
-
 .sl-col-controls {
   padding: 0.5em 0;
   position: absolute;

@@ -18,21 +18,25 @@
               :colIndex="columnIndex"
               :currentWidth="parseInt(column.width)"
             />
-            <div>
-              <button
-                @click.stop.prevent="openAddableBlocksModal"
-                :data-row="rowIndex"
-                :data-col="columnIndex"
-              >
-                Overlay
-              </button>
-            </div>
-            <template v-for="blockUID in column.items" :key="blockUID">
-              <BlockRenderer
-                v-if="blockUID in sl.blocks"
-                :block="sl.blocks[blockUID]"
-              />
+            <template v-for="(blockUID, blockIndex) in column.items" :key="blockUID">
+              <div class="sl-block" v-if="blockUID in sl.blocks">
+                <BlockControls
+                  :actions="actions"
+                  :rowIndex="rowIndex"
+                  :columnIndex="columnIndex"
+                  :blockIndex="blockIndex + 1"
+                />
+                <BlockRenderer :block="sl.blocks[blockUID]" />
+              </div>
             </template>
+
+            <BlockControls
+              v-if="column.items.length === 0"
+              :actions="actions"
+              :rowIndex="rowIndex"
+              :columnIndex="columnIndex"
+              :blockIndex="0"
+            />
 
             <ColControls
               v-if="row.items.length === columnIndex + 1"
@@ -56,6 +60,7 @@
 import BlockRenderer from "@/components/BlockRenderer.vue";
 import RowControls from "@/components/Controls/RowControls.vue";
 import ColControls from "@/components/Controls/ColControls.vue";
+import BlockControls from "@/components/Controls/BlockControls.vue";
 import { useSimplelayoutStore } from "@/store.js";
 import AddBlockModal from "@/components/Modals/AddBlockModal.vue";
 
@@ -65,10 +70,25 @@ export default {
     RowControls,
     ColControls,
     AddBlockModal,
+    BlockControls,
   },
   setup() {
     const sl = useSimplelayoutStore();
     return { sl };
+  },
+  data() {
+    return {
+      actions: [
+        {
+          label: "Add",
+          action: this.openAddableBlocksModal,
+        },
+        {
+          label: "Edit",
+          action: "#",
+        },
+      ],
+    };
   },
   created() {
     this.sl.fetchBlocks();
@@ -93,7 +113,16 @@ export default {
 
   .sl-col {
     position: relative;
-    text-align: center;
   }
+  .sl-block {
+    position: relative;
+    min-height: 100px;
+  }
+}
+.btn-xs {
+  font-size: 12px;
+  line-height: 1rem;
+  padding: 0;
+  height: 20px;
 }
 </style>

@@ -30,6 +30,7 @@ export default {
       const button = event.currentTarget;
       this.addRow = parseInt(button.getAttribute("data-row"));
       this.addCol = parseInt(button.getAttribute("data-col"));
+      this.addBlock = parseInt(button.getAttribute("data-block"));
       this.addableBlocksModal.hide();
 
       const url = `${this.sl.baseURL}/@@sl-addable-blocks`;
@@ -73,7 +74,12 @@ export default {
         const data = response.data;
         console.info(data["@id"], data["UID"]);
         console.info(this.addRow, this.addCol);
-        this.sl.addBlockToColumn(this.addRow, this.addCol, data["UID"]);
+        this.sl.addBlockToColumn(
+          this.addRow,
+          this.addCol,
+          this.addBlock,
+          data["UID"]
+        );
         this.addableBlocksModal.hide();
       } else {
         // Any form validation error means we got html back
