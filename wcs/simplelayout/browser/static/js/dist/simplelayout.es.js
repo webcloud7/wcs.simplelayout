@@ -7572,10 +7572,10 @@ const _hoisted_3$4 = /* @__PURE__ */ createBaseVNode("span", {
   "aria-haspopup": "true",
   class: "caret"
 }, null, -1);
-const _hoisted_4$2 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
+const _hoisted_4$3 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
 const _hoisted_5$2 = [
   _hoisted_3$4,
-  _hoisted_4$2
+  _hoisted_4$3
 ];
 const _hoisted_6$1 = ["aria-labelledby"];
 const _hoisted_7$1 = ["onClick"];
@@ -7689,7 +7689,7 @@ const _sfc_main$4 = {
 const _hoisted_1$3 = { class: "btn-group btn-group-xs" };
 const _hoisted_2$3 = ["id"];
 const _hoisted_3$3 = ["aria-labelledby"];
-const _hoisted_4$1 = ["onClick"];
+const _hoisted_4$2 = ["onClick"];
 const _hoisted_5$1 = { class: "btn-group btn-group-xs sl-row-controls" };
 function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(Fragment, null, [
@@ -7724,7 +7724,7 @@ function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
                 class: "dropdown-item",
                 onClick: () => $options.newWidth(width.cols),
                 href: "#"
-              }, toDisplayString(width.label), 9, _hoisted_4$1)
+              }, toDisplayString(width.label), 9, _hoisted_4$2)
             ]);
           }), 128))
         ], 8, _hoisted_3$3)
@@ -7736,7 +7736,7 @@ function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
       createBaseVNode("div", _hoisted_5$1, [
         createBaseVNode("button", {
           type: "button",
-          class: "btn btn-primary sl-col-add-button",
+          class: "btn btn-secondary sl-col-add-button",
           onClick: _cache[1] || (_cache[1] = () => $options.createCol())
         }, " + ")
       ])
@@ -7776,10 +7776,10 @@ const _hoisted_3$2 = /* @__PURE__ */ createBaseVNode("span", {
   "aria-haspopup": "true",
   class: "caret"
 }, null, -1);
-const _hoisted_4 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
+const _hoisted_4$1 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
 const _hoisted_5 = [
   _hoisted_3$2,
-  _hoisted_4
+  _hoisted_4$1
 ];
 const _hoisted_6 = ["aria-labelledby"];
 const _hoisted_7 = ["onClick", "data-row", "data-col", "data-block"];
@@ -7801,14 +7801,15 @@ function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
         return openBlock(), createElementBlock("li", {
           key: action.label
         }, [
-          createBaseVNode("a", {
+          action.enabled($props.rowIndex, $props.columnIndex) ? (openBlock(), createElementBlock("a", {
+            key: 0,
             class: "dropdown-item",
             onClick: withModifiers(action.action, ["stop", "prevent"]),
             "data-row": $props.rowIndex,
             "data-col": $props.columnIndex,
             "data-block": $props.blockIndex,
             href: "#"
-          }, toDisplayString(action.label), 9, _hoisted_7)
+          }, toDisplayString(action.label), 9, _hoisted_7)) : createCommentVNode("v-if", true)
         ]);
       }), 128))
     ], 8, _hoisted_6)
@@ -7952,11 +7953,15 @@ const _sfc_main = {
       actions: [
         {
           label: "Add",
-          action: this.openAddableBlocksModal
+          action: this.openAddableBlocksModal,
+          enabled: () => true
         },
         {
           label: "Edit",
-          action: "#"
+          action: "#",
+          enabled: (rowIndex, columnIndex) => {
+            return this.sl.layouts.items[rowIndex].items[columnIndex].items.length;
+          }
         }
       ]
     };
@@ -7974,7 +7979,11 @@ const _hoisted_1 = { class: "sl-container" };
 const _hoisted_2 = { class: "row" };
 const _hoisted_3 = {
   key: 0,
-  class: "sl-block"
+  class: "sl-block my-4"
+};
+const _hoisted_4 = {
+  key: 0,
+  class: "sl-block my-4"
 };
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_RowControls = resolveComponent("RowControls");
@@ -7982,63 +7991,66 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockControls = resolveComponent("BlockControls");
   const _component_BlockRenderer = resolveComponent("BlockRenderer");
   const _component_AddBlockModal = resolveComponent("AddBlockModal");
-  return openBlock(), createElementBlock("div", _hoisted_1, [
-    (openBlock(true), createElementBlock(Fragment, null, renderList($setup.sl.layouts.items, (row2, rowIndex) => {
-      return openBlock(), createElementBlock("div", {
-        key: `layout_${rowIndex}`,
-        class: "sl-row"
-      }, [
-        createVNode(_component_RowControls, { index: rowIndex }, null, 8, ["index"]),
-        createBaseVNode("div", _hoisted_2, [
-          (openBlock(true), createElementBlock(Fragment, null, renderList(row2.items, (column2, columnIndex) => {
-            return openBlock(), createElementBlock("div", {
-              key: `column_${columnIndex}_${rowIndex}`,
-              class: normalizeClass(`sl-col col col-${column2.width}`)
-            }, [
-              createVNode(_component_ColControls, {
-                rowIndex,
-                colIndex: columnIndex,
-                currentWidth: parseInt(column2.width)
-              }, null, 8, ["rowIndex", "colIndex", "currentWidth"]),
-              (openBlock(true), createElementBlock(Fragment, null, renderList(column2.items, (blockUID, blockIndex) => {
-                return openBlock(), createElementBlock(Fragment, { key: blockUID }, [
-                  blockUID in $setup.sl.blocks ? (openBlock(), createElementBlock("div", _hoisted_3, [
-                    createVNode(_component_BlockControls, {
-                      actions: $data.actions,
-                      rowIndex,
-                      columnIndex,
-                      blockIndex: blockIndex + 1
-                    }, null, 8, ["actions", "rowIndex", "columnIndex", "blockIndex"]),
-                    createVNode(_component_BlockRenderer, {
-                      block: $setup.sl.blocks[blockUID]
-                    }, null, 8, ["block"])
-                  ])) : createCommentVNode("v-if", true)
-                ], 64);
-              }), 128)),
-              column2.items.length === 0 ? (openBlock(), createBlock(_component_BlockControls, {
-                key: 0,
-                actions: $data.actions,
-                rowIndex,
-                columnIndex,
-                blockIndex: 0
-              }, null, 8, ["actions", "rowIndex", "columnIndex"])) : createCommentVNode("v-if", true),
-              row2.items.length === columnIndex + 1 ? (openBlock(), createBlock(_component_ColControls, {
-                key: 1,
-                rowIndex,
-                colIndex: columnIndex + 1,
-                right: ""
-              }, null, 8, ["rowIndex", "colIndex"])) : createCommentVNode("v-if", true)
-            ], 2);
-          }), 128))
-        ]),
-        $setup.sl.layouts.items.length === rowIndex + 1 ? (openBlock(), createBlock(_component_RowControls, {
-          key: 0,
-          index: rowIndex + 1
-        }, null, 8, ["index"])) : createCommentVNode("v-if", true)
-      ]);
-    }), 128)),
+  return openBlock(), createElementBlock(Fragment, null, [
+    createBaseVNode("div", _hoisted_1, [
+      (openBlock(true), createElementBlock(Fragment, null, renderList($setup.sl.layouts.items, (row2, rowIndex) => {
+        return openBlock(), createElementBlock("div", {
+          key: `layout_${rowIndex}`,
+          class: "sl-row"
+        }, [
+          createVNode(_component_RowControls, { index: rowIndex }, null, 8, ["index"]),
+          createBaseVNode("div", _hoisted_2, [
+            (openBlock(true), createElementBlock(Fragment, null, renderList(row2.items, (column2, columnIndex) => {
+              return openBlock(), createElementBlock("div", {
+                key: `column_${columnIndex}_${rowIndex}`,
+                class: normalizeClass(`sl-col col col-${column2.width}`)
+              }, [
+                createVNode(_component_ColControls, {
+                  rowIndex,
+                  colIndex: columnIndex,
+                  currentWidth: parseInt(column2.width)
+                }, null, 8, ["rowIndex", "colIndex", "currentWidth"]),
+                (openBlock(true), createElementBlock(Fragment, null, renderList(column2.items, (blockUID, blockIndex) => {
+                  return openBlock(), createElementBlock(Fragment, { key: blockUID }, [
+                    blockUID in $setup.sl.blocks ? (openBlock(), createElementBlock("div", _hoisted_3, [
+                      createVNode(_component_BlockControls, {
+                        actions: $data.actions,
+                        rowIndex,
+                        columnIndex,
+                        blockIndex: blockIndex + 1
+                      }, null, 8, ["actions", "rowIndex", "columnIndex", "blockIndex"]),
+                      createVNode(_component_BlockRenderer, {
+                        block: $setup.sl.blocks[blockUID]
+                      }, null, 8, ["block"])
+                    ])) : createCommentVNode("v-if", true)
+                  ], 64);
+                }), 128)),
+                column2.items.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_4, [
+                  createVNode(_component_BlockControls, {
+                    actions: $data.actions,
+                    rowIndex,
+                    columnIndex,
+                    blockIndex: 0
+                  }, null, 8, ["actions", "rowIndex", "columnIndex"])
+                ])) : createCommentVNode("v-if", true),
+                row2.items.length === columnIndex + 1 ? (openBlock(), createBlock(_component_ColControls, {
+                  key: 1,
+                  rowIndex,
+                  colIndex: columnIndex + 1,
+                  right: ""
+                }, null, 8, ["rowIndex", "colIndex"])) : createCommentVNode("v-if", true)
+              ], 2);
+            }), 128))
+          ]),
+          $setup.sl.layouts.items.length === rowIndex + 1 ? (openBlock(), createBlock(_component_RowControls, {
+            key: 0,
+            index: rowIndex + 1
+          }, null, 8, ["index"])) : createCommentVNode("v-if", true)
+        ]);
+      }), 128))
+    ]),
     createVNode(_component_AddBlockModal, { ref: "add-modal" }, null, 512)
-  ]);
+  ], 64);
 }
 var App = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/App.vue"]]);
 var axios$2 = { exports: {} };

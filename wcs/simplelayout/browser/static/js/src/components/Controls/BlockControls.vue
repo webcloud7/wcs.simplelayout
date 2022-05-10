@@ -14,6 +14,7 @@
     <ul class="dropdown-menu" :aria-labelledby="dropdownId">
       <li v-for="action in actions" :key="action.label">
         <a
+          v-if="action.enabled(rowIndex, columnIndex)"
           class="dropdown-item"
           @click.stop.prevent="action.action"
           :data-row="rowIndex"
@@ -57,7 +58,7 @@ export default {
 .sl-add-block-controls {
   position: absolute;
   right: 0;
-  top: 10px;
+  top: 0;
   visibility: hidden;
 }
 
@@ -67,7 +68,7 @@ export default {
   }
 }
 
-.sl-col:hover {
+.sl-block:hover {
   .sl-add-block-controls {
     visibility: visible;
   }

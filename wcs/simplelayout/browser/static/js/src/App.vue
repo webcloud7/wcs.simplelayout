@@ -18,8 +18,11 @@
               :colIndex="columnIndex"
               :currentWidth="parseInt(column.width)"
             />
-            <template v-for="(blockUID, blockIndex) in column.items" :key="blockUID">
-              <div class="sl-block" v-if="blockUID in sl.blocks">
+            <template
+              v-for="(blockUID, blockIndex) in column.items"
+              :key="blockUID"
+            >
+              <div class="sl-block my-4" v-if="blockUID in sl.blocks">
                 <BlockControls
                   :actions="actions"
                   :rowIndex="rowIndex"
@@ -30,13 +33,14 @@
               </div>
             </template>
 
-            <BlockControls
-              v-if="column.items.length === 0"
-              :actions="actions"
-              :rowIndex="rowIndex"
-              :columnIndex="columnIndex"
-              :blockIndex="0"
-            />
+            <div class="sl-block my-4" v-if="column.items.length === 0">
+              <BlockControls
+                :actions="actions"
+                :rowIndex="rowIndex"
+                :columnIndex="columnIndex"
+                :blockIndex="0"
+              />
+            </div>
 
             <ColControls
               v-if="row.items.length === columnIndex + 1"
@@ -52,8 +56,8 @@
         />
       </div>
     </template>
-    <AddBlockModal ref="add-modal" />
   </div>
+  <AddBlockModal ref="add-modal" />
 </template>
 
 <script>
@@ -82,10 +86,14 @@ export default {
         {
           label: "Add",
           action: this.openAddableBlocksModal,
+          enabled: () => true,
         },
         {
           label: "Edit",
           action: "#",
+          enabled: (rowIndex, columnIndex) => {
+            return this.sl.layouts.items[rowIndex].items[columnIndex].items.length;
+          },
         },
       ],
     };
@@ -102,9 +110,21 @@ export default {
 </script>
 <style lang="scss">
 #app {
-  .col {
-    border: 1px dotted #000000;
+  .sl-row {
+    .row {
+      border-top: 1px dashed #000000;
+    }
+    &:last-child .row {
+      border-bottom: 1px dashed #000000;
+    }
+  }
+  .sl-col {
+    border-left: 1px dashed #000000;
     min-height: 100px;
+
+    &:last-child {
+      border-right: 1px dashed #000000;
+    }
   }
 
   .sl-container {
@@ -115,6 +135,7 @@ export default {
     position: relative;
   }
   .sl-block {
+    border: 1px dashed #000000;
     position: relative;
     min-height: 100px;
   }

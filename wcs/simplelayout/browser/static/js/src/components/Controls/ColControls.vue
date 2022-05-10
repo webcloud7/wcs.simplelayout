@@ -37,7 +37,7 @@
     <div class="btn-group btn-group-xs sl-row-controls">
       <button
         type="button"
-        class="btn btn-primary sl-col-add-button"
+        class="btn btn-secondary sl-col-add-button"
         @click="() => createCol()"
       >
         +
