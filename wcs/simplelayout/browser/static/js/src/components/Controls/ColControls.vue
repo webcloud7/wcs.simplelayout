@@ -2,10 +2,15 @@
   <div
     v-if="currentWidth"
     class="sl-remove-col-controls"
-    :style="`z-index:${1000 - 1 - (rowIndex * 2)}`"
+    :style="`z-index:${1000 - 1 - rowIndex * 2}`"
   >
     <div class="btn-group btn-group-xs">
-      <button class="btn btn-xs btn-danger" type="button" @click="removeCol">
+      <button
+        v-if="!hasBlocks"
+        class="btn btn-xs btn-danger"
+        type="button"
+        @click="removeCol"
+      >
         Remove column
       </button>
       <button
@@ -101,6 +106,11 @@ export default {
       }
       return classes;
     },
+    hasBlocks() {
+      const blocks =
+        this.sl.layouts.items[this.rowIndex].items[this.colIndex].items.length;
+      return Boolean(blocks);
+    },
   },
 };
 </script>
@@ -138,7 +148,8 @@ export default {
 }
 
 .sl-row:hover {
-  .sl-col-controls, .sl-remove-col-controls {
+  .sl-col-controls,
+  .sl-remove-col-controls {
     visibility: visible;
   }
 }

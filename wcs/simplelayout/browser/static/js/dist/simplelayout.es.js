@@ -7692,6 +7692,10 @@ const _sfc_main$6 = {
         classes = classes + " right";
       }
       return classes;
+    },
+    hasBlocks() {
+      const blocks = this.sl.layouts.items[this.rowIndex].items[this.colIndex].items.length;
+      return Boolean(blocks);
     }
   }
 };
@@ -7708,11 +7712,12 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
       style: normalizeStyle(`z-index:${1e3 - 1 - $props.rowIndex * 2}`)
     }, [
       createBaseVNode("div", _hoisted_1$3, [
-        createBaseVNode("button", {
+        !$options.hasBlocks ? (openBlock(), createElementBlock("button", {
+          key: 0,
           class: "btn btn-xs btn-danger",
           type: "button",
           onClick: _cache[0] || (_cache[0] = (...args) => $options.removeCol && $options.removeCol(...args))
-        }, " Remove column "),
+        }, " Remove column ")) : createCommentVNode("v-if", true),
         createBaseVNode("button", {
           class: "btn dropdown-toggle btn-primary btn-xs",
           type: "button",
