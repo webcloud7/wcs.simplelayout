@@ -27,7 +27,7 @@
                   :actions="actions"
                   :rowIndex="rowIndex"
                   :columnIndex="columnIndex"
-                  :blockIndex="blockIndex + 1"
+                  :blockIndex="blockIndex"
                 />
                 <BlockRenderer :block="sl.blocks[blockUID]" />
               </div>
@@ -38,7 +38,7 @@
                 :actions="actions"
                 :rowIndex="rowIndex"
                 :columnIndex="columnIndex"
-                :blockIndex="0"
+                :blockIndex="-1"
               />
             </div>
 
@@ -58,6 +58,7 @@
     </template>
   </div>
   <AddBlockModal ref="add-modal" />
+  <EditBlockModal ref="edit-modal" />
 </template>
 
 <script>
@@ -67,6 +68,7 @@ import ColControls from "@/components/Controls/ColControls.vue";
 import BlockControls from "@/components/Controls/BlockControls.vue";
 import { useSimplelayoutStore } from "@/store.js";
 import AddBlockModal from "@/components/Modals/AddBlockModal.vue";
+import EditBlockModal from "@/components/Modals/EditBlockModal.vue";
 
 export default {
   components: {
@@ -75,6 +77,7 @@ export default {
     ColControls,
     AddBlockModal,
     BlockControls,
+    EditBlockModal,
   },
   setup() {
     const sl = useSimplelayoutStore();
@@ -90,7 +93,7 @@ export default {
         },
         {
           label: "Edit",
-          action: "#",
+          action: this.openEditBlocksModal,
           enabled: (rowIndex, columnIndex) => {
             return this.sl.layouts.items[rowIndex].items[columnIndex].items.length;
           },
@@ -104,6 +107,9 @@ export default {
   methods: {
     openAddableBlocksModal(event) {
       this.$refs["add-modal"].openAddableBlocksModal(event);
+    },
+    openEditBlocksModal(event) {
+      this.$refs["edit-modal"].openEditBlockModal(event);
     },
   },
 };

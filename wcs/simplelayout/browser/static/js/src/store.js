@@ -85,5 +85,8 @@ export const useSimplelayoutStore = defineStore({
       const data = { slblocks_layout: { items: newLayouts } };
       this.modifyLayouts(data);
     },
+    async modifyBlock(data) {
+      this.blocks[data.UID] = data;
+    },
   },
 });

@@ -28,4 +28,12 @@
         permission="cmf.AddPortalContent"
         class=".overlays.AddableBlocks"
         />
+
+    <browser:page
+        for="wcs.simplelayout.contenttypes.behaviors.IBlockMarker"
+        name="edit"
+        class=".crud.EditForm"
+        permission="cmf.ModifyPortalContent"
+        />
+
 </configure>

@@ -1,23 +1,23 @@
-from plone.app.uuid.utils import uuidToObject
 from plone.dexterity.browser.add import DefaultAddForm
 from plone.dexterity.browser.add import DefaultAddView
+from plone.dexterity.browser.edit import DefaultEditForm
+from plone.dexterity.events import EditCancelledEvent
+from plone.dexterity.events import EditFinishedEvent
+from plone.dexterity.i18n import MessageFactory as DXMF
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import addContentToContainer
 from plone.restapi.interfaces import ISerializeToJson
 from Products.CMFCore.interfaces import ITypesTool
-from Products.CMFCore.utils import getToolByName
-from Products.Five.browser.pagetemplatefile import BoundPageTemplate
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.statusmessages.interfaces import IStatusMessage
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
+from z3c.form import button
 from zope.component import adapter
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+from zope.event import notify
 from zope.interface import implementer
 from zope.interface import Interface
 from zope.location.interfaces import LocationError
 from zope.traversing.interfaces import ITraversable
-from zope.traversing.interfaces import TraversalError
 import json
 
 
@@ -78,3 +78,31 @@ class AddView(DefaultAddView):
             return self.form_instance.render()
         else:
             return super().render()
+
+
+class EditForm(DefaultEditForm):
+
+    _finished_edit = False
+
+    @button.buttonAndHandler(DXMF(u'Save'), name='save')
+    def handleApply(self, action):
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+        self.applyChanges(data)
+
+        notify(EditFinishedEvent(self.context))
+        self._finished_edit = True
+
+    @button.buttonAndHandler(DXMF(u'Cancel'), name='cancel')
+    def handleCancel(self, action):
+        notify(EditCancelledEvent(self.context))
+
+    def render(self):
+        if self._finished_edit:
+            api_view = getMultiAdapter((self.context, self.request), ISerializeToJson)
+            self.request.response.setHeader('Content-Type', 'application/json')
+            self.request.response.setHeader('X-Theme-Disabled', 'True')
+            return json.dumps(api_view())
+        return super().render()
