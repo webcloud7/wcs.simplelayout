@@ -65,7 +65,9 @@ export default {
           Accept: "text/html,application/json",
         },
       });
-      if (response.headers["content-type"] === "application/json") {
+      const isJson = response.headers["content-type"] === "application/json";
+      const is204 = response.status === 204;
+      if (isJson || is204) {
         // successful request
         const data = response.data;
         console.info(data["@id"], data["UID"]);
@@ -88,13 +90,15 @@ export default {
       body.innerHTML = doc.getElementById("content").innerHTML;
     },
     handleFormButtons() {
-      const saveButton =
-        this.modal._element.querySelector("#form-buttons-save");
-      const cancelButton = this.modal._element.querySelector(
-        "#form-buttons-cancel"
-      );
       const form = this.modal._element.querySelector("#form");
-      saveButton.addEventListener("click", this.handleSubmit);
+      const saveButton = form.querySelector("#form-buttons-save");
+      const deleteButton = form.querySelector("#form-buttons-Delete");
+      const cancelButton =
+        form.querySelector("#form-buttons-cancel") ||
+        form.querySelector("#form-buttons-Cancel");
+      const submitButton = saveButton || deleteButton;
+
+      submitButton.addEventListener("click", this.handleSubmit);
       form.addEventListener("submit", this.handleSubmit);
       cancelButton.addEventListener("click", this.handleCancel);
     },

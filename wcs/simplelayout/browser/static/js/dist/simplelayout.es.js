@@ -6112,7 +6112,7 @@ var _export_sfc = (sfc, props) => {
   }
   return target;
 };
-const _sfc_main$7 = {
+const _sfc_main$8 = {
   props: {
     block: {
       type: Object,
@@ -6125,10 +6125,10 @@ const _sfc_main$7 = {
     };
   }
 };
-function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", null, toDisplayString($props.block.title), 1);
 }
-var BlockRenderer = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/BlockRenderer.vue"]]);
+var BlockRenderer = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/BlockRenderer.vue"]]);
 function column(col) {
   return {
     "@type": "col",
@@ -7534,11 +7534,17 @@ const useSimplelayoutStore = defineStore({
     },
     async modifyBlock(data2) {
       this.blocks[data2.UID] = data2;
+    },
+    async deleteBlock(position) {
+      let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
+      newLayouts[position.rowIndex].items[position.columnIndex].items.splice(position.blockIndex, 1);
+      const data2 = { slblocks_layout: { items: newLayouts } };
+      this.modifyLayouts(data2);
     }
   }
 });
 var RowControls_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$6 = {
+const _sfc_main$7 = {
   props: {
     index: {
       type: Number,
@@ -7582,7 +7588,7 @@ const _hoisted_5$2 = [
 ];
 const _hoisted_6$1 = ["aria-labelledby"];
 const _hoisted_7$1 = ["onClick"];
-function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", {
     class: "sl-add-row-controls",
     style: normalizeStyle(`z-index:${1e3 - $props.index * 2}`)
@@ -7620,7 +7626,7 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ], 4);
 }
-var RowControls = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/RowControls.vue"]]);
+var RowControls = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/RowControls.vue"]]);
 function ColWidths(asMapping) {
   const widths = [
     { cols: 12, label: "100%" },
@@ -7635,7 +7641,7 @@ function ColWidths(asMapping) {
   return widths;
 }
 var ColControls_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$5 = {
+const _sfc_main$6 = {
   setup() {
     const sl = useSimplelayoutStore();
     return { sl };
@@ -7694,7 +7700,7 @@ const _hoisted_2$3 = ["id"];
 const _hoisted_3$3 = ["aria-labelledby"];
 const _hoisted_4$2 = ["onClick"];
 const _hoisted_5$1 = { class: "btn-group btn-group-xs sl-row-controls" };
-function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(Fragment, null, [
     $props.currentWidth ? (openBlock(), createElementBlock("div", {
       key: 0,
@@ -7746,9 +7752,9 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
     ], 2)
   ], 64);
 }
-var ColControls = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/ColControls.vue"]]);
+var ColControls = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/ColControls.vue"]]);
 var BlockControls_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$4 = {
+const _sfc_main$5 = {
   props: {
     actions: {
       type: Array,
@@ -7786,7 +7792,7 @@ const _hoisted_5 = [
 ];
 const _hoisted_6 = ["aria-labelledby"];
 const _hoisted_7 = ["onClick", "data-row", "data-col", "data-block"];
-function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$2, [
     createBaseVNode("button", {
       class: "btn btn-success btn-sm dropdown-toggle caret-only",
@@ -7818,8 +7824,8 @@ function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
     ], 8, _hoisted_6)
   ]);
 }
-var BlockControls = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/BlockControls.vue"]]);
-const _sfc_main$3 = {
+var BlockControls = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/BlockControls.vue"]]);
+const _sfc_main$4 = {
   name: "base-modal",
   props: {
     storeAction: {
@@ -7864,7 +7870,9 @@ const _sfc_main$3 = {
           Accept: "text/html,application/json"
         }
       });
-      if (response.headers["content-type"] === "application/json") {
+      const isJson = response.headers["content-type"] === "application/json";
+      const is204 = response.status === 204;
+      if (isJson || is204) {
         const data2 = response.data;
         console.info(data2["@id"], data2["UID"]);
         console.info(this.rowIndex, this.columnIndex);
@@ -7884,10 +7892,12 @@ const _sfc_main$3 = {
       body.innerHTML = doc2.getElementById("content").innerHTML;
     },
     handleFormButtons() {
-      const saveButton = this.modal._element.querySelector("#form-buttons-save");
-      const cancelButton = this.modal._element.querySelector("#form-buttons-cancel");
       const form = this.modal._element.querySelector("#form");
-      saveButton.addEventListener("click", this.handleSubmit);
+      const saveButton = form.querySelector("#form-buttons-save");
+      const deleteButton = form.querySelector("#form-buttons-Delete");
+      const cancelButton = form.querySelector("#form-buttons-cancel") || form.querySelector("#form-buttons-Cancel");
+      const submitButton = saveButton || deleteButton;
+      submitButton.addEventListener("click", this.handleSubmit);
       form.addEventListener("submit", this.handleSubmit);
       cancelButton.addEventListener("click", this.handleCancel);
     },
@@ -7910,11 +7920,11 @@ const _hoisted_2$1 = /* @__PURE__ */ createStaticVNode('<div class="modal-dialog
 const _hoisted_3$1 = [
   _hoisted_2$1
 ];
-function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$1, _hoisted_3$1, 512);
 }
-var BaseModal = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/BaseModal.vue"]]);
-const _sfc_main$2 = {
+var BaseModal = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/BaseModal.vue"]]);
+const _sfc_main$3 = {
   name: "add-modal",
   components: {
     BaseModal
@@ -7958,16 +7968,16 @@ const _sfc_main$2 = {
     }
   }
 };
-function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     storeAction: $options.storeAction,
     ref: "modal"
   }, null, 8, ["storeAction"]);
 }
-var AddBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/AddBlockModal.vue"]]);
-const _sfc_main$1 = {
-  name: "add-modal",
+var AddBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/AddBlockModal.vue"]]);
+const _sfc_main$2 = {
+  name: "edit-modal",
   components: {
     BaseModal
   },
@@ -8005,6 +8015,53 @@ const _sfc_main$1 = {
     }
   }
 };
+function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_BaseModal = resolveComponent("BaseModal");
+  return openBlock(), createBlock(_component_BaseModal, {
+    storeAction: $options.storeAction,
+    ref: "modal"
+  }, null, 8, ["storeAction"]);
+}
+var EditBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/EditBlockModal.vue"]]);
+const _sfc_main$1 = {
+  name: "delete-modal",
+  components: {
+    BaseModal
+  },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
+  },
+  data() {
+    return {
+      deleteBlockModal: null
+    };
+  },
+  mounted() {
+    this.deleteBlockModal = this.$refs["modal"].modal;
+  },
+  methods: {
+    async openDeleteBlockModal(event) {
+      const button = event.currentTarget;
+      const position = {
+        rowIndex: parseInt(button.getAttribute("data-row")),
+        columnIndex: parseInt(button.getAttribute("data-col")),
+        blockIndex: parseInt(button.getAttribute("data-block"))
+      };
+      this.deleteBlockModal.hide();
+      const url = `${this.getBlockURL(position)}/delete_confirmation`;
+      this.$refs["modal"].openFormModal(url, position);
+      this.deleteBlockModal.show();
+    },
+    getBlockURL(position) {
+      const uid2 = this.sl.layouts.items[position.rowIndex].items[position.columnIndex].items[position.blockIndex];
+      return this.sl.blocks[uid2]["@id"];
+    },
+    storeAction(position) {
+      this.sl.deleteBlock(position);
+    }
+  }
+};
 function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
@@ -8012,7 +8069,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
     ref: "modal"
   }, null, 8, ["storeAction"]);
 }
-var EditBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/EditBlockModal.vue"]]);
+var DeleteBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/DeleteBlockModal.vue"]]);
 var App_vue_vue_type_style_index_0_lang = "";
 const _sfc_main = {
   components: {
@@ -8021,7 +8078,8 @@ const _sfc_main = {
     ColControls,
     AddBlockModal,
     BlockControls,
-    EditBlockModal
+    EditBlockModal,
+    DeleteBlockModal
   },
   setup() {
     const sl = useSimplelayoutStore();
@@ -8041,6 +8099,13 @@ const _sfc_main = {
           enabled: (rowIndex, columnIndex) => {
             return this.sl.layouts.items[rowIndex].items[columnIndex].items.length;
           }
+        },
+        {
+          label: "Delete",
+          action: this.openDeleteBlocksModal,
+          enabled: (rowIndex, columnIndex) => {
+            return this.sl.layouts.items[rowIndex].items[columnIndex].items.length;
+          }
         }
       ]
     };
@@ -8054,6 +8119,9 @@ const _sfc_main = {
     },
     openEditBlocksModal(event) {
       this.$refs["edit-modal"].openEditBlockModal(event);
+    },
+    openDeleteBlocksModal(event) {
+      this.$refs["delete-modal"].openDeleteBlockModal(event);
     }
   }
 };
@@ -8074,6 +8142,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockRenderer = resolveComponent("BlockRenderer");
   const _component_AddBlockModal = resolveComponent("AddBlockModal");
   const _component_EditBlockModal = resolveComponent("EditBlockModal");
+  const _component_DeleteBlockModal = resolveComponent("DeleteBlockModal");
   return openBlock(), createElementBlock(Fragment, null, [
     createBaseVNode("div", _hoisted_1, [
       (openBlock(true), createElementBlock(Fragment, null, renderList($setup.sl.layouts.items, (row2, rowIndex) => {
@@ -8133,7 +8202,8 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       }), 128))
     ]),
     createVNode(_component_AddBlockModal, { ref: "add-modal" }, null, 512),
-    createVNode(_component_EditBlockModal, { ref: "edit-modal" }, null, 512)
+    createVNode(_component_EditBlockModal, { ref: "edit-modal" }, null, 512),
+    createVNode(_component_DeleteBlockModal, { ref: "delete-modal" }, null, 512)
   ], 64);
 }
 var App = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/App.vue"]]);

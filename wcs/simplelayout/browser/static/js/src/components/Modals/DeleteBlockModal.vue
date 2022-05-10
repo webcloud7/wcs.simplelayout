@@ -5,7 +5,7 @@
 import BaseModal from "@/components/Modals/BaseModal.vue";
 import { useSimplelayoutStore } from "@/store.js";
 export default {
-  name: "edit-modal",
+  name: "delete-modal",
   components: {
     BaseModal,
   },
@@ -15,25 +15,25 @@ export default {
   },
   data() {
     return {
-      editBlockModal: null,
+      deleteBlockModal: null,
     };
   },
   mounted() {
-    this.editBlockModal = this.$refs["modal"].modal;
+    this.deleteBlockModal = this.$refs["modal"].modal;
   },
   methods: {
-    async openEditBlockModal(event) {
+    async openDeleteBlockModal(event) {
       const button = event.currentTarget;
       const position = {
         rowIndex: parseInt(button.getAttribute("data-row")),
         columnIndex: parseInt(button.getAttribute("data-col")),
         blockIndex: parseInt(button.getAttribute("data-block")),
       };
-      this.editBlockModal.hide();
+      this.deleteBlockModal.hide();
 
-      const url = `${this.getBlockURL(position)}/edit`;
+      const url = `${this.getBlockURL(position)}/delete_confirmation`;
       this.$refs["modal"].openFormModal(url, position);
-      this.editBlockModal.show();
+      this.deleteBlockModal.show();
     },
 
     getBlockURL(position) {
@@ -42,8 +42,8 @@ export default {
           .items[position.blockIndex];
       return this.sl.blocks[uid]["@id"];
     },
-    storeAction(position, data) {
-      this.sl.modifyBlock(data);
+    storeAction(position) {
+      this.sl.deleteBlock(position);
     },
   },
 };

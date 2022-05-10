@@ -59,6 +59,7 @@
   </div>
   <AddBlockModal ref="add-modal" />
   <EditBlockModal ref="edit-modal" />
+  <DeleteBlockModal ref="delete-modal" />
 </template>
 
 <script>
@@ -69,6 +70,7 @@ import BlockControls from "@/components/Controls/BlockControls.vue";
 import { useSimplelayoutStore } from "@/store.js";
 import AddBlockModal from "@/components/Modals/AddBlockModal.vue";
 import EditBlockModal from "@/components/Modals/EditBlockModal.vue";
+import DeleteBlockModal from "@/components/Modals/DeleteBlockModal.vue";
 
 export default {
   components: {
@@ -78,6 +80,7 @@ export default {
     AddBlockModal,
     BlockControls,
     EditBlockModal,
+    DeleteBlockModal,
   },
   setup() {
     const sl = useSimplelayoutStore();
@@ -98,6 +101,13 @@ export default {
             return this.sl.layouts.items[rowIndex].items[columnIndex].items.length;
           },
         },
+        {
+          label: "Delete",
+          action: this.openDeleteBlocksModal,
+          enabled: (rowIndex, columnIndex) => {
+            return this.sl.layouts.items[rowIndex].items[columnIndex].items.length;
+          },
+        },
       ],
     };
   },
@@ -110,6 +120,9 @@ export default {
     },
     openEditBlocksModal(event) {
       this.$refs["edit-modal"].openEditBlockModal(event);
+    },
+    openDeleteBlocksModal(event) {
+      this.$refs["delete-modal"].openDeleteBlockModal(event);
     },
   },
 };

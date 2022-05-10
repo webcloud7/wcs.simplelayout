@@ -36,4 +36,11 @@
         permission="cmf.ModifyPortalContent"
         />
 
+    <browser:page
+        for="wcs.simplelayout.contenttypes.behaviors.IBlockMarker"
+        name="delete_confirmation"
+        class=".crud.BlockDeleteConfirmationForm"
+        permission="zope2.DeleteObjects"
+        />
+
 </configure>

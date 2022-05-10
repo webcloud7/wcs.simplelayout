@@ -1,3 +1,5 @@
+from Acquisition import aq_inner, aq_parent
+from plone.app.content.browser.actions import DeleteConfirmationForm
 from plone.dexterity.browser.add import DefaultAddForm
 from plone.dexterity.browser.add import DefaultAddView
 from plone.dexterity.browser.edit import DefaultEditForm
@@ -106,3 +108,27 @@ class EditForm(DefaultEditForm):
             self.request.response.setHeader('X-Theme-Disabled', 'True')
             return json.dumps(api_view())
         return super().render()
+
+
+_no_content_marker = object()
+
+
+class BlockDeleteConfirmationForm(DeleteConfirmationForm):
+
+    @button.buttonAndHandler(DXMF("Delete"), name="Delete")
+    def handle_delete(self, action):
+        parent = aq_parent(aq_inner(self.context))
+        # has the context object been acquired from a place it should not have
+        # been?
+        if self.context.aq_chain == self.context.aq_inner.aq_chain:
+            parent.manage_delObjects(self.context.getId())
+
+        self.request.response.setHeader('Content-Type', 'application/json')
+        self.request.response.setHeader('X-Theme-Disabled', 'True')
+        self.request.response.setStatus(204)
+        return _no_content_marker
+
+    @button.buttonAndHandler(DXMF("label_cancel", default="Cancel"), name="Cancel")
+    def handle_cancel(self, action):
+        target = self.view_url()
+        return self.request.response.redirect(target)
