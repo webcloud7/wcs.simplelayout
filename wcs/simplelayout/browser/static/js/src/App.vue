@@ -18,20 +18,25 @@
               :colIndex="columnIndex"
               :currentWidth="parseInt(column.width)"
             />
-            <template
-              v-for="(blockUID, blockIndex) in column.items"
-              :key="blockUID"
+
+            <draggable
+              v-bind="dragOptions"
+              :list="column.items"
+              :itemKey="(item) => element"
+              @end="saveLayout"
             >
-              <div class="sl-block my-4" v-if="blockUID in sl.blocks">
-                <BlockControls
-                  :actions="actions"
-                  :rowIndex="rowIndex"
-                  :columnIndex="columnIndex"
-                  :blockIndex="blockIndex"
-                />
-                <BlockRenderer :block="sl.blocks[blockUID]" />
-              </div>
-            </template>
+              <template #item="{ element, index }">
+                <div class="sl-block my-4" v-if="element in sl.blocks">
+                  <BlockControls
+                    :actions="actions"
+                    :rowIndex="rowIndex"
+                    :columnIndex="columnIndex"
+                    :blockIndex="index"
+                  />
+                  <BlockRenderer :block="sl.blocks[element]" />
+                </div>
+              </template>
+            </draggable>
 
             <div class="sl-block my-4" v-if="column.items.length === 0">
               <BlockControls
@@ -71,6 +76,7 @@ import { useSimplelayoutStore } from "@/store.js";
 import AddBlockModal from "@/components/Modals/AddBlockModal.vue";
 import EditBlockModal from "@/components/Modals/EditBlockModal.vue";
 import DeleteBlockModal from "@/components/Modals/DeleteBlockModal.vue";
+import draggable from "vuedraggable";
 
 export default {
   components: {
@@ -81,6 +87,7 @@ export default {
     BlockControls,
     EditBlockModal,
     DeleteBlockModal,
+    draggable,
   },
   setup() {
     const sl = useSimplelayoutStore();
@@ -98,14 +105,16 @@ export default {
           label: "Edit",
           action: this.openEditBlocksModal,
           enabled: (rowIndex, columnIndex) => {
-            return this.sl.layouts.items[rowIndex].items[columnIndex].items.length;
+            return this.sl.layouts.items[rowIndex].items[columnIndex].items
+              .length;
           },
         },
         {
           label: "Delete",
           action: this.openDeleteBlocksModal,
           enabled: (rowIndex, columnIndex) => {
-            return this.sl.layouts.items[rowIndex].items[columnIndex].items.length;
+            return this.sl.layouts.items[rowIndex].items[columnIndex].items
+              .length;
           },
         },
       ],
@@ -113,6 +122,18 @@ export default {
   },
   created() {
     this.sl.fetchBlocks();
+  },
+  computed: {
+    dragOptions() {
+      return {
+        animation: 200,
+        disabled: false,
+        class: "list-group",
+        group: "blocks",
+        handle: ".sl-handle",
+        "ghost-class": "ghost-sl-block",
+      };
+    },
   },
   methods: {
     openAddableBlocksModal(event) {
@@ -123,6 +144,12 @@ export default {
     },
     openDeleteBlocksModal(event) {
       this.$refs["delete-modal"].openDeleteBlockModal(event);
+    },
+    saveLayout: function (event) {
+      console.log(event);
+      this.sl.modifyLayouts({
+        slblocks_layout: { items: this.sl.layouts.items },
+      });
     },
   },
 };
@@ -164,5 +191,10 @@ export default {
   line-height: 1rem;
   padding: 0;
   height: 20px;
+}
+
+.ghost-sl-block {
+  opacity: 0.5;
+  height: 100px;
 }
 </style>

@@ -1,5 +1,8 @@
 <template>
   <div class="btn-group btn-group-xs sl-add-block-controls">
+    <button class="btn btn-secondary btn-sm sl-handle">
+      M
+    </button>
     <button
       class="btn btn-success btn-sm dropdown-toggle caret-only"
       type="button"
