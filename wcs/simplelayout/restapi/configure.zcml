@@ -8,4 +8,5 @@
 
 
   <adapter factory=".serializer.SimplelayoutSerializer" />
+  <adapter factory=".serializer.LayoutFieldSerializer"/>
 </configure>

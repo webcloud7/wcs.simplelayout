@@ -123,7 +123,8 @@ export default {
   left: 0;
   visibility: hidden;
   > .btn-group {
-    height: 100%;
+    height: 50%;
+    top: 25%;
   }
 
   &.right {

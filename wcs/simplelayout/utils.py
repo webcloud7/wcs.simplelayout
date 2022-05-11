@@ -3,6 +3,10 @@ from plone.dexterity.interfaces import IDexterityFTI
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
 from zope.component import getUtility
+import logging
+
+
+LOG = logging.getLogger('simplelayout')
 
 
 def get_block_types():
