@@ -1,5 +1,5 @@
 <template>
-  <div class="sl-container">
+  <div :class="`sl-container ${draggingClass}`">
     <template
       v-for="(row, rowIndex) in sl.layouts.items"
       :key="`layout_${rowIndex}`"
@@ -24,9 +24,10 @@
               :list="column.items"
               :itemKey="(item) => element"
               @end="saveLayout"
+              @start="startDraggingBlock"
             >
               <template #item="{ element, index }">
-                <div class="sl-block my-4" v-if="element in sl.blocks">
+                <div class="sl-block" v-if="element in sl.blocks">
                   <BlockControls
                     :actions="actions"
                     :rowIndex="rowIndex"
@@ -36,16 +37,18 @@
                   <BlockRenderer :block="sl.blocks[element]" />
                 </div>
               </template>
-            </draggable>
 
-            <div class="sl-block my-4" v-if="column.items.length === 0">
-              <BlockControls
-                :actions="actions"
-                :rowIndex="rowIndex"
-                :columnIndex="columnIndex"
-                :blockIndex="-1"
-              />
-            </div>
+              <template #footer>
+                <div class="sl-block sl-block-placeholder" v-if="column.items.length === 0">
+                  <BlockControls
+                    :actions="actions"
+                    :rowIndex="rowIndex"
+                    :columnIndex="columnIndex"
+                    :blockIndex="-1"
+                  />
+                </div>
+              </template>
+            </draggable>
 
             <ColControls
               v-if="row.items.length === columnIndex + 1"
@@ -95,6 +98,7 @@ export default {
   },
   data() {
     return {
+      dragging: false,
       actions: [
         {
           label: "Add",
@@ -124,14 +128,19 @@ export default {
     this.sl.fetchBlocks();
   },
   computed: {
+    draggingClass() {
+      return this.dragging ? "sl-dragging" : "";
+    },
     dragOptions() {
       return {
         animation: 200,
         disabled: false,
-        class: "list-group",
+        class: "sl-draggable-container",
         group: "blocks",
         handle: ".sl-handle",
-        "ghost-class": "ghost-sl-block",
+        ghostClass: "ghost-sl-block",
+        forceFallback: true,
+        // fallbackClass: "sl-block-dragging",
       };
     },
   },
@@ -145,11 +154,14 @@ export default {
     openDeleteBlocksModal(event) {
       this.$refs["delete-modal"].openDeleteBlockModal(event);
     },
-    saveLayout: function (event) {
-      console.log(event);
+    saveLayout: function () {
       this.sl.modifyLayouts({
         slblocks_layout: { items: this.sl.layouts.items },
       });
+      this.dragging = false;
+    },
+    startDraggingBlock() {
+      this.dragging = true;
     },
   },
 };
@@ -181,9 +193,12 @@ export default {
     position: relative;
   }
   .sl-block {
-    border: 1px dashed #000000;
+    margin: 20px 0;
     position: relative;
     min-height: 100px;
+    &:hover {
+      box-shadow: 0 0 2px 1px #000000;
+    }
   }
 }
 .btn-xs {
@@ -196,5 +211,32 @@ export default {
 .ghost-sl-block {
   opacity: 0.5;
   height: 100px;
+}
+
+.sl-draggable-container {
+  height: 100%;
+}
+
+.sl-block-dragging {
+  width: 100px !important;
+  height: 100px !important;
+  background-color:grey;
+  display: block;
+  border: 1px solid black;
+  > * {
+    display: none;
+  }
+}
+
+#app .sl-container.sl-dragging {
+  .sl-block {
+    box-shadow: 0 0 2px 1px #000000;
+    &.sl-block-placeholder {
+      display: none;
+    }
+  }
+  .sl-col {
+    min-height: 140px;
+  }
 }
 </style>

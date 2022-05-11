@@ -10076,10 +10076,10 @@ const _hoisted_3$4 = /* @__PURE__ */ createBaseVNode("span", {
   "aria-haspopup": "true",
   class: "caret"
 }, null, -1);
-const _hoisted_4$3 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
+const _hoisted_4$2 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
 const _hoisted_5$2 = [
   _hoisted_3$4,
-  _hoisted_4$3
+  _hoisted_4$2
 ];
 const _hoisted_6$1 = ["aria-labelledby"];
 const _hoisted_7$1 = ["onClick"];
@@ -10197,7 +10197,7 @@ const _sfc_main$6 = {
 const _hoisted_1$3 = { class: "btn-group btn-group-xs" };
 const _hoisted_2$3 = ["id"];
 const _hoisted_3$3 = ["aria-labelledby"];
-const _hoisted_4$2 = ["onClick"];
+const _hoisted_4$1 = ["onClick"];
 const _hoisted_5$1 = { class: "btn-group btn-group-xs sl-row-controls" };
 function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(Fragment, null, [
@@ -10233,7 +10233,7 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
                 class: "dropdown-item",
                 onClick: () => $options.newWidth(width.cols),
                 href: "#"
-              }, toDisplayString(width.label), 9, _hoisted_4$2)
+              }, toDisplayString(width.label), 9, _hoisted_4$1)
             ]);
           }), 128))
         ], 8, _hoisted_3$3)
@@ -10280,22 +10280,25 @@ const _sfc_main$5 = {
   }
 };
 const _hoisted_1$2 = { class: "btn-group btn-group-xs sl-add-block-controls" };
-const _hoisted_2$2 = /* @__PURE__ */ createBaseVNode("button", { class: "btn btn-secondary btn-sm sl-handle" }, " M ", -1);
+const _hoisted_2$2 = {
+  key: 0,
+  class: "btn btn-secondary btn-sm sl-handle"
+};
 const _hoisted_3$2 = ["id"];
-const _hoisted_4$1 = /* @__PURE__ */ createBaseVNode("span", {
+const _hoisted_4 = /* @__PURE__ */ createBaseVNode("span", {
   "aria-haspopup": "true",
   class: "caret"
 }, null, -1);
 const _hoisted_5 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
 const _hoisted_6 = [
-  _hoisted_4$1,
+  _hoisted_4,
   _hoisted_5
 ];
 const _hoisted_7 = ["aria-labelledby"];
 const _hoisted_8 = ["onClick", "data-row", "data-col", "data-block"];
 function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$2, [
-    _hoisted_2$2,
+    $props.blockIndex > -1 ? (openBlock(), createElementBlock("button", _hoisted_2$2, " M ")) : createCommentVNode("v-if", true),
     createBaseVNode("button", {
       class: "btn btn-success btn-sm dropdown-toggle caret-only",
       type: "button",
@@ -16917,6 +16920,7 @@ const _sfc_main = {
   },
   data() {
     return {
+      dragging: false,
       actions: [
         {
           label: "Add",
@@ -16944,14 +16948,18 @@ const _sfc_main = {
     this.sl.fetchBlocks();
   },
   computed: {
+    draggingClass() {
+      return this.dragging ? "sl-dragging" : "";
+    },
     dragOptions() {
       return {
         animation: 200,
         disabled: false,
-        class: "list-group",
+        class: "sl-draggable-container",
         group: "blocks",
         handle: ".sl-handle",
-        "ghost-class": "ghost-sl-block"
+        ghostClass: "ghost-sl-block",
+        forceFallback: true
       };
     }
   },
@@ -16965,23 +16973,25 @@ const _sfc_main = {
     openDeleteBlocksModal(event) {
       this.$refs["delete-modal"].openDeleteBlockModal(event);
     },
-    saveLayout: function(event) {
-      console.log(event);
+    saveLayout: function() {
       this.sl.modifyLayouts({
         slblocks_layout: { items: this.sl.layouts.items }
       });
+      this.dragging = false;
+    },
+    startDraggingBlock() {
+      this.dragging = true;
     }
   }
 };
-const _hoisted_1 = { class: "sl-container" };
-const _hoisted_2 = { class: "row" };
+const _hoisted_1 = { class: "row" };
+const _hoisted_2 = {
+  key: 0,
+  class: "sl-block"
+};
 const _hoisted_3 = {
   key: 0,
-  class: "sl-block my-4"
-};
-const _hoisted_4 = {
-  key: 0,
-  class: "sl-block my-4"
+  class: "sl-block sl-block-placeholder"
 };
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_RowControls = resolveComponent("RowControls");
@@ -16993,14 +17003,16 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_EditBlockModal = resolveComponent("EditBlockModal");
   const _component_DeleteBlockModal = resolveComponent("DeleteBlockModal");
   return openBlock(), createElementBlock(Fragment, null, [
-    createBaseVNode("div", _hoisted_1, [
+    createBaseVNode("div", {
+      class: normalizeClass(`sl-container ${$options.draggingClass}`)
+    }, [
       (openBlock(true), createElementBlock(Fragment, null, renderList($setup.sl.layouts.items, (row2, rowIndex) => {
         return openBlock(), createElementBlock("div", {
           key: `layout_${rowIndex}`,
           class: "sl-row"
         }, [
           createVNode(_component_RowControls, { index: rowIndex }, null, 8, ["index"]),
-          createBaseVNode("div", _hoisted_2, [
+          createBaseVNode("div", _hoisted_1, [
             (openBlock(true), createElementBlock(Fragment, null, renderList(row2.items, (column2, columnIndex) => {
               return openBlock(), createElementBlock("div", {
                 key: `column_${columnIndex}_${rowIndex}`,
@@ -17014,10 +17026,11 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
                 createVNode(_component_draggable, mergeProps($options.dragOptions, {
                   list: column2.items,
                   itemKey: (item) => _ctx.element,
-                  onEnd: $options.saveLayout
+                  onEnd: $options.saveLayout,
+                  onStart: $options.startDraggingBlock
                 }), {
                   item: withCtx(({ element, index: index2 }) => [
-                    element in $setup.sl.blocks ? (openBlock(), createElementBlock("div", _hoisted_3, [
+                    element in $setup.sl.blocks ? (openBlock(), createElementBlock("div", _hoisted_2, [
                       createVNode(_component_BlockControls, {
                         actions: $data.actions,
                         rowIndex,
@@ -17029,18 +17042,20 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
                       }, null, 8, ["block"])
                     ])) : createCommentVNode("v-if", true)
                   ]),
+                  footer: withCtx(() => [
+                    column2.items.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_3, [
+                      createVNode(_component_BlockControls, {
+                        actions: $data.actions,
+                        rowIndex,
+                        columnIndex,
+                        blockIndex: -1
+                      }, null, 8, ["actions", "rowIndex", "columnIndex"])
+                    ])) : createCommentVNode("v-if", true)
+                  ]),
                   _: 2
-                }, 1040, ["list", "itemKey", "onEnd"]),
-                column2.items.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_4, [
-                  createVNode(_component_BlockControls, {
-                    actions: $data.actions,
-                    rowIndex,
-                    columnIndex,
-                    blockIndex: -1
-                  }, null, 8, ["actions", "rowIndex", "columnIndex"])
-                ])) : createCommentVNode("v-if", true),
+                }, 1040, ["list", "itemKey", "onEnd", "onStart"]),
                 row2.items.length === columnIndex + 1 ? (openBlock(), createBlock(_component_ColControls, {
-                  key: 1,
+                  key: 0,
                   rowIndex,
                   colIndex: columnIndex + 1,
                   right: ""
@@ -17054,7 +17069,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
           }, null, 8, ["index"])) : createCommentVNode("v-if", true)
         ]);
       }), 128))
-    ]),
+    ], 2),
     createVNode(_component_AddBlockModal, { ref: "add-modal" }, null, 512),
     createVNode(_component_EditBlockModal, { ref: "edit-modal" }, null, 512),
     createVNode(_component_DeleteBlockModal, { ref: "delete-modal" }, null, 512)

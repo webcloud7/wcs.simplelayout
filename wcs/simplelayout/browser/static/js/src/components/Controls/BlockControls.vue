@@ -1,6 +1,6 @@
 <template>
   <div class="btn-group btn-group-xs sl-add-block-controls">
-    <button class="btn btn-secondary btn-sm sl-handle">
+    <button v-if="blockIndex > -1" class="btn btn-secondary btn-sm sl-handle">
       M
     </button>
     <button
