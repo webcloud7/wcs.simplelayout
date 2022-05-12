@@ -7,12 +7,13 @@
     aria-hidden="true"
     ref="sl-base-modal"
   >
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="modal-title">Addable Blocks</h5>
+          <h4 class="modal-title" id="modal-title"></h4>
         </div>
-        <div class="modal-body">Body</div>
+        <div class="modal-body"></div>
+        <div class="modal-footer"></div>
       </div>
     </div>
   </div>
@@ -87,6 +88,7 @@ export default {
       const body = this.modal._element.querySelector(".modal-body");
       const title = this.modal._element.querySelector(".modal-title");
       title.innerHTML = doc.querySelector("h1").innerHTML;
+      doc.querySelector("h1").remove();
       body.innerHTML = doc.getElementById("content").innerHTML;
     },
     handleFormButtons() {
@@ -101,6 +103,13 @@ export default {
       submitButton.addEventListener("click", this.handleSubmit);
       form.addEventListener("submit", this.handleSubmit);
       cancelButton.addEventListener("click", this.handleCancel);
+
+      const footer = this.modal._element.querySelector(".modal-footer");
+      while (footer.firstChild) {
+        footer.removeChild(footer.firstChild);
+      }
+      footer.appendChild(submitButton);
+      footer.appendChild(cancelButton);
     },
     handleCancel(event) {
       event.preventDefault();

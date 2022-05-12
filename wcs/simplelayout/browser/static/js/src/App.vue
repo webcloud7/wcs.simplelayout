@@ -169,20 +169,10 @@ export default {
 <style lang="scss">
 #app {
   .sl-row {
-    .row {
-      border-top: 1px dashed #000000;
-    }
-    &:last-child .row {
-      border-bottom: 1px dashed #000000;
-    }
   }
   .sl-col {
-    border-left: 1px dashed #000000;
+    border: 1px dashed #000000;
     min-height: 100px;
-
-    &:last-child {
-      border-right: 1px dashed #000000;
-    }
   }
 
   .sl-container {

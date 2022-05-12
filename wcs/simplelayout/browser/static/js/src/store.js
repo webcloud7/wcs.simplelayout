@@ -1,10 +1,11 @@
 import { defineStore } from "pinia";
+import { row } from "@/template.js";
 
 export const useSimplelayoutStore = defineStore({
   // id is required so that Pinia can connect the store to the devtools
   id: "simplelayoutStore",
   state: () => ({
-    layouts: { items: [] },
+    layouts: { items: [row()] },
     blocks: {},
     loading: false,
     baseURL: document.body.getAttribute("data-base-url"),
@@ -17,7 +18,7 @@ export const useSimplelayoutStore = defineStore({
         const response = await this.axios.get(this.baseURL);
         this.blocks = response.data.slblocks;
         const layouts = response.data.slblocks_layout;
-        if ("items" in layouts) {
+        if ("items" in layouts && layouts.items.length !== 0) {
           this.layouts = response.data.slblocks_layout;
         }
       } catch (error) {
@@ -73,7 +74,7 @@ export const useSimplelayoutStore = defineStore({
     },
     async addBlockToColumn(rowIndex, colIndex, blockIndex, uuid) {
       let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
-      console.info(blockIndex)
+      console.info(blockIndex);
       newLayouts[rowIndex].items[colIndex].items.splice(blockIndex, 0, uuid);
       const data = { slblocks_layout: { items: newLayouts } };
       this.modifyLayouts(data);
@@ -90,7 +91,10 @@ export const useSimplelayoutStore = defineStore({
     },
     async deleteBlock(position) {
       let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
-      newLayouts[position.rowIndex].items[position.columnIndex].items.splice(position.blockIndex, 1);
+      newLayouts[position.rowIndex].items[position.columnIndex].items.splice(
+        position.blockIndex,
+        1
+      );
       const data = { slblocks_layout: { items: newLayouts } };
       this.modifyLayouts(data);
     },

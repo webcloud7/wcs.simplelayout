@@ -9948,7 +9948,7 @@ This will fail in production.`);
 const useSimplelayoutStore = defineStore({
   id: "simplelayoutStore",
   state: () => ({
-    layouts: { items: [] },
+    layouts: { items: [row()] },
     blocks: {},
     loading: false,
     baseURL: document.body.getAttribute("data-base-url")
@@ -9961,7 +9961,7 @@ const useSimplelayoutStore = defineStore({
         const response = await this.axios.get(this.baseURL);
         this.blocks = response.data.slblocks;
         const layouts = response.data.slblocks_layout;
-        if ("items" in layouts) {
+        if ("items" in layouts && layouts.items.length !== 0) {
           this.layouts = response.data.slblocks_layout;
         }
       } catch (error) {
@@ -10394,6 +10394,7 @@ const _sfc_main$4 = {
       const body = this.modal._element.querySelector(".modal-body");
       const title = this.modal._element.querySelector(".modal-title");
       title.innerHTML = doc2.querySelector("h1").innerHTML;
+      doc2.querySelector("h1").remove();
       body.innerHTML = doc2.getElementById("content").innerHTML;
     },
     handleFormButtons() {
@@ -10405,6 +10406,12 @@ const _sfc_main$4 = {
       submitButton.addEventListener("click", this.handleSubmit);
       form.addEventListener("submit", this.handleSubmit);
       cancelButton.addEventListener("click", this.handleCancel);
+      const footer = this.modal._element.querySelector(".modal-footer");
+      while (footer.firstChild) {
+        footer.removeChild(footer.firstChild);
+      }
+      footer.appendChild(submitButton);
+      footer.appendChild(cancelButton);
     },
     handleCancel(event) {
       event.preventDefault();
@@ -10421,7 +10428,7 @@ const _hoisted_1$1 = {
   "aria-hidden": "true",
   ref: "sl-base-modal"
 };
-const _hoisted_2$1 = /* @__PURE__ */ createStaticVNode('<div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="modal-title">Addable Blocks</h5></div><div class="modal-body">Body</div></div></div>', 1);
+const _hoisted_2$1 = /* @__PURE__ */ createStaticVNode('<div class="modal-dialog modal-dialog-centered modal-xl"><div class="modal-content"><div class="modal-header"><h4 class="modal-title" id="modal-title"></h4></div><div class="modal-body"></div><div class="modal-footer"></div></div></div>', 1);
 const _hoisted_3$1 = [
   _hoisted_2$1
 ];
