@@ -11,6 +11,7 @@
  <property name="global_allow">True</property>
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types">
+  <element value="teaser_block"/>
   <element value="Block"/>
  </property>
  <property name="allow_discussion">False</property>
@@ -20,17 +21,19 @@
  </property>
  <property name="default_view_fallback">False</property>
  <property name="add_permission">cmf.AddPortalContent</property>
- <property name="klass">wcs.simplelayout.contenttypes.contentpage.ContentPage</property>
+ <property
+    name="klass">wcs.simplelayout.contenttypes.contentpage.ContentPage</property>
  <property name="behaviors">
   <element value="plone.namefromtitle"/>
   <element value="plone.basic"/>
-  <element
-     value="wcs.simplelayout.contenttypes.behaviors.ISimplelayout"/>
+  <element value="wcs.simplelayout.contenttypes.behaviors.ISimplelayout"/>
+  <element value="plone.excludefromnavigation"/>
+  <element value="plone.publication"/>
  </property>
  <property name="schema"></property>
  <property
     name="model_source">&lt;model xmlns:i18n=&quot;http://xml.zope.org/namespaces/i18n&quot; xmlns:marshal=&quot;http://namespaces.plone.org/supermodel/marshal&quot; xmlns:indexer=&quot;http://namespaces.plone.org/supermodel/indexer&quot; xmlns:form=&quot;http://namespaces.plone.org/supermodel/form&quot; xmlns:security=&quot;http://namespaces.plone.org/supermodel/security&quot; xmlns:users=&quot;http://namespaces.plone.org/supermodel/users&quot; xmlns:lingua=&quot;http://namespaces.plone.org/supermodel/lingua&quot; xmlns=&quot;http://namespaces.plone.org/supermodel/schema&quot;&gt;
-    &lt;schema/&gt;
+  &lt;schema/&gt;
   &lt;/model&gt;</property>
  <property name="model_file"></property>
  <property name="schema_policy">dexterity</property>

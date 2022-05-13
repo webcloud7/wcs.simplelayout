@@ -2,7 +2,6 @@
 <object name="Block" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">Block</property>
- <property name="description" i18n:translate=""></property>
  <property name="icon_expr">string:file-earmark-text</property>
  <property name="factory">Block</property>
  <property name="add_view_expr">string:${folder_url}/++add++Block</property>
@@ -24,15 +23,43 @@
   <element value="wcs.simplelayout.contenttypes.behaviors.IBlockMarker"/>
  </property>
  <property name="schema"></property>
- <property name="model_source">
+ <property
+    name="model_source">&lt;?xml version=&#x27;1.0&#x27; encoding=&#x27;utf8&#x27;?&gt;
   &lt;model xmlns:i18n=&quot;http://xml.zope.org/namespaces/i18n&quot; xmlns:marshal=&quot;http://namespaces.plone.org/supermodel/marshal&quot; xmlns:indexer=&quot;http://namespaces.plone.org/supermodel/indexer&quot; xmlns:form=&quot;http://namespaces.plone.org/supermodel/form&quot; xmlns:security=&quot;http://namespaces.plone.org/supermodel/security&quot; xmlns:users=&quot;http://namespaces.plone.org/supermodel/users&quot; xmlns:lingua=&quot;http://namespaces.plone.org/supermodel/lingua&quot; xmlns=&quot;http://namespaces.plone.org/supermodel/schema&quot;&gt;
-  &lt;schema&gt;
-  &lt;field name=&quot;title&quot; type=&quot;zope.schema.TextLine&quot;&gt;
-  &lt;description/&gt;
-  &lt;title&gt;Title&lt;/title&gt;
-  &lt;/field&gt;
-  &lt;fieldset name=&quot;gruppe1&quot; label=&quot;Gruppe1&quot;/&gt;
-  &lt;/schema&gt;
+    &lt;schema&gt;
+      &lt;field name=&quot;title&quot; type=&quot;zope.schema.TextLine&quot;&gt;
+        &lt;description/&gt;
+        &lt;title&gt;Titel&lt;/title&gt;
+      &lt;/field&gt;
+      &lt;field name=&quot;show_title&quot; type=&quot;zope.schema.Bool&quot;&gt;
+        &lt;description/&gt;
+        &lt;required&gt;False&lt;/required&gt;
+        &lt;title&gt;Titel anzeigen&lt;/title&gt;
+        &lt;form:widget type=&quot;z3c.form.browser.checkbox.SingleCheckBoxFieldWidget&quot;/&gt;
+      &lt;/field&gt;
+      &lt;field name=&quot;text&quot; type=&quot;plone.app.textfield.RichText&quot;&gt;
+        &lt;description/&gt;
+        &lt;required&gt;False&lt;/required&gt;
+        &lt;title&gt;Text&lt;/title&gt;
+      &lt;/field&gt;
+      &lt;fieldset name=&quot;image_informations&quot; label=&quot;Bild Informationen&quot;&gt;
+        &lt;field name=&quot;image&quot; type=&quot;plone.namedfile.field.NamedBlobImage&quot;&gt;
+          &lt;description/&gt;
+          &lt;required&gt;False&lt;/required&gt;
+          &lt;title&gt;Bild&lt;/title&gt;
+        &lt;/field&gt;
+        &lt;field name=&quot;image_byline&quot; type=&quot;zope.schema.TextLine&quot;&gt;
+          &lt;description/&gt;
+          &lt;required&gt;False&lt;/required&gt;
+          &lt;title&gt;Bild Byline&lt;/title&gt;
+        &lt;/field&gt;
+        &lt;field name=&quot;image_alt_text&quot; type=&quot;zope.schema.TextLine&quot;&gt;
+          &lt;description&gt;Alternativer Text (Barrierefreiheit)&lt;/description&gt;
+          &lt;required&gt;False&lt;/required&gt;
+          &lt;title&gt;Alternative Text&lt;/title&gt;
+        &lt;/field&gt;
+      &lt;/fieldset&gt;
+    &lt;/schema&gt;
   &lt;/model&gt;</property>
  <property name="model_file"></property>
  <property name="schema_policy">dexterity</property>
