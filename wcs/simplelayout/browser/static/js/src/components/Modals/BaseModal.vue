@@ -1,7 +1,6 @@
 <template>
   <div
-    class="modal fade"
-    id="sl-base-modal"
+    class="modal fade sl-base-modal"
     tabindex="-1"
     aria-labelledby="modal-title"
     aria-hidden="true"
@@ -39,7 +38,11 @@ export default {
     };
   },
   mounted() {
-    const options = {};
+    const options = {
+      backdrop: "static",
+      keyboard: false,
+      focus: false,
+    };
     const modal = this.$refs["sl-base-modal"];
     this.modal = new window.bootstrap.Modal(modal, options);
   },
@@ -90,6 +93,7 @@ export default {
       title.innerHTML = doc.querySelector("h1").innerHTML;
       doc.querySelector("h1").remove();
       body.innerHTML = doc.getElementById("content").innerHTML;
+      window.__patternslib_registry.scan(body);
     },
     handleFormButtons() {
       const form = this.modal._element.querySelector("#form");
@@ -119,3 +123,8 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.sl-base-modal {
+  z-index: 1051 !important;
+}
+</style>

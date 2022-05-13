@@ -10330,6 +10330,7 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
   ]);
 }
 var BlockControls = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/BlockControls.vue"]]);
+var BaseModal_vue_vue_type_style_index_0_lang = "";
 const _sfc_main$4 = {
   name: "base-modal",
   props: {
@@ -10349,7 +10350,11 @@ const _sfc_main$4 = {
     };
   },
   mounted() {
-    const options = {};
+    const options = {
+      backdrop: "static",
+      keyboard: false,
+      focus: false
+    };
     const modal = this.$refs["sl-base-modal"];
     this.modal = new window.bootstrap.Modal(modal, options);
   },
@@ -10396,6 +10401,7 @@ const _sfc_main$4 = {
       title.innerHTML = doc2.querySelector("h1").innerHTML;
       doc2.querySelector("h1").remove();
       body.innerHTML = doc2.getElementById("content").innerHTML;
+      window.__patternslib_registry.scan(body);
     },
     handleFormButtons() {
       const form = this.modal._element.querySelector("#form");
@@ -10421,8 +10427,7 @@ const _sfc_main$4 = {
   }
 };
 const _hoisted_1$1 = {
-  class: "modal fade",
-  id: "sl-base-modal",
+  class: "modal fade sl-base-modal",
   tabindex: "-1",
   "aria-labelledby": "modal-title",
   "aria-hidden": "true",
