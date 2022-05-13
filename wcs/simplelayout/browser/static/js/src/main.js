@@ -3,6 +3,7 @@ import App from "./App.vue";
 import { axiosInstance, axiosNeutralInstance } from "./utils.js";
 import VueAxios from "vue-axios";
 import { createPinia } from "pinia";
+import BlockViews from "./plugins/BlockViews.js";
 
 const app = createApp(App);
 app.use(VueAxios, {
@@ -15,4 +16,5 @@ pinia.use(({ store }) => {
 });
 
 app.use(pinia);
+app.use(BlockViews);
 app.mount("#app");

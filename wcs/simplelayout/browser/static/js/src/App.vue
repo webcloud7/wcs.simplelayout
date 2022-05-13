@@ -39,7 +39,10 @@
               </template>
 
               <template #footer>
-                <div class="sl-block sl-block-placeholder" v-if="column.items.length === 0">
+                <div
+                  class="sl-block sl-block-placeholder"
+                  v-if="column.items.length === 0"
+                >
                   <BlockControls
                     :actions="actions"
                     :rowIndex="rowIndex"
