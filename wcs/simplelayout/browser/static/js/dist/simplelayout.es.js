@@ -10433,7 +10433,7 @@ const _hoisted_1$1 = {
   "aria-hidden": "true",
   ref: "sl-base-modal"
 };
-const _hoisted_2$1 = /* @__PURE__ */ createStaticVNode('<div class="modal-dialog modal-dialog-centered modal-xl"><div class="modal-content"><div class="modal-header"><h4 class="modal-title" id="modal-title"></h4></div><div class="modal-body"></div><div class="modal-footer"></div></div></div>', 1);
+const _hoisted_2$1 = /* @__PURE__ */ createStaticVNode('<div class="modal-dialog modal-dialog-scrollable modal-xl"><div class="modal-content"><div class="modal-header"><h4 class="modal-title" id="modal-title"></h4></div><div class="modal-body"></div><div class="modal-footer"></div></div></div>', 1);
 const _hoisted_3$1 = [
   _hoisted_2$1
 ];
