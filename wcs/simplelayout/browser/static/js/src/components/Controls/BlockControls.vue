@@ -63,6 +63,7 @@ export default {
   right: 0;
   top: 0;
   visibility: hidden;
+  z-index: 1;
 }
 
 .dropdown-toggle {

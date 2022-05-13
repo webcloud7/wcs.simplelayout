@@ -8644,13 +8644,13 @@ const _sfc_main$9 = {
     }
   }
 };
-const _hoisted_1$5 = { key: 0 };
-const _hoisted_2$5 = { key: 1 };
+const _hoisted_1$6 = { key: 0 };
+const _hoisted_2$6 = { key: 1 };
 function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockFallbackView = resolveComponent("BlockFallbackView");
-  return $options.getBlockViewComponentByName !== void 0 ? (openBlock(), createElementBlock("div", _hoisted_1$5, [
+  return $options.getBlockViewComponentByName !== void 0 ? (openBlock(), createElementBlock("div", _hoisted_1$6, [
     (openBlock(), createBlock(resolveDynamicComponent($options.getBlockViewComponentByName), { block: $props.block }, null, 8, ["block"]))
-  ])) : (openBlock(), createElementBlock("div", _hoisted_2$5, [
+  ])) : (openBlock(), createElementBlock("div", _hoisted_2$6, [
     createVNode(_component_BlockFallbackView, { block: $props.block }, null, 8, ["block"])
   ]));
 }
@@ -10101,16 +10101,16 @@ const _sfc_main$8 = {
     }
   }
 };
-const _hoisted_1$4 = { class: "btn-group btn-group-xs" };
-const _hoisted_2$4 = ["id"];
-const _hoisted_3$4 = /* @__PURE__ */ createBaseVNode("span", {
+const _hoisted_1$5 = { class: "btn-group btn-group-xs" };
+const _hoisted_2$5 = ["id"];
+const _hoisted_3$5 = /* @__PURE__ */ createBaseVNode("span", {
   "aria-haspopup": "true",
   class: "caret"
 }, null, -1);
-const _hoisted_4$2 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
-const _hoisted_5$2 = [
-  _hoisted_3$4,
-  _hoisted_4$2
+const _hoisted_4$3 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
+const _hoisted_5$3 = [
+  _hoisted_3$5,
+  _hoisted_4$3
 ];
 const _hoisted_6$1 = ["aria-labelledby"];
 const _hoisted_7$1 = ["onClick"];
@@ -10119,7 +10119,7 @@ function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
     class: "sl-add-row-controls",
     style: normalizeStyle(`z-index:${1e3 - $props.index * 2}`)
   }, [
-    createBaseVNode("div", _hoisted_1$4, [
+    createBaseVNode("div", _hoisted_1$5, [
       createBaseVNode("button", {
         type: "button",
         class: "btn btn-primary",
@@ -10132,7 +10132,7 @@ function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
         "data-bs-toggle": "dropdown",
         "data-bs-auto-close": "true",
         "aria-expanded": "false"
-      }, _hoisted_5$2, 8, _hoisted_2$4),
+      }, _hoisted_5$3, 8, _hoisted_2$5),
       createBaseVNode("ul", {
         class: "dropdown-menu",
         "aria-labelledby": $options.dropdownId
@@ -10225,11 +10225,11 @@ const _sfc_main$7 = {
     }
   }
 };
-const _hoisted_1$3 = { class: "btn-group btn-group-xs" };
-const _hoisted_2$3 = ["id"];
-const _hoisted_3$3 = ["aria-labelledby"];
-const _hoisted_4$1 = ["onClick"];
-const _hoisted_5$1 = { class: "btn-group btn-group-xs sl-row-controls" };
+const _hoisted_1$4 = { class: "btn-group btn-group-xs" };
+const _hoisted_2$4 = ["id"];
+const _hoisted_3$4 = ["aria-labelledby"];
+const _hoisted_4$2 = ["onClick"];
+const _hoisted_5$2 = { class: "btn-group btn-group-xs sl-row-controls" };
 function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(Fragment, null, [
     $props.currentWidth ? (openBlock(), createElementBlock("div", {
@@ -10237,7 +10237,7 @@ function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
       class: "sl-remove-col-controls",
       style: normalizeStyle(`z-index:${1e3 - 1 - $props.rowIndex * 2}`)
     }, [
-      createBaseVNode("div", _hoisted_1$3, [
+      createBaseVNode("div", _hoisted_1$4, [
         !$options.hasBlocks ? (openBlock(), createElementBlock("button", {
           key: 0,
           class: "btn btn-xs btn-danger",
@@ -10251,7 +10251,7 @@ function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
           "data-bs-toggle": "dropdown",
           "data-bs-auto-close": "true",
           "aria-expanded": "false"
-        }, " Width: " + toDisplayString($options.widthsMapping[$props.currentWidth]), 9, _hoisted_2$3),
+        }, " Width: " + toDisplayString($options.widthsMapping[$props.currentWidth]), 9, _hoisted_2$4),
         createBaseVNode("ul", {
           class: "dropdown-menu",
           "aria-labelledby": $options.dropdownId
@@ -10264,16 +10264,16 @@ function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
                 class: "dropdown-item",
                 onClick: () => $options.newWidth(width.cols),
                 href: "#"
-              }, toDisplayString(width.label), 9, _hoisted_4$1)
+              }, toDisplayString(width.label), 9, _hoisted_4$2)
             ]);
           }), 128))
-        ], 8, _hoisted_3$3)
+        ], 8, _hoisted_3$4)
       ])
     ], 4)) : createCommentVNode("v-if", true),
     createBaseVNode("div", {
       class: normalizeClass($options.cssClasses)
     }, [
-      createBaseVNode("div", _hoisted_5$1, [
+      createBaseVNode("div", _hoisted_5$2, [
         createBaseVNode("button", {
           type: "button",
           class: "btn btn-secondary sl-col-add-button",
@@ -10310,26 +10310,26 @@ const _sfc_main$6 = {
     }
   }
 };
-const _hoisted_1$2 = { class: "btn-group btn-group-xs sl-add-block-controls" };
-const _hoisted_2$2 = {
+const _hoisted_1$3 = { class: "btn-group btn-group-xs sl-add-block-controls" };
+const _hoisted_2$3 = {
   key: 0,
   class: "btn btn-secondary btn-sm sl-handle"
 };
-const _hoisted_3$2 = ["id"];
-const _hoisted_4 = /* @__PURE__ */ createBaseVNode("span", {
+const _hoisted_3$3 = ["id"];
+const _hoisted_4$1 = /* @__PURE__ */ createBaseVNode("span", {
   "aria-haspopup": "true",
   class: "caret"
 }, null, -1);
-const _hoisted_5 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
+const _hoisted_5$1 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
 const _hoisted_6 = [
-  _hoisted_4,
-  _hoisted_5
+  _hoisted_4$1,
+  _hoisted_5$1
 ];
 const _hoisted_7 = ["aria-labelledby"];
 const _hoisted_8 = ["onClick", "data-row", "data-col", "data-block"];
 function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$2, [
-    $props.blockIndex > -1 ? (openBlock(), createElementBlock("button", _hoisted_2$2, " M ")) : createCommentVNode("v-if", true),
+  return openBlock(), createElementBlock("div", _hoisted_1$3, [
+    $props.blockIndex > -1 ? (openBlock(), createElementBlock("button", _hoisted_2$3, " M ")) : createCommentVNode("v-if", true),
     createBaseVNode("button", {
       class: "btn btn-success btn-sm dropdown-toggle caret-only",
       type: "button",
@@ -10337,7 +10337,7 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
       "data-bs-toggle": "dropdown",
       "data-bs-auto-close": "true",
       "aria-expanded": "false"
-    }, _hoisted_6, 8, _hoisted_3$2),
+    }, _hoisted_6, 8, _hoisted_3$3),
     createBaseVNode("ul", {
       class: "dropdown-menu",
       "aria-labelledby": $options.dropdownId
@@ -10400,6 +10400,7 @@ const _sfc_main$5 = {
     async handleSubmit(event) {
       event.preventDefault();
       event.stopPropagation();
+      this.handleTinyMCE();
       const form = this.modal._element.querySelector("#form");
       const url = form.getAttribute("action");
       const button = event.currentTarget;
@@ -10454,22 +10455,27 @@ const _sfc_main$5 = {
       event.preventDefault();
       event.stopPropagation();
       this.modal.hide();
+    },
+    handleTinyMCE() {
+      [...this.modal._element.querySelectorAll("textarea")].forEach((element) => {
+        tinyMCE.get(element.id).save();
+      });
     }
   }
 };
-const _hoisted_1$1 = {
+const _hoisted_1$2 = {
   class: "modal fade sl-base-modal",
   tabindex: "-1",
   "aria-labelledby": "modal-title",
   "aria-hidden": "true",
   ref: "sl-base-modal"
 };
-const _hoisted_2$1 = /* @__PURE__ */ createStaticVNode('<div class="modal-dialog modal-dialog-scrollable modal-xl"><div class="modal-content"><div class="modal-header"><h4 class="modal-title" id="modal-title"></h4></div><div class="modal-body"></div><div class="modal-footer"></div></div></div>', 1);
-const _hoisted_3$1 = [
-  _hoisted_2$1
+const _hoisted_2$2 = /* @__PURE__ */ createStaticVNode('<div class="modal-dialog modal-dialog-scrollable modal-xl"><div class="modal-content"><div class="modal-header"><h4 class="modal-title" id="modal-title"></h4></div><div class="modal-body"></div><div class="modal-footer"></div></div></div>', 1);
+const _hoisted_3$2 = [
+  _hoisted_2$2
 ];
 function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$1, _hoisted_3$1, 512);
+  return openBlock(), createElementBlock("div", _hoisted_1$2, _hoisted_3$2, 512);
 }
 var BaseModal = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/BaseModal.vue"]]);
 const _sfc_main$4 = {
@@ -17027,12 +17033,12 @@ const _sfc_main$1 = {
     }
   }
 };
-const _hoisted_1 = { class: "row" };
-const _hoisted_2 = {
+const _hoisted_1$1 = { class: "row" };
+const _hoisted_2$1 = {
   key: 0,
   class: "sl-block"
 };
-const _hoisted_3 = {
+const _hoisted_3$1 = {
   key: 0,
   class: "sl-block sl-block-placeholder"
 };
@@ -17055,7 +17061,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
           class: "sl-row"
         }, [
           createVNode(_component_RowControls, { index: rowIndex }, null, 8, ["index"]),
-          createBaseVNode("div", _hoisted_1, [
+          createBaseVNode("div", _hoisted_1$1, [
             (openBlock(true), createElementBlock(Fragment, null, renderList(row2.items, (column2, columnIndex) => {
               return openBlock(), createElementBlock("div", {
                 key: `column_${columnIndex}_${rowIndex}`,
@@ -17073,7 +17079,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
                   onStart: $options.startDraggingBlock
                 }), {
                   item: withCtx(({ element, index: index2 }) => [
-                    element in $setup.sl.blocks ? (openBlock(), createElementBlock("div", _hoisted_2, [
+                    element in $setup.sl.blocks ? (openBlock(), createElementBlock("div", _hoisted_2$1, [
                       createVNode(_component_BlockControls, {
                         actions: $data.actions,
                         rowIndex,
@@ -17086,7 +17092,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
                     ])) : createCommentVNode("v-if", true)
                   ]),
                   footer: withCtx(() => [
-                    column2.items.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_3, [
+                    column2.items.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_3$1, [
                       createVNode(_component_BlockControls, {
                         actions: $data.actions,
                         rowIndex,
@@ -18412,8 +18418,28 @@ const _sfc_main = {
     }
   }
 };
+const _hoisted_1 = { class: "card" };
+const _hoisted_2 = ["src", "alt"];
+const _hoisted_3 = { class: "card-body" };
+const _hoisted_4 = { class: "card-title" };
+const _hoisted_5 = ["innerHTML"];
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", null, toDisplayString($props.block.title), 1);
+  return openBlock(), createElementBlock("div", _hoisted_1, [
+    $props.block.image ? (openBlock(), createElementBlock("img", {
+      key: 0,
+      src: $props.block.image.scales.great.download,
+      class: "card-img-top",
+      alt: $props.block.image_alt_text
+    }, null, 8, _hoisted_2)) : createCommentVNode("v-if", true),
+    createBaseVNode("div", _hoisted_3, [
+      createBaseVNode("h5", _hoisted_4, toDisplayString($props.block.title), 1),
+      $props.block.text ? (openBlock(), createElementBlock("div", {
+        key: 0,
+        class: "card-text",
+        innerHTML: $props.block.text.data
+      }, null, 8, _hoisted_5)) : createCommentVNode("v-if", true)
+    ])
+  ]);
 }
 var Block = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/blockViews/Block.vue"]]);
 var __glob_0_0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
