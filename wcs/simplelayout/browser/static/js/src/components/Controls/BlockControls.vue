@@ -1,7 +1,7 @@
 <template>
   <div class="btn-group btn-group-xs sl-add-block-controls">
     <button v-if="blockIndex > -1" class="btn btn-secondary btn-sm sl-handle">
-      M
+      <img v-bind="moveIcon" />
     </button>
     <button
       class="btn btn-success btn-sm dropdown-toggle caret-only"
@@ -31,6 +31,7 @@
   </div>
 </template>
 <script>
+import { useSimplelayoutStore } from "@/store.js";
 export default {
   props: {
     actions: {
@@ -50,7 +51,19 @@ export default {
       required: true,
     },
   },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
+  },
   computed: {
+    moveIcon() {
+      return {
+        src: `${this.sl.portalURL}/iconresolver/arrows-move`,
+        alt: "Move block",
+        width: "20",
+        style: "filter: invert(1)",
+      };
+    },
     dropdownId() {
       return `blockDropdownMenu_${this.columnIndex}_${this.rowIndex}`;
     },

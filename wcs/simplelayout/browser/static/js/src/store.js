@@ -9,6 +9,7 @@ export const useSimplelayoutStore = defineStore({
     blocks: {},
     loading: false,
     baseURL: document.body.getAttribute("data-base-url"),
+    portalURL: document.body.getAttribute("data-portal-url"),
   }),
   getters: {},
   actions: {

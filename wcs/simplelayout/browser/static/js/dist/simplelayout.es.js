@@ -9982,7 +9982,8 @@ const useSimplelayoutStore = defineStore({
     layouts: { items: [row()] },
     blocks: {},
     loading: false,
-    baseURL: document.body.getAttribute("data-base-url")
+    baseURL: document.body.getAttribute("data-base-url"),
+    portalURL: document.body.getAttribute("data-portal-url")
   }),
   getters: {},
   actions: {
@@ -10304,7 +10305,19 @@ const _sfc_main$6 = {
       required: true
     }
   },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
+  },
   computed: {
+    moveIcon() {
+      return {
+        src: `${this.sl.portalURL}/iconresolver/arrows-move`,
+        alt: "Move block",
+        width: "20",
+        style: "filter: invert(1)"
+      };
+    },
     dropdownId() {
       return `blockDropdownMenu_${this.columnIndex}_${this.rowIndex}`;
     }
@@ -10329,7 +10342,9 @@ const _hoisted_7 = ["aria-labelledby"];
 const _hoisted_8 = ["onClick", "data-row", "data-col", "data-block"];
 function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$3, [
-    $props.blockIndex > -1 ? (openBlock(), createElementBlock("button", _hoisted_2$3, " M ")) : createCommentVNode("v-if", true),
+    $props.blockIndex > -1 ? (openBlock(), createElementBlock("button", _hoisted_2$3, [
+      createBaseVNode("img", normalizeProps(guardReactiveProps($options.moveIcon)), null, 16)
+    ])) : createCommentVNode("v-if", true),
     createBaseVNode("button", {
       class: "btn btn-success btn-sm dropdown-toggle caret-only",
       type: "button",
