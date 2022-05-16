@@ -76,7 +76,6 @@ export const useSimplelayoutStore = defineStore({
     },
     async addBlockToColumn(rowIndex, colIndex, blockIndex, uuid) {
       let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
-      console.info(blockIndex);
       newLayouts[rowIndex].items[colIndex].items.splice(blockIndex, 0, uuid);
       const data = { slblocks_layout: { items: newLayouts } };
       this.modifyLayouts(data);

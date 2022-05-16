@@ -9983,6 +9983,7 @@ const useSimplelayoutStore = defineStore({
     blocks: {},
     loading: false,
     baseURL: document.body.getAttribute("data-base-url"),
+    baseApiURL: document.body.getAttribute("data-base-url") + "/++api++",
     portalURL: document.body.getAttribute("data-portal-url")
   }),
   getters: {},
@@ -9990,7 +9991,7 @@ const useSimplelayoutStore = defineStore({
     async fetchBlocks() {
       this.loading = true;
       try {
-        const response = await this.axios.get(this.baseURL);
+        const response = await this.axios.get(this.baseApiURL);
         this.blocks = response.data.slblocks;
         const layouts = response.data.slblocks_layout;
         if ("items" in layouts && layouts.items.length !== 0) {
@@ -10005,7 +10006,7 @@ const useSimplelayoutStore = defineStore({
     async modifyLayouts(data2) {
       this.loading = true;
       try {
-        const response = await this.axios.patch(this.baseURL, data2);
+        const response = await this.axios.patch(this.baseApiURL, data2);
         this.blocks = response.data.slblocks;
         const layouts = response.data.slblocks_layout;
         if ("items" in layouts) {
@@ -10048,7 +10049,6 @@ const useSimplelayoutStore = defineStore({
     },
     async addBlockToColumn(rowIndex, colIndex, blockIndex, uuid) {
       let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
-      console.info(blockIndex);
       newLayouts[rowIndex].items[colIndex].items.splice(blockIndex, 0, uuid);
       const data2 = { slblocks_layout: { items: newLayouts } };
       this.modifyLayouts(data2);
@@ -10364,7 +10364,7 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
           action.enabled($props.rowIndex, $props.columnIndex) ? (openBlock(), createElementBlock("a", {
             key: 0,
             class: "dropdown-item",
-            onClick: withModifiers(action.action, ["stop", "prevent"]),
+            onClick: withModifiers(action.action, ["prevent"]),
             "data-row": $props.rowIndex,
             "data-col": $props.columnIndex,
             "data-block": $props.blockIndex,
@@ -10408,13 +10408,12 @@ const _sfc_main$5 = {
     async openFormModal(url, position) {
       const response = await this.axioshtml.get(url);
       this.position = position;
-      console.info(response);
       this.replaceModalContent(response);
       this.handleFormButtons();
+      this.modal.show();
     },
     async handleSubmit(event) {
       event.preventDefault();
-      event.stopPropagation();
       this.handleTinyMCE();
       const form = this.modal._element.querySelector("#form");
       const url = form.getAttribute("action");
@@ -10431,9 +10430,8 @@ const _sfc_main$5 = {
       const is204 = response.status === 204;
       if (isJson || is204) {
         const data2 = response.data;
-        console.info(data2["@id"], data2["UID"]);
-        console.info(this.rowIndex, this.columnIndex);
         this.storeAction(this.position, data2);
+        this.cleanBody();
         this.modal.hide();
       } else {
         this.replaceModalContent(response);
@@ -10469,7 +10467,14 @@ const _sfc_main$5 = {
     handleCancel(event) {
       event.preventDefault();
       event.stopPropagation();
+      this.cleanBody();
       this.modal.hide();
+    },
+    cleanBody() {
+      const body = this.modal._element.querySelector(".modal-body");
+      while (body.firstChild) {
+        body.removeChild(body.firstChild);
+      }
     },
     handleTinyMCE() {
       [...this.modal._element.querySelectorAll("textarea")].forEach((element) => {
@@ -10518,7 +10523,6 @@ const _sfc_main$4 = {
         columnIndex: parseInt(button.getAttribute("data-col")),
         blockIndex: parseInt(button.getAttribute("data-block"))
       };
-      this.addableBlocksModal.hide();
       const url = `${this.sl.baseURL}/@@sl-addable-blocks`;
       const response = await this.axioshtml.get(url);
       this.$refs["modal"].replaceModalContent(response);

@@ -50,13 +50,12 @@ export default {
     async openFormModal(url, position) {
       const response = await this.axioshtml.get(url);
       this.position = position;
-      console.info(response);
       this.replaceModalContent(response);
       this.handleFormButtons();
+      this.modal.show();
     },
     async handleSubmit(event) {
       event.preventDefault();
-      event.stopPropagation();
 
       this.handleTinyMCE();
       const form = this.modal._element.querySelector("#form");
@@ -76,9 +75,8 @@ export default {
       if (isJson || is204) {
         // successful request
         const data = response.data;
-        console.info(data["@id"], data["UID"]);
-        console.info(this.rowIndex, this.columnIndex);
         this.storeAction(this.position, data);
+        this.cleanBody();
         this.modal.hide();
       } else {
         // Any form validation error means we got html back
@@ -120,7 +118,14 @@ export default {
     handleCancel(event) {
       event.preventDefault();
       event.stopPropagation();
+      this.cleanBody();
       this.modal.hide();
+    },
+    cleanBody() {
+      const body = this.modal._element.querySelector(".modal-body");
+      while (body.firstChild) {
+        body.removeChild(body.firstChild);
+      }
     },
     handleTinyMCE() {
       [...this.modal._element.querySelectorAll("textarea")].forEach((element) => {

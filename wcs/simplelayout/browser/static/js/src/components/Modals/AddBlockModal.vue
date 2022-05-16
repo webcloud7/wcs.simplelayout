@@ -29,7 +29,6 @@ export default {
         columnIndex: parseInt(button.getAttribute("data-col")),
         blockIndex: parseInt(button.getAttribute("data-block")),
       };
-      this.addableBlocksModal.hide();
 
       const url = `${this.sl.baseURL}/@@sl-addable-blocks`;
       const response = await this.axioshtml.get(url);
@@ -46,7 +45,7 @@ export default {
       });
       this.addableBlocksModal.show();
     },
-    storeAction(position, data){
+    storeAction(position, data) {
       this.sl.addBlockToColumn(
         position.rowIndex,
         position.columnIndex,
