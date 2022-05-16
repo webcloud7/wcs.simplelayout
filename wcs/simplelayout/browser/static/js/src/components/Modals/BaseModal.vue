@@ -12,7 +12,16 @@
           <h4 class="modal-title" id="modal-title"></h4>
         </div>
         <div class="modal-body"></div>
-        <div class="modal-footer"></div>
+        <div class="modal-footer">
+          <button
+            id="form-buttons-cancel"
+            name="form.buttons.cancel"
+            class="btn btn-secondary standalone"
+            value="Cancel"
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -24,7 +33,19 @@ export default {
   props: {
     storeAction: {
       type: Function,
-      required: true,
+      required: false,
+      default: () => () => null,
+    },
+    modalOptions: {
+      type: Object,
+      required: false,
+      default() {
+        return {
+          backdrop: "static",
+          keyboard: false,
+          focus: false,
+        };
+      },
     },
   },
   setup() {
@@ -38,15 +59,18 @@ export default {
     };
   },
   mounted() {
-    const options = {
-      backdrop: "static",
-      keyboard: false,
-      focus: false,
-    };
     const modal = this.$refs["sl-base-modal"];
-    this.modal = new window.bootstrap.Modal(modal, options);
+    console.info(this.modalOptions);
+    this.modal = new window.bootstrap.Modal(modal, this.modalOptions);
   },
   methods: {
+    async openModal(url, position) {
+      const response = await this.axioshtml.get(url);
+      this.position = position;
+      this.replaceModalContent(response);
+      this.handleFormButtons();
+      this.modal.show();
+    },
     async openFormModal(url, position) {
       const response = await this.axioshtml.get(url);
       this.position = position;
@@ -97,22 +121,31 @@ export default {
     },
     handleFormButtons() {
       const form = this.modal._element.querySelector("#form");
-      const saveButton = form.querySelector("#form-buttons-save");
-      const deleteButton = form.querySelector("#form-buttons-Delete");
-      const cancelButton =
-        form.querySelector("#form-buttons-cancel") ||
-        form.querySelector("#form-buttons-Cancel");
-      const submitButton = saveButton || deleteButton;
+      let cancelButton = null;
+      let submitButton = null;
+      if (form) {
+        const saveButton = form.querySelector("#form-buttons-save");
+        const deleteButton = form.querySelector("#form-buttons-Delete");
+        cancelButton =
+          form.querySelector("#form-buttons-cancel") ||
+          form.querySelector("#form-buttons-Cancel");
+        submitButton = saveButton || deleteButton;
 
-      submitButton.addEventListener("click", this.handleSubmit);
-      form.addEventListener("submit", this.handleSubmit);
+        submitButton.addEventListener("click", this.handleSubmit);
+        form.addEventListener("submit", this.handleSubmit);
+      } else {
+        cancelButton = this.modal._element.querySelector("#form-buttons-cancel");
+      }
+
       cancelButton.addEventListener("click", this.handleCancel);
 
       const footer = this.modal._element.querySelector(".modal-footer");
       while (footer.firstChild) {
         footer.removeChild(footer.firstChild);
       }
-      footer.appendChild(submitButton);
+      if (submitButton) {
+        footer.appendChild(submitButton);
+      }
       footer.appendChild(cancelButton);
     },
     handleCancel(event) {
@@ -128,9 +161,11 @@ export default {
       }
     },
     handleTinyMCE() {
-      [...this.modal._element.querySelectorAll("textarea")].forEach((element) => {
-        tinyMCE.get(element.id).save();
-      });
+      [...this.modal._element.querySelectorAll("textarea")].forEach(
+        (element) => {
+          tinyMCE.get(element.id).save();
+        }
+      );
     },
   },
 };

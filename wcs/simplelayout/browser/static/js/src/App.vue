@@ -71,6 +71,7 @@
   <AddBlockModal ref="add-modal" />
   <EditBlockModal ref="edit-modal" />
   <DeleteBlockModal ref="delete-modal" />
+  <InfoBlockModal ref="info-modal" />
 </template>
 
 <script>
@@ -82,6 +83,7 @@ import { useSimplelayoutStore } from "@/store.js";
 import AddBlockModal from "@/components/Modals/AddBlockModal.vue";
 import EditBlockModal from "@/components/Modals/EditBlockModal.vue";
 import DeleteBlockModal from "@/components/Modals/DeleteBlockModal.vue";
+import InfoBlockModal from "@/components/Modals/InfoBlockModal.vue";
 import draggable from "vuedraggable";
 
 export default {
@@ -93,6 +95,7 @@ export default {
     BlockControls,
     EditBlockModal,
     DeleteBlockModal,
+    InfoBlockModal,
     draggable,
   },
   setup() {
@@ -124,6 +127,14 @@ export default {
               .length;
           },
         },
+        {
+          label: "Information",
+          action: this.openInfoBlockModal,
+          enabled: (rowIndex, columnIndex) => {
+            return this.sl.layouts.items[rowIndex].items[columnIndex].items
+              .length;
+          },
+        },
       ],
     };
   },
@@ -142,7 +153,7 @@ export default {
         group: "blocks",
         handle: ".sl-handle",
         ghostClass: "ghost-sl-block",
-        forceFallback: true,
+        // forceFallback: true,
         // fallbackClass: "sl-block-dragging",
       };
     },
@@ -156,6 +167,9 @@ export default {
     },
     openDeleteBlocksModal(event) {
       this.$refs["delete-modal"].openDeleteBlockModal(event);
+    },
+    openInfoBlockModal(event) {
+      this.$refs["info-modal"].openInfoBlockModal(event);
     },
     saveLayout: function () {
       this.sl.modifyLayouts({
