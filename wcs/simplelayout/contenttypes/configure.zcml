@@ -17,4 +17,22 @@
         provides="wcs.simplelayout.contenttypes.behaviors.IBlockMarker"
         />
 
+    <plone:behavior
+        title="Simplelayout Block Title"
+        description="Default Block title with (Show title option)"
+        provides="wcs.simplelayout.contenttypes.behaviors.IBlockTitle"
+        />
+
+    <plone:behavior
+        title="Simplelayout Block Text"
+        description="Default Block text, which only allows restricted HTML as content"
+        provides="wcs.simplelayout.contenttypes.behaviors.IBlockText"
+        />
+
+    <plone:behavior
+        title="Simplelayout Block Image"
+        description="Default Block image, with captions and Alt-Text field (accessibility)"
+        provides="wcs.simplelayout.contenttypes.behaviors.IBlockImage"
+        />
+
 </configure>

@@ -21,44 +21,15 @@
  <property name="behaviors">
   <element value="plone.namefromtitle"/>
   <element value="wcs.simplelayout.contenttypes.behaviors.IBlockMarker"/>
+  <element value="wcs.simplelayout.contenttypes.behaviors.IBlockTitle"/>
+  <element value="wcs.simplelayout.contenttypes.behaviors.IBlockText"/>
+  <element value="wcs.simplelayout.contenttypes.behaviors.IBlockImage"/>
  </property>
  <property name="schema"></property>
  <property
     name="model_source">&lt;?xml version=&#x27;1.0&#x27; encoding=&#x27;utf8&#x27;?&gt;
   &lt;model xmlns:i18n=&quot;http://xml.zope.org/namespaces/i18n&quot; xmlns:marshal=&quot;http://namespaces.plone.org/supermodel/marshal&quot; xmlns:indexer=&quot;http://namespaces.plone.org/supermodel/indexer&quot; xmlns:form=&quot;http://namespaces.plone.org/supermodel/form&quot; xmlns:security=&quot;http://namespaces.plone.org/supermodel/security&quot; xmlns:users=&quot;http://namespaces.plone.org/supermodel/users&quot; xmlns:lingua=&quot;http://namespaces.plone.org/supermodel/lingua&quot; xmlns=&quot;http://namespaces.plone.org/supermodel/schema&quot;&gt;
     &lt;schema&gt;
-      &lt;field name=&quot;title&quot; type=&quot;zope.schema.TextLine&quot;&gt;
-        &lt;description/&gt;
-        &lt;title&gt;Titel&lt;/title&gt;
-      &lt;/field&gt;
-      &lt;field name=&quot;show_title&quot; type=&quot;zope.schema.Bool&quot;&gt;
-        &lt;description/&gt;
-        &lt;required&gt;False&lt;/required&gt;
-        &lt;title&gt;Titel anzeigen&lt;/title&gt;
-        &lt;form:widget type=&quot;z3c.form.browser.checkbox.SingleCheckBoxFieldWidget&quot;/&gt;
-      &lt;/field&gt;
-      &lt;field name=&quot;text&quot; type=&quot;plone.app.textfield.RichText&quot;&gt;
-        &lt;description/&gt;
-        &lt;required&gt;False&lt;/required&gt;
-        &lt;title&gt;Text&lt;/title&gt;
-      &lt;/field&gt;
-      &lt;fieldset name=&quot;image_informations&quot; label=&quot;Bild Informationen&quot;&gt;
-        &lt;field name=&quot;image&quot; type=&quot;plone.namedfile.field.NamedBlobImage&quot;&gt;
-          &lt;description/&gt;
-          &lt;required&gt;False&lt;/required&gt;
-          &lt;title&gt;Bild&lt;/title&gt;
-        &lt;/field&gt;
-        &lt;field name=&quot;image_byline&quot; type=&quot;zope.schema.TextLine&quot;&gt;
-          &lt;description/&gt;
-          &lt;required&gt;False&lt;/required&gt;
-          &lt;title&gt;Bild Byline&lt;/title&gt;
-        &lt;/field&gt;
-        &lt;field name=&quot;image_alt_text&quot; type=&quot;zope.schema.TextLine&quot;&gt;
-          &lt;description&gt;Alternativer Text (Barrierefreiheit)&lt;/description&gt;
-          &lt;required&gt;False&lt;/required&gt;
-          &lt;title&gt;Alternative Text&lt;/title&gt;
-        &lt;/field&gt;
-      &lt;/fieldset&gt;
     &lt;/schema&gt;
   &lt;/model&gt;</property>
  <property name="model_file"></property>

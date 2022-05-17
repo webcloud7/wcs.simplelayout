@@ -18,3 +18,18 @@ class TestSampleTypes(FunctionalTesting):
     def test_add_page_using_builder(self):
         page = create(Builder('content page').titled('this is the title ü'))
         self.assertEqual('this is the title ü', page.Title())
+
+    @browsing
+    def test_add_default_block(self, browser):
+        contentpage = create(Builder('content page').titled(u'A page'))
+
+        browser.login().visit(contentpage)
+        factoriesmenu.add('Block')
+        browser.fill({'Title': u'This is a Block',
+                      'Text': u'<p>Some text</p>'})
+        browser.find_button_by_label('Save').click()
+
+        blocks = contentpage.objectValues()
+        self.assertEqual(1, len(blocks))
+        self.assertEqual(blocks[0].Title(), u'This is a Block')
+        self.assertEqual(blocks[0].text.raw, u'<p>Some text</p>')

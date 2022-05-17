@@ -15,6 +15,7 @@ tests_require = [
     'plone.api',
     'plone.app.contenttypes',
     'ftw.builder',
+    'ftw.testbrowser',
     'zope.testrunner',
 ]
 

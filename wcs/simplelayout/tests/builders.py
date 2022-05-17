@@ -10,7 +10,7 @@ builder_registry.register('content page', ContenPageBuilder)
 
 
 class BlockBuilder(DexterityBuilder):
-    portal_type = 'ContentPage'
+    portal_type = 'Block'
 
 
 builder_registry.register('block', BlockBuilder)
