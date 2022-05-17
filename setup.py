@@ -15,7 +15,7 @@ tests_require = [
     'plone.api',
     'plone.app.contenttypes',
     'ftw.builder',
-    'ftw.testbrowser',
+    'zope.testrunner',
 ]
 
 setup(
@@ -54,6 +54,8 @@ setup(
         tests=tests_require,
     ),
     entry_points="""
+    [console_scripts]
+    test-server = wcs.simplelayout.tests.server:server [test]
     [z3c.autoinclude.plugin]
     target = plone
     """,
