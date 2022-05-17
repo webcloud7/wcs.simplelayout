@@ -19,7 +19,7 @@
         <a
           v-if="action.enabled(rowIndex, columnIndex)"
           class="dropdown-item"
-          @click.prevent="action.action"
+          @click.prevent.stop="action.action"
           :data-row="rowIndex"
           :data-col="columnIndex"
           :data-block="blockIndex"

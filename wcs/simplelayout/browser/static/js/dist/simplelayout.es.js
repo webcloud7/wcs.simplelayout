@@ -10364,7 +10364,7 @@ function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
           action.enabled($props.rowIndex, $props.columnIndex) ? (openBlock(), createElementBlock("a", {
             key: 0,
             class: "dropdown-item",
-            onClick: withModifiers(action.action, ["prevent"]),
+            onClick: withModifiers(action.action, ["prevent", "stop"]),
             "data-row": $props.rowIndex,
             "data-col": $props.columnIndex,
             "data-block": $props.blockIndex,
@@ -10547,7 +10547,8 @@ const _sfc_main$5 = {
         blockIndex: parseInt(button.getAttribute("data-block"))
       };
       const url = `${this.sl.baseURL}/@@sl-addable-blocks`;
-      this.$refs["modal"].openModal(url);
+      const response = await this.axioshtml.get(url);
+      this.$refs["modal"].replaceModalContent(response);
       const body = this.addableBlocksModal._element.querySelector(".modal-body");
       [...body.querySelectorAll("a")].forEach((link) => {
         link.addEventListener("click", (event2) => {

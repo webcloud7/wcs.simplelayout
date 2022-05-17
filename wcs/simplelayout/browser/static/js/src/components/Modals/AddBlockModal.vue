@@ -31,7 +31,8 @@ export default {
       };
 
       const url = `${this.sl.baseURL}/@@sl-addable-blocks`;
-      this.$refs["modal"].openModal(url);
+      const response = await this.axioshtml.get(url);
+      this.$refs["modal"].replaceModalContent(response);
 
       const body =
         this.addableBlocksModal._element.querySelector(".modal-body");
