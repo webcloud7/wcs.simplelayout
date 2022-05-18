@@ -1,12 +1,13 @@
 <template>
   <div class="card">
-    <slot name="top">
-      <img
-        v-if="block.image"
-        :src="block.image.scales.great.download"
-        class="card-img-top"
-        :alt="block.image_alt_text" />
-    </slot>
+    <div class="card-img-top sl-card-image">
+      <slot name="top">
+        <img
+          v-if="block.image"
+          :src="block.image.scales.great.download"
+          :alt="block.image_alt_text" />
+      </slot>
+    </div>
     <div class="card-body">
       <slot name="title">
         <BlockTitle :block="block" />
@@ -34,3 +35,12 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.sl-card-image {
+  aspect-ratio: 16 / 10;
+  background-color: var(--bs-gray-200);
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+</style>

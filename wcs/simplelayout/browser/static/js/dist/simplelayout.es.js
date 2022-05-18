@@ -10161,7 +10161,7 @@ const _hoisted_5$3 = [
   _hoisted_3$6,
   _hoisted_4$3
 ];
-const _hoisted_6$1 = ["aria-labelledby"];
+const _hoisted_6$2 = ["aria-labelledby"];
 const _hoisted_7$1 = ["onClick"];
 function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", {
@@ -10197,7 +10197,7 @@ function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
             }, toDisplayString(row2.label), 9, _hoisted_7$1)
           ]);
         }), 128))
-      ], 8, _hoisted_6$1)
+      ], 8, _hoisted_6$2)
     ])
   ], 4);
 }
@@ -10382,7 +10382,7 @@ const _hoisted_4$1 = /* @__PURE__ */ createBaseVNode("span", {
   class: "caret"
 }, null, -1);
 const _hoisted_5$1 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
-const _hoisted_6 = [
+const _hoisted_6$1 = [
   _hoisted_4$1,
   _hoisted_5$1
 ];
@@ -10400,7 +10400,7 @@ function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
       "data-bs-toggle": "dropdown",
       "data-bs-auto-close": "true",
       "aria-expanded": "false"
-    }, _hoisted_6, 8, _hoisted_3$4),
+    }, _hoisted_6$1, 8, _hoisted_3$4),
     createBaseVNode("ul", {
       class: "dropdown-menu",
       "aria-labelledby": $options.dropdownId
@@ -18583,6 +18583,7 @@ function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
   ]);
 }
 var BlockTitle = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/standard/BlockTitle.vue"]]);
+var BlockStructure_vue_vue_type_style_index_0_lang = "";
 const _sfc_main$2 = {
   components: {
     BlockTitle
@@ -18595,40 +18596,42 @@ const _sfc_main$2 = {
   }
 };
 const _hoisted_1$1 = { class: "card" };
-const _hoisted_2 = ["src", "alt"];
-const _hoisted_3 = { class: "card-body" };
-const _hoisted_4 = { class: "card-text" };
-const _hoisted_5 = ["innerHTML"];
+const _hoisted_2 = { class: "card-img-top sl-card-image" };
+const _hoisted_3 = ["src", "alt"];
+const _hoisted_4 = { class: "card-body" };
+const _hoisted_5 = { class: "card-text" };
+const _hoisted_6 = ["innerHTML"];
 function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockTitle = resolveComponent("BlockTitle");
   return openBlock(), createElementBlock("div", _hoisted_1$1, [
-    renderSlot(_ctx.$slots, "top", {}, () => [
-      $props.block.image ? (openBlock(), createElementBlock("img", {
-        key: 0,
-        src: $props.block.image.scales.great.download,
-        class: "card-img-top",
-        alt: $props.block.image_alt_text
-      }, null, 8, _hoisted_2)) : createCommentVNode("v-if", true)
+    createBaseVNode("div", _hoisted_2, [
+      renderSlot(_ctx.$slots, "top", {}, () => [
+        $props.block.image ? (openBlock(), createElementBlock("img", {
+          key: 0,
+          src: $props.block.image.scales.great.download,
+          alt: $props.block.image_alt_text
+        }, null, 8, _hoisted_3)) : createCommentVNode("v-if", true)
+      ])
     ]),
-    createBaseVNode("div", _hoisted_3, [
+    createBaseVNode("div", _hoisted_4, [
       renderSlot(_ctx.$slots, "title", {}, () => [
         createVNode(_component_BlockTitle, { block: $props.block }, null, 8, ["block"])
       ]),
-      createBaseVNode("div", _hoisted_4, [
+      createBaseVNode("div", _hoisted_5, [
         renderSlot(_ctx.$slots, "body", {}, () => [
           $props.block.text ? (openBlock(), createElementBlock("div", {
             key: 0,
             innerHTML: $props.block.text.data
-          }, null, 8, _hoisted_5)) : createCommentVNode("v-if", true)
+          }, null, 8, _hoisted_6)) : createCommentVNode("v-if", true)
         ])
       ])
     ])
   ]);
 }
-var BlockCtructure = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/standard/BlockStructure.vue"]]);
+var BlockStructure = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/standard/BlockStructure.vue"]]);
 const _sfc_main$1 = {
   components: {
-    BlockStructure: BlockCtructure
+    BlockStructure
   },
   props: {
     block: {
@@ -18649,7 +18652,7 @@ var __glob_0_0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProp
 var VideoBlock_vue_vue_type_style_index_0_lang = "";
 const _sfc_main = {
   components: {
-    BlockCtructure
+    BlockStructure
   },
   props: {
     block: {
@@ -18664,8 +18667,8 @@ const _sfc_main = {
 };
 const _hoisted_1 = ["href"];
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-  const _component_BlockCtructure = resolveComponent("BlockCtructure");
-  return openBlock(), createBlock(_component_BlockCtructure, { block: $props.block }, {
+  const _component_BlockStructure = resolveComponent("BlockStructure");
+  return openBlock(), createBlock(_component_BlockStructure, { block: $props.block }, {
     top: withCtx(() => [
       createBaseVNode("div", {
         class: "card-img-top sl-placeholder-video",

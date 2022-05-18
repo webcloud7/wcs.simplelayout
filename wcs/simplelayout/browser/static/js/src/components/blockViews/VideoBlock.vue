@@ -1,5 +1,5 @@
 <template>
-  <BlockCtructure :block="block">
+  <BlockStructure :block="block">
     <template #top>
       <div
         class="card-img-top sl-placeholder-video"
@@ -10,14 +10,14 @@
     <template #body>
       <a :href="block.video_url">{{ block.video_url }}</a>
     </template>
-  </BlockCtructure>
+  </BlockStructure>
 </template>
 <script>
 import { useSimplelayoutStore } from "@/store.js";
-import BlockCtructure from "@/components/standard/BlockStructure.vue";
+import BlockStructure from "@/components/standard/BlockStructure.vue";
 export default {
   components: {
-    BlockCtructure,
+    BlockStructure,
   },
   props: {
     block: {
@@ -36,7 +36,6 @@ export default {
   height: 200px;
   width: 100%;
   background-repeat: no-repeat;
-  background-color: var(--bs-gray-200);
   background-position: center;
   background-size: contain;
 }
