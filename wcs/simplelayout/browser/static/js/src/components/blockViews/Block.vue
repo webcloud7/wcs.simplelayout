@@ -1,18 +1,12 @@
 <template>
-  <div class="card">
-    <img
-      v-if="block.image"
-      :src="block.image.scales.great.download"
-      class="card-img-top"
-      :alt="block.image_alt_text">
-    <div class="card-body">
-      <h5 class="card-title">{{ block.title }}</h5>
-      <div class="card-text" v-if="block.text" v-html="block.text.data" />
-    </div>
-  </div>
+  <BlockStructure :block="block" />
 </template>
 <script>
+import BlockStructure from "@/components/standard/BlockStructure.vue";
 export default {
+  components: {
+    BlockStructure,
+  },
   props: {
     block: {
       type: Object,

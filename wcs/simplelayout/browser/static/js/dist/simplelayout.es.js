@@ -8607,7 +8607,7 @@ var _export_sfc = (sfc, props) => {
   }
   return target;
 };
-const _sfc_main$b = {
+const _sfc_main$e = {
   props: {
     block: {
       type: Object,
@@ -8615,15 +8615,15 @@ const _sfc_main$b = {
     }
   }
 };
-function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", null, toDisplayString($props.block.title), 1);
 }
-var BlockFallbackView = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$b], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/blockViews/BlockFallbackView.vue"]]);
+var BlockFallbackView = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/blockViews/BlockFallbackView.vue"]]);
 var __glob_0_1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   "default": BlockFallbackView
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$a = {
+const _sfc_main$d = {
   components: {
     BlockFallbackView
   },
@@ -8644,17 +8644,17 @@ const _sfc_main$a = {
     }
   }
 };
-const _hoisted_1$6 = { key: 0 };
-const _hoisted_2$6 = { key: 1 };
-function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$8 = { key: 0 };
+const _hoisted_2$7 = { key: 1 };
+function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockFallbackView = resolveComponent("BlockFallbackView");
-  return $options.getBlockViewComponentByName !== void 0 ? (openBlock(), createElementBlock("div", _hoisted_1$6, [
+  return $options.getBlockViewComponentByName !== void 0 ? (openBlock(), createElementBlock("div", _hoisted_1$8, [
     (openBlock(), createBlock(resolveDynamicComponent($options.getBlockViewComponentByName), { block: $props.block }, null, 8, ["block"]))
-  ])) : (openBlock(), createElementBlock("div", _hoisted_2$6, [
+  ])) : (openBlock(), createElementBlock("div", _hoisted_2$7, [
     createVNode(_component_BlockFallbackView, { block: $props.block }, null, 8, ["block"])
   ]));
 }
-var BlockRenderer = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/BlockRenderer.vue"]]);
+var BlockRenderer = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/BlockRenderer.vue"]]);
 function column(col) {
   return {
     "@type": "col",
@@ -8834,8 +8834,8 @@ function setupDevtoolsPlugin(pluginDescriptor, setupFn) {
   }
 }
 /*!
-  * pinia v2.0.0-rc.10
-  * (c) 2021 Eduardo San Martin Morote
+  * pinia v2.0.14
+  * (c) 2022 Eduardo San Martin Morote
   * @license MIT
   */
 let activePinia;
@@ -8891,7 +8891,7 @@ function click(node) {
 const _navigator = typeof navigator === "object" ? navigator : { userAgent: "" };
 const isMacOSWebView = /* @__PURE__ */ (() => /Macintosh/.test(_navigator.userAgent) && /AppleWebKit/.test(_navigator.userAgent) && !/Safari/.test(_navigator.userAgent))();
 const saveAs = !IS_CLIENT ? () => {
-} : "download" in HTMLAnchorElement.prototype && !isMacOSWebView ? downloadSaveAs : "msSaveOrOpenBlob" in _navigator ? msSaveAs : fileSaverSaveAs;
+} : typeof HTMLAnchorElement !== "undefined" && "download" in HTMLAnchorElement.prototype && !isMacOSWebView ? downloadSaveAs : "msSaveOrOpenBlob" in _navigator ? msSaveAs : fileSaverSaveAs;
 function downloadSaveAs(blob, name = "download", opts) {
   const a = document.createElement("a");
   a.download = name;
@@ -9086,22 +9086,35 @@ function formatDisplay(display) {
 const PINIA_ROOT_LABEL = "\u{1F34D} Pinia (root)";
 const PINIA_ROOT_ID = "_root";
 function formatStoreForInspectorTree(store) {
-  return "$id" in store ? {
-    id: store.$id,
-    label: store.$id
-  } : {
+  return isPinia(store) ? {
     id: PINIA_ROOT_ID,
     label: PINIA_ROOT_LABEL
+  } : {
+    id: store.$id,
+    label: store.$id
   };
 }
 function formatStoreForInspectorState(store) {
   if (isPinia(store)) {
+    const storeNames = Array.from(store._s.keys());
+    const storeMap = store._s;
     const state2 = {
-      state: Object.keys(store.state.value).map((storeId) => ({
+      state: storeNames.map((storeId) => ({
         editable: true,
         key: storeId,
         value: store.state.value[storeId]
-      }))
+      })),
+      getters: storeNames.filter((id) => storeMap.get(id)._getters).map((id) => {
+        const store2 = storeMap.get(id);
+        return {
+          editable: false,
+          key: id,
+          value: store2._getters.reduce((getters, key) => {
+            getters[key] = store2[key];
+            return getters;
+          }, {})
+        };
+      })
     };
     return state2;
   }
@@ -9174,12 +9187,15 @@ function registerPiniaDevtools(app2, pinia2) {
   setupDevtoolsPlugin({
     id: "dev.esm.pinia",
     label: "Pinia \u{1F34D}",
-    logo: "https://pinia.esm.dev/logo.svg",
+    logo: "https://pinia.vuejs.org/logo.svg",
     packageName: "pinia",
-    homepage: "https://pinia.esm.dev",
+    homepage: "https://pinia.vuejs.org",
     componentStateTypes,
     app: app2
   }, (api) => {
+    if (typeof api.now !== "function") {
+      toastMessage("You seem to be using an outdated version of Vue Devtools. Are you still using the Beta release instead of the stable one? You can find the links at https://devtools.vuejs.org/guide/installation.html.");
+    }
     api.addTimelineLayer({
       id: MUTATIONS_LAYER_ID,
       label: `Pinia \u{1F34D}`,
@@ -9234,7 +9250,18 @@ function registerPiniaDevtools(app2, pinia2) {
             type: getStoreType(store.$id),
             key: "state",
             editable: true,
-            value: store.$state
+            value: store._isOptionsAPI ? {
+              _custom: {
+                value: store.$state,
+                actions: [
+                  {
+                    icon: "restore",
+                    tooltip: "Reset the state of this store",
+                    action: () => store.$reset()
+                  }
+                ]
+              }
+            } : store.$state
           });
           if (store._getters && store._getters.length) {
             payload.instanceData.state.push({
@@ -9242,7 +9269,11 @@ function registerPiniaDevtools(app2, pinia2) {
               key: "getters",
               editable: false,
               value: store._getters.reduce((getters, key) => {
-                getters[key] = store[key];
+                try {
+                  getters[key] = store[key];
+                } catch (error) {
+                  getters[key] = error;
+                }
                 return getters;
               }, {})
             });
@@ -9280,7 +9311,7 @@ function registerPiniaDevtools(app2, pinia2) {
             path.unshift("$state");
           }
         } else {
-          path.unshift("state", "value");
+          path.unshift("state");
         }
         isTimelineActive = false;
         payload.set(inspectedStore, path, payload.state.value);
@@ -9315,18 +9346,26 @@ function addStoreToDevtools(app2, store) {
   setupDevtoolsPlugin({
     id: "dev.esm.pinia",
     label: "Pinia \u{1F34D}",
-    logo: "https://pinia.esm.dev/logo.svg",
+    logo: "https://pinia.vuejs.org/logo.svg",
     packageName: "pinia",
-    homepage: "https://pinia.esm.dev",
+    homepage: "https://pinia.vuejs.org",
     componentStateTypes,
-    app: app2
+    app: app2,
+    settings: {
+      logStoreChanges: {
+        label: "Notify about new/deleted stores",
+        type: "boolean",
+        defaultValue: true
+      }
+    }
   }, (api) => {
+    const now2 = typeof api.now === "function" ? api.now.bind(api) : Date.now;
     store.$onAction(({ after, onError, name, args }) => {
       const groupId = runningActionId++;
       api.addTimelineEvent({
         layerId: MUTATIONS_LAYER_ID,
         event: {
-          time: Date.now(),
+          time: now2(),
           title: "\u{1F6EB} " + name,
           subtitle: "start",
           data: {
@@ -9342,7 +9381,7 @@ function addStoreToDevtools(app2, store) {
         api.addTimelineEvent({
           layerId: MUTATIONS_LAYER_ID,
           event: {
-            time: Date.now(),
+            time: now2(),
             title: "\u{1F6EC} " + name,
             subtitle: "end",
             data: {
@@ -9360,7 +9399,7 @@ function addStoreToDevtools(app2, store) {
         api.addTimelineEvent({
           layerId: MUTATIONS_LAYER_ID,
           event: {
-            time: Date.now(),
+            time: now2(),
             logType: "error",
             title: "\u{1F4A5} " + name,
             subtitle: "end",
@@ -9383,7 +9422,7 @@ function addStoreToDevtools(app2, store) {
           api.addTimelineEvent({
             layerId: MUTATIONS_LAYER_ID,
             event: {
-              time: Date.now(),
+              time: now2(),
               title: "Change",
               subtitle: name,
               data: {
@@ -9402,7 +9441,7 @@ function addStoreToDevtools(app2, store) {
       if (!isTimelineActive)
         return;
       const eventData = {
-        time: Date.now(),
+        time: now2(),
         title: formatMutationType(type),
         data: __spreadValues({
           store: formatDisplay(store.$id)
@@ -9438,7 +9477,7 @@ function addStoreToDevtools(app2, store) {
       api.addTimelineEvent({
         layerId: MUTATIONS_LAYER_ID,
         event: {
-          time: Date.now(),
+          time: now2(),
           title: "\u{1F525} " + store.$id,
           subtitle: "HMR update",
           data: {
@@ -9457,12 +9496,12 @@ function addStoreToDevtools(app2, store) {
       api.notifyComponentUpdate();
       api.sendInspectorTree(INSPECTOR_ID);
       api.sendInspectorState(INSPECTOR_ID);
-      toastMessage(`Disposed "${store.$id}" store \u{1F5D1}`);
+      api.getSettings().logStoreChanges && toastMessage(`Disposed "${store.$id}" store \u{1F5D1}`);
     };
     api.notifyComponentUpdate();
     api.sendInspectorTree(INSPECTOR_ID);
     api.sendInspectorState(INSPECTOR_ID);
-    toastMessage(`"${store.$id}" store installed \u{1F195}`);
+    api.getSettings().logStoreChanges && toastMessage(`"${store.$id}" store installed \u{1F195}`);
   });
 }
 let runningActionId = 0;
@@ -9493,6 +9532,9 @@ function devtoolsPlugin({ app: app2, store, options }) {
   if (store.$id.startsWith("__hot:")) {
     return;
   }
+  if (options.state) {
+    store._isOptionsAPI = true;
+  }
   if (typeof options.state === "function") {
     patchActionForGrouping(store, Object.keys(options.actions));
     const originalHotUpdate = store._hotUpdate;
@@ -9507,7 +9549,7 @@ function createPinia() {
   const scope = effectScope(true);
   const state = scope.run(() => ref({}));
   let _p = [];
-  const toBeInstalled = [];
+  let toBeInstalled = [];
   const pinia2 = markRaw({
     install(app2) {
       setActivePinia(pinia2);
@@ -9519,6 +9561,7 @@ function createPinia() {
           registerPiniaDevtools(app2, pinia2);
         }
         toBeInstalled.forEach((plugin2) => _p.push(plugin2));
+        toBeInstalled = [];
       }
     },
     use(plugin2) {
@@ -9535,7 +9578,7 @@ function createPinia() {
     _s: /* @__PURE__ */ new Map(),
     state
   });
-  if (IS_CLIENT) {
+  if (IS_CLIENT && true) {
     pinia2.use(devtoolsPlugin);
   }
   return pinia2;
@@ -9557,12 +9600,15 @@ function patchObject(newState, oldState) {
   }
   return newState;
 }
-function addSubscription(subscriptions, callback, detached) {
+const noop = () => {
+};
+function addSubscription(subscriptions, callback, detached, onCleanup = noop) {
   subscriptions.push(callback);
   const removeSubscription = () => {
     const idx = subscriptions.indexOf(callback);
     if (idx > -1) {
       subscriptions.splice(idx, 1);
+      onCleanup();
     }
   };
   if (!detached && getCurrentInstance()) {
@@ -9571,25 +9617,31 @@ function addSubscription(subscriptions, callback, detached) {
   return removeSubscription;
 }
 function triggerSubscriptions(subscriptions, ...args) {
-  subscriptions.forEach((callback) => {
+  subscriptions.slice().forEach((callback) => {
     callback(...args);
   });
 }
-function innerPatch(target, patchToApply) {
+function mergeReactiveObjects(target, patchToApply) {
   for (const key in patchToApply) {
+    if (!patchToApply.hasOwnProperty(key))
+      continue;
     const subPatch = patchToApply[key];
     const targetValue = target[key];
-    if (isPlainObject$1(targetValue) && isPlainObject$1(subPatch) && !isRef(subPatch) && !isReactive(subPatch)) {
-      target[key] = innerPatch(targetValue, subPatch);
+    if (isPlainObject$1(targetValue) && isPlainObject$1(subPatch) && target.hasOwnProperty(key) && !isRef(subPatch) && !isReactive(subPatch)) {
+      target[key] = mergeReactiveObjects(targetValue, subPatch);
     } else {
       target[key] = subPatch;
     }
   }
   return target;
 }
+const skipHydrateSymbol = Symbol("pinia:skipHydration");
+function shouldHydrate(obj) {
+  return !isPlainObject$1(obj) || !obj.hasOwnProperty(skipHydrateSymbol);
+}
 const { assign } = Object;
 function isComputed(o) {
-  return o && o.effect;
+  return !!(isRef(o) && o.effect);
 }
 function createOptionsStore(id, options, pinia2, hot) {
   const { state, actions, getters } = options;
@@ -9611,7 +9663,7 @@ function createOptionsStore(id, options, pinia2, hot) {
       return computedGetters;
     }, {}));
   }
-  store = createSetupStore(id, setup, options, pinia2, hot);
+  store = createSetupStore(id, setup, options, pinia2, hot, true);
   store.$reset = function $reset() {
     const newState = state ? state() : {};
     this.$patch(($state) => {
@@ -9620,14 +9672,9 @@ function createOptionsStore(id, options, pinia2, hot) {
   };
   return store;
 }
-const noop = () => {
-};
-function createSetupStore($id, setup, options = {}, pinia2, hot) {
+function createSetupStore($id, setup, options = {}, pinia2, hot, isOptionsStore) {
   let scope;
-  const buildState = options.state;
-  const optionsForPlugin = __spreadValues({
-    actions: {}
-  }, options);
+  const optionsForPlugin = assign({ actions: {} }, options);
   if (!pinia2._e.active) {
     throw new Error("Pinia destroyed");
   }
@@ -9648,19 +9695,21 @@ function createSetupStore($id, setup, options = {}, pinia2, hot) {
     };
   }
   let isListening;
+  let isSyncListening;
   let subscriptions = markRaw([]);
   let actionSubscriptions = markRaw([]);
   let debuggerEvents;
   const initialState = pinia2.state.value[$id];
-  if (!initialState && !hot) {
+  if (!isOptionsStore && !initialState && !hot) {
     {
       pinia2.state.value[$id] = {};
     }
   }
   const hotState = ref({});
+  let activeListener;
   function $patch(partialStateOrMutator) {
     let subscriptionMutation;
-    isListening = false;
+    isListening = isSyncListening = false;
     {
       debuggerEvents = [];
     }
@@ -9672,7 +9721,7 @@ function createSetupStore($id, setup, options = {}, pinia2, hot) {
         events: debuggerEvents
       };
     } else {
-      innerPatch(pinia2.state.value[$id], partialStateOrMutator);
+      mergeReactiveObjects(pinia2.state.value[$id], partialStateOrMutator);
       subscriptionMutation = {
         type: MutationType.patchObject,
         payload: partialStateOrMutator,
@@ -9680,7 +9729,13 @@ function createSetupStore($id, setup, options = {}, pinia2, hot) {
         events: debuggerEvents
       };
     }
-    isListening = true;
+    const myListenerId = activeListener = Symbol();
+    nextTick().then(() => {
+      if (activeListener === myListenerId) {
+        isListening = true;
+      }
+    });
+    isSyncListening = true;
     triggerSubscriptions(subscriptions, subscriptionMutation, pinia2.state.value[$id]);
   }
   const $reset = () => {
@@ -9696,13 +9751,13 @@ function createSetupStore($id, setup, options = {}, pinia2, hot) {
     return function() {
       setActivePinia(pinia2);
       const args = Array.from(arguments);
-      let afterCallback = noop;
-      let onErrorCallback = noop;
+      const afterCallbackList = [];
+      const onErrorCallbackList = [];
       function after(callback) {
-        afterCallback = callback;
+        afterCallbackList.push(callback);
       }
       function onError(callback) {
-        onErrorCallback = callback;
+        onErrorCallbackList.push(callback);
       }
       triggerSubscriptions(actionSubscriptions, {
         args,
@@ -9715,22 +9770,20 @@ function createSetupStore($id, setup, options = {}, pinia2, hot) {
       try {
         ret = action.apply(this && this.$id === $id ? this : store, args);
       } catch (error) {
-        if (onErrorCallback(error) !== false) {
-          throw error;
-        }
+        triggerSubscriptions(onErrorCallbackList, error);
+        throw error;
       }
       if (ret instanceof Promise) {
         return ret.then((value) => {
-          const newRet2 = afterCallback(value);
-          return newRet2 === void 0 ? value : newRet2;
+          triggerSubscriptions(afterCallbackList, value);
+          return value;
         }).catch((error) => {
-          if (onErrorCallback(error) !== false) {
-            return Promise.reject(error);
-          }
+          triggerSubscriptions(onErrorCallbackList, error);
+          return Promise.reject(error);
         });
       }
-      const newRet = afterCallback(ret);
-      return newRet === void 0 ? ret : newRet;
+      triggerSubscriptions(afterCallbackList, ret);
+      return ret;
     };
   }
   const _hmrPayload = /* @__PURE__ */ markRaw({
@@ -9746,15 +9799,9 @@ function createSetupStore($id, setup, options = {}, pinia2, hot) {
     $patch,
     $reset,
     $subscribe(callback, options2 = {}) {
-      if (typeof options2 === "boolean") {
-        console.warn(`[\u{1F34D}]: store.$subscribe() no longer accepts a boolean as the 2nd parameter:
-Replace "store.$subscribe(fn, ${String(options2)})" with "store.$subscribe(fn, { detached: ${String(options2)} })".
-This will fail in production.`);
-        options2 = { detached: options2 };
-      }
-      const _removeSubscription = addSubscription(subscriptions, callback, options2.detached);
-      const stopWatcher = scope.run(() => watch(() => pinia2.state.value[$id], (state, oldState) => {
-        if (isListening) {
+      const removeSubscription = addSubscription(subscriptions, callback, options2.detached, () => stopWatcher());
+      const stopWatcher = scope.run(() => watch(() => pinia2.state.value[$id], (state) => {
+        if (options2.flush === "sync" ? isSyncListening : isListening) {
           callback({
             storeId: $id,
             type: MutationType.direct,
@@ -9762,10 +9809,6 @@ This will fail in production.`);
           }, state);
         }
       }, assign({}, $subscribeOptions, options2)));
-      const removeSubscription = () => {
-        stopWatcher();
-        _removeSubscription();
-      };
       return removeSubscription;
     },
     $dispose
@@ -9784,12 +9827,12 @@ This will fail in production.`);
     if (isRef(prop) && !isComputed(prop) || isReactive(prop)) {
       if (hot) {
         set(hotState.value, key, toRef(setupStore, key));
-      } else if (!buildState) {
-        if (initialState) {
+      } else if (!isOptionsStore) {
+        if (initialState && shouldHydrate(prop)) {
           if (isRef(prop)) {
             prop.value = initialState[key];
           } else {
-            innerPatch(prop, initialState[key]);
+            mergeReactiveObjects(prop, initialState[key]);
           }
         }
         {
@@ -9810,7 +9853,7 @@ This will fail in production.`);
       optionsForPlugin.actions[key] = prop;
     } else {
       if (isComputed(prop)) {
-        _hmrPayload.getters[key] = buildState ? options.getters[key] : prop;
+        _hmrPayload.getters[key] = isOptionsStore ? options.getters[key] : prop;
         if (IS_CLIENT) {
           const getters = setupStore._getters || (setupStore._getters = markRaw([]));
           getters.push(key);
@@ -9820,6 +9863,7 @@ This will fail in production.`);
   }
   {
     assign(store, setupStore);
+    assign(toRaw(store), setupStore);
   }
   Object.defineProperty(store, "$state", {
     get: () => hot ? hotState.value : pinia2.state.value[$id],
@@ -9853,15 +9897,19 @@ This will fail in production.`);
         }
       });
       isListening = false;
+      isSyncListening = false;
       pinia2.state.value[$id] = toRef(newStore._hmrPayload, "hotState");
-      isListening = true;
+      isSyncListening = true;
+      nextTick().then(() => {
+        isListening = true;
+      });
       for (const actionName in newStore._hmrPayload.actions) {
         const action = newStore[actionName];
         set(store, actionName, wrapAction(actionName, action));
       }
       for (const getterName in newStore._hmrPayload.getters) {
         const getter = newStore._hmrPayload.getters[getterName];
-        const getterValue = buildState ? computed(() => {
+        const getterValue = isOptionsStore ? computed(() => {
           setActivePinia(pinia2);
           return getter.call(store, store);
         }) : getter;
@@ -9915,12 +9963,14 @@ This will fail in production.`);
   });
   if (store.$state && typeof store.$state === "object" && typeof store.$state.constructor === "function" && !store.$state.constructor.toString().includes("[native code]")) {
     console.warn(`[\u{1F34D}]: The "state" must be a plain object. It cannot be
-	state: () => new MyClass()`);
+	state: () => new MyClass()
+Found in store "${store.$id}".`);
   }
-  if (initialState && buildState) {
-    (options.hydrate || innerPatch)(store, initialState);
+  if (initialState && isOptionsStore && options.hydrate) {
+    options.hydrate(store.$state, initialState);
   }
   isListening = true;
+  isSyncListening = true;
   return store;
 }
 function defineStore(idOrOptions, setup, setupOptions) {
@@ -9941,10 +9991,8 @@ function defineStore(idOrOptions, setup, setupOptions) {
       setActivePinia(pinia2);
     if (!activePinia) {
       throw new Error(`[\u{1F34D}]: getActivePinia was called with no active Pinia. Did you forget to install pinia?
-
-const pinia = createPinia()
-app.use(pinia)
-
+	const pinia = createPinia()
+	app.use(pinia)
 This will fail in production.`);
     }
     pinia2 = activePinia;
@@ -10071,7 +10119,7 @@ const useSimplelayoutStore = defineStore({
   }
 });
 var RowControls_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$9 = {
+const _sfc_main$c = {
   props: {
     index: {
       type: Number,
@@ -10102,25 +10150,25 @@ const _sfc_main$9 = {
     }
   }
 };
-const _hoisted_1$5 = { class: "btn-group btn-group-xs" };
-const _hoisted_2$5 = ["id"];
-const _hoisted_3$5 = /* @__PURE__ */ createBaseVNode("span", {
+const _hoisted_1$7 = { class: "btn-group btn-group-xs" };
+const _hoisted_2$6 = ["id"];
+const _hoisted_3$6 = /* @__PURE__ */ createBaseVNode("span", {
   "aria-haspopup": "true",
   class: "caret"
 }, null, -1);
 const _hoisted_4$3 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
 const _hoisted_5$3 = [
-  _hoisted_3$5,
+  _hoisted_3$6,
   _hoisted_4$3
 ];
 const _hoisted_6$1 = ["aria-labelledby"];
 const _hoisted_7$1 = ["onClick"];
-function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", {
     class: "sl-add-row-controls",
     style: normalizeStyle(`z-index:${1e3 - $props.index * 2}`)
   }, [
-    createBaseVNode("div", _hoisted_1$5, [
+    createBaseVNode("div", _hoisted_1$7, [
       createBaseVNode("button", {
         type: "button",
         class: "btn btn-primary",
@@ -10133,7 +10181,7 @@ function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
         "data-bs-toggle": "dropdown",
         "data-bs-auto-close": "true",
         "aria-expanded": "false"
-      }, _hoisted_5$3, 8, _hoisted_2$5),
+      }, _hoisted_5$3, 8, _hoisted_2$6),
       createBaseVNode("ul", {
         class: "dropdown-menu",
         "aria-labelledby": $options.dropdownId
@@ -10153,7 +10201,7 @@ function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ], 4);
 }
-var RowControls = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$9], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/RowControls.vue"]]);
+var RowControls = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/RowControls.vue"]]);
 function ColWidths(asMapping) {
   const widths = [
     { cols: 12, label: "100%" },
@@ -10168,7 +10216,7 @@ function ColWidths(asMapping) {
   return widths;
 }
 var ColControls_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$8 = {
+const _sfc_main$b = {
   setup() {
     const sl = useSimplelayoutStore();
     return { sl };
@@ -10226,19 +10274,19 @@ const _sfc_main$8 = {
     }
   }
 };
-const _hoisted_1$4 = { class: "btn-group btn-group-xs" };
-const _hoisted_2$4 = ["id"];
-const _hoisted_3$4 = ["aria-labelledby"];
+const _hoisted_1$6 = { class: "btn-group btn-group-xs" };
+const _hoisted_2$5 = ["id"];
+const _hoisted_3$5 = ["aria-labelledby"];
 const _hoisted_4$2 = ["onClick"];
 const _hoisted_5$2 = { class: "btn-group btn-group-xs sl-row-controls" };
-function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(Fragment, null, [
     $props.currentWidth ? (openBlock(), createElementBlock("div", {
       key: 0,
       class: "sl-remove-col-controls",
       style: normalizeStyle(`z-index:${1e3 - 1 - $props.rowIndex * 2}`)
     }, [
-      createBaseVNode("div", _hoisted_1$4, [
+      createBaseVNode("div", _hoisted_1$6, [
         !$options.hasBlocks ? (openBlock(), createElementBlock("button", {
           key: 0,
           class: "btn btn-xs btn-danger",
@@ -10252,7 +10300,7 @@ function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
           "data-bs-toggle": "dropdown",
           "data-bs-auto-close": "true",
           "aria-expanded": "false"
-        }, " Width: " + toDisplayString($options.widthsMapping[$props.currentWidth]), 9, _hoisted_2$4),
+        }, " Width: " + toDisplayString($options.widthsMapping[$props.currentWidth]), 9, _hoisted_2$5),
         createBaseVNode("ul", {
           class: "dropdown-menu",
           "aria-labelledby": $options.dropdownId
@@ -10268,7 +10316,7 @@ function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
               }, toDisplayString(width.label), 9, _hoisted_4$2)
             ]);
           }), 128))
-        ], 8, _hoisted_3$4)
+        ], 8, _hoisted_3$5)
       ])
     ], 4)) : createCommentVNode("v-if", true),
     createBaseVNode("div", {
@@ -10284,9 +10332,9 @@ function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
     ], 2)
   ], 64);
 }
-var ColControls = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/ColControls.vue"]]);
+var ColControls = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$b], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/ColControls.vue"]]);
 var BlockControls_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$7 = {
+const _sfc_main$a = {
   props: {
     actions: {
       type: Array,
@@ -10323,12 +10371,12 @@ const _sfc_main$7 = {
     }
   }
 };
-const _hoisted_1$3 = { class: "btn-group btn-group-xs sl-add-block-controls" };
-const _hoisted_2$3 = {
+const _hoisted_1$5 = { class: "btn-group btn-group-xs sl-add-block-controls" };
+const _hoisted_2$4 = {
   key: 0,
   class: "btn btn-secondary btn-sm sl-handle"
 };
-const _hoisted_3$3 = ["id"];
+const _hoisted_3$4 = ["id"];
 const _hoisted_4$1 = /* @__PURE__ */ createBaseVNode("span", {
   "aria-haspopup": "true",
   class: "caret"
@@ -10340,9 +10388,9 @@ const _hoisted_6 = [
 ];
 const _hoisted_7 = ["aria-labelledby"];
 const _hoisted_8 = ["onClick", "data-row", "data-col", "data-block"];
-function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$3, [
-    $props.blockIndex > -1 ? (openBlock(), createElementBlock("button", _hoisted_2$3, [
+function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$5, [
+    $props.blockIndex > -1 ? (openBlock(), createElementBlock("button", _hoisted_2$4, [
       createBaseVNode("img", normalizeProps(guardReactiveProps($options.moveIcon)), null, 16)
     ])) : createCommentVNode("v-if", true),
     createBaseVNode("button", {
@@ -10352,7 +10400,7 @@ function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
       "data-bs-toggle": "dropdown",
       "data-bs-auto-close": "true",
       "aria-expanded": "false"
-    }, _hoisted_6, 8, _hoisted_3$3),
+    }, _hoisted_6, 8, _hoisted_3$4),
     createBaseVNode("ul", {
       class: "dropdown-menu",
       "aria-labelledby": $options.dropdownId
@@ -10375,9 +10423,9 @@ function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
     ], 8, _hoisted_7)
   ]);
 }
-var BlockControls = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/BlockControls.vue"]]);
+var BlockControls = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/BlockControls.vue"]]);
 var BaseModal_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$6 = {
+const _sfc_main$9 = {
   name: "base-modal",
   props: {
     storeAction: {
@@ -10506,22 +10554,22 @@ const _sfc_main$6 = {
     }
   }
 };
-const _hoisted_1$2 = {
+const _hoisted_1$4 = {
   class: "modal fade sl-base-modal",
   tabindex: "-1",
   "aria-labelledby": "modal-title",
   "aria-hidden": "true",
   ref: "sl-base-modal"
 };
-const _hoisted_2$2 = /* @__PURE__ */ createStaticVNode('<div class="modal-dialog modal-dialog-scrollable modal-xl"><div class="modal-content"><div class="modal-header"><h4 class="modal-title" id="modal-title"></h4></div><div class="modal-body"></div><div class="modal-footer"><button id="form-buttons-cancel" name="form.buttons.cancel" class="btn btn-secondary standalone" value="Cancel"> Cancel </button></div></div></div>', 1);
-const _hoisted_3$2 = [
-  _hoisted_2$2
+const _hoisted_2$3 = /* @__PURE__ */ createStaticVNode('<div class="modal-dialog modal-dialog-scrollable modal-xl"><div class="modal-content"><div class="modal-header"><h4 class="modal-title" id="modal-title"></h4></div><div class="modal-body"></div><div class="modal-footer"><button id="form-buttons-cancel" name="form.buttons.cancel" class="btn btn-secondary standalone" value="Cancel"> Cancel </button></div></div></div>', 1);
+const _hoisted_3$3 = [
+  _hoisted_2$3
 ];
-function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$2, _hoisted_3$2, 512);
+function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$4, _hoisted_3$3, 512);
 }
-var BaseModal = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/BaseModal.vue"]]);
-const _sfc_main$5 = {
+var BaseModal = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$9], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/BaseModal.vue"]]);
+const _sfc_main$8 = {
   name: "add-modal",
   components: {
     BaseModal
@@ -10564,15 +10612,15 @@ const _sfc_main$5 = {
     }
   }
 };
-function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     storeAction: $options.storeAction,
     ref: "modal"
   }, null, 8, ["storeAction"]);
 }
-var AddBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/AddBlockModal.vue"]]);
-const _sfc_main$4 = {
+var AddBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/AddBlockModal.vue"]]);
+const _sfc_main$7 = {
   name: "edit-modal",
   components: {
     BaseModal
@@ -10611,15 +10659,15 @@ const _sfc_main$4 = {
     }
   }
 };
-function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     storeAction: $options.storeAction,
     ref: "modal"
   }, null, 8, ["storeAction"]);
 }
-var EditBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/EditBlockModal.vue"]]);
-const _sfc_main$3 = {
+var EditBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/EditBlockModal.vue"]]);
+const _sfc_main$6 = {
   name: "delete-modal",
   components: {
     BaseModal
@@ -10658,15 +10706,15 @@ const _sfc_main$3 = {
     }
   }
 };
-function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     storeAction: $options.storeAction,
     ref: "modal"
   }, null, 8, ["storeAction"]);
 }
-var DeleteBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/DeleteBlockModal.vue"]]);
-const _sfc_main$2 = {
+var DeleteBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/DeleteBlockModal.vue"]]);
+const _sfc_main$5 = {
   name: "info-modal",
   components: {
     BaseModal
@@ -10706,14 +10754,14 @@ const _sfc_main$2 = {
     }
   }
 };
-function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     modalOptions: $data.options,
     ref: "modal"
   }, null, 8, ["modalOptions"]);
 }
-var InfoBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/InfoBlockModal.vue"]]);
+var InfoBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/InfoBlockModal.vue"]]);
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 function getDefaultExportFromCjs(x) {
   return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
@@ -17042,7 +17090,7 @@ var require$$1 = /* @__PURE__ */ getAugmentedNamespace(sortable_esm);
 })(vuedraggable_umd);
 var draggable = /* @__PURE__ */ getDefaultExportFromCjs(vuedraggable_umd.exports);
 var App_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$1 = {
+const _sfc_main$4 = {
   components: {
     BlockRenderer,
     RowControls,
@@ -17133,16 +17181,16 @@ const _sfc_main$1 = {
     }
   }
 };
-const _hoisted_1$1 = { class: "row" };
-const _hoisted_2$1 = {
+const _hoisted_1$3 = { class: "row" };
+const _hoisted_2$2 = {
   key: 0,
   class: "sl-block"
 };
-const _hoisted_3$1 = {
+const _hoisted_3$2 = {
   key: 0,
   class: "sl-block sl-block-placeholder"
 };
-function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_RowControls = resolveComponent("RowControls");
   const _component_ColControls = resolveComponent("ColControls");
   const _component_BlockControls = resolveComponent("BlockControls");
@@ -17162,7 +17210,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
           class: "sl-row"
         }, [
           createVNode(_component_RowControls, { index: rowIndex }, null, 8, ["index"]),
-          createBaseVNode("div", _hoisted_1$1, [
+          createBaseVNode("div", _hoisted_1$3, [
             (openBlock(true), createElementBlock(Fragment, null, renderList(row2.items, (column2, columnIndex) => {
               return openBlock(), createElementBlock("div", {
                 key: `column_${columnIndex}_${rowIndex}`,
@@ -17180,7 +17228,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
                   onStart: $options.startDraggingBlock
                 }), {
                   item: withCtx(({ element, index: index2 }) => [
-                    element in $setup.sl.blocks ? (openBlock(), createElementBlock("div", _hoisted_2$1, [
+                    element in $setup.sl.blocks ? (openBlock(), createElementBlock("div", _hoisted_2$2, [
                       createVNode(_component_BlockControls, {
                         actions: $data.actions,
                         rowIndex,
@@ -17193,7 +17241,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
                     ])) : createCommentVNode("v-if", true)
                   ]),
                   footer: withCtx(() => [
-                    column2.items.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_3$1, [
+                    column2.items.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_3$2, [
                       createVNode(_component_BlockControls, {
                         actions: $data.actions,
                         rowIndex,
@@ -17226,7 +17274,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
     createVNode(_component_InfoBlockModal, { ref: "info-modal" }, null, 512)
   ], 64);
 }
-var App = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/App.vue"]]);
+var App = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/App.vue"]]);
 var axios$2 = { exports: {} };
 var bind$2 = function bind2(fn, thisArg) {
   return function wrap() {
@@ -18512,7 +18560,7 @@ function getVueVersion(e) {
 (typeof exports == "undefined" ? "undefined" : _typeof(exports)) == "object" ? module.exports = plugin : typeof define == "function" && define.amd ? define([], function() {
   return plugin;
 }) : window.Vue && window.axios && window.Vue.use && Vue.use(plugin, window.axios);
-const _sfc_main = {
+const _sfc_main$3 = {
   props: {
     block: {
       type: Object,
@@ -18520,37 +18568,127 @@ const _sfc_main = {
     }
   }
 };
-const _hoisted_1 = { class: "card" };
-const _hoisted_2 = ["src", "alt"];
-const _hoisted_3 = { class: "card-body" };
-const _hoisted_4 = { class: "card-title" };
-const _hoisted_5 = ["innerHTML"];
-function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1, [
-    $props.block.image ? (openBlock(), createElementBlock("img", {
-      key: 0,
-      src: $props.block.image.scales.great.download,
-      class: "card-img-top",
-      alt: $props.block.image_alt_text
-    }, null, 8, _hoisted_2)) : createCommentVNode("v-if", true),
-    createBaseVNode("div", _hoisted_3, [
-      createBaseVNode("h5", _hoisted_4, toDisplayString($props.block.title), 1),
-      $props.block.text ? (openBlock(), createElementBlock("div", {
-        key: 0,
-        class: "card-text",
-        innerHTML: $props.block.text.data
-      }, null, 8, _hoisted_5)) : createCommentVNode("v-if", true)
+const _hoisted_1$2 = { class: "card-title" };
+const _hoisted_2$1 = { class: "position-relative d-inline-block pe-2" };
+const _hoisted_3$1 = {
+  key: 0,
+  class: "h6 text-black text-opacity-50"
+};
+function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("h4", _hoisted_1$2, [
+    createBaseVNode("div", _hoisted_2$1, [
+      createTextVNode(toDisplayString($props.block.title) + " ", 1),
+      !$props.block.show_title ? (openBlock(), createElementBlock("span", _hoisted_3$1, "(hidden title)")) : createCommentVNode("v-if", true)
     ])
   ]);
 }
-var Block = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/blockViews/Block.vue"]]);
+var BlockTitle = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/standard/BlockTitle.vue"]]);
+const _sfc_main$2 = {
+  components: {
+    BlockTitle
+  },
+  props: {
+    block: {
+      type: Object,
+      required: true
+    }
+  }
+};
+const _hoisted_1$1 = { class: "card" };
+const _hoisted_2 = ["src", "alt"];
+const _hoisted_3 = { class: "card-body" };
+const _hoisted_4 = { class: "card-text" };
+const _hoisted_5 = ["innerHTML"];
+function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_BlockTitle = resolveComponent("BlockTitle");
+  return openBlock(), createElementBlock("div", _hoisted_1$1, [
+    renderSlot(_ctx.$slots, "top", {}, () => [
+      $props.block.image ? (openBlock(), createElementBlock("img", {
+        key: 0,
+        src: $props.block.image.scales.great.download,
+        class: "card-img-top",
+        alt: $props.block.image_alt_text
+      }, null, 8, _hoisted_2)) : createCommentVNode("v-if", true)
+    ]),
+    createBaseVNode("div", _hoisted_3, [
+      renderSlot(_ctx.$slots, "title", {}, () => [
+        createVNode(_component_BlockTitle, { block: $props.block }, null, 8, ["block"])
+      ]),
+      createBaseVNode("div", _hoisted_4, [
+        renderSlot(_ctx.$slots, "body", {}, () => [
+          $props.block.text ? (openBlock(), createElementBlock("div", {
+            key: 0,
+            innerHTML: $props.block.text.data
+          }, null, 8, _hoisted_5)) : createCommentVNode("v-if", true)
+        ])
+      ])
+    ])
+  ]);
+}
+var BlockCtructure = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/standard/BlockStructure.vue"]]);
+const _sfc_main$1 = {
+  components: {
+    BlockStructure: BlockCtructure
+  },
+  props: {
+    block: {
+      type: Object,
+      required: true
+    }
+  }
+};
+function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_BlockStructure = resolveComponent("BlockStructure");
+  return openBlock(), createBlock(_component_BlockStructure, { block: $props.block }, null, 8, ["block"]);
+}
+var Block = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/blockViews/Block.vue"]]);
 var __glob_0_0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   "default": Block
 }, Symbol.toStringTag, { value: "Module" }));
+var VideoBlock_vue_vue_type_style_index_0_lang = "";
+const _sfc_main = {
+  components: {
+    BlockCtructure
+  },
+  props: {
+    block: {
+      type: Object,
+      required: true
+    }
+  },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
+  }
+};
+const _hoisted_1 = ["href"];
+function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_BlockCtructure = resolveComponent("BlockCtructure");
+  return openBlock(), createBlock(_component_BlockCtructure, { block: $props.block }, {
+    top: withCtx(() => [
+      createBaseVNode("div", {
+        class: "card-img-top sl-placeholder-video",
+        "aria-hidden": "true",
+        style: normalizeStyle(`background-image: url(${this.sl.portalURL}/iconresolver/camera-video)`)
+      }, null, 4)
+    ]),
+    body: withCtx(() => [
+      createBaseVNode("a", {
+        href: $props.block.video_url
+      }, toDisplayString($props.block.video_url), 9, _hoisted_1)
+    ]),
+    _: 1
+  }, 8, ["block"]);
+}
+var VideoBlock = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/blockViews/VideoBlock.vue"]]);
+var __glob_0_2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  "default": VideoBlock
+}, Symbol.toStringTag, { value: "Module" }));
 var BlockViews = {
   install: (app2) => {
-    const modules = { "../components/blockViews/Block.vue": __glob_0_0, "../components/blockViews/BlockFallbackView.vue": __glob_0_1 };
+    const modules = { "../components/blockViews/Block.vue": __glob_0_0, "../components/blockViews/BlockFallbackView.vue": __glob_0_1, "../components/blockViews/VideoBlock.vue": __glob_0_2 };
     const views = {};
     Object.entries(modules).forEach(([path, m]) => {
       const name = path.split("/").pop().replace(/\.\w+$/, "");
