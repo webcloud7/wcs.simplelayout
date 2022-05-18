@@ -3,4 +3,5 @@
  <property name="title">Controls the available content types in your portal</property>
  <object name="ContentPage" meta_type="Dexterity FTI"/>
  <object name="Block" meta_type="Dexterity FTI"/>
+ <object name="VideoBlock" meta_type="Dexterity FTI"/>
 </object>

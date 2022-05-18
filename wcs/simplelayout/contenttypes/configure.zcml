@@ -35,4 +35,10 @@
         provides="wcs.simplelayout.contenttypes.behaviors.IBlockImage"
         />
 
+    <plone:behavior
+        title="Simplelayout Block Video URL"
+        description="Provides a video url field, which supports youtube and vimeo urls."
+        provides="wcs.simplelayout.contenttypes.behaviors.IVideoUrl"
+        />
+
 </configure>

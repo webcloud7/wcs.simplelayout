@@ -9,6 +9,7 @@ from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
+from plone.testing.zope import WSGI_SERVER_FIXTURE
 import plone.restapi
 import wcs.simplelayout
 
@@ -34,3 +35,9 @@ SIMPLELAYOUT_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(SIMPLELAYOUT_FIXTURE,
            set_builder_session_factory(functional_session_factory)),
     name='Simplelayout:Functional')
+
+SIMPLELAYOUT_FRONTEND_TESTING = FunctionalTesting(
+    bases=(SIMPLELAYOUT_FIXTURE,
+           WSGI_SERVER_FIXTURE,
+           set_builder_session_factory(functional_session_factory)),
+    name='Simplelayout:Frontend')

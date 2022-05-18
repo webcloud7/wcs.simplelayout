@@ -6,8 +6,11 @@ from plone.restapi import _
 from plone.schema import JSONField
 from plone.supermodel import model
 from plone.supermodel.directives import primary
+from wcs.simplelayout.contenttypes import utils
 from zope import schema
 from zope.interface import Interface
+from zope.interface import Invalid
+from zope.interface import invariant
 from zope.interface import provider
 import json
 
@@ -111,11 +114,11 @@ class IBlockMarker(Interface):
 class IBlockTitle(model.Schema):
     """Default block title behavior"""
     title = schema.TextLine(
-        title=_(u'label_title', default=u'Title'),
+        title=_('label_title', default='Title'),
         required=True)
 
     show_title = schema.Bool(
-        title=_(u'label_show_title', default=u'Show title'),
+        title=_('label_show_title', default='Show title'),
         default=True,
         required=False)
 
@@ -126,7 +129,7 @@ class IBlockText(model.Schema):
     searchable('text')
     primary('text')
     text = RichText(
-        title=_(u'label_text', default=u'Text'),
+        title=_('label_text', default='Text'),
         required=False,
         allowed_mime_types=('text/html',))
 
@@ -135,20 +138,43 @@ class IBlockText(model.Schema):
 class IBlockImage(model.Schema):
     model.fieldset(
         'image',
-        label=_(u'Image'),
+        label=_('Image'),
         fields=['image', 'image_alt_text', 'image_caption']
     )
 
     image = NamedBlobImage(
-        title=_(u'label_image', default=u'Image'),
+        title=_('label_image', default='Image'),
         required=False)
 
     image_alt_text = schema.TextLine(
-        title=_(u'label_image_alt_text', default=u'Image alternative text'),
+        title=_('label_image_alt_text', default='Image alternative text'),
         required=False,
-        description=_(u'description_image_alt_text',
-                      default=u'Enter an alternative text for the image'))
+        description=_('description_image_alt_text',
+                      default='Enter an alternative text for the image'))
 
     image_caption = schema.TextLine(
-        title=_(u'label_image_caption', default=u'Image caption'),
+        title=_('label_image_caption', default='Image caption'),
         required=False)
+
+
+@provider(IFormFieldProvider)
+class IVideoUrl(model.Schema):
+    video_url = schema.URI(
+        title=_('label_video_url', default='Youtube, or Vimeo URL'),
+        description=_('Youtube format: http(s)://youtu.be/VIDEO_ID (add start parameter to let '
+                      'the vide start at a specific position)<br/>'
+                      'Youtube (no-cookie) format: https://www.youtube-nocookie.com/embed/VIDEO_ID<br/>'
+                      'Vimeo format: http(s)://vimeo.com/(channels/groups)/'
+                      'VIDEO_ID'),
+        required=True)
+
+    @invariant
+    def validate_video_url(data):
+        if utils.is_youtube_url(data.video_url):
+            return
+        elif utils.is_vimeo_url(data.video_url):
+            return
+        elif utils.is_youtube_nocookie_url(data.video_url):
+            return
+        else:
+            raise Invalid(_('This is no a valid youtube, or vimeo url.'))

@@ -14,3 +14,10 @@ class BlockBuilder(DexterityBuilder):
 
 
 builder_registry.register('block', BlockBuilder)
+
+
+class VideoBlockBuilder(DexterityBuilder):
+    portal_type = 'VideoBlock'
+
+
+builder_registry.register('video block', BlockBuilder)
