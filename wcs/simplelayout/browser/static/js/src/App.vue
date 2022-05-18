@@ -72,6 +72,7 @@
   <EditBlockModal ref="edit-modal" />
   <DeleteBlockModal ref="delete-modal" />
   <InfoBlockModal ref="info-modal" />
+  <UploadModal ref="upload-modal" />
 </template>
 
 <script>
@@ -84,6 +85,7 @@ import AddBlockModal from "@/components/Modals/AddBlockModal.vue";
 import EditBlockModal from "@/components/Modals/EditBlockModal.vue";
 import DeleteBlockModal from "@/components/Modals/DeleteBlockModal.vue";
 import InfoBlockModal from "@/components/Modals/InfoBlockModal.vue";
+import UploadModal from "@/components/Modals/UploadModal.vue";
 import draggable from "vuedraggable";
 
 export default {
@@ -96,6 +98,7 @@ export default {
     EditBlockModal,
     DeleteBlockModal,
     InfoBlockModal,
+    UploadModal,
     draggable,
   },
   setup() {
@@ -122,6 +125,14 @@ export default {
         {
           label: "Delete",
           action: this.openDeleteBlocksModal,
+          enabled: (rowIndex, columnIndex) => {
+            return this.sl.layouts.items[rowIndex].items[columnIndex].items
+              .length;
+          },
+        },
+        {
+          label: "Upload",
+          action: this.openUploadModal,
           enabled: (rowIndex, columnIndex) => {
             return this.sl.layouts.items[rowIndex].items[columnIndex].items
               .length;
@@ -170,6 +181,9 @@ export default {
     },
     openInfoBlockModal(event) {
       this.$refs["info-modal"].openInfoBlockModal(event);
+    },
+    openUploadModal(event) {
+      this.$refs["upload-modal"].openUploadModal(event);
     },
     saveLayout: function () {
       this.sl.modifyLayouts({

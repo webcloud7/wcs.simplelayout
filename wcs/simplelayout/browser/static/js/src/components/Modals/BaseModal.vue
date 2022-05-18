@@ -9,9 +9,11 @@
     <div class="modal-dialog modal-dialog-scrollable modal-xl">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title" id="modal-title"></h4>
+          <h4 class="modal-title" id="modal-title">
+            <slot name="title" />
+          </h4>
         </div>
-        <div class="modal-body"></div>
+        <div class="modal-body"><slot name="body" /></div>
         <div class="modal-footer">
           <button
             id="form-buttons-cancel"
@@ -19,7 +21,7 @@
             class="btn btn-secondary standalone"
             value="Cancel"
           >
-            Cancel
+            Close
           </button>
         </div>
       </div>

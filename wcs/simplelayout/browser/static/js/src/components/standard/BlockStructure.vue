@@ -1,11 +1,12 @@
 <template>
   <div class="card">
-    <div class="card-img-top sl-card-image">
+    <div :class="block.image ? 'card-img-top sl-card-image' : ''">
       <slot name="top">
         <img
           v-if="block.image"
           :src="block.image.scales.great.download"
-          :alt="block.image_alt_text" />
+          :alt="block.image_alt_text"
+        />
       </slot>
     </div>
     <div class="card-body">
