@@ -8645,12 +8645,12 @@ const _sfc_main$e = {
   }
 };
 const _hoisted_1$9 = { key: 0 };
-const _hoisted_2$8 = { key: 1 };
+const _hoisted_2$9 = { key: 1 };
 function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockFallbackView = resolveComponent("BlockFallbackView");
   return $options.getBlockViewComponentByName !== void 0 ? (openBlock(), createElementBlock("div", _hoisted_1$9, [
     (openBlock(), createBlock(resolveDynamicComponent($options.getBlockViewComponentByName), { block: $props.block }, null, 8, ["block"]))
-  ])) : (openBlock(), createElementBlock("div", _hoisted_2$8, [
+  ])) : (openBlock(), createElementBlock("div", _hoisted_2$9, [
     createVNode(_component_BlockFallbackView, { block: $props.block }, null, 8, ["block"])
   ]));
 }
@@ -10151,7 +10151,7 @@ const _sfc_main$d = {
   }
 };
 const _hoisted_1$8 = { class: "btn-group btn-group-xs" };
-const _hoisted_2$7 = ["id"];
+const _hoisted_2$8 = ["id"];
 const _hoisted_3$6 = /* @__PURE__ */ createBaseVNode("span", {
   "aria-haspopup": "true",
   class: "caret"
@@ -10161,7 +10161,7 @@ const _hoisted_5$4 = [
   _hoisted_3$6,
   _hoisted_4$4
 ];
-const _hoisted_6$2 = ["aria-labelledby"];
+const _hoisted_6$3 = ["aria-labelledby"];
 const _hoisted_7$2 = ["onClick"];
 function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", {
@@ -10181,7 +10181,7 @@ function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
         "data-bs-toggle": "dropdown",
         "data-bs-auto-close": "true",
         "aria-expanded": "false"
-      }, _hoisted_5$4, 8, _hoisted_2$7),
+      }, _hoisted_5$4, 8, _hoisted_2$8),
       createBaseVNode("ul", {
         class: "dropdown-menu",
         "aria-labelledby": $options.dropdownId
@@ -10197,7 +10197,7 @@ function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
             }, toDisplayString(row2.label), 9, _hoisted_7$2)
           ]);
         }), 128))
-      ], 8, _hoisted_6$2)
+      ], 8, _hoisted_6$3)
     ])
   ], 4);
 }
@@ -10275,7 +10275,7 @@ const _sfc_main$c = {
   }
 };
 const _hoisted_1$7 = { class: "btn-group btn-group-xs" };
-const _hoisted_2$6 = ["id"];
+const _hoisted_2$7 = ["id"];
 const _hoisted_3$5 = ["aria-labelledby"];
 const _hoisted_4$3 = ["onClick"];
 const _hoisted_5$3 = { class: "btn-group btn-group-xs sl-row-controls" };
@@ -10300,7 +10300,7 @@ function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
           "data-bs-toggle": "dropdown",
           "data-bs-auto-close": "true",
           "aria-expanded": "false"
-        }, " Width: " + toDisplayString($options.widthsMapping[$props.currentWidth]), 9, _hoisted_2$6),
+        }, " Width: " + toDisplayString($options.widthsMapping[$props.currentWidth]), 9, _hoisted_2$7),
         createBaseVNode("ul", {
           class: "dropdown-menu",
           "aria-labelledby": $options.dropdownId
@@ -10372,7 +10372,7 @@ const _sfc_main$b = {
   }
 };
 const _hoisted_1$6 = { class: "btn-group btn-group-xs sl-add-block-controls" };
-const _hoisted_2$5 = {
+const _hoisted_2$6 = {
   key: 0,
   class: "btn btn-secondary btn-sm sl-handle"
 };
@@ -10382,7 +10382,7 @@ const _hoisted_4$2 = /* @__PURE__ */ createBaseVNode("span", {
   class: "caret"
 }, null, -1);
 const _hoisted_5$2 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
-const _hoisted_6$1 = [
+const _hoisted_6$2 = [
   _hoisted_4$2,
   _hoisted_5$2
 ];
@@ -10390,7 +10390,7 @@ const _hoisted_7$1 = ["aria-labelledby"];
 const _hoisted_8 = ["onClick", "data-row", "data-col", "data-block"];
 function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$6, [
-    $props.blockIndex > -1 ? (openBlock(), createElementBlock("button", _hoisted_2$5, [
+    $props.blockIndex > -1 ? (openBlock(), createElementBlock("button", _hoisted_2$6, [
       createBaseVNode("img", normalizeProps(guardReactiveProps($options.moveIcon)), null, 16)
     ])) : createCommentVNode("v-if", true),
     createBaseVNode("button", {
@@ -10400,7 +10400,7 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
       "data-bs-toggle": "dropdown",
       "data-bs-auto-close": "true",
       "aria-expanded": "false"
-    }, _hoisted_6$1, 8, _hoisted_3$4),
+    }, _hoisted_6$2, 8, _hoisted_3$4),
     createBaseVNode("ul", {
       class: "dropdown-menu",
       "aria-labelledby": $options.dropdownId
@@ -10561,14 +10561,14 @@ const _hoisted_1$5 = {
   "aria-hidden": "true",
   ref: "sl-base-modal"
 };
-const _hoisted_2$4 = { class: "modal-dialog modal-dialog-scrollable modal-xl" };
+const _hoisted_2$5 = { class: "modal-dialog modal-dialog-scrollable modal-xl" };
 const _hoisted_3$3 = { class: "modal-content" };
 const _hoisted_4$1 = { class: "modal-header" };
 const _hoisted_5$1 = {
   class: "modal-title",
   id: "modal-title"
 };
-const _hoisted_6 = { class: "modal-body" };
+const _hoisted_6$1 = { class: "modal-body" };
 const _hoisted_7 = /* @__PURE__ */ createBaseVNode("div", { class: "modal-footer" }, [
   /* @__PURE__ */ createBaseVNode("button", {
     id: "form-buttons-cancel",
@@ -10579,14 +10579,14 @@ const _hoisted_7 = /* @__PURE__ */ createBaseVNode("div", { class: "modal-footer
 ], -1);
 function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$5, [
-    createBaseVNode("div", _hoisted_2$4, [
+    createBaseVNode("div", _hoisted_2$5, [
       createBaseVNode("div", _hoisted_3$3, [
         createBaseVNode("div", _hoisted_4$1, [
           createBaseVNode("h4", _hoisted_5$1, [
             renderSlot(_ctx.$slots, "title")
           ])
         ]),
-        createBaseVNode("div", _hoisted_6, [
+        createBaseVNode("div", _hoisted_6$1, [
           renderSlot(_ctx.$slots, "body")
         ]),
         _hoisted_7
@@ -10827,7 +10827,7 @@ const _sfc_main$5 = {
   }
 };
 const _hoisted_1$4 = /* @__PURE__ */ createTextVNode("Upload");
-const _hoisted_2$3 = {
+const _hoisted_2$4 = {
   class: "upload",
   ref: "upload"
 };
@@ -10838,7 +10838,7 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
       _hoisted_1$4
     ]),
     body: withCtx(() => [
-      createBaseVNode("div", _hoisted_2$3, null, 512)
+      createBaseVNode("div", _hoisted_2$4, null, 512)
     ]),
     _: 1
   }, 512);
@@ -17275,7 +17275,7 @@ const _sfc_main$4 = {
   }
 };
 const _hoisted_1$3 = { class: "row" };
-const _hoisted_2$2 = {
+const _hoisted_2$3 = {
   key: 0,
   class: "sl-block"
 };
@@ -17322,7 +17322,7 @@ function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
                   onStart: $options.startDraggingBlock
                 }), {
                   item: withCtx(({ element, index: index2 }) => [
-                    element in $setup.sl.blocks ? (openBlock(), createElementBlock("div", _hoisted_2$2, [
+                    element in $setup.sl.blocks ? (openBlock(), createElementBlock("div", _hoisted_2$3, [
                       createVNode(_component_BlockControls, {
                         actions: $data.actions,
                         rowIndex,
@@ -18664,14 +18664,14 @@ const _sfc_main$3 = {
   }
 };
 const _hoisted_1$2 = { class: "card-title" };
-const _hoisted_2$1 = { class: "position-relative d-inline-block pe-2" };
+const _hoisted_2$2 = { class: "position-relative d-inline-block pe-2" };
 const _hoisted_3$1 = {
   key: 0,
   class: "h6 text-black text-opacity-50"
 };
 function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("h4", _hoisted_1$2, [
-    createBaseVNode("div", _hoisted_2$1, [
+    createBaseVNode("div", _hoisted_2$2, [
       createTextVNode(toDisplayString($props.block.title) + " ", 1),
       !$props.block.show_title ? (openBlock(), createElementBlock("span", _hoisted_3$1, "(hidden title)")) : createCommentVNode("v-if", true)
     ])
@@ -18691,34 +18691,35 @@ const _sfc_main$2 = {
   }
 };
 const _hoisted_1$1 = { class: "card" };
-const _hoisted_2 = ["src", "alt"];
-const _hoisted_3 = { class: "card-body" };
-const _hoisted_4 = { class: "card-text" };
-const _hoisted_5 = ["innerHTML"];
+const _hoisted_2$1 = {
+  key: 0,
+  class: "card-img-top sl-card-image"
+};
+const _hoisted_3 = ["src", "alt"];
+const _hoisted_4 = { class: "card-body" };
+const _hoisted_5 = { class: "card-text" };
+const _hoisted_6 = ["innerHTML"];
 function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockTitle = resolveComponent("BlockTitle");
   return openBlock(), createElementBlock("div", _hoisted_1$1, [
-    createBaseVNode("div", {
-      class: normalizeClass($props.block.image ? "card-img-top sl-card-image" : "")
-    }, [
-      renderSlot(_ctx.$slots, "top", {}, () => [
-        $props.block.image ? (openBlock(), createElementBlock("img", {
-          key: 0,
+    renderSlot(_ctx.$slots, "top", {}, () => [
+      $props.block.image ? (openBlock(), createElementBlock("div", _hoisted_2$1, [
+        createBaseVNode("img", {
           src: $props.block.image.scales.great.download,
           alt: $props.block.image_alt_text
-        }, null, 8, _hoisted_2)) : createCommentVNode("v-if", true)
-      ])
-    ], 2),
-    createBaseVNode("div", _hoisted_3, [
+        }, null, 8, _hoisted_3)
+      ])) : createCommentVNode("v-if", true)
+    ]),
+    createBaseVNode("div", _hoisted_4, [
       renderSlot(_ctx.$slots, "title", {}, () => [
         createVNode(_component_BlockTitle, { block: $props.block }, null, 8, ["block"])
       ]),
-      createBaseVNode("div", _hoisted_4, [
+      createBaseVNode("div", _hoisted_5, [
         renderSlot(_ctx.$slots, "body", {}, () => [
           $props.block.text ? (openBlock(), createElementBlock("div", {
             key: 0,
             innerHTML: $props.block.text.data
-          }, null, 8, _hoisted_5)) : createCommentVNode("v-if", true)
+          }, null, 8, _hoisted_6)) : createCommentVNode("v-if", true)
         ])
       ])
     ])
@@ -18761,21 +18762,26 @@ const _sfc_main = {
     return { sl };
   }
 };
-const _hoisted_1 = ["href"];
+const _hoisted_1 = {
+  class: "card-img-top sl-card-image",
+  "aria-hidden": "true"
+};
+const _hoisted_2 = ["href"];
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockStructure = resolveComponent("BlockStructure");
   return openBlock(), createBlock(_component_BlockStructure, { block: $props.block }, {
     top: withCtx(() => [
-      createBaseVNode("div", {
-        class: "card-img-top sl-placeholder-video",
-        "aria-hidden": "true",
-        style: normalizeStyle(`background-image: url(${this.sl.portalURL}/iconresolver/camera-video)`)
-      }, null, 4)
+      createBaseVNode("div", _hoisted_1, [
+        createBaseVNode("div", {
+          class: "sl-placeholder-video",
+          style: normalizeStyle(`background-image: url(${this.sl.portalURL}/iconresolver/camera-video)`)
+        }, null, 4)
+      ])
     ]),
     body: withCtx(() => [
       createBaseVNode("a", {
         href: $props.block.video_url
-      }, toDisplayString($props.block.video_url), 9, _hoisted_1)
+      }, toDisplayString($props.block.video_url), 9, _hoisted_2)
     ]),
     _: 1
   }, 8, ["block"]);

@@ -1,14 +1,13 @@
 <template>
   <div class="card">
-    <div :class="block.image ? 'card-img-top sl-card-image' : ''">
-      <slot name="top">
+    <slot name="top">
+      <div class="card-img-top sl-card-image" v-if="block.image">
         <img
-          v-if="block.image"
           :src="block.image.scales.great.download"
           :alt="block.image_alt_text"
         />
-      </slot>
-    </div>
+      </div>
+    </slot>
     <div class="card-body">
       <slot name="title">
         <BlockTitle :block="block" />

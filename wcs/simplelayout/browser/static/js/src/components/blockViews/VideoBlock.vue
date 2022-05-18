@@ -1,11 +1,12 @@
 <template>
   <BlockStructure :block="block">
     <template #top>
-      <div
-        class="card-img-top sl-placeholder-video"
-        aria-hidden="true"
-        :style="`background-image: url(${this.sl.portalURL}/iconresolver/camera-video)`"
-      />
+      <div class="card-img-top sl-card-image" aria-hidden="true">
+        <div
+          class="sl-placeholder-video"
+          :style="`background-image: url(${this.sl.portalURL}/iconresolver/camera-video)`"
+        />
+      </div>
     </template>
     <template #body>
       <a :href="block.video_url">{{ block.video_url }}</a>
