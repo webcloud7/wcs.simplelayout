@@ -38,13 +38,15 @@ export default {
         url: `${this.getBlockURL(position)}/@@fileUpload`,
         showTitle: false,
       };
-      const upload = new window.__patternslib_registry.patterns.upload(
+      new window.__patternslib_registry.patterns.upload(
         this.$refs["upload"],
         options
       );
-      upload.$el.addEventListener("uploadAllCompleted", () => {
-        this.reloadBlock();
+
+      this.uploadBlockModal._element.addEventListener("hide.bs.modal", () => {
+        this.reloadBlock(position);
       });
+
       this.$refs["modal"].handleFormButtons();
       this.uploadBlockModal.show();
     },
@@ -55,8 +57,9 @@ export default {
           .items[position.blockIndex];
       return this.sl.blocks[uid]["@id"];
     },
-    async reloadBlock() {
-      const response = await this.axios.get(this.getBlockURL());
+    async reloadBlock(position) {
+      const params = { params: { expand: "types" } };
+      const response = await this.axios.get(this.getBlockURL(position), params);
       this.sl.modifyBlock(response.data);
     },
   },

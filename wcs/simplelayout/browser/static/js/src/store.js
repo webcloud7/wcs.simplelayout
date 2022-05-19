@@ -11,14 +11,14 @@ export const useSimplelayoutStore = defineStore({
     baseURL: document.body.getAttribute("data-base-url"),
     baseApiURL: document.body.getAttribute("data-base-url") + "/++api++",
     portalURL: document.body.getAttribute("data-portal-url"),
+    params: { expand: "types" },
   }),
   getters: {},
   actions: {
     async fetchBlocks() {
       this.loading = true;
       try {
-        const params = { expand: "types" };
-        const response = await this.axios.get(this.baseApiURL, { params });
+        const response = await this.axios.get(this.baseApiURL, { params: this.params });
         this.blocks = response.data.slblocks;
         const layouts = response.data.slblocks_layout;
         if ("items" in layouts && layouts.items.length !== 0) {
@@ -33,7 +33,7 @@ export const useSimplelayoutStore = defineStore({
     async modifyLayouts(data) {
       this.loading = true;
       try {
-        const response = await this.axios.patch(this.baseApiURL, data);
+        const response = await this.axios.patch(this.baseApiURL, data, { params: this.params });
         this.blocks = response.data.slblocks;
         const layouts = response.data.slblocks_layout;
         if ("items" in layouts) {

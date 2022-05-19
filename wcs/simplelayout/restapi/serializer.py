@@ -8,12 +8,14 @@ from plone.restapi.serializer.expansion import expandable_elements
 from plone.schema import IJSONField
 from urllib import parse
 from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
+from wcs.simplelayout.contenttypes.behaviors import IBlockSortOptions
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.utils import LOG
 from zope.component import adapter
 from zope.component import getMultiAdapter
 from zope.interface import implementer
 from zope.interface import Interface
+from zope.schema.interfaces import ITextLine
 import json
 
 
@@ -68,6 +70,28 @@ class SimplelayoutSerializer(SerializeFolderToJson):
         expand_by_querystring(self.context, self.request, result)
         insert_simplelayout_blocks(self.context, result)
         return result
+
+
+@adapter(ITextLine, IBlockSortOptions, Interface)
+@implementer(IFieldSerializer)
+class ContentQueryFieldSerializer(DefaultFieldSerializer):
+
+    def __call__(self, *args):
+        if self.field.__name__ == 'computed_query':
+            sort_on = IBlockSortOptions(self.context).sort_on
+            sort_order = IBlockSortOptions(self.context).sort_order
+            url = f'{self.context.absolute_url()}/@search'
+            query = {
+                'path.query': '/'.join(self.context.getPhysicalPath()),
+                'path.depth': 1,
+                'sort_on': sort_on,
+                'sort_order': sort_order,
+                'fullobjects': True,
+                'b_size': 10,
+            }
+            return f'{url}?{parse.urlencode(query, doseq=False)}'
+
+        return super().__call__()
 
 
 @adapter(IJSONField, ISimplelayout, Interface)

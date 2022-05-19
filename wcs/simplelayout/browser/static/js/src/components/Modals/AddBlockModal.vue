@@ -33,6 +33,7 @@ export default {
       const url = `${this.sl.baseURL}/@@sl-addable-blocks`;
       const response = await this.axioshtml.get(url);
       this.$refs["modal"].replaceModalContent(response);
+      this.$refs["modal"].handleFormButtons();
 
       const body =
         this.addableBlocksModal._element.querySelector(".modal-body");

@@ -7,6 +7,8 @@ from plone.schema import JSONField
 from plone.supermodel import model
 from plone.supermodel.directives import primary
 from wcs.simplelayout.contenttypes import utils
+from wcs.simplelayout.contenttypes.vocabs import sort_index_vocabulary
+from wcs.simplelayout.contenttypes.vocabs import sort_order_vocabulary
 from zope import schema
 from zope.interface import Interface
 from zope.interface import Invalid
@@ -178,3 +180,20 @@ class IVideoUrl(model.Schema):
             return
         else:
             raise Invalid(_('This is no a valid youtube, or vimeo url.'))
+
+
+@provider(IFormFieldProvider)
+class IBlockSortOptions(model.Schema):
+    sort_on = schema.Choice(
+        title=_(u'label_sort_on', default=u'Sort by'),
+        required=True,
+        default="sortable_title",
+        source=sort_index_vocabulary)
+
+    sort_order = schema.Choice(
+        title=_(u'label_sort_order', default=u'Sort order'),
+        required=True,
+        default="ascending",
+        vocabulary=sort_order_vocabulary)
+
+    computed_query = schema.TextLine(readonly=True)

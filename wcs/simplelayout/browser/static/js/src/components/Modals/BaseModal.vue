@@ -89,6 +89,7 @@ export default {
 
       let formData = new FormData(form);
       formData.append(button.getAttribute("name"), button.value);
+      formData.append("expand", "types");
       const response = await this.axioshtml.post(url, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
