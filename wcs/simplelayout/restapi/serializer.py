@@ -4,7 +4,9 @@ from plone.restapi.interfaces import ISerializeToJson
 from plone.restapi.serializer.converters import json_compatible
 from plone.restapi.serializer.dxcontent import SerializeFolderToJson
 from plone.restapi.serializer.dxfields import DefaultFieldSerializer
+from plone.restapi.serializer.expansion import expandable_elements
 from plone.schema import IJSONField
+from urllib import parse
 from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.utils import LOG
@@ -50,12 +52,20 @@ def insert_simplelayout_blocks(context, result):
     result['slblocks'] = {block['UID']: block for block in blocks}
 
 
+def expand_by_querystring(context, request, result):
+    query = parse.parse_qs(request.get('QUERY_STRING', ''))
+    if not request.form.get('expand') and 'expand' in query:
+        request.form['expand'] = query['expand'][0]
+        result.update(expandable_elements(context, request))
+
+
 @implementer(ISerializeToJson)
 @adapter(ISimplelayout, Interface)
 class SimplelayoutSerializer(SerializeFolderToJson):
 
     def __call__(self, version=None, include_items=True):
         result = super().__call__(version, include_items)
+        expand_by_querystring(self.context, self.request, result)
         insert_simplelayout_blocks(self.context, result)
         return result
 
