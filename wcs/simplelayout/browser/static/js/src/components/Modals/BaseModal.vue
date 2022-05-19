@@ -62,7 +62,6 @@ export default {
   },
   mounted() {
     const modal = this.$refs["sl-base-modal"];
-    console.info(this.modalOptions);
     this.modal = new window.bootstrap.Modal(modal, this.modalOptions);
   },
   methods: {

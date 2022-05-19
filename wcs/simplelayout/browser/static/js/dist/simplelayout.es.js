@@ -10039,7 +10039,8 @@ const useSimplelayoutStore = defineStore({
     async fetchBlocks() {
       this.loading = true;
       try {
-        const response = await this.axios.get(this.baseApiURL);
+        const params = { expand: "types" };
+        const response = await this.axios.get(this.baseApiURL, { params });
         this.blocks = response.data.slblocks;
         const layouts = response.data.slblocks_layout;
         if ("items" in layouts && layouts.items.length !== 0) {
@@ -10409,7 +10410,7 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
         return openBlock(), createElementBlock("li", {
           key: action.label
         }, [
-          action.enabled($props.rowIndex, $props.columnIndex) ? (openBlock(), createElementBlock("a", {
+          action.enabled($props.rowIndex, $props.columnIndex, $props.blockIndex) ? (openBlock(), createElementBlock("a", {
             key: 0,
             class: "dropdown-item",
             onClick: withModifiers(action.action, ["prevent", "stop"]),
@@ -10457,7 +10458,6 @@ const _sfc_main$a = {
   },
   mounted() {
     const modal = this.$refs["sl-base-modal"];
-    console.info(this.modalOptions);
     this.modal = new window.bootstrap.Modal(modal, this.modalOptions);
   },
   methods: {
@@ -10814,15 +10814,23 @@ const _sfc_main$5 = {
         blockIndex: parseInt(button.getAttribute("data-block"))
       };
       const options = {
-        url: `${this.getBlockURL(position)}/@@fileUpload`
+        url: `${this.getBlockURL(position)}/@@fileUpload`,
+        showTitle: false
       };
-      new window.__patternslib_registry.patterns.upload(this.$refs["upload"], options);
+      const upload = new window.__patternslib_registry.patterns.upload(this.$refs["upload"], options);
+      upload.$el.addEventListener("uploadAllCompleted", () => {
+        this.reloadBlock();
+      });
       this.$refs["modal"].handleFormButtons();
       this.uploadBlockModal.show();
     },
     getBlockURL(position) {
       const uid2 = this.sl.layouts.items[position.rowIndex].items[position.columnIndex].items[position.blockIndex];
       return this.sl.blocks[uid2]["@id"];
+    },
+    async reloadBlock() {
+      const response = await this.axios.get(this.getBlockURL());
+      this.sl.modifyBlock(response.data);
     }
   }
 };
@@ -17215,8 +17223,13 @@ const _sfc_main$4 = {
         {
           label: "Upload",
           action: this.openUploadModal,
-          enabled: (rowIndex, columnIndex) => {
-            return this.sl.layouts.items[rowIndex].items[columnIndex].items.length;
+          enabled: (rowIndex, columnIndex, blockIndex) => {
+            const uid2 = this.sl.layouts.items[rowIndex].items[columnIndex].items[blockIndex];
+            if (!uid2) {
+              return false;
+            }
+            const addable = this.sl.blocks[uid2]["@components"]["types"].filter((item) => item.addable);
+            return addable.length;
           }
         },
         {

@@ -17,7 +17,7 @@
     <ul class="dropdown-menu" :aria-labelledby="dropdownId">
       <li v-for="action in actions" :key="action.label">
         <a
-          v-if="action.enabled(rowIndex, columnIndex)"
+          v-if="action.enabled(rowIndex, columnIndex, blockIndex)"
           class="dropdown-item"
           @click.prevent.stop="action.action"
           :data-row="rowIndex"

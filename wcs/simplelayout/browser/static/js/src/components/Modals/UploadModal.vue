@@ -36,11 +36,15 @@ export default {
       };
       const options = {
         url: `${this.getBlockURL(position)}/@@fileUpload`,
+        showTitle: false,
       };
-      new window.__patternslib_registry.patterns.upload(
+      const upload = new window.__patternslib_registry.patterns.upload(
         this.$refs["upload"],
         options
       );
+      upload.$el.addEventListener("uploadAllCompleted", () => {
+        this.reloadBlock();
+      });
       this.$refs["modal"].handleFormButtons();
       this.uploadBlockModal.show();
     },
@@ -50,6 +54,10 @@ export default {
         this.sl.layouts.items[position.rowIndex].items[position.columnIndex]
           .items[position.blockIndex];
       return this.sl.blocks[uid]["@id"];
+    },
+    async reloadBlock() {
+      const response = await this.axios.get(this.getBlockURL());
+      this.sl.modifyBlock(response.data);
     },
   },
 };

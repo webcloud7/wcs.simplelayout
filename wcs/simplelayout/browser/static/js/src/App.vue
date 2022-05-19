@@ -133,9 +133,20 @@ export default {
         {
           label: "Upload",
           action: this.openUploadModal,
-          enabled: (rowIndex, columnIndex) => {
-            return this.sl.layouts.items[rowIndex].items[columnIndex].items
-              .length;
+          enabled: (rowIndex, columnIndex, blockIndex) => {
+            const uid =
+              this.sl.layouts.items[rowIndex].items[columnIndex].items[
+                blockIndex
+              ];
+
+            if (!uid) {
+              return false;
+            }
+
+            const addable = this.sl.blocks[uid]["@components"]["types"].filter(
+              (item) => item.addable
+            );
+            return addable.length;
           },
         },
         {
@@ -241,7 +252,7 @@ export default {
 .sl-block-dragging {
   width: 100px !important;
   height: 100px !important;
-  background-color:grey;
+  background-color: grey;
   display: block;
   border: 1px solid black;
   > * {

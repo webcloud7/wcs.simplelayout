@@ -17,7 +17,8 @@ export const useSimplelayoutStore = defineStore({
     async fetchBlocks() {
       this.loading = true;
       try {
-        const response = await this.axios.get(this.baseApiURL);
+        const params = { expand: "types" };
+        const response = await this.axios.get(this.baseApiURL, { params });
         this.blocks = response.data.slblocks;
         const layouts = response.data.slblocks_layout;
         if ("items" in layouts && layouts.items.length !== 0) {
