@@ -157,6 +157,25 @@ export default {
               .length;
           },
         },
+        {
+          label: "Contens (Listing)",
+          action: this.gotoFolderContents,
+          enabled: (rowIndex, columnIndex, blockIndex) => {
+            const uid =
+              this.sl.layouts.items[rowIndex].items[columnIndex].items[
+                blockIndex
+              ];
+
+            if (!uid) {
+              return false;
+            }
+
+            const addable = this.sl.blocks[uid]["@components"]["types"].filter(
+              (item) => item.addable
+            );
+            return addable.length;
+          },
+        },
       ],
     };
   },
@@ -195,6 +214,15 @@ export default {
     },
     openUploadModal(event) {
       this.$refs["upload-modal"].openUploadModal(event);
+    },
+    gotoFolderContents(event) {
+      const button = event.currentTarget;
+      const rowIndex = parseInt(button.getAttribute("data-row"));
+      const columnIndex = parseInt(button.getAttribute("data-col"));
+      const blockIndex = parseInt(button.getAttribute("data-block"));
+      const uid =
+        this.sl.layouts.items[rowIndex].items[columnIndex].items[blockIndex];
+      window.open(this.sl.blocks[uid]["@id"] + "/folder_contents", "_self");
     },
     saveLayout: function () {
       this.sl.modifyLayouts({

@@ -2,36 +2,39 @@
   <BlockStructure :block="block">
     <template #body>
       total {{ data.items_total }}
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Title</th>
-            <th>Size</th>
-            <th>Modified</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="file in data.items" :key="file.UID">
-            <template v-if="file['@type'] === 'Image'">
-              <td>{{ file.image["content-type"] }}</td>
-              <td>
-                <a :href="file.image.download">{{ file.title }}</a>
-              </td>
-              <td>{{ file.image.size }}</td>
-            </template>
-            <template v-if="file['@type'] === 'File'">
-              <td>{{ file.file["content-type"] }}</td>
-              <td>
-                <a :href="file.file.download">{{ file.title }}</a>
-              </td>
-              <td>{{ file.file.size }}</td>
-            </template>
-            <td>{{ file.modified }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Title</th>
+              <th>Size</th>
+              <th>Modified</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="file in data.items" :key="file.UID">
+              <template v-if="file['@type'] === 'Image'">
+                <td>{{ file.image["content-type"] }}</td>
+                <td>
+                  <a :href="file.image.download">{{ file.title }}</a>
+                </td>
+                <td>{{ file.image.size }}</td>
+              </template>
+              <template v-if="file['@type'] === 'File'">
+                <td>{{ file.file["content-type"] }}</td>
+                <td>
+                  <a :href="file.file.download">{{ file.title }}</a>
+                </td>
+                <td>{{ file.file.size }}</td>
+              </template>
+              <td>{{ file.modified }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <Pagination
+        v-if="data.batching"
         @next="fetchNext"
         @previous="fetchPrevious"
         :batching="data.batching"
@@ -55,7 +58,7 @@ export default {
   },
   data() {
     return {
-      data: { items: [] },
+      data: { items: [], batching: null },
     };
   },
   created() {
