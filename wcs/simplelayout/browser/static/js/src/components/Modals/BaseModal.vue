@@ -33,6 +33,11 @@ import { useSimplelayoutStore } from "@/store.js";
 export default {
   name: "base-modal",
   props: {
+    cleanUpBody: {
+      type: Boolean,
+      required: false,
+      default: () => true,
+    },
     storeAction: {
       type: Function,
       required: false,
@@ -157,6 +162,9 @@ export default {
       this.modal.hide();
     },
     cleanBody() {
+      if (!this.cleanUpBody) {
+        return;
+      }
       const body = this.modal._element.querySelector(".modal-body");
       while (body.firstChild) {
         body.removeChild(body.firstChild);

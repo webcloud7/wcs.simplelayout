@@ -1,4 +1,4 @@
-<template>
+ <template>
   <div class="btn-group btn-group-xs sl-add-block-controls">
     <button v-if="blockIndex > -1" class="btn btn-secondary btn-sm sl-handle">
       <img v-bind="moveIcon" />

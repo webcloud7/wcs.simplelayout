@@ -10504,6 +10504,11 @@ var BaseModal_vue_vue_type_style_index_0_lang = "";
 const _sfc_main$a = {
   name: "base-modal",
   props: {
+    cleanUpBody: {
+      type: Boolean,
+      required: false,
+      default: () => true
+    },
     storeAction: {
       type: Function,
       required: false,
@@ -10618,6 +10623,9 @@ const _sfc_main$a = {
       this.modal.hide();
     },
     cleanBody() {
+      if (!this.cleanUpBody) {
+        return;
+      }
       const body = this.modal._element.querySelector(".modal-body");
       while (body.firstChild) {
         body.removeChild(body.firstChild);
@@ -10894,9 +10902,12 @@ const _sfc_main$5 = {
         url: `${this.getBlockURL(position)}/@@fileUpload`,
         showTitle: false
       };
-      new window.__patternslib_registry.patterns.upload(this.$refs["upload"], options);
+      const upload = new window.__patternslib_registry.patterns.upload(this.$refs["upload"], options);
       this.uploadBlockModal._element.addEventListener("hide.bs.modal", () => {
         this.reloadBlock(position);
+        upload.dropzone.destroy();
+        upload.$el[0].removeChild(upload.$el[0].firstChild);
+        console.info(upload);
       });
       this.$refs["modal"].handleFormButtons();
       this.uploadBlockModal.show();
@@ -10919,7 +10930,10 @@ const _hoisted_2$4 = {
 };
 function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
-  return openBlock(), createBlock(_component_BaseModal, { ref: "modal" }, {
+  return openBlock(), createBlock(_component_BaseModal, {
+    cleanUpBody: false,
+    ref: "modal"
+  }, {
     title: withCtx(() => [
       _hoisted_1$4
     ]),

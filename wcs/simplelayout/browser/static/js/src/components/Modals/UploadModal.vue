@@ -1,5 +1,5 @@
 <template>
-  <BaseModal ref="modal">
+  <BaseModal :cleanUpBody="false" ref="modal">
     <template #title>Upload</template>
     <template #body>
       <div class="upload" ref="upload" />
@@ -38,13 +38,16 @@ export default {
         url: `${this.getBlockURL(position)}/@@fileUpload`,
         showTitle: false,
       };
-      new window.__patternslib_registry.patterns.upload(
+      const upload = new window.__patternslib_registry.patterns.upload(
         this.$refs["upload"],
         options
       );
 
       this.uploadBlockModal._element.addEventListener("hide.bs.modal", () => {
         this.reloadBlock(position);
+        upload.dropzone.destroy();
+        upload.$el[0].removeChild(upload.$el[0].firstChild);
+        console.info(upload);
       });
 
       this.$refs["modal"].handleFormButtons();

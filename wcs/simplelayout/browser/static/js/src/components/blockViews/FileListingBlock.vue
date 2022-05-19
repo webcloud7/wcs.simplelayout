@@ -32,7 +32,7 @@
             </tr>
           </tbody>
         </table>
-      </div>
+      </div> 
       <Pagination
         v-if="data.batching"
         @next="fetchNext"
