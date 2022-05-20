@@ -1,9 +1,9 @@
 <template>
   <div v-if="getBlockViewComponentByName !== undefined">
-    <component :is="getBlockViewComponentByName" :block="block" />
+    <component :is="getBlockViewComponentByName" v-bind="$props" />
   </div>
   <div v-else>
-    <BlockFallbackView :block="block" />
+    <BlockFallbackView v-bind="$props" />
   </div>
 </template>
 <script>
@@ -14,6 +14,22 @@ export default {
     BlockFallbackView,
   },
   props: {
+    actions: {
+      type: Array,
+      required: true,
+    },
+    rowIndex: {
+      type: Number,
+      required: true,
+    },
+    columnIndex: {
+      type: Number,
+      required: true,
+    },
+    blockIndex: {
+      type: Number,
+      required: true,
+    },
     block: {
       type: Object,
       required: true,

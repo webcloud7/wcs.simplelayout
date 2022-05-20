@@ -28,13 +28,13 @@
             >
               <template #item="{ element, index }">
                 <div class="sl-block" v-if="element in sl.blocks">
-                  <BlockControls
+                  <BlockRenderer
                     :actions="actions"
+                    :block="sl.blocks[element]"
                     :rowIndex="rowIndex"
                     :columnIndex="columnIndex"
                     :blockIndex="index"
                   />
-                  <BlockRenderer :block="sl.blocks[element]" />
                 </div>
               </template>
 
@@ -43,8 +43,9 @@
                   class="sl-block sl-block-placeholder"
                   v-if="column.items.length === 0"
                 >
-                  <BlockControls
+                  <BlockRenderer
                     :actions="actions"
+                    :block="{}"
                     :rowIndex="rowIndex"
                     :columnIndex="columnIndex"
                     :blockIndex="-1"
@@ -79,7 +80,6 @@
 import BlockRenderer from "@/components/BlockRenderer.vue";
 import RowControls from "@/components/Controls/RowControls.vue";
 import ColControls from "@/components/Controls/ColControls.vue";
-import BlockControls from "@/components/Controls/BlockControls.vue";
 import { useSimplelayoutStore } from "@/store.js";
 import AddBlockModal from "@/components/Modals/AddBlockModal.vue";
 import EditBlockModal from "@/components/Modals/EditBlockModal.vue";
@@ -94,7 +94,6 @@ export default {
     RowControls,
     ColControls,
     AddBlockModal,
-    BlockControls,
     EditBlockModal,
     DeleteBlockModal,
     InfoBlockModal,

@@ -1,5 +1,6 @@
 <template>
   <div class="card">
+    <BlockControls v-bind="$props" />
     <slot name="top">
       <div class="card-img-top sl-card-image" v-if="block.image">
         <img
@@ -8,11 +9,7 @@
         />
       </div>
     </slot>
-    <div class="card-body">
-      <slot name="title">
-        <BlockTitle :block="block" />
-      </slot>
-
+    <div class="card-body" v-if="Object.keys(block).length !== 0">
       <div class="card-text">
         <slot name="body">
           <div v-if="block.text" v-html="block.text.data" />
@@ -22,12 +19,28 @@
   </div>
 </template>
 <script>
-import BlockTitle from "@/components/standard/BlockTitle.vue";
+import BlockControls from "@/components/Controls/BlockControls.vue";
 export default {
   components: {
-    BlockTitle,
+    BlockControls,
   },
   props: {
+    actions: {
+      type: Array,
+      required: true,
+    },
+    rowIndex: {
+      type: Number,
+      required: true,
+    },
+    columnIndex: {
+      type: Number,
+      required: true,
+    },
+    blockIndex: {
+      type: Number,
+      required: true,
+    },
     block: {
       type: Object,
       required: true,

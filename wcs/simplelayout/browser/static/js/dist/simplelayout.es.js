@@ -8600,150 +8600,6 @@ var vue_runtime_esmBundler = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Objec
   withKeys,
   withModifiers
 }, Symbol.toStringTag, { value: "Module" }));
-var _export_sfc = (sfc, props) => {
-  const target = sfc.__vccOpts || sfc;
-  for (const [key, val] of props) {
-    target[key] = val;
-  }
-  return target;
-};
-const _sfc_main$i = {
-  props: {
-    block: {
-      type: Object,
-      required: true
-    }
-  }
-};
-const _hoisted_1$c = { class: "card-title" };
-const _hoisted_2$c = { class: "position-relative d-inline-block pe-2" };
-const _hoisted_3$8 = {
-  key: 0,
-  class: "h6 text-black text-opacity-50"
-};
-function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("h4", _hoisted_1$c, [
-    createBaseVNode("div", _hoisted_2$c, [
-      createTextVNode(toDisplayString($props.block.title) + " ", 1),
-      !$props.block.show_title ? (openBlock(), createElementBlock("span", _hoisted_3$8, "(hidden title)")) : createCommentVNode("v-if", true)
-    ])
-  ]);
-}
-var BlockTitle = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/standard/BlockTitle.vue"]]);
-var BlockStructure_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$h = {
-  components: {
-    BlockTitle
-  },
-  props: {
-    block: {
-      type: Object,
-      required: true
-    }
-  }
-};
-const _hoisted_1$b = { class: "card" };
-const _hoisted_2$b = {
-  key: 0,
-  class: "card-img-top sl-card-image"
-};
-const _hoisted_3$7 = ["src", "alt"];
-const _hoisted_4$6 = { class: "card-body" };
-const _hoisted_5$6 = { class: "card-text" };
-const _hoisted_6$3 = ["innerHTML"];
-function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
-  const _component_BlockTitle = resolveComponent("BlockTitle");
-  return openBlock(), createElementBlock("div", _hoisted_1$b, [
-    renderSlot(_ctx.$slots, "top", {}, () => [
-      $props.block.image ? (openBlock(), createElementBlock("div", _hoisted_2$b, [
-        createBaseVNode("img", {
-          src: $props.block.image.scales.great.download,
-          alt: $props.block.image_alt_text
-        }, null, 8, _hoisted_3$7)
-      ])) : createCommentVNode("v-if", true)
-    ]),
-    createBaseVNode("div", _hoisted_4$6, [
-      renderSlot(_ctx.$slots, "title", {}, () => [
-        createVNode(_component_BlockTitle, { block: $props.block }, null, 8, ["block"])
-      ]),
-      createBaseVNode("div", _hoisted_5$6, [
-        renderSlot(_ctx.$slots, "body", {}, () => [
-          $props.block.text ? (openBlock(), createElementBlock("div", {
-            key: 0,
-            innerHTML: $props.block.text.data
-          }, null, 8, _hoisted_6$3)) : createCommentVNode("v-if", true)
-        ])
-      ])
-    ])
-  ]);
-}
-var BlockStructure = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/standard/BlockStructure.vue"]]);
-const _sfc_main$g = {
-  components: {
-    BlockStructure
-  },
-  props: {
-    block: {
-      type: Object,
-      required: true
-    }
-  }
-};
-function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
-  const _component_BlockStructure = resolveComponent("BlockStructure");
-  return openBlock(), createBlock(_component_BlockStructure, { block: $props.block }, null, 8, ["block"]);
-}
-var BlockFallbackView = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$g], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/blockViews/BlockFallbackView.vue"]]);
-var __glob_0_1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-  __proto__: null,
-  "default": BlockFallbackView
-}, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$f = {
-  components: {
-    BlockFallbackView
-  },
-  props: {
-    block: {
-      type: Object,
-      required: true
-    }
-  },
-  methods: {
-    hasBlockViewComponent() {
-      return this.block["@type"] in this.$blockviews;
-    }
-  },
-  computed: {
-    getBlockViewComponentByName() {
-      return this.$blockviews[this.block["@type"]];
-    }
-  }
-};
-const _hoisted_1$a = { key: 0 };
-const _hoisted_2$a = { key: 1 };
-function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
-  const _component_BlockFallbackView = resolveComponent("BlockFallbackView");
-  return $options.getBlockViewComponentByName !== void 0 ? (openBlock(), createElementBlock("div", _hoisted_1$a, [
-    (openBlock(), createBlock(resolveDynamicComponent($options.getBlockViewComponentByName), { block: $props.block }, null, 8, ["block"]))
-  ])) : (openBlock(), createElementBlock("div", _hoisted_2$a, [
-    createVNode(_component_BlockFallbackView, { block: $props.block }, null, 8, ["block"])
-  ]));
-}
-var BlockRenderer = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$f], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/BlockRenderer.vue"]]);
-function column(col) {
-  return {
-    "@type": "col",
-    width: `${12 / parseInt(col)}`,
-    items: []
-  };
-}
-function row(cols) {
-  const colsArray = Array.from(new Array(cols), (x, i) => i);
-  return {
-    "@type": "row",
-    items: colsArray.map(() => column(cols))
-  };
-}
 var isVue2 = false;
 function set(target, key, val) {
   if (Array.isArray(target)) {
@@ -10099,6 +9955,20 @@ This will fail in production.`);
   useStore.$id = id;
   return useStore;
 }
+function column(col) {
+  return {
+    "@type": "col",
+    width: `${12 / parseInt(col)}`,
+    items: []
+  };
+}
+function row(cols) {
+  const colsArray = Array.from(new Array(cols), (x, i) => i);
+  return {
+    "@type": "row",
+    items: colsArray.map(() => column(cols))
+  };
+}
 const useSimplelayoutStore = defineStore({
   id: "simplelayoutStore",
   state: () => ({
@@ -10194,8 +10064,326 @@ const useSimplelayoutStore = defineStore({
     }
   }
 });
-var RowControls_vue_vue_type_style_index_0_lang = "";
+var _export_sfc = (sfc, props) => {
+  const target = sfc.__vccOpts || sfc;
+  for (const [key, val] of props) {
+    target[key] = val;
+  }
+  return target;
+};
+const _sfc_main$i = {
+  props: {
+    block: {
+      type: Object,
+      required: true
+    }
+  }
+};
+const _hoisted_1$c = { class: "card-title" };
+const _hoisted_2$c = { class: "position-relative d-inline-block pe-2" };
+const _hoisted_3$8 = {
+  key: 0,
+  class: "h6 text-black text-opacity-50"
+};
+function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("h4", _hoisted_1$c, [
+    createBaseVNode("div", _hoisted_2$c, [
+      createTextVNode(toDisplayString($props.block.title) + " ", 1),
+      !$props.block.show_title ? (openBlock(), createElementBlock("span", _hoisted_3$8, "(hidden title)")) : createCommentVNode("v-if", true)
+    ])
+  ]);
+}
+var BlockTitle = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/standard/BlockTitle.vue"]]);
+var BlockControls_vue_vue_type_style_index_0_lang = "";
+const _sfc_main$h = {
+  components: {
+    BlockTitle
+  },
+  props: {
+    actions: {
+      type: Array,
+      required: true
+    },
+    rowIndex: {
+      type: Number,
+      required: true
+    },
+    columnIndex: {
+      type: Number,
+      required: true
+    },
+    blockIndex: {
+      type: Number,
+      required: true
+    },
+    block: {
+      type: Object,
+      required: true
+    }
+  },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
+  },
+  computed: {
+    moveIcon() {
+      return {
+        src: `${this.sl.portalURL}/iconresolver/arrows-move`,
+        alt: "Move block",
+        width: "20",
+        style: "filter: invert(1)"
+      };
+    },
+    dropdownId() {
+      return `blockDropdownMenu_${this.columnIndex}_${this.rowIndex}`;
+    },
+    dropdownIdMobile() {
+      return `${this.dropdownId}_mobile_menu`;
+    }
+  }
+};
+const _hoisted_1$b = { class: "navbar navbar-expand-lg bg-light sl-add-block-controls" };
+const _hoisted_2$b = { class: "container" };
+const _hoisted_3$7 = ["data-bs-target", "aria-controls"];
+const _hoisted_4$6 = /* @__PURE__ */ createBaseVNode("span", { class: "navbar-toggler-icon" }, null, -1);
+const _hoisted_5$6 = [
+  _hoisted_4$6
+];
+const _hoisted_6$3 = ["id"];
+const _hoisted_7$2 = { class: "navbar-nav" };
+const _hoisted_8 = { class: "nav-item" };
+const _hoisted_9 = { class: "btn-group btn-group-xs" };
+const _hoisted_10 = {
+  key: 0,
+  class: "btn btn-secondary btn-sm sl-handle sl-move-button"
+};
+const _hoisted_11 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Move", -1);
+const _hoisted_12 = ["id"];
+const _hoisted_13 = /* @__PURE__ */ createBaseVNode("span", null, "Actions", -1);
+const _hoisted_14 = [
+  _hoisted_13
+];
+const _hoisted_15 = ["aria-labelledby"];
+const _hoisted_16 = ["onClick", "data-row", "data-col", "data-block"];
+function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_BlockTitle = resolveComponent("BlockTitle");
+  return openBlock(), createElementBlock("nav", _hoisted_1$b, [
+    createBaseVNode("div", _hoisted_2$b, [
+      createBaseVNode("span", null, [
+        renderSlot(_ctx.$slots, "title", {}, () => [
+          $props.block.title ? (openBlock(), createBlock(_component_BlockTitle, {
+            key: 0,
+            block: $props.block
+          }, null, 8, ["block"])) : createCommentVNode("v-if", true)
+        ])
+      ]),
+      createBaseVNode("button", {
+        class: "navbar-toggler",
+        type: "button",
+        "data-bs-toggle": "collapse",
+        "data-bs-target": `#${$options.dropdownIdMobile}`,
+        "aria-controls": $options.dropdownIdMobile,
+        "aria-expanded": "false",
+        "aria-label": "Toggle edit menu"
+      }, _hoisted_5$6, 8, _hoisted_3$7),
+      createBaseVNode("div", {
+        class: "collapse navbar-collapse justify-content-end flex-shrink-0",
+        id: $options.dropdownIdMobile
+      }, [
+        createBaseVNode("ul", _hoisted_7$2, [
+          createBaseVNode("li", _hoisted_8, [
+            createBaseVNode("div", _hoisted_9, [
+              $props.blockIndex > -1 ? (openBlock(), createElementBlock("button", _hoisted_10, [
+                createBaseVNode("img", normalizeProps(guardReactiveProps($options.moveIcon)), null, 16),
+                _hoisted_11
+              ])) : createCommentVNode("v-if", true),
+              createBaseVNode("button", {
+                class: "btn btn-success btn-sm dropdown-toggle",
+                type: "button",
+                id: $options.dropdownId,
+                "data-bs-toggle": "dropdown",
+                "data-bs-auto-close": "true",
+                "aria-expanded": "false"
+              }, _hoisted_14, 8, _hoisted_12),
+              createBaseVNode("ul", {
+                class: "dropdown-menu",
+                "aria-labelledby": $options.dropdownId
+              }, [
+                (openBlock(true), createElementBlock(Fragment, null, renderList($props.actions, (action) => {
+                  return openBlock(), createElementBlock("li", {
+                    key: action.label
+                  }, [
+                    action.enabled($props.rowIndex, $props.columnIndex, $props.blockIndex) ? (openBlock(), createElementBlock("a", {
+                      key: 0,
+                      class: "dropdown-item",
+                      onClick: withModifiers(action.action, ["prevent", "stop"]),
+                      "data-row": $props.rowIndex,
+                      "data-col": $props.columnIndex,
+                      "data-block": $props.blockIndex,
+                      href: "#"
+                    }, toDisplayString(action.label), 9, _hoisted_16)) : createCommentVNode("v-if", true)
+                  ]);
+                }), 128))
+              ], 8, _hoisted_15)
+            ])
+          ])
+        ])
+      ], 8, _hoisted_6$3)
+    ])
+  ]);
+}
+var BlockControls = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/BlockControls.vue"]]);
+var BlockStructure_vue_vue_type_style_index_0_lang = "";
+const _sfc_main$g = {
+  components: {
+    BlockControls
+  },
+  props: {
+    actions: {
+      type: Array,
+      required: true
+    },
+    rowIndex: {
+      type: Number,
+      required: true
+    },
+    columnIndex: {
+      type: Number,
+      required: true
+    },
+    blockIndex: {
+      type: Number,
+      required: true
+    },
+    block: {
+      type: Object,
+      required: true
+    }
+  }
+};
+const _hoisted_1$a = { class: "card" };
+const _hoisted_2$a = {
+  key: 0,
+  class: "card-img-top sl-card-image"
+};
+const _hoisted_3$6 = ["src", "alt"];
+const _hoisted_4$5 = {
+  key: 0,
+  class: "card-body"
+};
+const _hoisted_5$5 = { class: "card-text" };
+const _hoisted_6$2 = ["innerHTML"];
+function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_BlockControls = resolveComponent("BlockControls");
+  return openBlock(), createElementBlock("div", _hoisted_1$a, [
+    createVNode(_component_BlockControls, normalizeProps(guardReactiveProps(_ctx.$props)), null, 16),
+    renderSlot(_ctx.$slots, "top", {}, () => [
+      $props.block.image ? (openBlock(), createElementBlock("div", _hoisted_2$a, [
+        createBaseVNode("img", {
+          src: $props.block.image.scales.great.download,
+          alt: $props.block.image_alt_text
+        }, null, 8, _hoisted_3$6)
+      ])) : createCommentVNode("v-if", true)
+    ]),
+    Object.keys($props.block).length !== 0 ? (openBlock(), createElementBlock("div", _hoisted_4$5, [
+      createBaseVNode("div", _hoisted_5$5, [
+        renderSlot(_ctx.$slots, "body", {}, () => [
+          $props.block.text ? (openBlock(), createElementBlock("div", {
+            key: 0,
+            innerHTML: $props.block.text.data
+          }, null, 8, _hoisted_6$2)) : createCommentVNode("v-if", true)
+        ])
+      ])
+    ])) : createCommentVNode("v-if", true)
+  ]);
+}
+var BlockStructure = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$g], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/standard/BlockStructure.vue"]]);
+const _sfc_main$f = {
+  components: {
+    BlockStructure
+  },
+  props: {
+    actions: {
+      type: Array,
+      required: true
+    },
+    rowIndex: {
+      type: Number,
+      required: true
+    },
+    columnIndex: {
+      type: Number,
+      required: true
+    },
+    blockIndex: {
+      type: Number,
+      required: true
+    },
+    block: {
+      type: Object,
+      required: true
+    }
+  }
+};
+function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_BlockStructure = resolveComponent("BlockStructure");
+  return openBlock(), createBlock(_component_BlockStructure, normalizeProps(guardReactiveProps(_ctx.$props)), null, 16);
+}
+var BlockFallbackView = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$f], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/blockViews/BlockFallbackView.vue"]]);
+var __glob_0_1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  "default": BlockFallbackView
+}, Symbol.toStringTag, { value: "Module" }));
 const _sfc_main$e = {
+  components: {
+    BlockFallbackView
+  },
+  props: {
+    actions: {
+      type: Array,
+      required: true
+    },
+    rowIndex: {
+      type: Number,
+      required: true
+    },
+    columnIndex: {
+      type: Number,
+      required: true
+    },
+    blockIndex: {
+      type: Number,
+      required: true
+    },
+    block: {
+      type: Object,
+      required: true
+    }
+  },
+  methods: {
+    hasBlockViewComponent() {
+      return this.block["@type"] in this.$blockviews;
+    }
+  },
+  computed: {
+    getBlockViewComponentByName() {
+      return this.$blockviews[this.block["@type"]];
+    }
+  }
+};
+const _hoisted_1$9 = { key: 0 };
+const _hoisted_2$9 = { key: 1 };
+function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_BlockFallbackView = resolveComponent("BlockFallbackView");
+  return $options.getBlockViewComponentByName !== void 0 ? (openBlock(), createElementBlock("div", _hoisted_1$9, [
+    (openBlock(), createBlock(resolveDynamicComponent($options.getBlockViewComponentByName), normalizeProps(guardReactiveProps(_ctx.$props)), null, 16))
+  ])) : (openBlock(), createElementBlock("div", _hoisted_2$9, [
+    createVNode(_component_BlockFallbackView, normalizeProps(guardReactiveProps(_ctx.$props)), null, 16)
+  ]));
+}
+var BlockRenderer = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/BlockRenderer.vue"]]);
+var RowControls_vue_vue_type_style_index_0_lang = "";
+const _sfc_main$d = {
   props: {
     index: {
       type: Number,
@@ -10226,25 +10414,25 @@ const _sfc_main$e = {
     }
   }
 };
-const _hoisted_1$9 = { class: "btn-group btn-group-xs" };
-const _hoisted_2$9 = ["id"];
-const _hoisted_3$6 = /* @__PURE__ */ createBaseVNode("span", {
+const _hoisted_1$8 = { class: "btn-group btn-group-xs" };
+const _hoisted_2$8 = ["id"];
+const _hoisted_3$5 = /* @__PURE__ */ createBaseVNode("span", {
   "aria-haspopup": "true",
   class: "caret"
 }, null, -1);
-const _hoisted_4$5 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
-const _hoisted_5$5 = [
-  _hoisted_3$6,
-  _hoisted_4$5
+const _hoisted_4$4 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
+const _hoisted_5$4 = [
+  _hoisted_3$5,
+  _hoisted_4$4
 ];
-const _hoisted_6$2 = ["aria-labelledby"];
-const _hoisted_7$2 = ["onClick"];
-function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_6$1 = ["aria-labelledby"];
+const _hoisted_7$1 = ["onClick"];
+function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", {
     class: "sl-add-row-controls",
     style: normalizeStyle(`z-index:${1e3 - $props.index * 2}`)
   }, [
-    createBaseVNode("div", _hoisted_1$9, [
+    createBaseVNode("div", _hoisted_1$8, [
       createBaseVNode("button", {
         type: "button",
         class: "btn btn-primary",
@@ -10257,7 +10445,7 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
         "data-bs-toggle": "dropdown",
         "data-bs-auto-close": "true",
         "aria-expanded": "false"
-      }, _hoisted_5$5, 8, _hoisted_2$9),
+      }, _hoisted_5$4, 8, _hoisted_2$8),
       createBaseVNode("ul", {
         class: "dropdown-menu",
         "aria-labelledby": $options.dropdownId
@@ -10270,14 +10458,14 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
               class: "dropdown-item",
               onClick: withModifiers(() => $options.createRow(row2.cols), ["prevent"]),
               href: "#"
-            }, toDisplayString(row2.label), 9, _hoisted_7$2)
+            }, toDisplayString(row2.label), 9, _hoisted_7$1)
           ]);
         }), 128))
-      ], 8, _hoisted_6$2)
+      ], 8, _hoisted_6$1)
     ])
   ], 4);
 }
-var RowControls = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/RowControls.vue"]]);
+var RowControls = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/RowControls.vue"]]);
 function ColWidths(asMapping) {
   const widths = [
     { cols: 12, label: "100%" },
@@ -10292,7 +10480,7 @@ function ColWidths(asMapping) {
   return widths;
 }
 var ColControls_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$d = {
+const _sfc_main$c = {
   setup() {
     const sl = useSimplelayoutStore();
     return { sl };
@@ -10350,19 +10538,19 @@ const _sfc_main$d = {
     }
   }
 };
-const _hoisted_1$8 = { class: "btn-group btn-group-xs" };
-const _hoisted_2$8 = ["id"];
-const _hoisted_3$5 = ["aria-labelledby"];
-const _hoisted_4$4 = ["onClick"];
-const _hoisted_5$4 = { class: "btn-group btn-group-xs sl-row-controls" };
-function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$7 = { class: "btn-group btn-group-xs" };
+const _hoisted_2$7 = ["id"];
+const _hoisted_3$4 = ["aria-labelledby"];
+const _hoisted_4$3 = ["onClick"];
+const _hoisted_5$3 = { class: "btn-group btn-group-xs sl-row-controls" };
+function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(Fragment, null, [
     $props.currentWidth ? (openBlock(), createElementBlock("div", {
       key: 0,
       class: "sl-remove-col-controls",
       style: normalizeStyle(`z-index:${1e3 - 1 - $props.rowIndex * 2}`)
     }, [
-      createBaseVNode("div", _hoisted_1$8, [
+      createBaseVNode("div", _hoisted_1$7, [
         !$options.hasBlocks ? (openBlock(), createElementBlock("button", {
           key: 0,
           class: "btn btn-xs btn-danger",
@@ -10376,7 +10564,7 @@ function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
           "data-bs-toggle": "dropdown",
           "data-bs-auto-close": "true",
           "aria-expanded": "false"
-        }, " Width: " + toDisplayString($options.widthsMapping[$props.currentWidth]), 9, _hoisted_2$8),
+        }, " Width: " + toDisplayString($options.widthsMapping[$props.currentWidth]), 9, _hoisted_2$7),
         createBaseVNode("ul", {
           class: "dropdown-menu",
           "aria-labelledby": $options.dropdownId
@@ -10389,16 +10577,16 @@ function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
                 class: "dropdown-item",
                 onClick: () => $options.newWidth(width.cols),
                 href: "#"
-              }, toDisplayString(width.label), 9, _hoisted_4$4)
+              }, toDisplayString(width.label), 9, _hoisted_4$3)
             ]);
           }), 128))
-        ], 8, _hoisted_3$5)
+        ], 8, _hoisted_3$4)
       ])
     ], 4)) : createCommentVNode("v-if", true),
     createBaseVNode("div", {
       class: normalizeClass($options.cssClasses)
     }, [
-      createBaseVNode("div", _hoisted_5$4, [
+      createBaseVNode("div", _hoisted_5$3, [
         createBaseVNode("button", {
           type: "button",
           class: "btn btn-secondary sl-col-add-button",
@@ -10408,98 +10596,7 @@ function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
     ], 2)
   ], 64);
 }
-var ColControls = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/ColControls.vue"]]);
-var BlockControls_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$c = {
-  props: {
-    actions: {
-      type: Array,
-      required: true
-    },
-    rowIndex: {
-      type: Number,
-      required: true
-    },
-    columnIndex: {
-      type: Number,
-      required: true
-    },
-    blockIndex: {
-      type: Number,
-      required: true
-    }
-  },
-  setup() {
-    const sl = useSimplelayoutStore();
-    return { sl };
-  },
-  computed: {
-    moveIcon() {
-      return {
-        src: `${this.sl.portalURL}/iconresolver/arrows-move`,
-        alt: "Move block",
-        width: "20",
-        style: "filter: invert(1)"
-      };
-    },
-    dropdownId() {
-      return `blockDropdownMenu_${this.columnIndex}_${this.rowIndex}`;
-    }
-  }
-};
-const _hoisted_1$7 = { class: "btn-group btn-group-xs sl-add-block-controls" };
-const _hoisted_2$7 = {
-  key: 0,
-  class: "btn btn-secondary btn-sm sl-handle"
-};
-const _hoisted_3$4 = ["id"];
-const _hoisted_4$3 = /* @__PURE__ */ createBaseVNode("span", {
-  "aria-haspopup": "true",
-  class: "caret"
-}, null, -1);
-const _hoisted_5$3 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
-const _hoisted_6$1 = [
-  _hoisted_4$3,
-  _hoisted_5$3
-];
-const _hoisted_7$1 = ["aria-labelledby"];
-const _hoisted_8 = ["onClick", "data-row", "data-col", "data-block"];
-function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$7, [
-    $props.blockIndex > -1 ? (openBlock(), createElementBlock("button", _hoisted_2$7, [
-      createBaseVNode("img", normalizeProps(guardReactiveProps($options.moveIcon)), null, 16)
-    ])) : createCommentVNode("v-if", true),
-    createBaseVNode("button", {
-      class: "btn btn-success btn-sm dropdown-toggle caret-only",
-      type: "button",
-      id: $options.dropdownId,
-      "data-bs-toggle": "dropdown",
-      "data-bs-auto-close": "true",
-      "aria-expanded": "false"
-    }, _hoisted_6$1, 8, _hoisted_3$4),
-    createBaseVNode("ul", {
-      class: "dropdown-menu",
-      "aria-labelledby": $options.dropdownId
-    }, [
-      (openBlock(true), createElementBlock(Fragment, null, renderList($props.actions, (action) => {
-        return openBlock(), createElementBlock("li", {
-          key: action.label
-        }, [
-          action.enabled($props.rowIndex, $props.columnIndex, $props.blockIndex) ? (openBlock(), createElementBlock("a", {
-            key: 0,
-            class: "dropdown-item",
-            onClick: withModifiers(action.action, ["prevent", "stop"]),
-            "data-row": $props.rowIndex,
-            "data-col": $props.columnIndex,
-            "data-block": $props.blockIndex,
-            href: "#"
-          }, toDisplayString(action.label), 9, _hoisted_8)) : createCommentVNode("v-if", true)
-        ]);
-      }), 128))
-    ], 8, _hoisted_7$1)
-  ]);
-}
-var BlockControls = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/BlockControls.vue"]]);
+var ColControls = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Controls/ColControls.vue"]]);
 var BaseModal_vue_vue_type_style_index_0_lang = "";
 const _sfc_main$b = {
   name: "base-modal",
@@ -17278,7 +17375,6 @@ const _sfc_main$5 = {
     RowControls,
     ColControls,
     AddBlockModal,
-    BlockControls,
     EditBlockModal,
     DeleteBlockModal,
     InfoBlockModal,
@@ -17411,7 +17507,6 @@ const _hoisted_3$2 = {
 function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_RowControls = resolveComponent("RowControls");
   const _component_ColControls = resolveComponent("ColControls");
-  const _component_BlockControls = resolveComponent("BlockControls");
   const _component_BlockRenderer = resolveComponent("BlockRenderer");
   const _component_draggable = resolveComponent("draggable");
   const _component_AddBlockModal = resolveComponent("AddBlockModal");
@@ -17448,21 +17543,20 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
                 }), {
                   item: withCtx(({ element, index: index2 }) => [
                     element in $setup.sl.blocks ? (openBlock(), createElementBlock("div", _hoisted_2$4, [
-                      createVNode(_component_BlockControls, {
+                      createVNode(_component_BlockRenderer, {
                         actions: $data.actions,
+                        block: $setup.sl.blocks[element],
                         rowIndex,
                         columnIndex,
                         blockIndex: index2
-                      }, null, 8, ["actions", "rowIndex", "columnIndex", "blockIndex"]),
-                      createVNode(_component_BlockRenderer, {
-                        block: $setup.sl.blocks[element]
-                      }, null, 8, ["block"])
+                      }, null, 8, ["actions", "block", "rowIndex", "columnIndex", "blockIndex"])
                     ])) : createCommentVNode("v-if", true)
                   ]),
                   footer: withCtx(() => [
                     column2.items.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_3$2, [
-                      createVNode(_component_BlockControls, {
+                      createVNode(_component_BlockRenderer, {
                         actions: $data.actions,
+                        block: {},
                         rowIndex,
                         columnIndex,
                         blockIndex: -1
@@ -18785,6 +18879,22 @@ const _sfc_main$4 = {
     BlockStructure
   },
   props: {
+    actions: {
+      type: Array,
+      required: true
+    },
+    rowIndex: {
+      type: Number,
+      required: true
+    },
+    columnIndex: {
+      type: Number,
+      required: true
+    },
+    blockIndex: {
+      type: Number,
+      required: true
+    },
     block: {
       type: Object,
       required: true
@@ -18793,7 +18903,7 @@ const _sfc_main$4 = {
 };
 function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockStructure = resolveComponent("BlockStructure");
-  return openBlock(), createBlock(_component_BlockStructure, { block: $props.block }, null, 8, ["block"]);
+  return openBlock(), createBlock(_component_BlockStructure, normalizeProps(guardReactiveProps(_ctx.$props)), null, 16);
 }
 var Block = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/blockViews/Block.vue"]]);
 var __glob_0_0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -18855,6 +18965,22 @@ const _sfc_main$2 = {
     Pagination
   },
   props: {
+    actions: {
+      type: Array,
+      required: true
+    },
+    rowIndex: {
+      type: Number,
+      required: true
+    },
+    columnIndex: {
+      type: Number,
+      required: true
+    },
+    blockIndex: {
+      type: Number,
+      required: true
+    },
     block: {
       type: Object,
       required: true
@@ -18903,7 +19029,7 @@ const _hoisted_5$1 = ["href"];
 function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_Pagination = resolveComponent("Pagination");
   const _component_BlockStructure = resolveComponent("BlockStructure");
-  return openBlock(), createBlock(_component_BlockStructure, { block: $props.block }, {
+  return openBlock(), createBlock(_component_BlockStructure, normalizeProps(guardReactiveProps(_ctx.$props)), {
     body: withCtx(() => [
       createTextVNode(" total " + toDisplayString($data.data.items_total) + " ", 1),
       createBaseVNode("div", _hoisted_1$2, [
@@ -18946,7 +19072,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
       }, null, 8, ["onNext", "onPrevious", "batching"])) : createCommentVNode("v-if", true)
     ]),
     _: 1
-  }, 8, ["block"]);
+  }, 16);
 }
 var FileListingBlock = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/blockViews/FileListingBlock.vue"]]);
 var __glob_0_2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -18959,6 +19085,22 @@ const _sfc_main$1 = {
     Pagination
   },
   props: {
+    actions: {
+      type: Array,
+      required: true
+    },
+    rowIndex: {
+      type: Number,
+      required: true
+    },
+    columnIndex: {
+      type: Number,
+      required: true
+    },
+    blockIndex: {
+      type: Number,
+      required: true
+    },
     block: {
       type: Object,
       required: true
@@ -19007,7 +19149,7 @@ const _hoisted_5 = ["href"];
 function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_Pagination = resolveComponent("Pagination");
   const _component_BlockStructure = resolveComponent("BlockStructure");
-  return openBlock(), createBlock(_component_BlockStructure, { block: $props.block }, {
+  return openBlock(), createBlock(_component_BlockStructure, normalizeProps(guardReactiveProps(_ctx.$props)), {
     body: withCtx(() => [
       createTextVNode(" total " + toDisplayString($data.data.items_total) + " ", 1),
       createBaseVNode("div", _hoisted_1$1, [
@@ -19050,7 +19192,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
       }, null, 8, ["onNext", "onPrevious", "batching"])) : createCommentVNode("v-if", true)
     ]),
     _: 1
-  }, 8, ["block"]);
+  }, 16);
 }
 var ImageListingBlock = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/blockViews/ImageListingBlock.vue"]]);
 var __glob_0_3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -19063,6 +19205,22 @@ const _sfc_main = {
     BlockStructure
   },
   props: {
+    actions: {
+      type: Array,
+      required: true
+    },
+    rowIndex: {
+      type: Number,
+      required: true
+    },
+    columnIndex: {
+      type: Number,
+      required: true
+    },
+    blockIndex: {
+      type: Number,
+      required: true
+    },
     block: {
       type: Object,
       required: true
@@ -19080,7 +19238,7 @@ const _hoisted_1 = {
 const _hoisted_2 = ["href"];
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockStructure = resolveComponent("BlockStructure");
-  return openBlock(), createBlock(_component_BlockStructure, { block: $props.block }, {
+  return openBlock(), createBlock(_component_BlockStructure, normalizeProps(guardReactiveProps(_ctx.$props)), {
     top: withCtx(() => [
       createBaseVNode("div", _hoisted_1, [
         createBaseVNode("div", {
@@ -19095,7 +19253,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       }, toDisplayString($props.block.video_url), 9, _hoisted_2)
     ]),
     _: 1
-  }, 8, ["block"]);
+  }, 16);
 }
 var VideoBlock = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/blockViews/VideoBlock.vue"]]);
 var __glob_0_4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({

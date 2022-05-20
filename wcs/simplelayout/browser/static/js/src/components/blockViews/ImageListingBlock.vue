@@ -1,5 +1,5 @@
 <template>
-  <BlockStructure :block="block">
+  <BlockStructure v-bind="$props">
     <template #body>
       total {{ data.items_total }}
       <div class="table-responsive">
@@ -51,6 +51,22 @@ export default {
     Pagination,
   },
   props: {
+    actions: {
+      type: Array,
+      required: true,
+    },
+    rowIndex: {
+      type: Number,
+      required: true,
+    },
+    columnIndex: {
+      type: Number,
+      required: true,
+    },
+    blockIndex: {
+      type: Number,
+      required: true,
+    },
     block: {
       type: Object,
       required: true,
