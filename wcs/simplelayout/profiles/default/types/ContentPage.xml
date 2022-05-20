@@ -15,6 +15,7 @@
   <element value="Block"/>
   <element value="VideoBlock"/>
   <element value="FileListingBlock"/>
+  <element value="ImageListingBlock"/>
  </property>
  <property name="allow_discussion">False</property>
  <property name="default_view">@@simplelayout-view</property>
