@@ -28,4 +28,5 @@
         directory="./upgrades"
         />
 
+    <adapter factory=".indexer.news_start_date" name="Date"/>
 </configure>

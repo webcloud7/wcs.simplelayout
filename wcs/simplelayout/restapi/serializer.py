@@ -1,6 +1,9 @@
+from datetime import datetime
+from datetime import timedelta
 from plone import api
 from plone.restapi.interfaces import IFieldSerializer
 from plone.restapi.interfaces import ISerializeToJson
+from plone.restapi.serializer.converters import datetimelike_to_iso
 from plone.restapi.serializer.converters import json_compatible
 from plone.restapi.serializer.dxcontent import SerializeFolderToJson
 from plone.restapi.serializer.dxfields import DefaultFieldSerializer
@@ -8,6 +11,7 @@ from plone.restapi.serializer.expansion import expandable_elements
 from plone.schema import IJSONField
 from urllib import parse
 from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
+from wcs.simplelayout.contenttypes.behaviors import IBlockNewsOptions
 from wcs.simplelayout.contenttypes.behaviors import IBlockSortOptions
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.utils import LOG
@@ -70,6 +74,42 @@ class SimplelayoutSerializer(SerializeFolderToJson):
         expand_by_querystring(self.context, self.request, result)
         insert_simplelayout_blocks(self.context, result)
         return result
+
+
+@adapter(ITextLine, IBlockNewsOptions, Interface)
+@implementer(IFieldSerializer)
+class NewsQueryFieldSerializer(DefaultFieldSerializer):
+
+    def __call__(self, *args):
+        if self.field.__name__ == 'computed_query':
+            relations = IBlockNewsOptions(self.context).filter_by_path
+            paths = ''
+            quantity = IBlockNewsOptions(self.context).quantity
+            age = IBlockNewsOptions(self.context).maximum_age
+            sort_order = 'ascending'
+            sort_on = 'Date'
+            url = f'{self.context.absolute_url()}/@search'
+            if not relations:
+                paths = '/'.join(self.context.aq_parent.getPhysicalPath())
+            else:
+                paths = ['/'.join(item.to_object.getPhysicalPath()) for item in paths]
+
+            query = {
+                'object_provides': 'wcs.simplelayout.contenttypes.behaviors.INews',
+                'path': paths,
+                'sort_on': sort_on,
+                'sort_order': sort_order,
+                'fullobjects': True,
+                'b_size': quantity,
+            }
+
+            if age != 0:
+                date = datetimelike_to_iso(datetime.now() - timedelta(days=age))
+                query['Date.query'] = date
+                query['Date.range'] = 'min'
+            return f'{url}?{parse.urlencode(query, doseq=True)}'
+
+        return super().__call__()
 
 
 @adapter(ITextLine, IBlockSortOptions, Interface)

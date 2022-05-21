@@ -1,5 +1,6 @@
 from plone.app.dexterity.textindexer.directives import searchable
 from plone.app.textfield import RichText
+from plone.app.vocabularies.catalog import CatalogSource
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.namedfile.field import NamedBlobImage
 from plone.restapi import _
@@ -9,6 +10,8 @@ from plone.supermodel.directives import primary
 from wcs.simplelayout.contenttypes import utils
 from wcs.simplelayout.contenttypes.vocabs import sort_index_vocabulary
 from wcs.simplelayout.contenttypes.vocabs import sort_order_vocabulary
+from z3c.relationfield import RelationChoice
+from z3c.relationfield import RelationList
 from zope import schema
 from zope.interface import Interface
 from zope.interface import Invalid
@@ -94,6 +97,10 @@ LAYOUT_SCHEMA = json.dumps(
 """
 
 
+class IBlockMarker(Interface):
+    """Marker interface for simplelayout blocks"""
+
+
 @provider(IFormFieldProvider)
 class ISimplelayout(model.Schema):
 
@@ -108,8 +115,16 @@ class ISimplelayout(model.Schema):
     )
 
 
-class IBlockMarker(Interface):
-    """Marker interface for simplelayout blocks"""
+@provider(IFormFieldProvider)
+class INews(model.Schema):
+
+    news_date = schema.Datetime(
+        title=_(u'news_date_label', default=u'Date'),
+        description=_(u'news_date_description',
+                      default=u'News will be sorted by this date'),
+        required=True,
+        defaultFactory=utils.today,
+    )
 
 
 @provider(IFormFieldProvider)
@@ -185,15 +200,63 @@ class IVideoUrl(model.Schema):
 @provider(IFormFieldProvider)
 class IBlockSortOptions(model.Schema):
     sort_on = schema.Choice(
-        title=_(u'label_sort_on', default=u'Sort by'),
+        title=_('label_sort_on', default='Sort by'),
         required=True,
         default="sortable_title",
         source=sort_index_vocabulary)
 
     sort_order = schema.Choice(
-        title=_(u'label_sort_order', default=u'Sort order'),
+        title=_('label_sort_order', default='Sort order'),
         required=True,
         default="ascending",
         vocabulary=sort_order_vocabulary)
+
+    computed_query = schema.TextLine(readonly=True)
+
+
+@provider(IFormFieldProvider)
+class IBlockNewsOptions(model.Schema):
+
+    filter_by_path = RelationList(
+        title=_('news_listing_config_filter_path_label',
+                default='Limit to path'),
+        description=_('news_listing_config_filter_path_description',
+                      default='Only show news items from a specific path.'
+                      ' If there is no path, news from the current area will be shown'),
+        value_type=RelationChoice(
+            source=CatalogSource(),
+        ),
+        required=False,
+        missing_value=[],
+    )
+
+    quantity = schema.Int(
+        title=_('news_listing_config_quantity_label', default='Quantity'),
+        description=_('news_listing_config_quantity_description',
+                      default='The number of news entries to be '
+                              'shown at most. Enter 0 for no limitation.'),
+        default=5,
+    )
+
+    subjects = schema.List(
+        title=_('news_listing_config_subjects_label',
+                default='Filter by subject'),
+        description=_('news_listing_config_subjects_description',
+                      default='Only news with the selected subjects will '
+                              'be shown.'),
+        value_type=schema.Choice(vocabulary='plone.app.vocabularies.Keywords'),
+        required=False,
+        missing_value=[],
+    )
+
+    maximum_age = schema.Int(
+        title=_('news_listing_config_maximum_age_label',
+                default='Maximum age (days)'),
+        description=_('news_listing_config_maximum_age_description',
+                      default='Only news younger than this value will be '
+                              'rendered. Enter 0 for no limitation.'),
+        default=0,
+        required=True,
+    )
 
     computed_query = schema.TextLine(readonly=True)

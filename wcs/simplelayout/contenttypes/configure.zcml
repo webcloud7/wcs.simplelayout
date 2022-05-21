@@ -12,6 +12,12 @@
         />
 
     <plone:behavior
+        title="Make a content a News Tyope"
+        description="Marks content as news for listings and providesa news date field."
+        provides="wcs.simplelayout.contenttypes.behaviors.INews"
+        />
+
+    <plone:behavior
         title="Simplelayout Block"
         description="Makes this content a Simplelayout Block"
         provides="wcs.simplelayout.contenttypes.behaviors.IBlockMarker"
@@ -45,6 +51,12 @@
         title="Simplelayout Block Sort options"
         description="Provides sort order and sort on options for a listing"
         provides="wcs.simplelayout.contenttypes.behaviors.IBlockSortOptions"
+        />
+
+    <plone:behavior
+        title="Simplelayout Block News options"
+        description="Provides options to find and filter news content"
+        provides="wcs.simplelayout.contenttypes.behaviors.IBlockNewsOptions"
         />
 
 </configure>

@@ -1,4 +1,5 @@
 from urllib.parse import urlparse
+import datetime 
 
 
 def is_vimeo_url(url):
@@ -20,3 +21,7 @@ def is_youtube_nocookie_url(url):
     parsed_url = urlparse(url)
     path = parsed_url.path.split('/')
     return parsed_url.netloc == 'www.youtube-nocookie.com' and len(path) == 3 and path[-1]
+
+
+def today():
+    return datetime.datetime.now()

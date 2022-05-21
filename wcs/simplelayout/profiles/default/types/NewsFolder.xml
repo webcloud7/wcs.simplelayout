@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object name="ContentPage" meta_type="Dexterity FTI" i18n:domain="plone"
+<object name="NewsFolder" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <property name="title" i18n:translate="">Content Page</property>
+ <property name="title" i18n:translate="">News Folder</property>
  <property name="icon_expr">string:file-earmark-text</property>
- <property name="factory">ContentPage</property>
+ <property name="factory">NewsFolder</property>
  <property
-    name="add_view_expr">string:${folder_url}/++add++ContentPage</property>
+    name="add_view_expr">string:${folder_url}/++add++NewsFolder</property>
  <property name="link_target"></property>
  <property name="immediate_view">@@simplelayout-view</property>
  <property name="global_allow">True</property>
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types">
-  <element value="NewsFolder"/>
+  <element value="News"/>
   <element value="Block"/>
   <element value="VideoBlock"/>
   <element value="FileListingBlock"/>
@@ -26,7 +26,7 @@
  <property name="default_view_fallback">False</property>
  <property name="add_permission">cmf.AddPortalContent</property>
  <property
-    name="klass">wcs.simplelayout.contenttypes.contentpage.ContentPage</property>
+    name="klass">wcs.simplelayout.contenttypes.newsfolder.NewsFolder</property>
  <property name="behaviors">
   <element value="plone.namefromtitle"/>
   <element value="plone.basic"/>
