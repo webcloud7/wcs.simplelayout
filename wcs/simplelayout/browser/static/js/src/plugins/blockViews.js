@@ -1,6 +1,5 @@
 export default {
   install: (app) => {
-    // const modules = import.meta.globEager("../components/blockViews/*.vue");
     const modules = require.context("../components/blockViews", true, /\.vue$/);
 
     const views = {};
@@ -15,6 +14,5 @@ export default {
       views[name] = componentConfig.default;
     });
     app.config.globalProperties.$blockviews = views;
-    // app.provide("blockviews", options);
   },
 };
