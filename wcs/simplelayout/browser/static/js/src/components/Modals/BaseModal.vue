@@ -30,6 +30,7 @@
 </template>
 <script>
 import { useSimplelayoutStore } from "@/store.js";
+import registry from "@patternslib/patternslib/src/core/registry";
 export default {
   name: "base-modal",
   props: {
@@ -67,7 +68,10 @@ export default {
   },
   mounted() {
     const modal = this.$refs["sl-base-modal"];
-    this.modal = new window.bootstrap.Modal(modal, this.modalOptions);
+    this.modal = new window.jQuery.fn.modal.Constructor(
+      modal,
+      this.modalOptions
+    );
   },
   methods: {
     async openModal(url, position) {
@@ -118,13 +122,12 @@ export default {
     replaceModalContent(response) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(response.data, "text/html");
-
       const body = this.modal._element.querySelector(".modal-body");
       const title = this.modal._element.querySelector(".modal-title");
       title.innerHTML = doc.querySelector("h1").innerHTML;
       doc.querySelector("h1").remove();
       body.innerHTML = doc.getElementById("content").innerHTML;
-      window.__patternslib_registry.scan(body);
+      registry.scan(body);
     },
     handleFormButtons() {
       const form = this.modal._element.querySelector("#form");
@@ -141,7 +144,9 @@ export default {
         submitButton.addEventListener("click", this.handleSubmit);
         form.addEventListener("submit", this.handleSubmit);
       } else {
-        cancelButton = this.modal._element.querySelector("#form-buttons-cancel");
+        cancelButton = this.modal._element.querySelector(
+          "#form-buttons-cancel"
+        );
       }
 
       cancelButton.addEventListener("click", this.handleCancel);
