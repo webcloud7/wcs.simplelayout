@@ -6,7 +6,7 @@
 
     <div metal:fill-slot="content-core">
         
-        <link rel="stylesheet" type="text/css" tal:attributes="href string:${here/portal_url}/++resource++simplelayout/js/dist/style.css" />
+        <link rel="stylesheet" type="text/css" tal:attributes="href string:${here/portal_url}/++resource++simplelayout/js/dist/simplelayout.min.css" />
 
         <div id="app"></div>
     </div>

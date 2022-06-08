@@ -115,6 +115,9 @@ export default {
 </script>
 <style lang="scss">
 .sl-add-block-controls {
+  .navbar-nav {
+    visibility: hidden;
+  }
   .container {
     align-items: flex-start;
   }
@@ -122,5 +125,11 @@ export default {
     flex: 1 0 auto;
   }
   z-index: 1;
+}
+
+.sl-block:hover .sl-add-block-controls {
+  .navbar-nav {
+    visibility: visible;
+  }
 }
 </style>
