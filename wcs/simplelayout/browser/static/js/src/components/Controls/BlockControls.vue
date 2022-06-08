@@ -41,7 +41,10 @@
               >
                 <span>Actions</span>
               </button>
-              <ul class="dropdown-menu" :aria-labelledby="dropdownId">
+              <ul
+                class="dropdown-menu dropdown-menu-end"
+                :aria-labelledby="dropdownId"
+              >
                 <li v-for="action in actions" :key="action.label">
                   <a
                     v-if="action.enabled(rowIndex, columnIndex, blockIndex)"
