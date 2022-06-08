@@ -41,7 +41,10 @@
               >
                 <span>Actions</span>
               </button>
-              <ul class="dropdown-menu" :aria-labelledby="dropdownId">
+              <ul
+                class="dropdown-menu dropdown-menu-end"
+                :aria-labelledby="dropdownId"
+              >
                 <li v-for="action in actions" :key="action.label">
                   <a
                     v-if="action.enabled(rowIndex, columnIndex, blockIndex)"
@@ -115,6 +118,9 @@ export default {
 </script>
 <style lang="scss">
 .sl-add-block-controls {
+  .navbar-nav {
+    visibility: hidden;
+  }
   .container {
     align-items: flex-start;
   }
@@ -122,5 +128,11 @@ export default {
     flex: 1 0 auto;
   }
   z-index: 1;
+}
+
+.sl-block:hover .sl-add-block-controls {
+  .navbar-nav {
+    visibility: visible;
+  }
 }
 </style>

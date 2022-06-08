@@ -1,10 +1,18 @@
 export default {
   install: (app) => {
-    const modules = import.meta.globEager("../components/blockViews/*.vue");
+    // const modules = import.meta.globEager("../components/blockViews/*.vue");
+    const modules = require.context("../components/blockViews", true, /\.vue$/);
+
     const views = {};
-    Object.entries(modules).forEach(([path, m]) => {
-      const name = path.split("/").pop().replace(/\.\w+$/, "");
-      views[name] = m.default;
+    modules.keys().forEach((fileName) => {
+      const componentConfig = modules(fileName);
+
+      const name = fileName
+        .split("/")
+        .pop()
+        .replace(/\.\w+$/, "");
+
+      views[name] = componentConfig.default;
     });
     app.config.globalProperties.$blockviews = views;
     // app.provide("blockviews", options);

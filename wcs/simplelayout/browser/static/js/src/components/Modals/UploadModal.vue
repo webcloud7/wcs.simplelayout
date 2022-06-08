@@ -38,7 +38,7 @@ export default {
         url: `${this.getBlockURL(position)}/@@fileUpload`,
         showTitle: false,
       };
-      const upload = new window.__patternslib_registry.patterns.upload(
+      const upload = new window.__patternslib_registry.upload(
         this.$refs["upload"],
         options
       );

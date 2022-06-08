@@ -1,0 +1,157 @@
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/sass-loader/dist/cjs.js!./node_modules/vue-loader/dist/index.js??ruleSet[1].rules[3].use[0]!./wcs/simplelayout/browser/static/js/src/components/Controls/BlockControls.vue?vue&type=style&index=0&id=4e4d49e2&lang=scss ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.sl-add-block-controls {
+  z-index: 1;
+}
+.sl-add-block-controls .navbar-nav {
+  visibility: hidden;
+}
+.sl-add-block-controls .container {
+  align-items: flex-start;
+}
+.sl-add-block-controls .sl-move-button {
+  flex: 1 0 auto;
+}
+.sl-block:hover .sl-add-block-controls .navbar-nav {
+  visibility: visible;
+}
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/sass-loader/dist/cjs.js!./node_modules/vue-loader/dist/index.js??ruleSet[1].rules[3].use[0]!./wcs/simplelayout/browser/static/js/src/components/standard/BlockStructure.vue?vue&type=style&index=0&id=468bf6a3&lang=scss ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.sl-card-image {
+  aspect-ratio: 16/10;
+  background-color: var(--bs-gray-200);
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/sass-loader/dist/cjs.js!./node_modules/vue-loader/dist/index.js??ruleSet[1].rules[3].use[0]!./wcs/simplelayout/browser/static/js/src/components/Controls/RowControls.vue?vue&type=style&index=0&id=fa70cc48&lang=scss ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.sl-add-row-controls {
+  position: relative;
+}
+.sl-add-row-controls > .btn-group {
+  width: 120px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  position: absolute;
+  top: -8px;
+}
+.sl-add-row-controls > .btn-group button {
+  padding: 0;
+  line-height: 1rem;
+}
+.sl-add-row-controls > .btn-group button:first-child {
+  width: 50px;
+}
+.sl-container:hover .sl-add-row-controls {
+  visibility: visible;
+}
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/sass-loader/dist/cjs.js!./node_modules/vue-loader/dist/index.js??ruleSet[1].rules[3].use[0]!./wcs/simplelayout/browser/static/js/src/components/Controls/ColControls.vue?vue&type=style&index=0&id=0169cefc&lang=scss ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.sl-col-controls {
+  padding: 0.5em 0;
+  position: absolute;
+  height: 100%;
+  left: 0;
+  visibility: hidden;
+}
+.sl-col-controls > .btn-group {
+  height: 50%;
+  top: 25%;
+}
+.sl-col-controls.right {
+  right: 0;
+  top: 0;
+  left: auto;
+}
+.sl-col-controls .sl-col-add-button {
+  padding: 0;
+}
+.sl-remove-col-controls {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  bottom: 10px;
+  transform: translate(-50%, 0);
+  z-index: 1;
+  visibility: hidden;
+}
+.sl-row:hover .sl-col-controls,
+.sl-row:hover .sl-remove-col-controls {
+  visibility: visible;
+}
+/*!************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/sass-loader/dist/cjs.js!./node_modules/vue-loader/dist/index.js??ruleSet[1].rules[3].use[0]!./wcs/simplelayout/browser/static/js/src/components/Modals/BaseModal.vue?vue&type=style&index=0&id=f4248710&lang=scss ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.sl-base-modal {
+  z-index: 1051 !important;
+}
+/*!************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/sass-loader/dist/cjs.js!./node_modules/vue-loader/dist/index.js??ruleSet[1].rules[3].use[0]!./wcs/simplelayout/browser/static/js/src/App.vue?vue&type=style&index=0&id=697a6f2d&lang=scss ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************************/
+#app .sl-col {
+  border: 1px dashed #000000;
+  min-height: 100px;
+}
+#app .sl-container {
+  position: relative;
+}
+#app .sl-col {
+  position: relative;
+}
+#app .sl-block {
+  margin: 20px 0;
+  position: relative;
+  min-height: 100px;
+}
+#app .sl-block:hover {
+  box-shadow: 0 0 2px 1px #000000;
+}
+.btn-xs {
+  font-size: 12px;
+  line-height: 1rem;
+  padding: 0;
+  height: 20px;
+}
+.ghost-sl-block {
+  opacity: 0.5;
+  height: 100px;
+}
+.sl-draggable-container {
+  height: 100%;
+}
+.sl-block-dragging {
+  width: 100px !important;
+  height: 100px !important;
+  background-color: grey;
+  display: block;
+  border: 1px solid black;
+}
+.sl-block-dragging > * {
+  display: none;
+}
+#app .sl-container.sl-dragging .sl-block {
+  box-shadow: 0 0 2px 1px #000000;
+}
+#app .sl-container.sl-dragging .sl-block.sl-block-placeholder {
+  display: none;
+}
+#app .sl-container.sl-dragging .sl-col {
+  min-height: 140px;
+}
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/sass-loader/dist/cjs.js!./node_modules/vue-loader/dist/index.js??ruleSet[1].rules[3].use[0]!./wcs/simplelayout/browser/static/js/src/components/blockViews/VideoBlock.vue?vue&type=style&index=0&id=3c0837aa&lang=scss ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.sl-placeholder-video {
+  height: 200px;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoid2NzX3NpbXBsZWxheW91dF9icm93c2VyX3N0YXRpY19qc19zcmNfbWFpbl9qcy13ZWJwYWNrX3NoYXJpbmdfY29uc3VtZV9kZWZhdWx0X2pxdWVyeV9qcXVlcnkuY3NzIiwibWFwcGluZ3MiOiI7OztBQUNBO0VBVUU7QUNURjtBREFFO0VBQ0U7QUNFSjtBREFFO0VBQ0U7QUNFSjtBREFFO0VBQ0U7QUNFSjtBRElFO0VBQ0U7QUNESixDOzs7O0FDZEE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0FDQUYsQzs7OztBQ0xBO0VBQ0U7QUNBRjtBREVFO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtBQ0FKO0FERUk7RUFDRTtFQUNBO0FDQU47QURFTTtFQUNFO0FDQVI7QURNRTtFQUNFO0FDSEosQzs7OztBQ25CQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7QUNBRjtBRENFO0VBQ0U7RUFDQTtBQ0NKO0FERUU7RUFDRTtFQUNBO0VBQ0E7QUNBSjtBREdFO0VBQ0U7QUNESjtBREtBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7QUNGRjtBRE1FOztFQUVFO0FDSEosQzs7OztBQ2hDQTtFQUNFO0FDQUYsQzs7OztBQ0VFO0VBQ0U7RUFDQTtBQ0hKO0FETUU7RUFDRTtBQ0pKO0FET0U7RUFDRTtBQ0xKO0FET0U7RUFDRTtFQUNBO0VBQ0E7QUNMSjtBRE1JO0VBQ0U7QUNKTjtBRFFBO0VBQ0U7RUFDQTtFQUNBO0VBQ0E7QUNMRjtBRFFBO0VBQ0U7RUFDQTtBQ0xGO0FEUUE7RUFDRTtBQ0xGO0FEUUE7RUFDRTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0FDTEY7QURNRTtFQUNFO0FDSko7QURTRTtFQUNFO0FDTko7QURPSTtFQUNFO0FDTE47QURRRTtFQUNFO0FDTkosQzs7OztBQ3JEQTtFQUNFO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7QUNBRixDIiwic291cmNlcyI6WyJ3ZWJwYWNrOi8vc2ltcGxlbGF5b3V0Ly4vd2NzL3NpbXBsZWxheW91dC9icm93c2VyL3N0YXRpYy9qcy9zcmMvY29tcG9uZW50cy9Db250cm9scy9CbG9ja0NvbnRyb2xzLnZ1ZSIsIndlYnBhY2s6Ly9zaW1wbGVsYXlvdXQvLi9CbG9ja0NvbnRyb2xzLnZ1ZSIsIndlYnBhY2s6Ly9zaW1wbGVsYXlvdXQvLi93Y3Mvc2ltcGxlbGF5b3V0L2Jyb3dzZXIvc3RhdGljL2pzL3NyYy9jb21wb25lbnRzL3N0YW5kYXJkL0Jsb2NrU3RydWN0dXJlLnZ1ZSIsIndlYnBhY2s6Ly9zaW1wbGVsYXlvdXQvLi9CbG9ja1N0cnVjdHVyZS52dWUiLCJ3ZWJwYWNrOi8vc2ltcGxlbGF5b3V0Ly4vd2NzL3NpbXBsZWxheW91dC9icm93c2VyL3N0YXRpYy9qcy9zcmMvY29tcG9uZW50cy9Db250cm9scy9Sb3dDb250cm9scy52dWUiLCJ3ZWJwYWNrOi8vc2ltcGxlbGF5b3V0Ly4vUm93Q29udHJvbHMudnVlIiwid2VicGFjazovL3NpbXBsZWxheW91dC8uL3djcy9zaW1wbGVsYXlvdXQvYnJvd3Nlci9zdGF0aWMvanMvc3JjL2NvbXBvbmVudHMvQ29udHJvbHMvQ29sQ29udHJvbHMudnVlIiwid2VicGFjazovL3NpbXBsZWxheW91dC8uL0NvbENvbnRyb2xzLnZ1ZSIsIndlYnBhY2s6Ly9zaW1wbGVsYXlvdXQvLi93Y3Mvc2ltcGxlbGF5b3V0L2Jyb3dzZXIvc3RhdGljL2pzL3NyYy9jb21wb25lbnRzL01vZGFscy9CYXNlTW9kYWwudnVlIiwid2VicGFjazovL3NpbXBsZWxheW91dC8uL0Jhc2VNb2RhbC52dWUiLCJ3ZWJwYWNrOi8vc2ltcGxlbGF5b3V0Ly4vd2NzL3NpbXBsZWxheW91dC9icm93c2VyL3N0YXRpYy9qcy9zcmMvQXBwLnZ1ZSIsIndlYnBhY2s6Ly9zaW1wbGVsYXlvdXQvLi9BcHAudnVlIiwid2VicGFjazovL3NpbXBsZWxheW91dC8uL3djcy9zaW1wbGVsYXlvdXQvYnJvd3Nlci9zdGF0aWMvanMvc3JjL2NvbXBvbmVudHMvYmxvY2tWaWV3cy9WaWRlb0Jsb2NrLnZ1ZSIsIndlYnBhY2s6Ly9zaW1wbGVsYXlvdXQvLi9WaWRlb0Jsb2NrLnZ1ZSJdLCJzb3VyY2VzQ29udGVudCI6WyJcbi5zbC1hZGQtYmxvY2stY29udHJvbHMge1xuICAubmF2YmFyLW5hdiB7XG4gICAgdmlzaWJpbGl0eTogaGlkZGVuO1xuICB9XG4gIC5jb250YWluZXIge1xuICAgIGFsaWduLWl0ZW1zOiBmbGV4LXN0YXJ0O1xuICB9XG4gIC5zbC1tb3ZlLWJ1dHRvbiB7XG4gICAgZmxleDogMSAwIGF1dG87XG4gIH1cbiAgei1pbmRleDogMTtcbn1cblxuLnNsLWJsb2NrOmhvdmVyIC5zbC1hZGQtYmxvY2stY29udHJvbHMge1xuICAubmF2YmFyLW5hdiB7XG4gICAgdmlzaWJpbGl0eTogdmlzaWJsZTtcbiAgfVxufVxuIiwiLnNsLWFkZC1ibG9jay1jb250cm9scyB7XG4gIHotaW5kZXg6IDE7XG59XG4uc2wtYWRkLWJsb2NrLWNvbnRyb2xzIC5uYXZiYXItbmF2IHtcbiAgdmlzaWJpbGl0eTogaGlkZGVuO1xufVxuLnNsLWFkZC1ibG9jay1jb250cm9scyAuY29udGFpbmVyIHtcbiAgYWxpZ24taXRlbXM6IGZsZXgtc3RhcnQ7XG59XG4uc2wtYWRkLWJsb2NrLWNvbnRyb2xzIC5zbC1tb3ZlLWJ1dHRvbiB7XG4gIGZsZXg6IDEgMCBhdXRvO1xufVxuXG4uc2wtYmxvY2s6aG92ZXIgLnNsLWFkZC1ibG9jay1jb250cm9scyAubmF2YmFyLW5hdiB7XG4gIHZpc2liaWxpdHk6IHZpc2libGU7XG59IiwiXG4uc2wtY2FyZC1pbWFnZSB7XG4gIGFzcGVjdC1yYXRpbzogMTYgLyAxMDtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tYnMtZ3JheS0yMDApO1xuICBhbGlnbi1pdGVtczogY2VudGVyO1xuICBkaXNwbGF5OiBmbGV4O1xuICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbn1cbiIsIi5zbC1jYXJkLWltYWdlIHtcbiAgYXNwZWN0LXJhdGlvOiAxNi8xMDtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tYnMtZ3JheS0yMDApO1xuICBhbGlnbi1pdGVtczogY2VudGVyO1xuICBkaXNwbGF5OiBmbGV4O1xuICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbn0iLCJcbi5zbC1hZGQtcm93LWNvbnRyb2xzIHtcbiAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAvLyB2aXNpYmlsaXR5OiBoaWRkZW47XG4gID4gLmJ0bi1ncm91cCB7XG4gICAgd2lkdGg6IDEyMHB4O1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAwKTtcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgdG9wOiAtOHB4O1xuXG4gICAgYnV0dG9uIHtcbiAgICAgIHBhZGRpbmc6IDA7XG4gICAgICBsaW5lLWhlaWdodDogMXJlbTtcblxuICAgICAgJjpmaXJzdC1jaGlsZCB7XG4gICAgICAgIHdpZHRoOiA1MHB4O1xuICAgICAgfVxuICAgIH1cbiAgfVxufVxuLnNsLWNvbnRhaW5lcjpob3ZlciB7XG4gIC5zbC1hZGQtcm93LWNvbnRyb2xzIHtcbiAgICB2aXNpYmlsaXR5OiB2aXNpYmxlO1xuICB9XG59XG4iLCIuc2wtYWRkLXJvdy1jb250cm9scyB7XG4gIHBvc2l0aW9uOiByZWxhdGl2ZTtcbn1cbi5zbC1hZGQtcm93LWNvbnRyb2xzID4gLmJ0bi1ncm91cCB7XG4gIHdpZHRoOiAxMjBweDtcbiAgbGVmdDogNTAlO1xuICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAwKTtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICB0b3A6IC04cHg7XG59XG4uc2wtYWRkLXJvdy1jb250cm9scyA+IC5idG4tZ3JvdXAgYnV0dG9uIHtcbiAgcGFkZGluZzogMDtcbiAgbGluZS1oZWlnaHQ6IDFyZW07XG59XG4uc2wtYWRkLXJvdy1jb250cm9scyA+IC5idG4tZ3JvdXAgYnV0dG9uOmZpcnN0LWNoaWxkIHtcbiAgd2lkdGg6IDUwcHg7XG59XG5cbi5zbC1jb250YWluZXI6aG92ZXIgLnNsLWFkZC1yb3ctY29udHJvbHMge1xuICB2aXNpYmlsaXR5OiB2aXNpYmxlO1xufSIsIlxuLnNsLWNvbC1jb250cm9scyB7XG4gIHBhZGRpbmc6IDAuNWVtIDA7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgaGVpZ2h0OiAxMDAlO1xuICBsZWZ0OiAwO1xuICB2aXNpYmlsaXR5OiBoaWRkZW47XG4gID4gLmJ0bi1ncm91cCB7XG4gICAgaGVpZ2h0OiA1MCU7XG4gICAgdG9wOiAyNSU7XG4gIH1cblxuICAmLnJpZ2h0IHtcbiAgICByaWdodDogMDtcbiAgICB0b3A6IDA7XG4gICAgbGVmdDogYXV0bztcbiAgfVxuXG4gIC5zbC1jb2wtYWRkLWJ1dHRvbiB7XG4gICAgcGFkZGluZzogMDtcbiAgfVxufVxuXG4uc2wtcmVtb3ZlLWNvbC1jb250cm9scyB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgYm90dG9tOiAwO1xuICBsZWZ0OiA1MCU7XG4gIGJvdHRvbTogMTBweDtcbiAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgMCk7XG4gIHotaW5kZXg6IDE7XG4gIHZpc2liaWxpdHk6IGhpZGRlbjtcbn1cblxuLnNsLXJvdzpob3ZlciB7XG4gIC5zbC1jb2wtY29udHJvbHMsXG4gIC5zbC1yZW1vdmUtY29sLWNvbnRyb2xzIHtcbiAgICB2aXNpYmlsaXR5OiB2aXNpYmxlO1xuICB9XG59XG4iLCIuc2wtY29sLWNvbnRyb2xzIHtcbiAgcGFkZGluZzogMC41ZW0gMDtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBoZWlnaHQ6IDEwMCU7XG4gIGxlZnQ6IDA7XG4gIHZpc2liaWxpdHk6IGhpZGRlbjtcbn1cbi5zbC1jb2wtY29udHJvbHMgPiAuYnRuLWdyb3VwIHtcbiAgaGVpZ2h0OiA1MCU7XG4gIHRvcDogMjUlO1xufVxuLnNsLWNvbC1jb250cm9scy5yaWdodCB7XG4gIHJpZ2h0OiAwO1xuICB0b3A6IDA7XG4gIGxlZnQ6IGF1dG87XG59XG4uc2wtY29sLWNvbnRyb2xzIC5zbC1jb2wtYWRkLWJ1dHRvbiB7XG4gIHBhZGRpbmc6IDA7XG59XG5cbi5zbC1yZW1vdmUtY29sLWNvbnRyb2xzIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBib3R0b206IDA7XG4gIGxlZnQ6IDUwJTtcbiAgYm90dG9tOiAxMHB4O1xuICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAwKTtcbiAgei1pbmRleDogMTtcbiAgdmlzaWJpbGl0eTogaGlkZGVuO1xufVxuXG4uc2wtcm93OmhvdmVyIC5zbC1jb2wtY29udHJvbHMsXG4uc2wtcm93OmhvdmVyIC5zbC1yZW1vdmUtY29sLWNvbnRyb2xzIHtcbiAgdmlzaWJpbGl0eTogdmlzaWJsZTtcbn0iLCJcbi5zbC1iYXNlLW1vZGFsIHtcbiAgei1pbmRleDogMTA1MSAhaW1wb3J0YW50O1xufVxuIiwiLnNsLWJhc2UtbW9kYWwge1xuICB6LWluZGV4OiAxMDUxICFpbXBvcnRhbnQ7XG59IiwiXG4jYXBwIHtcbiAgLnNsLXJvdyB7XG4gIH1cbiAgLnNsLWNvbCB7XG4gICAgYm9yZGVyOiAxcHggZGFzaGVkICMwMDAwMDA7XG4gICAgbWluLWhlaWdodDogMTAwcHg7XG4gIH1cblxuICAuc2wtY29udGFpbmVyIHtcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gIH1cblxuICAuc2wtY29sIHtcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gIH1cbiAgLnNsLWJsb2NrIHtcbiAgICBtYXJnaW46IDIwcHggMDtcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgbWluLWhlaWdodDogMTAwcHg7XG4gICAgJjpob3ZlciB7XG4gICAgICBib3gtc2hhZG93OiAwIDAgMnB4IDFweCAjMDAwMDAwO1xuICAgIH1cbiAgfVxufVxuLmJ0bi14cyB7XG4gIGZvbnQtc2l6ZTogMTJweDtcbiAgbGluZS1oZWlnaHQ6IDFyZW07XG4gIHBhZGRpbmc6IDA7XG4gIGhlaWdodDogMjBweDtcbn1cblxuLmdob3N0LXNsLWJsb2NrIHtcbiAgb3BhY2l0eTogMC41O1xuICBoZWlnaHQ6IDEwMHB4O1xufVxuXG4uc2wtZHJhZ2dhYmxlLWNvbnRhaW5lciB7XG4gIGhlaWdodDogMTAwJTtcbn1cblxuLnNsLWJsb2NrLWRyYWdnaW5nIHtcbiAgd2lkdGg6IDEwMHB4ICFpbXBvcnRhbnQ7XG4gIGhlaWdodDogMTAwcHggIWltcG9ydGFudDtcbiAgYmFja2dyb3VuZC1jb2xvcjogZ3JleTtcbiAgZGlzcGxheTogYmxvY2s7XG4gIGJvcmRlcjogMXB4IHNvbGlkIGJsYWNrO1xuICA+ICoge1xuICAgIGRpc3BsYXk6IG5vbmU7XG4gIH1cbn1cblxuI2FwcCAuc2wtY29udGFpbmVyLnNsLWRyYWdnaW5nIHtcbiAgLnNsLWJsb2NrIHtcbiAgICBib3gtc2hhZG93OiAwIDAgMnB4IDFweCAjMDAwMDAwO1xuICAgICYuc2wtYmxvY2stcGxhY2Vob2xkZXIge1xuICAgICAgZGlzcGxheTogbm9uZTtcbiAgICB9XG4gIH1cbiAgLnNsLWNvbCB7XG4gICAgbWluLWhlaWdodDogMTQwcHg7XG4gIH1cbn1cbiIsIiNhcHAgLnNsLWNvbCB7XG4gIGJvcmRlcjogMXB4IGRhc2hlZCAjMDAwMDAwO1xuICBtaW4taGVpZ2h0OiAxMDBweDtcbn1cbiNhcHAgLnNsLWNvbnRhaW5lciB7XG4gIHBvc2l0aW9uOiByZWxhdGl2ZTtcbn1cbiNhcHAgLnNsLWNvbCB7XG4gIHBvc2l0aW9uOiByZWxhdGl2ZTtcbn1cbiNhcHAgLnNsLWJsb2NrIHtcbiAgbWFyZ2luOiAyMHB4IDA7XG4gIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgbWluLWhlaWdodDogMTAwcHg7XG59XG4jYXBwIC5zbC1ibG9jazpob3ZlciB7XG4gIGJveC1zaGFkb3c6IDAgMCAycHggMXB4ICMwMDAwMDA7XG59XG5cbi5idG4teHMge1xuICBmb250LXNpemU6IDEycHg7XG4gIGxpbmUtaGVpZ2h0OiAxcmVtO1xuICBwYWRkaW5nOiAwO1xuICBoZWlnaHQ6IDIwcHg7XG59XG5cbi5naG9zdC1zbC1ibG9jayB7XG4gIG9wYWNpdHk6IDAuNTtcbiAgaGVpZ2h0OiAxMDBweDtcbn1cblxuLnNsLWRyYWdnYWJsZS1jb250YWluZXIge1xuICBoZWlnaHQ6IDEwMCU7XG59XG5cbi5zbC1ibG9jay1kcmFnZ2luZyB7XG4gIHdpZHRoOiAxMDBweCAhaW1wb3J0YW50O1xuICBoZWlnaHQ6IDEwMHB4ICFpbXBvcnRhbnQ7XG4gIGJhY2tncm91bmQtY29sb3I6IGdyZXk7XG4gIGRpc3BsYXk6IGJsb2NrO1xuICBib3JkZXI6IDFweCBzb2xpZCBibGFjaztcbn1cbi5zbC1ibG9jay1kcmFnZ2luZyA+ICoge1xuICBkaXNwbGF5OiBub25lO1xufVxuXG4jYXBwIC5zbC1jb250YWluZXIuc2wtZHJhZ2dpbmcgLnNsLWJsb2NrIHtcbiAgYm94LXNoYWRvdzogMCAwIDJweCAxcHggIzAwMDAwMDtcbn1cbiNhcHAgLnNsLWNvbnRhaW5lci5zbC1kcmFnZ2luZyAuc2wtYmxvY2suc2wtYmxvY2stcGxhY2Vob2xkZXIge1xuICBkaXNwbGF5OiBub25lO1xufVxuI2FwcCAuc2wtY29udGFpbmVyLnNsLWRyYWdnaW5nIC5zbC1jb2wge1xuICBtaW4taGVpZ2h0OiAxNDBweDtcbn0iLCJcbi5zbC1wbGFjZWhvbGRlci12aWRlbyB7XG4gIGhlaWdodDogMjAwcHg7XG4gIHdpZHRoOiAxMDAlO1xuICBiYWNrZ3JvdW5kLXJlcGVhdDogbm8tcmVwZWF0O1xuICBiYWNrZ3JvdW5kLXBvc2l0aW9uOiBjZW50ZXI7XG4gIGJhY2tncm91bmQtc2l6ZTogY29udGFpbjtcbn1cbiIsIi5zbC1wbGFjZWhvbGRlci12aWRlbyB7XG4gIGhlaWdodDogMjAwcHg7XG4gIHdpZHRoOiAxMDAlO1xuICBiYWNrZ3JvdW5kLXJlcGVhdDogbm8tcmVwZWF0O1xuICBiYWNrZ3JvdW5kLXBvc2l0aW9uOiBjZW50ZXI7XG4gIGJhY2tncm91bmQtc2l6ZTogY29udGFpbjtcbn0iXSwibmFtZXMiOltdLCJzb3VyY2VSb290IjoiIn0=*/
