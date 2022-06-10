@@ -2,7 +2,7 @@
 <object name="News" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">News</property>
- <property name="icon_expr">string:file-earmark-text</property>
+ <property name="icon_expr">string:newspaper</property>
  <property name="factory">News</property>
  <property
     name="add_view_expr">string:${folder_url}/++add++News</property>

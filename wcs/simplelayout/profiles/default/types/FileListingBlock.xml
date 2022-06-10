@@ -2,7 +2,7 @@
 <object name="FileListingBlock" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">FileListingBlock</property>
- <property name="icon_expr">string:file-earmark-text</property>
+ <property name="icon_expr">string:bi-card-list</property>
  <property name="factory">FileListingBlock</property>
  <property name="add_view_expr">string:${folder_url}/++add++FileListingBlock</property>
  <property name="link_target"></property>

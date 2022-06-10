@@ -2,7 +2,7 @@
 <object name="ContentPage" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">Content Page</property>
- <property name="icon_expr">string:file-earmark-text</property>
+ <property name="icon_expr">string:file-earmark-richtext</property>
  <property name="factory">ContentPage</property>
  <property
     name="add_view_expr">string:${folder_url}/++add++ContentPage</property>
@@ -17,6 +17,7 @@
   <element value="FileListingBlock"/>
   <element value="ImageListingBlock"/>
   <element value="NewsListingBlock"/>
+  <element value="ContentPage"/>
  </property>
  <property name="allow_discussion">False</property>
  <property name="default_view">@@simplelayout-view</property>
