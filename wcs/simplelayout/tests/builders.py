@@ -20,4 +20,4 @@ class VideoBlockBuilder(DexterityBuilder):
     portal_type = 'VideoBlock'
 
 
-builder_registry.register('video block', BlockBuilder)
+builder_registry.register('video block', VideoBlockBuilder)
