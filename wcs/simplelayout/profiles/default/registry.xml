@@ -5,6 +5,11 @@
             <element>ContentPage</element>
         </value>
     </record>
+    <record name="plone.default_page_types">
+        <value purge="false">
+            <element>ContentPage</element>
+        </value>
+    </record>
     <records prefix="plone.bundles/simplelayout" interface='Products.CMFPlone.interfaces.IBundleRegistry'>
         <value key="enabled">True</value>
         <value key="expression">python: member is not None</value>
