@@ -12,7 +12,7 @@ class TestSampleTypes(FunctionalTesting):
             'ImageListingBlock',
             'NewsListingBlock'
         )
-        self.assertEquals(
+        self.assertEqual(
             block_ids,
             tuple(map(lambda fti: fti.getId(), get_block_types()))
         )
