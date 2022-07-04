@@ -16,6 +16,13 @@
         />
 
     <browser:page
+        for="wcs.simplelayout.contenttypes.mediafolder.IMediaFolder"
+        name="mediafolder_view"
+        class=".mediafolder.MediaFolderView"
+        permission="zope2.View"
+        />
+
+    <browser:page
         for="wcs.simplelayout.contenttypes.behaviors.ISimplelayout"
         name="simplelayout-view"
         permission="zope2.View"

@@ -33,3 +33,11 @@ class TestSampleTypes(FunctionalTesting):
         self.assertEqual(1, len(blocks))
         self.assertEqual(blocks[0].Title(), u'This is a Block')
         self.assertEqual(blocks[0].text.raw, u'<p>Some text</p>')
+
+    @browsing
+    def test_add_media_folder(self, browser):
+        browser.login().visit()
+        factoriesmenu.add('Media Folder')
+        browser.fill({'Title': u'This is a media folder'})
+        browser.find_button_by_label('Save').click()
+        self.assertEqual(u'This is a media folder', plone.first_heading())
