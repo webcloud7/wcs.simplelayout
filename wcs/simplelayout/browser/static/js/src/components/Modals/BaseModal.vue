@@ -31,6 +31,8 @@
 <script>
 import { useSimplelayoutStore } from "@/store.js";
 import registry from "@patternslib/patternslib/src/core/registry";
+import $ from "jquery";
+
 export default {
   name: "base-modal",
   props: {
@@ -68,10 +70,7 @@ export default {
   },
   mounted() {
     const modal = this.$refs["sl-base-modal"];
-    this.modal = new window.jQuery.fn.modal.Constructor(
-      modal,
-      this.modalOptions
-    );
+    this.modal = new $.fn.modal.Constructor(modal, this.modalOptions);
   },
   methods: {
     async openModal(url, position) {
