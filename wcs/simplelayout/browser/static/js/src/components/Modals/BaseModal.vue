@@ -66,10 +66,13 @@ export default {
     return {
       modal: null,
       position: {},
+      bootstrap: null,
     };
   },
   mounted() {
     const modal = this.$refs["sl-base-modal"];
+    // this.loadBootstrap();
+    // console.info(this.bootstrap);
     this.modal = new $.fn.modal.Constructor(modal, this.modalOptions);
   },
   methods: {
@@ -182,6 +185,9 @@ export default {
         }
       );
     },
+    // async loadBootstrap() {
+    //   this.bootstrap = await import("bootstrap");
+    // },
   },
 };
 </script>
