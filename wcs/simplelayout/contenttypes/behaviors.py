@@ -1,6 +1,8 @@
+from ftw.referencewidget.widget import ReferenceBrowserWidget
 from plone.app.dexterity.textindexer.directives import searchable
 from plone.app.textfield import RichText
 from plone.app.vocabularies.catalog import CatalogSource
+from plone.autoform import directives
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.namedfile.field import NamedBlobImage
 from plone.restapi import _
@@ -12,6 +14,7 @@ from wcs.simplelayout.contenttypes.vocabs import sort_index_vocabulary
 from wcs.simplelayout.contenttypes.vocabs import sort_order_vocabulary
 from z3c.relationfield import RelationChoice
 from z3c.relationfield import RelationList
+from z3c.relationfield.schema import Relation
 from zope import schema
 from zope.interface import Interface
 from zope.interface import Invalid
@@ -260,3 +263,17 @@ class IBlockNewsOptions(model.Schema):
     )
 
     computed_query = schema.TextLine(readonly=True)
+
+
+@provider(IFormFieldProvider)
+class IMediaFolderReference(model.Schema):
+    directives.widget('mediafolder',
+                      ReferenceBrowserWidget,
+                      allow_nonsearched_types=True,
+                      start='parent',
+                      override=True,
+                      selectable=['MediaFolder', ])
+    mediafolder = Relation(
+        title=_(u'label_mediafolder', default=u'Mediafolder reference'),
+        required=False,
+    )

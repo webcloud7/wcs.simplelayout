@@ -13,6 +13,7 @@ from urllib import parse
 from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
 from wcs.simplelayout.contenttypes.behaviors import IBlockNewsOptions
 from wcs.simplelayout.contenttypes.behaviors import IBlockSortOptions
+from wcs.simplelayout.contenttypes.behaviors import IMediaFolderReference
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.utils import LOG
 from zope.component import adapter
@@ -122,7 +123,7 @@ class ContentQueryFieldSerializer(DefaultFieldSerializer):
             sort_order = IBlockSortOptions(self.context).sort_order
             url = f'{self.context.absolute_url()}/@search'
             query = {
-                'path.query': '/'.join(self.context.getPhysicalPath()),
+                'path.query': self._get_path(),
                 'path.depth': 1,
                 'sort_on': sort_on,
                 'sort_order': sort_order,
@@ -132,6 +133,14 @@ class ContentQueryFieldSerializer(DefaultFieldSerializer):
             return f'{url}?{parse.urlencode(query, doseq=False)}'
 
         return super().__call__()
+
+    def _get_path(self):
+        mediafolder_behaviour = IMediaFolderReference(self.context, None)
+        if (mediafolder_behaviour and
+                mediafolder_behaviour.mediafolder and
+                mediafolder_behaviour.mediafolder.to_object):
+            return '/'.join(self.context.mediafolder.to_object.getPhysicalPath())
+        return '/'.join(self.context.getPhysicalPath())
 
 
 @adapter(IJSONField, ISimplelayout, Interface)

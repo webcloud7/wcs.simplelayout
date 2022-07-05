@@ -23,6 +23,22 @@
         />
 
     <browser:page
+        for="wcs.simplelayout.contenttypes.behaviors.IMediaFolderReference"
+        name="add-and-link-mediafolder"
+        class=".mediafolder.CreateAndLinkMediaFolder"
+        permission="cmf.ModifyPortalContent"
+        />
+
+    <browser:viewlet
+        for="wcs.simplelayout.contenttypes.mediafolder.IMediaFolder"
+        name="mediafolder-back-reference"
+        manager="plone.app.layout.viewlets.interfaces.IAboveContentBody"
+        permission="zope2.View"
+        class=".mediafolder.MediaFolderViewlet"
+        layer="wcs.simplelayout.interfaces.ISimplelayoutLayer"
+        />
+
+    <browser:page
         for="wcs.simplelayout.contenttypes.behaviors.ISimplelayout"
         name="simplelayout-view"
         permission="zope2.View"

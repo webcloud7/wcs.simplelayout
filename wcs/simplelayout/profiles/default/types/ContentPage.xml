@@ -18,6 +18,7 @@
   <element value="ImageListingBlock"/>
   <element value="NewsListingBlock"/>
   <element value="ContentPage"/>
+  <element value="MediaFolder"/>
  </property>
  <property name="allow_discussion">False</property>
  <property name="default_view">@@simplelayout-view</property>

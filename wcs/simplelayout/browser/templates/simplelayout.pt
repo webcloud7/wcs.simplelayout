@@ -8,6 +8,6 @@
         
         <link rel="stylesheet" type="text/css" tal:attributes="href string:${here/portal_url}/++resource++simplelayout/js/dist/simplelayout.min.css" />
 
-        <div id="app"></div>
+        <div tal:attributes="data-token context/@@authenticator/token" id="app"></div>
     </div>
 </html>
