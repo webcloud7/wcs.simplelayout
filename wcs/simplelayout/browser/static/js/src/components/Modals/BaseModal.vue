@@ -85,6 +85,7 @@ export default {
       this.position = position;
       this.replaceModalContent(response);
       this.handleFormButtons();
+      window.initReferenceWidget();
       this.modal.show();
     },
     async handleSubmit(event) {
