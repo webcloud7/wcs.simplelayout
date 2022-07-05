@@ -12,9 +12,13 @@ export const useSimplelayoutStore = defineStore({
     baseApiURL: document.body.getAttribute("data-base-url") + "/++api++",
     portalURL: document.body.getAttribute("data-portal-url"),
     params: { expand: "types" },
+    authToken: null,
   }),
   getters: {},
   actions: {
+    setAuthenticatorToken(token) {
+      this.authToken = token;
+    },
     async fetchBlocks() {
       this.loading = true;
       try {

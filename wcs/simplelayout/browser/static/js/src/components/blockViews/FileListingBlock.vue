@@ -1,6 +1,24 @@
 <template>
   <BlockStructure v-bind="$props">
     <template #body>
+      <div class="mediafolder-link">
+        <form
+          v-if="!block.mediafolder"
+          method="POST"
+          :action="`${block['@id']}/@@add-and-link-mediafolder`"
+        >
+          <input type="hidden" name="_authenticator" :value="sl.authToken" />
+          <button type="submit" class="btn btn-success btn-sm">
+            Click here to create a new Media Folder
+          </button>
+        </form>
+        <a
+          v-else
+          :href="block.mediafolder['@id']"
+          class="btn btn-success btn-sm"
+          >Go the the referenced Media Folder</a
+        >
+      </div>
       total {{ data.items_total }}
       <div class="table-responsive">
         <table class="table table-hover">
@@ -32,7 +50,7 @@
             </tr>
           </tbody>
         </table>
-      </div> 
+      </div>
       <Pagination
         v-if="data.batching"
         @next="fetchNext"
@@ -43,8 +61,10 @@
   </BlockStructure>
 </template>
 <script>
+import { useSimplelayoutStore } from "@/store.js";
 import BlockStructure from "@/components/standard/BlockStructure.vue";
 import Pagination from "@/components/Pagination.vue";
+
 export default {
   components: {
     BlockStructure,
@@ -71,6 +91,10 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
   },
   data() {
     return {

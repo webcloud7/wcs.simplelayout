@@ -1,5 +1,5 @@
 <template>
-  <div :class="`sl-container ${draggingClass}`">
+  <div :class="`sl-container ${draggingClass}`" ref="root">
     <template
       v-for="(row, rowIndex) in sl.layouts.items"
       :key="`layout_${rowIndex}`"
@@ -180,6 +180,11 @@ export default {
   },
   created() {
     this.sl.fetchBlocks();
+  },
+  mounted() {
+    this.sl.setAuthenticatorToken(
+      this.$refs.root.parentElement.getAttribute("data-token")
+    );
   },
   computed: {
     draggingClass() {
