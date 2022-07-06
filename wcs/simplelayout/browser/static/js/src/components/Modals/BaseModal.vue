@@ -31,6 +31,8 @@
 <script>
 import { useSimplelayoutStore } from "@/store.js";
 import registry from "@patternslib/patternslib/src/core/registry";
+import $ from "jquery";
+
 export default {
   name: "base-modal",
   props: {
@@ -64,14 +66,14 @@ export default {
     return {
       modal: null,
       position: {},
+      bootstrap: null,
     };
   },
   mounted() {
     const modal = this.$refs["sl-base-modal"];
-    this.modal = new window.jQuery.fn.modal.Constructor(
-      modal,
-      this.modalOptions
-    );
+    // this.loadBootstrap();
+    // console.info(this.bootstrap);
+    this.modal = new $.fn.modal.Constructor(modal, this.modalOptions);
   },
   methods: {
     async openModal(url, position) {
@@ -86,6 +88,7 @@ export default {
       this.position = position;
       this.replaceModalContent(response);
       this.handleFormButtons();
+      window.initReferenceWidget();
       this.modal.show();
     },
     async handleSubmit(event) {
@@ -182,6 +185,9 @@ export default {
         }
       );
     },
+    // async loadBootstrap() {
+    //   this.bootstrap = await import("bootstrap");
+    // },
   },
 };
 </script>

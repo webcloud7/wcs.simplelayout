@@ -9,6 +9,13 @@ class ContenPageBuilder(DexterityBuilder):
 builder_registry.register('content page', ContenPageBuilder)
 
 
+class MediaFolderBuilder(DexterityBuilder):
+    portal_type = 'MediaFolder'
+
+
+builder_registry.register('mediafolder', MediaFolderBuilder)
+
+
 class BlockBuilder(DexterityBuilder):
     portal_type = 'Block'
 

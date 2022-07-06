@@ -110,5 +110,5 @@ class TestVideoBlock(FunctionalTesting):
         browser.find_button_by_label('Save').click()
 
         statusmessages.assert_message('There were some errors.')
-        self.assertEquals('This is no a valid youtube, or vimeo url.',
+        self.assertEqual('This is no a valid youtube, or vimeo url.',
                           browser.css('.field.error').first.text)

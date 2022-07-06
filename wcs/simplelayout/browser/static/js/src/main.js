@@ -17,4 +17,7 @@ pinia.use(({ store }) => {
 
 app.use(pinia);
 app.use(BlockViews);
-app.mount("#app");
+
+window.addEventListener("load", () => {
+  app.mount("#app");
+});

@@ -59,4 +59,15 @@
         provides="wcs.simplelayout.contenttypes.behaviors.IBlockNewsOptions"
         />
 
+    <plone:behavior
+        title="MediaFolder reference field"
+        description="Extends the content with a reference field to a media folder"
+        provides=".behaviors.IMediaFolderReference"
+        />
+
+    <subscriber
+        for=".behaviors.IMediaFolderReference
+            zope.lifecycleevent.IObjectAddedEvent"
+        handler=".fix_set_relations.add_behavior_relations"
+        />
 </configure>

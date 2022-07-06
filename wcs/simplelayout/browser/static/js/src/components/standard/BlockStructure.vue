@@ -1,5 +1,6 @@
 <template>
   <div class="card">
+    <a :id="block['id']" />
     <BlockControls v-bind="$props" />
     <slot name="top">
       <div class="card-img-top sl-card-image" v-if="block.image">

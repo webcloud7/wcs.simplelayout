@@ -1,38 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object name="ContentPage" meta_type="Dexterity FTI" i18n:domain="plone"
+<object name="MediaFolder" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
- <property name="title" i18n:translate="">Content Page</property>
- <property name="icon_expr">string:file-earmark-richtext</property>
- <property name="factory">ContentPage</property>
+ <property name="title" i18n:translate="">Media Folder</property>
+ <property name="icon_expr">string:folder2-open</property>
+ <property name="factory">MediaFolder</property>
  <property
-    name="add_view_expr">string:${folder_url}/++add++ContentPage</property>
+    name="add_view_expr">string:${folder_url}/++add++MediaFolder</property>
  <property name="link_target"></property>
- <property name="immediate_view">@@simplelayout-view</property>
+ <property name="immediate_view">@@mediafolder_view</property>
  <property name="global_allow">True</property>
  <property name="filter_content_types">True</property>
  <property name="allowed_content_types">
-  <element value="NewsFolder"/>
-  <element value="Block"/>
-  <element value="VideoBlock"/>
-  <element value="FileListingBlock"/>
-  <element value="ImageListingBlock"/>
-  <element value="NewsListingBlock"/>
-  <element value="ContentPage"/>
-  <element value="MediaFolder"/>
+  <element value="Image" />
+  <element value="File" />
  </property>
  <property name="allow_discussion">False</property>
- <property name="default_view">@@simplelayout-view</property>
+ <property name="default_view">@@mediafolder_view</property>
  <property name="view_methods">
-  <element value="@@simplelayout-view"/>
+  <element value="@@mediafolder_view"/>
  </property>
  <property name="default_view_fallback">False</property>
  <property name="add_permission">cmf.AddPortalContent</property>
  <property
-    name="klass">wcs.simplelayout.contenttypes.contentpage.ContentPage</property>
+    name="klass">wcs.simplelayout.contenttypes.mediafolder.MediaFolder</property>
  <property name="behaviors">
   <element value="plone.namefromtitle"/>
   <element value="plone.basic"/>
-  <element value="wcs.simplelayout.contenttypes.behaviors.ISimplelayout"/>
   <element value="plone.excludefromnavigation"/>
   <element value="plone.publication"/>
  </property>
