@@ -88,7 +88,6 @@ export default {
       this.position = position;
       this.replaceModalContent(response);
       this.handleFormButtons();
-      window.initReferenceWidget();
       this.modal.show();
     },
     async handleSubmit(event) {
@@ -131,6 +130,7 @@ export default {
       doc.querySelector("h1").remove();
       body.innerHTML = doc.getElementById("content").innerHTML;
       registry.scan(body);
+      window.initReferenceWidget();
     },
     handleFormButtons() {
       const form = this.modal._element.querySelector("#form");
