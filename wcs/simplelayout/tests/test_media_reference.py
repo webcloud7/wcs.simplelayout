@@ -19,4 +19,3 @@ class TestMediaFolderReference(FunctionalTesting):
 
         block = contentpage.objectValues()[0]
         self.assertEqual(mediafolder, block.mediafolder.to_object)
-
