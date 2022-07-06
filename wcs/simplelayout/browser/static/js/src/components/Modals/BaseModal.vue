@@ -14,7 +14,7 @@
           </h4>
         </div>
         <div class="modal-body"><slot name="body" /></div>
-        <div class="modal-footer">
+        <div class="modal-footer sl-base-modal-footer">
           <button
             id="form-buttons-cancel"
             name="form.buttons.cancel"
@@ -154,7 +154,7 @@ export default {
 
       cancelButton.addEventListener("click", this.handleCancel);
 
-      const footer = this.modal._element.querySelector(".modal-footer");
+      const footer = this.modal._element.querySelector(".sl-base-modal-footer");
       while (footer.firstChild) {
         footer.removeChild(footer.firstChild);
       }
