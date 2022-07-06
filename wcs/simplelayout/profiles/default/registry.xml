@@ -17,5 +17,6 @@
         <value key="csscompilation"></value>
         <value key="load_async">False</value>
         <value key="load_defer">False</value>
+        <value key="depends">bootstrap-js</value>
     </records>
 </registry>
