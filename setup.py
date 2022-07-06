@@ -45,7 +45,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'ftw.upgrade',
-        'ftw.referencewidget > 4.0.0a3',
+        'ftw.referencewidget > 4.0.0a4',
         'Plone',
         'plone.autoinclude',
         'plone.restapi',
