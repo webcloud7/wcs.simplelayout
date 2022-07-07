@@ -3,6 +3,7 @@
     <record name="plone.displayed_types">
         <value purge="false">
             <element>ContentPage</element>
+            <element>NewsFolder</element>
         </value>
     </record>
     <record name="plone.default_page_types">
