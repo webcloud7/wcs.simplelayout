@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<object name="portal_workflow" meta_type="Plone Workflow Tool">
+ <bindings>
+  <type type_id="Block"/>
+  <type type_id="VideoBlock"/>
+  <type type_id="FileListingBlock"/>
+  <type type_id="ImageListingBlock"/>
+  <type type_id="NewsListingBlock"/>
+ </bindings>
+</object>
