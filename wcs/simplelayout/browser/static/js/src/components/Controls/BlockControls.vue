@@ -1,6 +1,6 @@
 <template>
-  <div class="container d-flex justify-content-between">
-    <div class="">
+  <div class="container d-flex justify-content-between sl-header-wrapper my-2">
+    <div class="sl-title-wrapper">
       <slot name="title">
         <BlockTitle :block="block" v-if="block.title" />
       </slot>
@@ -100,4 +100,5 @@ export default {
 .sl-block:hover .sl-add-block-controls {
   visibility: visible;
 }
+
 </style>
