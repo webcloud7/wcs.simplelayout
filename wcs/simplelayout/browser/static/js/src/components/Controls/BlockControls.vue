@@ -1,11 +1,14 @@
 <template>
-  <div class="container d-flex justify-content-between sl-header-wrapper my-2">
+  <div class="container d-flex justify-content-between align-items-start sl-header-wrapper">
     <div class="sl-title-wrapper">
       <slot name="title">
         <BlockTitle :block="block" v-if="block.title" />
       </slot>
     </div>
-    <div class="btn-group btn-group-xs sl-add-block-controls">
+    <div
+      class="btn-group btn-group-xs sl-add-block-controls"
+      v-if="sl.canModify"
+    >
       <button
         v-if="blockIndex > -1"
         class="btn btn-secondary btn-sm sl-handle sl-move-button"
@@ -92,6 +95,9 @@ export default {
 };
 </script>
 <style lang="scss">
+.sl-move-button {
+  width: 40px;
+}
 .sl-add-block-controls {
   visibility: hidden;
   z-index: 1;
@@ -100,5 +106,4 @@ export default {
 .sl-block:hover .sl-add-block-controls {
   visibility: visible;
 }
-
 </style>
