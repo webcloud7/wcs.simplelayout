@@ -5,7 +5,7 @@
       :key="`layout_${rowIndex}`"
     >
       <div class="sl-row">
-        <RowControls :index="rowIndex" />
+        <RowControls :index="rowIndex" v-if="sl.canModify" />
 
         <div class="row">
           <div
@@ -14,6 +14,7 @@
             :class="`sl-col col col-${column.width}`"
           >
             <ColControls
+              v-if="sl.canModify"
               :rowIndex="rowIndex"
               :colIndex="columnIndex"
               :currentWidth="parseInt(column.width)"
@@ -55,7 +56,7 @@
             </draggable>
 
             <ColControls
-              v-if="row.items.length === columnIndex + 1"
+              v-if="row.items.length === columnIndex + 1 && sl.canModify"
               :rowIndex="rowIndex"
               :colIndex="columnIndex + 1"
               right
@@ -63,7 +64,7 @@
           </div>
         </div>
         <RowControls
-          v-if="sl.layouts.items.length === rowIndex + 1"
+          v-if="sl.layouts.items.length === rowIndex + 1 && sl.canModify"
           :index="rowIndex + 1"
         />
       </div>
@@ -178,13 +179,14 @@ export default {
       ],
     };
   },
-  created() {
-    this.sl.fetchBlocks();
-  },
   mounted() {
     this.sl.setAuthenticatorToken(
       this.$refs.root.parentElement.getAttribute("data-token")
     );
+    this.sl.setCanModify(
+      this.$refs.root.parentElement.getAttribute("data-can-modify")
+    );
+    this.sl.fetchBlocks();
   },
   computed: {
     draggingClass() {

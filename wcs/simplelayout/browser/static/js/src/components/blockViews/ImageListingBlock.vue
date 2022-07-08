@@ -1,7 +1,7 @@
 <template>
   <BlockStructure v-bind="$props">
     <template #body>
-      <div class="mediafolder-link">
+      <div class="mediafolder-link" v-if="sl.canModify">
         <form
           v-if="!block.mediafolder"
           method="POST"

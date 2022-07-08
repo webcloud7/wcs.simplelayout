@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <a :id="block['id']" />
-    <BlockControls v-bind="$props" />
+    <BlockControls v-bind="$props" v-if="sl.canModify" />
     <slot name="top">
       <div class="card-img-top sl-card-image" v-if="block.image">
         <img
@@ -20,6 +20,7 @@
   </div>
 </template>
 <script>
+import { useSimplelayoutStore } from "@/store.js";
 import BlockControls from "@/components/Controls/BlockControls.vue";
 export default {
   components: {
@@ -46,6 +47,10 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
   },
 };
 </script>

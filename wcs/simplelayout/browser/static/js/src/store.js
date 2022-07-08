@@ -13,11 +13,20 @@ export const useSimplelayoutStore = defineStore({
     portalURL: document.body.getAttribute("data-portal-url"),
     params: { expand: "types" },
     authToken: null,
+    canModify: false,
   }),
   getters: {},
   actions: {
     setAuthenticatorToken(token) {
       this.authToken = token;
+    },
+    setCanModify(value) {
+      if (value == "True") {
+        this.canModify = true;
+      } else {
+        this.canModify = false;
+        this.params = {};
+      }
     },
     async fetchBlocks() {
       this.loading = true;

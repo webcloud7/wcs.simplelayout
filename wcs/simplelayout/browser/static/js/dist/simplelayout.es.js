@@ -10030,12 +10030,21 @@ const useSimplelayoutStore = defineStore({
     baseApiURL: document.body.getAttribute("data-base-url") + "/++api++",
     portalURL: document.body.getAttribute("data-portal-url"),
     params: { expand: "types" },
-    authToken: null
+    authToken: null,
+    canModify: false
   }),
   getters: {},
   actions: {
     setAuthenticatorToken(token) {
       this.authToken = token;
+    },
+    setCanModify(value) {
+      if (value == "True") {
+        this.canModify = true;
+      } else {
+        this.canModify = false;
+        this.params = {};
+      }
     },
     async fetchBlocks() {
       this.loading = true;
@@ -10286,6 +10295,10 @@ const _sfc_main$h = {
       type: Object,
       required: true
     }
+  },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
   }
 };
 const _hoisted_1$b = { class: "card" };
@@ -10296,7 +10309,7 @@ const _hoisted_3$7 = {
 };
 const _hoisted_4$5 = ["src", "alt"];
 const _hoisted_5$5 = {
-  key: 0,
+  key: 1,
   class: "card-body"
 };
 const _hoisted_6$4 = { class: "card-text" };
@@ -10307,7 +10320,7 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
     createBaseVNode("a", {
       id: $props.block["id"]
     }, null, 8, _hoisted_2$b),
-    createVNode(_component_BlockControls, normalizeProps(guardReactiveProps(_ctx.$props)), null, 16),
+    $setup.sl.canModify ? (openBlock(), createBlock(_component_BlockControls, normalizeProps(mergeProps({ key: 0 }, _ctx.$props)), null, 16)) : createCommentVNode("v-if", true),
     renderSlot(_ctx.$slots, "top", {}, () => [
       $props.block.image ? (openBlock(), createElementBlock("div", _hoisted_3$7, [
         createBaseVNode("img", {
@@ -24287,11 +24300,10 @@ const _sfc_main$6 = {
       ]
     };
   },
-  created() {
-    this.sl.fetchBlocks();
-  },
   mounted() {
     this.sl.setAuthenticatorToken(this.$refs.root.parentElement.getAttribute("data-token"));
+    this.sl.setCanModify(this.$refs.root.parentElement.getAttribute("data-can-modify"));
+    this.sl.fetchBlocks();
   },
   computed: {
     draggingClass() {
@@ -24372,18 +24384,22 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
           key: `layout_${rowIndex}`,
           class: "sl-row"
         }, [
-          createVNode(_component_RowControls, { index: rowIndex }, null, 8, ["index"]),
+          $setup.sl.canModify ? (openBlock(), createBlock(_component_RowControls, {
+            key: 0,
+            index: rowIndex
+          }, null, 8, ["index"])) : createCommentVNode("v-if", true),
           createBaseVNode("div", _hoisted_1$5, [
             (openBlock(true), createElementBlock(Fragment, null, renderList(row2.items, (column2, columnIndex) => {
               return openBlock(), createElementBlock("div", {
                 key: `column_${columnIndex}_${rowIndex}`,
                 class: normalizeClass(`sl-col col col-${column2.width}`)
               }, [
-                createVNode(_component_ColControls, {
+                $setup.sl.canModify ? (openBlock(), createBlock(_component_ColControls, {
+                  key: 0,
                   rowIndex,
                   colIndex: columnIndex,
                   currentWidth: parseInt(column2.width)
-                }, null, 8, ["rowIndex", "colIndex", "currentWidth"]),
+                }, null, 8, ["rowIndex", "colIndex", "currentWidth"])) : createCommentVNode("v-if", true),
                 createVNode(_component_draggable, mergeProps($options.dragOptions, {
                   list: column2.items,
                   itemKey: (item) => _ctx.element,
@@ -24414,8 +24430,8 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
                   ]),
                   _: 2
                 }, 1040, ["list", "itemKey", "onEnd", "onStart"]),
-                row2.items.length === columnIndex + 1 ? (openBlock(), createBlock(_component_ColControls, {
-                  key: 0,
+                row2.items.length === columnIndex + 1 && $setup.sl.canModify ? (openBlock(), createBlock(_component_ColControls, {
+                  key: 1,
                   rowIndex,
                   colIndex: columnIndex + 1,
                   right: ""
@@ -24423,8 +24439,8 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
               ], 2);
             }), 128))
           ]),
-          $setup.sl.layouts.items.length === rowIndex + 1 ? (openBlock(), createBlock(_component_RowControls, {
-            key: 0,
+          $setup.sl.layouts.items.length === rowIndex + 1 && $setup.sl.canModify ? (openBlock(), createBlock(_component_RowControls, {
+            key: 1,
             index: rowIndex + 1
           }, null, 8, ["index"])) : createCommentVNode("v-if", true)
         ]);
@@ -25867,7 +25883,10 @@ const _sfc_main$3 = {
     }
   }
 };
-const _hoisted_1$3 = { class: "mediafolder-link" };
+const _hoisted_1$3 = {
+  key: 0,
+  class: "mediafolder-link"
+};
 const _hoisted_2$3 = ["action"];
 const _hoisted_3$2 = ["value"];
 const _hoisted_4$1 = /* @__PURE__ */ createBaseVNode("button", {
@@ -25892,7 +25911,7 @@ function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockStructure = resolveComponent("BlockStructure");
   return openBlock(), createBlock(_component_BlockStructure, normalizeProps(guardReactiveProps(_ctx.$props)), {
     body: withCtx(() => [
-      createBaseVNode("div", _hoisted_1$3, [
+      $setup.sl.canModify ? (openBlock(), createElementBlock("div", _hoisted_1$3, [
         !$props.block.mediafolder ? (openBlock(), createElementBlock("form", {
           key: 0,
           method: "POST",
@@ -25909,7 +25928,7 @@ function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
           href: $props.block.mediafolder["@id"],
           class: "btn btn-success btn-sm"
         }, "Go the the referenced Media Folder", 8, _hoisted_5$1))
-      ]),
+      ])) : createCommentVNode("v-if", true),
       createTextVNode(" total " + toDisplayString($data.data.items_total) + " ", 1),
       createBaseVNode("div", _hoisted_6$1, [
         createBaseVNode("table", _hoisted_7$1, [
@@ -25944,7 +25963,7 @@ function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
         ])
       ]),
       $data.data.batching ? (openBlock(), createBlock(_component_Pagination, {
-        key: 0,
+        key: 1,
         onNext: $options.fetchNext,
         onPrevious: $options.fetchPrevious,
         batching: $data.data.batching
@@ -26017,7 +26036,10 @@ const _sfc_main$2 = {
     }
   }
 };
-const _hoisted_1$2 = { class: "mediafolder-link" };
+const _hoisted_1$2 = {
+  key: 0,
+  class: "mediafolder-link"
+};
 const _hoisted_2$2 = ["action"];
 const _hoisted_3$1 = ["value"];
 const _hoisted_4 = /* @__PURE__ */ createBaseVNode("button", {
@@ -26042,7 +26064,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockStructure = resolveComponent("BlockStructure");
   return openBlock(), createBlock(_component_BlockStructure, normalizeProps(guardReactiveProps(_ctx.$props)), {
     body: withCtx(() => [
-      createBaseVNode("div", _hoisted_1$2, [
+      $setup.sl.canModify ? (openBlock(), createElementBlock("div", _hoisted_1$2, [
         !$props.block.mediafolder ? (openBlock(), createElementBlock("form", {
           key: 0,
           method: "POST",
@@ -26059,7 +26081,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
           href: $props.block.mediafolder["@id"],
           class: "btn btn-success btn-sm"
         }, "Go the the referenced Media Folder", 8, _hoisted_5))
-      ]),
+      ])) : createCommentVNode("v-if", true),
       createTextVNode(" total " + toDisplayString($data.data.items_total) + " ", 1),
       createBaseVNode("div", _hoisted_6, [
         createBaseVNode("table", _hoisted_7, [
@@ -26094,7 +26116,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
         ])
       ]),
       $data.data.batching ? (openBlock(), createBlock(_component_Pagination, {
-        key: 0,
+        key: 1,
         onNext: $options.fetchNext,
         onPrevious: $options.fetchPrevious,
         batching: $data.data.batching
@@ -26292,6 +26314,4 @@ pinia.use(({ store }) => {
 });
 app.use(pinia);
 app.use(BlockViews);
-window.addEventListener("load", () => {
-  app.mount("#app");
-});
+app.mount("#app");
