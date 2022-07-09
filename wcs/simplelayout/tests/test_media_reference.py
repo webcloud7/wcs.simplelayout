@@ -11,8 +11,7 @@ class TestMediaFolderReference(FunctionalTesting):
     def test_add_default_block(self, browser):
         contentpage = create(Builder('content page').titled(u'A page'))
         mediafolder = create(Builder('mediafolder').titled(u'A media folder'))
-        browser.login().visit(contentpage)
-        factoriesmenu.add('FileListingBlock')
+        browser.login().visit(contentpage, view='++add++FileListingBlock')
         browser.fill({'Title': u'This is a Block',
                       'Mediafolder reference': mediafolder})
         browser.find_button_by_label('Save').click()

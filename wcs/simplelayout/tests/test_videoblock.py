@@ -71,7 +71,7 @@ class TestVideoBlock(FunctionalTesting):
     @browsing
     def test_adding_youtube_videoblock(self, browser):
         browser.login().visit(self.page)
-        factoriesmenu.add('VideoBlock')
+        browser.visit(self.page, view='++add++VideoBlock')
         browser.fill(
             {
                 'Title': 'Youtube Video',
@@ -88,7 +88,7 @@ class TestVideoBlock(FunctionalTesting):
     @browsing
     def test_adding_vimeo_videoblock(self, browser):
         browser.login().visit(self.page)
-        factoriesmenu.add('VideoBlock')
+        browser.visit(self.page, view='++add++VideoBlock')
         browser.fill(
             {
                 'Title': 'Vimeo Video',
@@ -105,7 +105,7 @@ class TestVideoBlock(FunctionalTesting):
     @browsing
     def test_video_url_invariant(self, browser):
         browser.login().visit(self.page)
-        factoriesmenu.add('VideoBlock')
+        browser.visit(self.page, view='++add++VideoBlock')
         browser.fill({'Youtube, or Vimeo URL': 'https://example.com'})
         browser.find_button_by_label('Save').click()
 
