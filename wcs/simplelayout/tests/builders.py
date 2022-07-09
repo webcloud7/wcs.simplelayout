@@ -16,6 +16,20 @@ class MediaFolderBuilder(DexterityBuilder):
 builder_registry.register('mediafolder', MediaFolderBuilder)
 
 
+class NewsFolderBuilder(DexterityBuilder):
+    portal_type = 'NewsFolder'
+
+
+builder_registry.register('news folder', NewsFolderBuilder)
+
+
+class NewsBuilder(DexterityBuilder):
+    portal_type = 'News'
+
+
+builder_registry.register('news', NewsBuilder)
+
+
 class BlockBuilder(DexterityBuilder):
     portal_type = 'Block'
 

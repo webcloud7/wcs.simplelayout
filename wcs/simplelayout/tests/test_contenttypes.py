@@ -23,8 +23,7 @@ class TestSampleTypes(FunctionalTesting):
     def test_add_default_block(self, browser):
         contentpage = create(Builder('content page').titled(u'A page'))
 
-        browser.login().visit(contentpage)
-        factoriesmenu.add('Block')
+        browser.login().open(contentpage, view='++add++Block')
         browser.fill({'Title': u'This is a Block',
                       'Text': u'<p>Some text</p>'})
         browser.find_button_by_label('Save').click()
