@@ -10,4 +10,5 @@
  <object name="FileListingBlock" meta_type="Dexterity FTI"/>
  <object name="ImageListingBlock" meta_type="Dexterity FTI"/>
  <object name="NewsListingBlock" meta_type="Dexterity FTI"/>
+ <object name="AllPurposeListingBlock" meta_type="Dexterity FTI"/>
 </object>

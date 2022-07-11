@@ -2,7 +2,7 @@ from wcs.simplelayout.tests import FunctionalTesting
 from wcs.simplelayout.utils import get_block_types
 
 
-class TestSampleTypes(FunctionalTesting):
+class TestUtils(FunctionalTesting):
 
     def test_get_block_types(self):
         block_ids = (
@@ -10,7 +10,8 @@ class TestSampleTypes(FunctionalTesting):
             'VideoBlock',
             'FileListingBlock',
             'ImageListingBlock',
-            'NewsListingBlock'
+            'NewsListingBlock',
+            'AllPurposeListingBlock',
         )
         self.assertEqual(
             block_ids,

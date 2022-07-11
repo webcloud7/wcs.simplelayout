@@ -1,8 +1,10 @@
 from datetime import datetime
 from datetime import timedelta
 from plone import api
+from plone.app.contenttypes.behaviors.collection import ISyndicatableCollection
 from plone.restapi.interfaces import IFieldSerializer
 from plone.restapi.interfaces import ISerializeToJson
+from plone.restapi.serializer.collection import SerializeCollectionToJson
 from plone.restapi.serializer.converters import datetimelike_to_iso
 from plone.restapi.serializer.converters import json_compatible
 from plone.restapi.serializer.dxcontent import SerializeFolderToJson
@@ -50,6 +52,14 @@ def insert_simplelayout_blocks(context, result):
         'path': {'depth': 1, 'query': '/'.join(context.getPhysicalPath())},
         'object_provides': IBlockMarker.__identifier__,
     }
+
+    # Only insert blocks if the request was made on the content itself.
+    # This avoids a possible max recursion depth exeeded error on
+    # listings, like collections.
+    if context.absolute_url() != context.REQUEST.ACTUAL_URL.rstrip('/++api++'):
+        result['slblocks'] = {}
+        return
+
     catalog = api.portal.get_tool('portal_catalog')
     brains = catalog(**query)
     blocks = getMultiAdapter(
@@ -173,3 +183,15 @@ class LayoutFieldSerializer(DefaultFieldSerializer):
                          f'on {self.context.absolute_url()}')
             return json_compatible(value)
         return super().__call__()
+
+
+@implementer(ISerializeToJson)
+@adapter(ISyndicatableCollection, Interface)
+class AllPurposeListingBlockSerializer(SerializeCollectionToJson):
+    # Register collection serializer for blocks with the plone.collection behavior
+    # Main difference is, that this block always returns the @id of of itself
+    # and not the canonical id
+    def __call__(self, version=None, include_items=True):
+        result = super().__call__(version=version, include_items=include_items)
+        result['@id'] = self.context.absolute_url()
+        return result
