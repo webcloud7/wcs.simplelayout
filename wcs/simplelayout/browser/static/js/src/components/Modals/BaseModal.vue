@@ -31,6 +31,7 @@
 <script>
 import { useSimplelayoutStore } from "@/store.js";
 import registry from "@patternslib/patternslib/src/core/registry";
+import { executeScriptElements } from "@/utils.js"
 
 export default {
   name: "base-modal",
@@ -128,6 +129,7 @@ export default {
       body.innerHTML = doc.getElementById("content").innerHTML;
       registry.scan(body);
       window.initReferenceWidget();
+      executeScriptElements(body);
     },
     handleFormButtons() {
       const form = this.modal._element.querySelector("#form");

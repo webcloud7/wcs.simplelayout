@@ -19,6 +19,7 @@
   <element value="NewsListingBlock"/>
   <element value="ContentPage"/>
   <element value="MediaFolder"/>
+  <element value="AllPurposeListingBlock"/>
  </property>
  <property name="allow_discussion">False</property>
  <property name="default_view">@@simplelayout-view</property>

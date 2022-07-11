@@ -11,4 +11,5 @@
   <adapter factory=".serializer.LayoutFieldSerializer"/>
   <adapter factory=".serializer.ContentQueryFieldSerializer"/>
   <adapter factory=".serializer.NewsQueryFieldSerializer"/>
+  <adapter factory=".serializer.AllPurposeListingBlockSerializer"/>
 </configure>
