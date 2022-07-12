@@ -23419,32 +23419,6 @@ const _sfc_main$5 = {
     async fetchPrevious(url) {
       const response = await this.axios.get(url);
       this.data = response.data;
-    },
-    getTableColumns() {
-      const toConvert = {
-        Description: "description",
-        Date: "news_date",
-        Title: "title",
-        EffectiveDate: "effective",
-        CreationDate: "creates",
-        ExpirationDate: "expires",
-        ModificationDate: "modified",
-        Subject: "subjects",
-        Type: "@type",
-        getID: "id",
-        getRemoteUrl: "remoteUrl",
-        ID: "id",
-        listCreators: "creators",
-        portal_type: "@type"
-      };
-      const columns = this.data.customViewFields.map((col) => {
-        if (col.token in toConvert) {
-          col.token = toConvert[col.token];
-          return col;
-        }
-        return col;
-      });
-      return columns;
     }
   }
 };
@@ -23463,7 +23437,7 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
         createBaseVNode("table", _hoisted_2$4, [
           createBaseVNode("thead", null, [
             createBaseVNode("tr", null, [
-              (openBlock(true), createElementBlock(Fragment, null, renderList($data.columns, (col) => {
+              (openBlock(true), createElementBlock(Fragment, null, renderList(this.data.customViewFields, (col) => {
                 return openBlock(), createElementBlock("th", {
                   key: col.token
                 }, toDisplayString(col.title), 1);
@@ -23475,7 +23449,7 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
               return openBlock(), createElementBlock("tr", {
                 key: item.UID
               }, [
-                (openBlock(true), createElementBlock(Fragment, null, renderList($data.columns, (col) => {
+                (openBlock(true), createElementBlock(Fragment, null, renderList(this.data.customViewFields, (col) => {
                   return openBlock(), createElementBlock(Fragment, {
                     key: col.token
                   }, [

@@ -9,6 +9,7 @@ from plone.restapi.serializer.converters import datetimelike_to_iso
 from plone.restapi.serializer.converters import json_compatible
 from plone.restapi.serializer.dxcontent import SerializeFolderToJson
 from plone.restapi.serializer.dxfields import DefaultFieldSerializer
+from plone.restapi.serializer.dxfields import CollectionFieldSerializer
 from plone.restapi.serializer.expansion import expandable_elements
 from plone.schema import IJSONField
 from urllib import parse
@@ -22,6 +23,7 @@ from zope.component import adapter
 from zope.component import getMultiAdapter
 from zope.interface import implementer
 from zope.interface import Interface
+from zope.schema.interfaces import IList
 from zope.schema.interfaces import ITextLine
 import json
 
@@ -195,3 +197,38 @@ class AllPurposeListingBlockSerializer(SerializeCollectionToJson):
         result = super().__call__(version=version, include_items=include_items)
         result['@id'] = self.context.absolute_url()
         return result
+
+
+CONVERT_TOKENS_CUSTOMVIEWFIELDS = {
+    'Description': 'description',
+    'Date': 'news_date',
+    'Title': 'title',
+    'EffectiveDate': 'effective',
+    'CreationDate': 'creates',
+    'ExpirationDate': 'expires',
+    'ModificationDate': 'modified',
+    'Subject': 'subjects',
+    'Type': '@type',
+    'getID': 'id',
+    'getRemoteUrl': 'remoteUrl',
+    'ID': 'id',
+    'listCreators': 'creators',
+    'portal_type': '@type',
+}
+
+
+@adapter(IList, ISyndicatableCollection, Interface)
+@implementer(IFieldSerializer)
+class CustomViewFieldsSerializer(CollectionFieldSerializer):
+
+    def __call__(self, *args):
+        """Serialize/convert customViewFields to make it usable in the
+        frontend"""
+        if self.field.__name__ == 'customViewFields':
+            result = super().__call__(*args)
+
+            for mapping in result:
+                if mapping['token'] in CONVERT_TOKENS_CUSTOMVIEWFIELDS:
+                    mapping['token'] = CONVERT_TOKENS_CUSTOMVIEWFIELDS[mapping['token']]
+
+            return result

@@ -42,3 +42,10 @@ class VideoBlockBuilder(DexterityBuilder):
 
 
 builder_registry.register('video block', VideoBlockBuilder)
+
+
+class AllPurposeBlockBuilder(DexterityBuilder):
+    portal_type = 'AllPurposeListingBlock'
+
+
+builder_registry.register('all purpose listing block', AllPurposeBlockBuilder)

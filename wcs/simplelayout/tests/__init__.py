@@ -9,6 +9,11 @@ import wcs.simplelayout.tests.builders  # noqa
 class FunctionalTesting(TestCase):
     layer = SIMPLELAYOUT_FUNCTIONAL_TESTING
 
+    api_headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+    }
+
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']

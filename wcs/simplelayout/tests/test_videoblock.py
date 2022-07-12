@@ -1,13 +1,10 @@
 from ftw.builder import Builder
 from ftw.builder import create
 from ftw.testbrowser import browsing
-from ftw.testbrowser.pages import factoriesmenu
 from ftw.testbrowser.pages import statusmessages
-from plone.uuid.interfaces import IUUID
 from wcs.simplelayout.contenttypes import utils
 from wcs.simplelayout.tests import FunctionalTesting
 from unittest import TestCase
-import json
 
 
 class TestVideoValidators(TestCase):

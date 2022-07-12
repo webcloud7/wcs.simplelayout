@@ -6,12 +6,12 @@
         <table class="table table-hover">
           <thead>
             <tr>
-              <th v-for="col in columns" :key="col.token">{{ col.title }}</th>
+              <th v-for="col in this.data.customViewFields" :key="col.token">{{ col.title }}</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in data.items" :key="item.UID">
-              <template v-for="col in columns" :key="col.token">
+              <template v-for="col in this.data.customViewFields" :key="col.token">
                 <td v-if="col.token == 'getObjSize'">
                   <template v-if="item['@type'] == 'File'">
                     {{ item.file.size}}
@@ -101,34 +101,6 @@ export default {
     async fetchPrevious(url) {
       const response = await this.axios.get(url);
       this.data = response.data;
-    },
-    getTableColumns() {
-      // Mapping from names provided by the plone vocab to the key returned from the restapi
-      const toConvert = {
-        Description: "description",
-        Date: "news_date",
-        Title: "title",
-        EffectiveDate: "effective",
-        CreationDate: "creates",
-        ExpirationDate: "expires",
-        ModificationDate: "modified",
-        Subject: "subjects",
-        Type: "@type",
-        getID: "id",
-        getRemoteUrl: "remoteUrl",
-        ID: "id",
-        listCreators: "creators",
-        portal_type: "@type",
-      };
-
-      const columns = this.data.customViewFields.map((col) => {
-        if (col.token in toConvert) {
-          col.token = toConvert[col.token];
-          return col;
-        }
-        return col;
-      });
-      return columns;
     },
   },
 };
