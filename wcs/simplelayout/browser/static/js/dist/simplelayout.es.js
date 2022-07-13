@@ -16376,7 +16376,6 @@ const _sfc_main$d = {
       doc2.querySelector("h1").remove();
       body.innerHTML = doc2.getElementById("content").innerHTML;
       registry.scan(body);
-      window.initReferenceWidget();
       executeScriptElements(body);
     },
     handleFormButtons() {

@@ -128,7 +128,6 @@ export default {
       doc.querySelector("h1").remove();
       body.innerHTML = doc.getElementById("content").innerHTML;
       registry.scan(body);
-      window.initReferenceWidget();
       executeScriptElements(body);
     },
     handleFormButtons() {
