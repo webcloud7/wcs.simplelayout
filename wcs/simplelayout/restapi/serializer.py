@@ -59,7 +59,7 @@ def insert_simplelayout_blocks(context, result):
     # Only insert blocks if the request was made on the content itself.
     # This avoids a possible max recursion depth exeeded error on
     # listings, like collections.
-    if context.absolute_url() != context.REQUEST.ACTUAL_URL.rstrip('/++api++'):
+    if context.absolute_url() != context.REQUEST.ACTUAL_URL.removesuffix('/++api++'):
         result['slblocks'] = {}
         return
 
