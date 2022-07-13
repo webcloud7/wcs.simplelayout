@@ -14,7 +14,7 @@
           <tbody>
             <tr v-for="news in data.items" :key="news.UID">
               <td>{{ news.news_date }}</td>
-              <td>{{ news.title }}</td>
+              <td><a :href="news['@id']">{{ news.title }}</a></td>
               <td>{{ news.modified }}</td>
             </tr>
           </tbody>
@@ -74,7 +74,8 @@ export default {
   },
   methods: {
     async fetchData() {
-      const response = await this.axios.get(this.block.computed_query);
+      const params = { params: { fullobjects: true } };
+      const response = await this.axios.get(this.block["@id"], params);
       this.data = response.data;
     },
     async fetchNext(url) {

@@ -214,8 +214,6 @@ class IBlockSortOptions(model.Schema):
         default="ascending",
         vocabulary=sort_order_vocabulary)
 
-    computed_query = schema.TextLine(readonly=True)
-
 
 @provider(IFormFieldProvider)
 class IBlockNewsOptions(model.Schema):
@@ -261,8 +259,6 @@ class IBlockNewsOptions(model.Schema):
         default=0,
         required=True,
     )
-
-    computed_query = schema.TextLine(readonly=True)
 
 
 @provider(IFormFieldProvider)

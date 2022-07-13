@@ -2,14 +2,16 @@ from datetime import datetime
 from datetime import timedelta
 from plone import api
 from plone.app.contenttypes.behaviors.collection import ISyndicatableCollection
+from plone.restapi.deserializer import boolean_value
 from plone.restapi.interfaces import IFieldSerializer
 from plone.restapi.interfaces import ISerializeToJson
 from plone.restapi.serializer.collection import SerializeCollectionToJson
 from plone.restapi.serializer.converters import datetimelike_to_iso
 from plone.restapi.serializer.converters import json_compatible
 from plone.restapi.serializer.dxcontent import SerializeFolderToJson
-from plone.restapi.serializer.dxfields import DefaultFieldSerializer
+from plone.restapi.serializer.dxcontent import SerializeToJson
 from plone.restapi.serializer.dxfields import CollectionFieldSerializer
+from plone.restapi.serializer.dxfields import DefaultFieldSerializer
 from plone.restapi.serializer.expansion import expandable_elements
 from plone.schema import IJSONField
 from urllib import parse
@@ -24,7 +26,6 @@ from zope.component import getMultiAdapter
 from zope.interface import implementer
 from zope.interface import Interface
 from zope.schema.interfaces import IList
-from zope.schema.interfaces import ITextLine
 import json
 
 
@@ -89,62 +90,82 @@ class SimplelayoutSerializer(SerializeFolderToJson):
         return result
 
 
-@adapter(ITextLine, IBlockNewsOptions, Interface)
-@implementer(IFieldSerializer)
-class NewsQueryFieldSerializer(DefaultFieldSerializer):
+@implementer(ISerializeToJson)
+@adapter(IBlockNewsOptions, Interface)
+class NewsListingBlockSerializer(SerializeToJson):
+    def __call__(self, version=None, include_items=True):
+        result = super().__call__(version=version)
 
-    def __call__(self, *args):
-        if self.field.__name__ == 'computed_query':
-            relations = IBlockNewsOptions(self.context).filter_by_path
-            paths = ''
-            quantity = IBlockNewsOptions(self.context).quantity
-            age = IBlockNewsOptions(self.context).maximum_age
+        include_items = self.request.form.get("include_items", include_items)
+        include_items = boolean_value(include_items)
+        if include_items:
             sort_order = 'ascending'
             sort_on = 'Date'
-            url = f'{self.context.absolute_url()}/@search'
+
+            relations = IBlockNewsOptions(self.context).filter_by_path
+            paths = ''
             if not relations:
                 paths = '/'.join(self.context.aq_parent.getPhysicalPath())
             else:
-                paths = ['/'.join(item.to_object.getPhysicalPath()) for item in paths]
+                paths = ['/'.join(item.to_object.getPhysicalPath()) for item in paths if item.to_object]
 
             query = {
-                'object_provides': 'wcs.simplelayout.contenttypes.behaviors.INews',
                 'path': paths,
                 'sort_on': sort_on,
                 'sort_order': sort_order,
-                'fullobjects': True,
-                'b_size': quantity,
+                'object_provides': 'wcs.simplelayout.contenttypes.behaviors.INews',
             }
 
+            age = IBlockNewsOptions(self.context).maximum_age
             if age != 0:
                 date = datetimelike_to_iso(datetime.now() - timedelta(days=age))
                 query['Date.query'] = date
                 query['Date.range'] = 'min'
-            return f'{url}?{parse.urlencode(query, doseq=True)}'
 
-        return super().__call__()
+            if 'b_size' not in self.request.form:
+                self.request.form['b_size'] = IBlockNewsOptions(self.context).quantity
+            lazy_resultset = api.portal.get_tool('portal_catalog').searchResults(**query)
+            search_result = getMultiAdapter(
+                (lazy_resultset, self.request), ISerializeToJson)(
+                    fullobjects="fullobjects" in list(self.request.form)
+            )
+
+            del search_result['@id']
+            result.update(search_result)
+
+        return result
 
 
-@adapter(ITextLine, IBlockSortOptions, Interface)
-@implementer(IFieldSerializer)
-class ContentQueryFieldSerializer(DefaultFieldSerializer):
+@implementer(ISerializeToJson)
+@adapter(IBlockSortOptions, Interface)
+class BlockSortOptionsSerializer(SerializeToJson):
 
-    def __call__(self, *args):
-        if self.field.__name__ == 'computed_query':
+    def __call__(self, version=None, include_items=True):
+        result = super().__call__(version=version)
+
+        include_items = self.request.form.get("include_items", include_items)
+        include_items = boolean_value(include_items)
+        if include_items:
             sort_on = IBlockSortOptions(self.context).sort_on
             sort_order = IBlockSortOptions(self.context).sort_order
-            url = f'{self.context.absolute_url()}/@search'
             query = {
-                'path.query': self._get_path(),
-                'path.depth': 1,
+                'path': {'query': self._get_path(), 'depth': 1},
                 'sort_on': sort_on,
                 'sort_order': sort_order,
-                'fullobjects': True,
-                'b_size': 10,
             }
-            return f'{url}?{parse.urlencode(query, doseq=False)}'
 
-        return super().__call__()
+            if 'b_size' not in self.request.form:
+                self.request.form['b_size'] = 10
+            lazy_resultset = api.portal.get_tool('portal_catalog').searchResults(**query)
+            search_result = getMultiAdapter(
+                (lazy_resultset, self.request), ISerializeToJson)(
+                    fullobjects="fullobjects" in list(self.request.form)
+            )
+
+            del search_result['@id']
+            result.update(search_result)
+
+        return result
 
     def _get_path(self):
         mediafolder_behaviour = IMediaFolderReference(self.context, None)

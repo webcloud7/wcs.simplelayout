@@ -115,7 +115,8 @@ export default {
   },
   methods: {
     async fetchData() {
-      const response = await this.axios.get(this.block.computed_query);
+      const params = { params: { fullobjects: true } };
+      const response = await this.axios.get(this.block["@id"], params);
       this.data = response.data;
     },
     async fetchNext(url) {
