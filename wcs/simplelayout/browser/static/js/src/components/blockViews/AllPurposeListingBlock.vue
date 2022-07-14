@@ -6,26 +6,35 @@
         <table class="table table-hover">
           <thead>
             <tr>
-              <th v-for="col in this.data.customViewFields" :key="col.token">{{ col.title }}</th>
+              <th v-for="col in this.data.customViewFields" :key="col.token">
+                {{ col.title }}
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in data.items" :key="item.UID">
-              <template v-for="col in this.data.customViewFields" :key="col.token">
+              <template
+                v-for="col in this.data.customViewFields"
+                :key="col.token"
+              >
                 <td v-if="col.token == 'getObjSize'">
                   <template v-if="item['@type'] == 'File'">
-                    {{ item.file.size}}
+                    {{ item.file.size }}
                   </template>
                   <template v-if="item['@type'] == 'Image'">
-                    {{ item.image.size}}
+                    {{ item.image.size }}
                   </template>
                 </td>
                 <td v-else-if="col.token == 'mime_type'">
                   <template v-if="item['@type'] == 'File'">
-                    {{ item.file["content-type"]}}
+                    <img
+                      :src="`${sl.baseURL}/@@iconresolver/mimetype-${item.file['content-type']}`"
+                    />
                   </template>
                   <template v-if="item['@type'] == 'Image'">
-                    {{ item.image["content-type"]}}
+                    <img
+                      :src="`${sl.baseURL}/@@iconresolver/mimetype-${item.image['content-type']}`"
+                    />
                   </template>
                 </td>
                 <td v-else>{{ item[col.token] }}</td>
@@ -44,6 +53,7 @@
   </BlockStructure>
 </template>
 <script>
+import { useSimplelayoutStore } from "@/store.js";
 import BlockStructure from "@/components/standard/BlockStructure.vue";
 import Pagination from "@/components/Pagination.vue";
 export default {
@@ -72,6 +82,10 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
   },
   data() {
     return {

@@ -10217,10 +10217,10 @@ const _hoisted_4$8 = {
   class: "btn btn-secondary btn-sm sl-handle sl-move-button"
 };
 const _hoisted_5$7 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Move", -1);
-const _hoisted_6$5 = ["id"];
-const _hoisted_7$5 = /* @__PURE__ */ createBaseVNode("span", null, "Actions", -1);
+const _hoisted_6$6 = ["id"];
+const _hoisted_7$6 = /* @__PURE__ */ createBaseVNode("span", null, "Actions", -1);
 const _hoisted_8$3 = [
-  _hoisted_7$5
+  _hoisted_7$6
 ];
 const _hoisted_9$2 = ["aria-labelledby"];
 const _hoisted_10$2 = ["onClick", "data-row", "data-col", "data-block"];
@@ -10247,7 +10247,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
         "data-bs-toggle": "dropdown",
         "data-bs-auto-close": "true",
         "aria-expanded": "false"
-      }, _hoisted_8$3, 8, _hoisted_6$5),
+      }, _hoisted_8$3, 8, _hoisted_6$6),
       createBaseVNode("ul", {
         class: "dropdown-menu dropdown-menu-end",
         "aria-labelledby": $options.dropdownId
@@ -10308,11 +10308,11 @@ const _hoisted_4$7 = {
   class: "card-img-top sl-card-image"
 };
 const _hoisted_5$6 = ["src", "alt"];
-const _hoisted_6$4 = {
+const _hoisted_6$5 = {
   key: 0,
   class: "card-body"
 };
-const _hoisted_7$4 = { class: "card-text" };
+const _hoisted_7$5 = { class: "card-text" };
 const _hoisted_8$2 = ["innerHTML"];
 function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockControls = resolveComponent("BlockControls");
@@ -10331,8 +10331,8 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
         }, null, 8, _hoisted_5$6)
       ])) : createCommentVNode("v-if", true)
     ]),
-    Object.keys($props.block).length !== 0 ? (openBlock(), createElementBlock("div", _hoisted_6$4, [
-      createBaseVNode("div", _hoisted_7$4, [
+    Object.keys($props.block).length !== 0 ? (openBlock(), createElementBlock("div", _hoisted_6$5, [
+      createBaseVNode("div", _hoisted_7$5, [
         renderSlot(_ctx.$slots, "body", {}, () => [
           $props.block.text ? (openBlock(), createElementBlock("div", {
             key: 0,
@@ -10472,8 +10472,8 @@ const _hoisted_5$5 = [
   _hoisted_3$7,
   _hoisted_4$6
 ];
-const _hoisted_6$3 = ["aria-labelledby"];
-const _hoisted_7$3 = ["onClick"];
+const _hoisted_6$4 = ["aria-labelledby"];
+const _hoisted_7$4 = ["onClick"];
 function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", {
     class: "sl-add-row-controls",
@@ -10505,10 +10505,10 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
               class: "dropdown-item",
               onClick: withModifiers(() => $options.createRow(row2.cols), ["prevent"]),
               href: "#"
-            }, toDisplayString(row2.label), 9, _hoisted_7$3)
+            }, toDisplayString(row2.label), 9, _hoisted_7$4)
           ]);
         }), 128))
-      ], 8, _hoisted_6$3)
+      ], 8, _hoisted_6$4)
     ])
   ], 4);
 }
@@ -18877,8 +18877,8 @@ const _hoisted_5$3 = {
   class: "modal-title",
   id: "modal-title"
 };
-const _hoisted_6$2 = { class: "modal-body" };
-const _hoisted_7$2 = /* @__PURE__ */ createBaseVNode("div", { class: "modal-footer sl-base-modal-footer" }, [
+const _hoisted_6$3 = { class: "modal-body" };
+const _hoisted_7$3 = /* @__PURE__ */ createBaseVNode("div", { class: "modal-footer sl-base-modal-footer" }, [
   /* @__PURE__ */ createBaseVNode("button", {
     id: "form-buttons-cancel",
     name: "form.buttons.cancel",
@@ -18895,10 +18895,10 @@ function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
             renderSlot(_ctx.$slots, "title")
           ])
         ]),
-        createBaseVNode("div", _hoisted_6$2, [
+        createBaseVNode("div", _hoisted_6$3, [
           renderSlot(_ctx.$slots, "body")
         ]),
-        _hoisted_7$2
+        _hoisted_7$3
       ])
     ])
   ], 512);
@@ -25829,6 +25829,10 @@ const _sfc_main$5 = {
       required: true
     }
   },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
+  },
   data() {
     return {
       data: { items: [], batching: null },
@@ -25863,7 +25867,9 @@ const _hoisted_1$4 = { class: "table-responsive" };
 const _hoisted_2$4 = { class: "table table-hover" };
 const _hoisted_3$3 = { key: 0 };
 const _hoisted_4$3 = { key: 1 };
-const _hoisted_5$2 = { key: 2 };
+const _hoisted_5$2 = ["src"];
+const _hoisted_6$2 = ["src"];
+const _hoisted_7$2 = { key: 2 };
 function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_Pagination = resolveComponent("Pagination");
   const _component_BlockStructure = resolveComponent("BlockStructure");
@@ -25898,13 +25904,15 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
                         createTextVNode(toDisplayString(item.image.size), 1)
                       ], 64)) : createCommentVNode("v-if", true)
                     ])) : col.token == "mime_type" ? (openBlock(), createElementBlock("td", _hoisted_4$3, [
-                      item["@type"] == "File" ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
-                        createTextVNode(toDisplayString(item.file["content-type"]), 1)
-                      ], 64)) : createCommentVNode("v-if", true),
-                      item["@type"] == "Image" ? (openBlock(), createElementBlock(Fragment, { key: 1 }, [
-                        createTextVNode(toDisplayString(item.image["content-type"]), 1)
-                      ], 64)) : createCommentVNode("v-if", true)
-                    ])) : (openBlock(), createElementBlock("td", _hoisted_5$2, toDisplayString(item[col.token]), 1))
+                      item["@type"] == "File" ? (openBlock(), createElementBlock("img", {
+                        key: 0,
+                        src: `${$setup.sl.baseURL}/@@iconresolver/mimetype-${item.file["content-type"]}`
+                      }, null, 8, _hoisted_5$2)) : createCommentVNode("v-if", true),
+                      item["@type"] == "Image" ? (openBlock(), createElementBlock("img", {
+                        key: 1,
+                        src: `${$setup.sl.baseURL}/@@iconresolver/mimetype-${item.image["content-type"]}`
+                      }, null, 8, _hoisted_6$2)) : createCommentVNode("v-if", true)
+                    ])) : (openBlock(), createElementBlock("td", _hoisted_7$2, toDisplayString(item[col.token]), 1))
                   ], 64);
                 }), 128))
               ]);
