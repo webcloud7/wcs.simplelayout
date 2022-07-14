@@ -2,9 +2,11 @@ from datetime import datetime
 from datetime import timedelta
 from plone import api
 from plone.app.contenttypes.behaviors.collection import ISyndicatableCollection
+from plone.restapi.batching import HypermediaBatch
 from plone.restapi.deserializer import boolean_value
 from plone.restapi.interfaces import IFieldSerializer
 from plone.restapi.interfaces import ISerializeToJson
+from plone.restapi.interfaces import ISerializeToJsonSummary
 from plone.restapi.serializer.collection import SerializeCollectionToJson
 from plone.restapi.serializer.converters import datetimelike_to_iso
 from plone.restapi.serializer.converters import json_compatible
@@ -210,12 +212,39 @@ class LayoutFieldSerializer(DefaultFieldSerializer):
 
 @implementer(ISerializeToJson)
 @adapter(ISyndicatableCollection, Interface)
-class AllPurposeListingBlockSerializer(SerializeCollectionToJson):
+class AllPurposeListingBlockSerializer(SerializeToJson):
     # Register collection serializer for blocks with the plone.collection behavior
     # Main difference is, that this block always returns the @id of of itself
     # and not the canonical id
+    # Plus it avoids a recursion if the collection lists itself
     def __call__(self, version=None, include_items=True):
-        result = super().__call__(version=version, include_items=include_items)
+        result = super().__call__(version=version)
+
+        include_items_request = self.request.form.get("include_items", include_items)
+        include_items_request = boolean_value(include_items_request)
+        if include_items and include_items_request:
+            results = self.context.results(batch=False)
+            batch = HypermediaBatch(self.request, results)
+
+            if not self.request.form.get("fullobjects"):
+                result["@id"] = batch.canonical_url
+            result["items_total"] = batch.items_total
+            if batch.links:
+                result["batching"] = batch.links
+
+            if "fullobjects" in list(self.request.form):
+                result["items"] = [
+                    getMultiAdapter(
+                        (brain.getObject(), self.request), ISerializeToJson
+                    )(include_items=False)  # Prevent recursion
+                    for brain in batch
+                ]
+            else:
+                result["items"] = [
+                    getMultiAdapter((brain, self.request), ISerializeToJsonSummary)()
+                    for brain in batch
+                ]
+
         result['@id'] = self.context.absolute_url()
         return result
 
