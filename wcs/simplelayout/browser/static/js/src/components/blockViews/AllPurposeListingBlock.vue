@@ -92,7 +92,6 @@ export default {
       const params = { params: { fullobjects: true } };
       const response = await this.axios.get(this.block["@id"], params);
       this.data = response.data;
-      this.columns = this.getTableColumns();
     },
     async fetchNext(url) {
       const response = await this.axios.get(url);
