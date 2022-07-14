@@ -3,7 +3,7 @@
     <template #body>
       total {{ data.items_total }}
       <div class="table-responsive">
-        <table class="table table-hover">
+        <table class="table table-hover allpuropseblock-listing">
           <thead>
             <tr>
               <th v-for="col in this.data.customViewFields" :key="col.token">
@@ -12,7 +12,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in data.items" :key="item.UID">
+            <tr v-for="item in data.items" :key="item.UID" @click="goto(item['@id'])">
               <template
                 v-for="col in this.data.customViewFields"
                 :key="col.token"
@@ -115,6 +115,16 @@ export default {
       const response = await this.axios.get(url);
       this.data = response.data;
     },
+    goto(url) {
+      window.location.href = url;
+    },
   },
 };
 </script>
+<style lang="scss">
+.allpuropseblock-listing tbody tr {
+  &:hover {
+    cursor: pointer;
+  }
+}
+</style>

@@ -10219,7 +10219,7 @@ const _hoisted_4$8 = {
 const _hoisted_5$7 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Move", -1);
 const _hoisted_6$6 = ["id"];
 const _hoisted_7$6 = /* @__PURE__ */ createBaseVNode("span", null, "Actions", -1);
-const _hoisted_8$3 = [
+const _hoisted_8$4 = [
   _hoisted_7$6
 ];
 const _hoisted_9$2 = ["aria-labelledby"];
@@ -10247,7 +10247,7 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
         "data-bs-toggle": "dropdown",
         "data-bs-auto-close": "true",
         "aria-expanded": "false"
-      }, _hoisted_8$3, 8, _hoisted_6$6),
+      }, _hoisted_8$4, 8, _hoisted_6$6),
       createBaseVNode("ul", {
         class: "dropdown-menu dropdown-menu-end",
         "aria-labelledby": $options.dropdownId
@@ -10313,7 +10313,7 @@ const _hoisted_6$5 = {
   class: "card-body"
 };
 const _hoisted_7$5 = { class: "card-text" };
-const _hoisted_8$2 = ["innerHTML"];
+const _hoisted_8$3 = ["innerHTML"];
 function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockControls = resolveComponent("BlockControls");
   return openBlock(), createElementBlock("div", _hoisted_1$c, [
@@ -10337,7 +10337,7 @@ function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
           $props.block.text ? (openBlock(), createElementBlock("div", {
             key: 0,
             innerHTML: $props.block.text.data
-          }, null, 8, _hoisted_8$2)) : createCommentVNode("v-if", true)
+          }, null, 8, _hoisted_8$3)) : createCommentVNode("v-if", true)
         ])
       ])
     ])) : createCommentVNode("v-if", true),
@@ -25802,6 +25802,7 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
   ])) : createCommentVNode("v-if", true);
 }
 var Pagination = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Pagination.vue"]]);
+var AllPurposeListingBlock_vue_vue_type_style_index_0_lang = "";
 const _sfc_main$5 = {
   components: {
     BlockStructure,
@@ -25860,16 +25861,20 @@ const _sfc_main$5 = {
     async fetchPrevious(url) {
       const response = await this.axios.get(url);
       this.data = response.data;
+    },
+    goto(url) {
+      window.location.href = url;
     }
   }
 };
 const _hoisted_1$4 = { class: "table-responsive" };
-const _hoisted_2$4 = { class: "table table-hover" };
-const _hoisted_3$3 = { key: 0 };
-const _hoisted_4$3 = { key: 1 };
-const _hoisted_5$2 = ["src"];
+const _hoisted_2$4 = { class: "table table-hover allpuropseblock-listing" };
+const _hoisted_3$3 = ["onClick"];
+const _hoisted_4$3 = { key: 0 };
+const _hoisted_5$2 = { key: 1 };
 const _hoisted_6$2 = ["src"];
-const _hoisted_7$2 = { key: 2 };
+const _hoisted_7$2 = ["src"];
+const _hoisted_8$2 = { key: 2 };
 function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_Pagination = resolveComponent("Pagination");
   const _component_BlockStructure = resolveComponent("BlockStructure");
@@ -25890,32 +25895,33 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
           createBaseVNode("tbody", null, [
             (openBlock(true), createElementBlock(Fragment, null, renderList($data.data.items, (item) => {
               return openBlock(), createElementBlock("tr", {
-                key: item.UID
+                key: item.UID,
+                onClick: ($event) => $options.goto(item["@id"])
               }, [
                 (openBlock(true), createElementBlock(Fragment, null, renderList(this.data.customViewFields, (col) => {
                   return openBlock(), createElementBlock(Fragment, {
                     key: col.token
                   }, [
-                    col.token == "getObjSize" ? (openBlock(), createElementBlock("td", _hoisted_3$3, [
+                    col.token == "getObjSize" ? (openBlock(), createElementBlock("td", _hoisted_4$3, [
                       item["@type"] == "File" ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
                         createTextVNode(toDisplayString(item.file.size), 1)
                       ], 64)) : createCommentVNode("v-if", true),
                       item["@type"] == "Image" ? (openBlock(), createElementBlock(Fragment, { key: 1 }, [
                         createTextVNode(toDisplayString(item.image.size), 1)
                       ], 64)) : createCommentVNode("v-if", true)
-                    ])) : col.token == "mime_type" ? (openBlock(), createElementBlock("td", _hoisted_4$3, [
+                    ])) : col.token == "mime_type" ? (openBlock(), createElementBlock("td", _hoisted_5$2, [
                       item["@type"] == "File" ? (openBlock(), createElementBlock("img", {
                         key: 0,
                         src: `${$setup.sl.baseURL}/@@iconresolver/mimetype-${item.file["content-type"]}`
-                      }, null, 8, _hoisted_5$2)) : createCommentVNode("v-if", true),
+                      }, null, 8, _hoisted_6$2)) : createCommentVNode("v-if", true),
                       item["@type"] == "Image" ? (openBlock(), createElementBlock("img", {
                         key: 1,
                         src: `${$setup.sl.baseURL}/@@iconresolver/mimetype-${item.image["content-type"]}`
-                      }, null, 8, _hoisted_6$2)) : createCommentVNode("v-if", true)
-                    ])) : (openBlock(), createElementBlock("td", _hoisted_7$2, toDisplayString(item[col.token]), 1))
+                      }, null, 8, _hoisted_7$2)) : createCommentVNode("v-if", true)
+                    ])) : (openBlock(), createElementBlock("td", _hoisted_8$2, toDisplayString(item[col.token]), 1))
                   ], 64);
                 }), 128))
-              ]);
+              ], 8, _hoisted_3$3);
             }), 128))
           ])
         ])
