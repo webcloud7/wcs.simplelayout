@@ -15,14 +15,22 @@
           <tbody>
             <tr v-for="file in data.items" :key="file.UID">
               <template v-if="file['@type'] === 'Image'">
-                <td>{{ file.image["content-type"] }}</td>
+                <td>
+                  <img
+                    :src="`${sl.baseURL}/@@iconresolver/mimetype-${file.image['content-type']}`"
+                  />
+                </td>
                 <td>
                   <a :href="file.image.download">{{ file.title }}</a>
                 </td>
                 <td>{{ file.image.size }}</td>
               </template>
               <template v-if="file['@type'] === 'File'">
-                <td>{{ file.file["content-type"] }}</td>
+                <td>
+                  <img
+                    :src="`${sl.baseURL}/@@iconresolver/mimetype-${file.file['content-type']}`"
+                  />
+                </td>
                 <td>
                   <a :href="file.file.download">{{ file.title }}</a>
                 </td>
