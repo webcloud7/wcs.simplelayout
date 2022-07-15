@@ -10023,7 +10023,7 @@ function row(cols) {
 const useSimplelayoutStore = defineStore({
   id: "simplelayoutStore",
   state: () => ({
-    layouts: { items: [row()] },
+    layouts: { items: [row(1)] },
     blocks: {},
     loading: false,
     baseURL: document.body.getAttribute("data-base-url"),

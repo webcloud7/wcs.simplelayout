@@ -5,7 +5,7 @@ export const useSimplelayoutStore = defineStore({
   // id is required so that Pinia can connect the store to the devtools
   id: "simplelayoutStore",
   state: () => ({
-    layouts: { items: [row()] },
+    layouts: { items: [row(1)] },
     blocks: {},
     loading: false,
     baseURL: document.body.getAttribute("data-base-url"),
