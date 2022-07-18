@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-07-18 14:43+0000\n"
+"POT-Creation-Date: 2022-07-18 15:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,7 +51,7 @@ msgid "Makes this content a Simplelayout ConentPage"
 msgstr "Markiert den Inhlat als Simplelayour Inhalt, dadurch können Blöcke hinzugefügt und angezeigt werden"
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:18
-msgid "Marks content as news for listings and providesa news date field."
+msgid "Marks content as news for listings and provides a news date field."
 msgstr "Ebenfalls, wird daruch ein Feld 'News Datum' zur Verfügung gestellt. Dies wird für die Sortierung benötigt"
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:66
