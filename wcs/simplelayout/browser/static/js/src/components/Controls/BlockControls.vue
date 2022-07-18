@@ -1,6 +1,8 @@
 <template>
-  <div class="container d-flex justify-content-between align-items-start sl-header-wrapper">
-    <div class="sl-title-wrapper">
+  <div
+    class="d-flex justify-content-end align-items-start sl-header-wrapper flex-wrap"
+  >
+    <div class="sl-title-wrapper me-auto">
       <slot name="title">
         <BlockTitle :block="block" v-if="block.title" />
       </slot>
@@ -16,30 +18,50 @@
         <img v-bind="moveIcon" />
         <span class="sr-only">Move</span>
       </button>
-      <button
-        class="btn btn-success btn-sm dropdown-toggle"
-        type="button"
-        :id="dropdownId"
-        data-bs-toggle="dropdown"
-        data-bs-auto-close="true"
-        aria-expanded="false"
-      >
-        <span>Actions</span>
-      </button>
-      <ul class="dropdown-menu dropdown-menu-end" :aria-labelledby="dropdownId">
-        <li v-for="action in actions" :key="action.label">
-          <a
-            v-if="action.enabled(rowIndex, columnIndex, blockIndex)"
-            class="dropdown-item"
-            @click.prevent.stop="action.action"
-            :data-row="rowIndex"
-            :data-col="columnIndex"
-            :data-block="blockIndex"
-            href="#"
-            >{{ action.label }}</a
-          >
-        </li>
-      </ul>
+
+      <template v-if="block['@id']">
+        <button
+          class="btn btn-success btn-sm dropdown-toggle"
+          type="button"
+          :id="dropdownId"
+          data-bs-toggle="dropdown"
+          data-bs-auto-close="true"
+          aria-expanded="false"
+        >
+          <span>{{ $i18n("Actions") }}</span>
+        </button>
+        <ul
+          class="dropdown-menu dropdown-menu-end"
+          :aria-labelledby="dropdownId"
+        >
+          <li v-for="action in actions" :key="action.label">
+            <a
+              v-if="action.enabled(rowIndex, columnIndex, blockIndex)"
+              class="dropdown-item"
+              @click.prevent.stop="action.action"
+              :data-row="rowIndex"
+              :data-col="columnIndex"
+              :data-block="blockIndex"
+              href="#"
+              >{{ $i18n(action.label) }}</a
+            >
+          </li>
+        </ul>
+      </template>
+      <template v-else>
+        <!-- Only show add action -->
+        <button
+          class="btn btn-success btn-sm"
+          v-if="actions[0].enabled(rowIndex, columnIndex, blockIndex)"
+          @click.prevent.stop="actions[0].action"
+          :data-row="rowIndex"
+          :data-col="columnIndex"
+          :data-block="blockIndex"
+          href="#"
+        >
+          {{ $i18n(actions[0].label) }}
+        </button>
+      </template>
     </div>
   </div>
 </template>

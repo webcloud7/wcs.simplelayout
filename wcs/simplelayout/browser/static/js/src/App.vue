@@ -158,7 +158,7 @@ export default {
           },
         },
         {
-          label: "Contens (Listing)",
+          label: "Contents (Listing)",
           action: this.gotoFolderContents,
           enabled: (rowIndex, columnIndex, blockIndex) => {
             const uid =
@@ -185,6 +185,9 @@ export default {
     );
     this.sl.setCanModify(
       this.$refs.root.parentElement.getAttribute("data-can-modify")
+    );
+    this.sl.setI18nMessages(
+      this.$refs.root.parentElement.getAttribute("data-i18n")
     );
     this.sl.fetchBlocks();
   },
@@ -262,9 +265,6 @@ export default {
     margin: 20px 0;
     position: relative;
     min-height: 100px;
-    &:hover {
-      box-shadow: 0 0 2px 1px #000000;
-    }
   }
 }
 .btn-xs {
