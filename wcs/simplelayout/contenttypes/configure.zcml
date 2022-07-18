@@ -12,8 +12,8 @@
         />
 
     <plone:behavior
-        title="Make a content a News Tyope"
-        description="Marks content as news for listings and providesa news date field."
+        title="Make a content a News Type"
+        description="Marks content as news for listings and provides a news date field."
         provides="wcs.simplelayout.contenttypes.behaviors.INews"
         />
 

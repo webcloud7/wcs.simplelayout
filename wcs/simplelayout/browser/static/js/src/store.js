@@ -14,9 +14,20 @@ export const useSimplelayoutStore = defineStore({
     params: { expand: "types" },
     authToken: null,
     canModify: false,
+    i18n: {},
   }),
   getters: {},
   actions: {
+    setI18nMessages(messages) {
+      this.i18n = JSON.parse(messages);
+    },
+    getTranslation(message) {
+      if (message in this.i18n) {
+        return this.i18n[message];
+      }
+      return message;
+    },
+
     setAuthenticatorToken(token) {
       this.authToken = token;
     },

@@ -24,7 +24,7 @@
         data-bs-auto-close="true"
         aria-expanded="false"
       >
-        <span>Actions</span>
+        <span>{{ $i18n("Actions") }}</span>
       </button>
       <ul class="dropdown-menu dropdown-menu-end" :aria-labelledby="dropdownId">
         <li v-for="action in actions" :key="action.label">
@@ -36,7 +36,7 @@
             :data-col="columnIndex"
             :data-block="blockIndex"
             href="#"
-            >{{ action.label }}</a
+            >{{ $i18n(action.label) }}</a
           >
         </li>
       </ul>

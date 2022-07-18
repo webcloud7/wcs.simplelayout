@@ -10031,10 +10031,20 @@ const useSimplelayoutStore = defineStore({
     portalURL: document.body.getAttribute("data-portal-url"),
     params: { expand: "types" },
     authToken: null,
-    canModify: false
+    canModify: false,
+    i18n: {}
   }),
   getters: {},
   actions: {
+    setI18nMessages(messages) {
+      this.i18n = JSON.parse(messages);
+    },
+    getTranslation(message) {
+      if (message in this.i18n) {
+        return this.i18n[message];
+      }
+      return message;
+    },
     setAuthenticatorToken(token) {
       this.authToken = token;
     },
@@ -10218,12 +10228,8 @@ const _hoisted_4$8 = {
 };
 const _hoisted_5$7 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Move", -1);
 const _hoisted_6$6 = ["id"];
-const _hoisted_7$6 = /* @__PURE__ */ createBaseVNode("span", null, "Actions", -1);
-const _hoisted_8$4 = [
-  _hoisted_7$6
-];
-const _hoisted_9$2 = ["aria-labelledby"];
-const _hoisted_10$2 = ["onClick", "data-row", "data-col", "data-block"];
+const _hoisted_7$6 = ["aria-labelledby"];
+const _hoisted_8$4 = ["onClick", "data-row", "data-col", "data-block"];
 function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockTitle = resolveComponent("BlockTitle");
   return openBlock(), createElementBlock("div", _hoisted_1$d, [
@@ -10247,7 +10253,9 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
         "data-bs-toggle": "dropdown",
         "data-bs-auto-close": "true",
         "aria-expanded": "false"
-      }, _hoisted_8$4, 8, _hoisted_6$6),
+      }, [
+        createBaseVNode("span", null, toDisplayString(_ctx.$i18n("Actions")), 1)
+      ], 8, _hoisted_6$6),
       createBaseVNode("ul", {
         class: "dropdown-menu dropdown-menu-end",
         "aria-labelledby": $options.dropdownId
@@ -10264,10 +10272,10 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
               "data-col": $props.columnIndex,
               "data-block": $props.blockIndex,
               href: "#"
-            }, toDisplayString(action.label), 9, _hoisted_10$2)) : createCommentVNode("v-if", true)
+            }, toDisplayString(_ctx.$i18n(action.label)), 9, _hoisted_8$4)) : createCommentVNode("v-if", true)
           ]);
         }), 128))
-      ], 8, _hoisted_9$2)
+      ], 8, _hoisted_7$6)
     ])) : createCommentVNode("v-if", true)
   ]);
 }
@@ -25537,7 +25545,7 @@ const _sfc_main$7 = {
           }
         },
         {
-          label: "Contens (Listing)",
+          label: "Contents (Listing)",
           action: this.gotoFolderContents,
           enabled: (rowIndex, columnIndex, blockIndex) => {
             const uid2 = this.sl.layouts.items[rowIndex].items[columnIndex].items[blockIndex];
@@ -25554,6 +25562,7 @@ const _sfc_main$7 = {
   mounted() {
     this.sl.setAuthenticatorToken(this.$refs.root.parentElement.getAttribute("data-token"));
     this.sl.setCanModify(this.$refs.root.parentElement.getAttribute("data-can-modify"));
+    this.sl.setI18nMessages(this.$refs.root.parentElement.getAttribute("data-i18n"));
     this.sl.fetchBlocks();
   },
   computed: {
@@ -26484,6 +26493,14 @@ var BlockViews = {
     app2.config.globalProperties.$blockviews = views;
   }
 };
+var i18n = {
+  install: (app2) => {
+    const sl = useSimplelayoutStore();
+    app2.config.globalProperties.$i18n = (message) => {
+      return sl.getTranslation(message);
+    };
+  }
+};
 const app = createApp(App);
 app.use(plugin, {
   axios: axiosInstance(),
@@ -26495,4 +26512,5 @@ pinia.use(({ store }) => {
 });
 app.use(pinia);
 app.use(BlockViews);
+app.use(i18n);
 app.mount("#app");

@@ -5,7 +5,7 @@
       i18n:domain="wcs.simplelayout">
 
     <div metal:fill-slot="content">
-        <h1>Addable Blocks</h1>
+        <h1 i18n:translate="label_addable_blocks">Addable Blocks</h1>
 
         <article id="content">
             <ul>

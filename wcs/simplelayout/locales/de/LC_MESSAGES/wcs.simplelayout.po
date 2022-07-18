@@ -16,51 +16,51 @@ msgstr ""
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:42
 msgid "Default Block image, with captions and Alt-Text field (accessibility)"
-msgstr ""
+msgstr "Barrierefreies Bild für Blöcke, inkl. Bild Alt-Text und Bildlegende"
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:36
 msgid "Default Block text, which only allows restricted HTML as content"
-msgstr ""
+msgstr "Text für Blöcke, welcher nur HTML erlaubt."
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:30
 msgid "Default Block title with (Show title option)"
-msgstr ""
+msgstr "Titel für Blöcke, inkl. 'Title anzeigen Option'"
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:66
 msgid "Extends the content with a reference field to a media folder"
-msgstr ""
+msgstr "Der Inhalt erhält dadruch ein neues Feld für die Verknüpfung mit Medien Ordner"
 
 #: ./wcs/simplelayout/contenttypes/behaviors.py:161
 msgid "Image"
-msgstr ""
+msgstr "Bild"
 
 #: ./wcs/simplelayout/contenttypes/behaviors.py:110
 msgid "Layout"
-msgstr ""
+msgstr "Layout"
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:18
 msgid "Make a content a News Type"
-msgstr ""
+msgstr "Markiert den Inhlatstyp als News. Dieser erscheint dadurch in News Auflistungen"
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:24
 msgid "Makes this content a Simplelayout Block"
-msgstr ""
+msgstr "Markiert den Inhalt als Block, dadudch kann dieser Inhalt als Block verwendet werden"
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:12
 msgid "Makes this content a Simplelayout ConentPage"
-msgstr ""
+msgstr "Markiert den Inhlat als Simplelayour Inhalt, dadurch können Blöcke hinzugefügt und angezeigt werden"
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:18
-msgid "Marks content as news for listings and provides a news date field."
-msgstr ""
+msgid "Marks content as news for listings and providesa news date field."
+msgstr "Ebenfalls, wird daruch ein Feld 'News Datum' zur Verfügung gestellt. Dies wird für die Sortierung benötigt"
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:66
 msgid "MediaFolder reference field"
-msgstr ""
+msgstr "Media Ordner Verknüpfung"
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:48
 msgid "Provides a video url field, which supports youtube and vimeo urls."
-msgstr ""
+msgstr "Stellt ein Video Feld zur Verfügung, welches youtube und vimeo URL's erlaubt"
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:60
 msgid "Provides options to find and filter news content"
@@ -72,11 +72,11 @@ msgstr ""
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:24
 msgid "Simplelayout Block"
-msgstr ""
+msgstr "Simplelayout Block"
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:42
 msgid "Simplelayout Block Image"
-msgstr ""
+msgstr "Simplelayout Block Bild"
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:60
 msgid "Simplelayout Block News options"
@@ -96,7 +96,7 @@ msgstr ""
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:48
 msgid "Simplelayout Block Video URL"
-msgstr ""
+msgstr "Video URL Feld für Blöcke"
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:12
 msgid "Simplelayout Content Page"
@@ -108,7 +108,7 @@ msgstr ""
 
 #: ./wcs/simplelayout/contenttypes/behaviors.py:200
 msgid "This is no a valid youtube, or vimeo url."
-msgstr ""
+msgstr "Es handelt sich um keine gültige Youtube, oder VIMEO URL"
 
 #: ./wcs/simplelayout/contenttypes/behaviors.py:184
 msgid "Youtube format: http(s)://youtu.be/VIDEO_ID (add start parameter to let the vide start at a specific position)<br/>Youtube (no-cookie) format: https://www.youtube-nocookie.com/embed/VIDEO_ID<br/>Vimeo format: http(s)://vimeo.com/(channels/groups)/VIDEO_ID"
@@ -117,147 +117,147 @@ msgstr ""
 #. Default: "Enter an alternative text for the image"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:172
 msgid "description_image_alt_text"
-msgstr ""
+msgstr "Alternative-Text für das Bild (Zugänglichkeit)"
 
 #. Default: "Actions"
 #: ./wcs/simplelayout/browser/simplelayout.py:23
 msgid "label_actions"
-msgstr ""
+msgstr "Aktionen"
 
 #. Default: "Add"
 #: ./wcs/simplelayout/browser/simplelayout.py:24
 msgid "label_add"
-msgstr ""
+msgstr "Hinzufügen"
 
 #. Default: "Addable Blocks"
 #: ./wcs/simplelayout/browser/templates/addable-blocks-overlay.pt:8
 msgid "label_addable_blocks"
-msgstr ""
+msgstr "Hinzufügbare Blöcke"
 
 #. Default: "Ascending"
 #: ./wcs/simplelayout/contenttypes/vocabs.py:29
 msgid "label_ascending"
-msgstr ""
+msgstr "Abwerts"
 
 #. Default: "Contents (Listing)"
 #: ./wcs/simplelayout/browser/simplelayout.py:29
 msgid "label_contents"
-msgstr ""
+msgstr "Inhalte"
 
 #. Default: "Delete"
 #: ./wcs/simplelayout/browser/simplelayout.py:26
 msgid "label_delete"
-msgstr ""
+msgstr "Löschen"
 
 #. Default: "Descending"
 #: ./wcs/simplelayout/contenttypes/vocabs.py:31
 msgid "label_descending"
-msgstr ""
+msgstr "Abwerts"
 
 #. Default: "Edit"
 #: ./wcs/simplelayout/browser/simplelayout.py:25
 msgid "label_edit"
-msgstr ""
+msgstr "Bearbeiten"
 
 #. Default: "Image"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:166
 msgid "label_image"
-msgstr ""
+msgstr "Bild"
 
 #. Default: "Image alternative text"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:170
 msgid "label_image_alt_text"
-msgstr ""
+msgstr "Alternative-Text"
 
 #. Default: "Image caption"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:176
 msgid "label_image_caption"
-msgstr ""
+msgstr "Bild Legende"
 
 #. Default: "Information"
 #: ./wcs/simplelayout/browser/simplelayout.py:28
 msgid "label_information"
-msgstr ""
+msgstr "Informationen"
 
 #. Default: "Mediafolder reference"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:273
 msgid "label_mediafolder"
-msgstr ""
+msgstr "Media Order Verknüpfung"
 
 #. Default: "Show title"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:141
 msgid "label_show_title"
-msgstr ""
+msgstr "Titel azeigen?"
 
 #. Default: "Sort by"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:206
 msgid "label_sort_on"
-msgstr ""
+msgstr "Sortiert nach"
 
 #. Default: "Sort order"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:212
 msgid "label_sort_order"
-msgstr ""
+msgstr "Reihenfolge"
 
 #. Default: "Text"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:152
 msgid "label_text"
-msgstr ""
+msgstr "Text"
 
 #. Default: "Title"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:137
 msgid "label_title"
-msgstr ""
+msgstr "Titel"
 
 #. Default: "Upload"
 #: ./wcs/simplelayout/browser/simplelayout.py:27
 msgid "label_upload"
-msgstr ""
+msgstr "Upload"
 
 #. Default: "Youtube, or Vimeo URL"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:183
 msgid "label_video_url"
-msgstr ""
+msgstr "Youtube, oder Vimeo URL"
 
 #. Default: "News will be sorted by this date"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:126
 msgid "news_date_description"
-msgstr ""
+msgstr "News werden in News Auflistungen nach diesem Datum sortiert."
 
 #. Default: "Date"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:125
 msgid "news_date_label"
-msgstr ""
+msgstr "News Datum"
 
 #. Default: "Only show news items from a specific path. If there is no path, news from the current area will be shown"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:224
 msgid "news_listing_config_filter_path_description"
-msgstr ""
+msgstr "News werden aus dem, oder den ausgewällten Bereichen angezeit, falls leer, wird der aktuelle Bereich nach News durchsucht."
 
 #. Default: "Limit to path"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:222
 msgid "news_listing_config_filter_path_label"
-msgstr ""
+msgstr "Nach Bereich einschränken"
 
 #. Default: "Only news younger than this value will be rendered. Enter 0 for no limitation."
 #: ./wcs/simplelayout/contenttypes/behaviors.py:256
 msgid "news_listing_config_maximum_age_description"
-msgstr ""
+msgstr "Stellt News dar, welche nicht älter als der angegebene Wert sind. 0 bedeutet keine Einschränkung."
 
 #. Default: "Maximum age (days)"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:254
 msgid "news_listing_config_maximum_age_label"
-msgstr ""
+msgstr "Maximales alter (Tage)"
 
 #. Default: "The number of news entries to be shown at most. Enter 0 for no limitation."
 #: ./wcs/simplelayout/contenttypes/behaviors.py:236
 msgid "news_listing_config_quantity_description"
-msgstr ""
+msgstr "Definiert die maximale Anzahl News, welche aufgelistst wird. 0 bedeutet keine Einschränkung"
 
 #. Default: "Quantity"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:235
 msgid "news_listing_config_quantity_label"
-msgstr ""
+msgstr "Anzahl News"
 
 #. Default: "Only news with the selected subjects will be shown."
 #: ./wcs/simplelayout/contenttypes/behaviors.py:245
@@ -267,7 +267,7 @@ msgstr ""
 #. Default: "Filter by subject"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:243
 msgid "news_listing_config_subjects_label"
-msgstr ""
+msgstr "Stichwort filter"
 
 #: ./wcs/simplelayout/configure.zcml:24
 msgid "wcs.simplelayout base profile"
