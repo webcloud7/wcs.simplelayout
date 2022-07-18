@@ -47,9 +47,9 @@ export default {
   data() {
     return {
       rows: [
-        { cols: 2, label: "2-column row (50%)" },
-        { cols: 3, label: "3-column row (33%)" },
-        { cols: 4, label: "4-column row (25%)" },
+        { cols: 2, label: this.$i18n("2-column row (50%)") },
+        { cols: 3, label: this.$i18n("3-column row (33%)") },
+        { cols: 4, label: this.$i18n("4-column row (25%)") },
       ],
     };
   },

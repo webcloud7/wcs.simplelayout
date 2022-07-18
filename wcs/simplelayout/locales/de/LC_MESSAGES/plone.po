@@ -14,29 +14,30 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0\n"
 "Preferred-Encodings: utf-8 latin1\n"
 
-msgid "ContentPage"
-msgstr "Inhaltsseite"
+msgid "AllPurposeListingBlock"
+msgstr "Generische Auflistung"
 
 msgid "Block"
 msgstr "Text und Bild"
 
-msgid "ImageListingBlock"
-msgstr "Bild-Auflistung"
+msgid "ContentPage"
+msgstr "Inhaltsseite"
 
 msgid "FileListingBlock"
 msgstr "Datei-Auflistung"
 
+msgid "ImageListingBlock"
+msgstr "Bild-Auflistung"
+
 msgid "MediaFolder"
 msgstr "Medien Ordner"
-
-msgid "VideoBlock"
-msgstr "Video"
-
-msgid "AllPurposeListingBlock"
-msgstr "Generische Auflistung"
 
 msgid "News"
 msgstr "News"
 
 msgid "NewsFolder"
 msgstr "News Bereich"
+
+msgid "VideoBlock"
+msgstr "Video"
+

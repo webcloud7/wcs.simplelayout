@@ -11,7 +11,7 @@
         type="button"
         @click="removeCol"
       >
-        Remove column
+        {{ $i18n("Remove") }}
       </button>
       <button
         class="btn dropdown-toggle btn-primary btn-xs"
@@ -21,7 +21,7 @@
         data-bs-auto-close="true"
         aria-expanded="false"
       >
-        Width: {{ widthsMapping[currentWidth] }}
+        {{ $i18n("Width") }}: {{ widthsMapping[currentWidth] }}
       </button>
       <ul class="dropdown-menu" :aria-labelledby="dropdownId">
         <template v-for="width in widths" :key="width.cols">

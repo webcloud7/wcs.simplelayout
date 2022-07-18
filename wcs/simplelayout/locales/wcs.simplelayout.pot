@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-07-18 15:06+0000\n"
+"POT-Creation-Date: 2022-07-18 17:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -159,6 +159,11 @@ msgstr ""
 msgid "label_edit"
 msgstr ""
 
+#. Default: "4-column row (25%)"
+#: ./wcs/simplelayout/browser/simplelayout.py:34
+msgid "label_four_col"
+msgstr ""
+
 #. Default: "Image"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:166
 msgid "label_image"
@@ -184,6 +189,16 @@ msgstr ""
 msgid "label_mediafolder"
 msgstr ""
 
+#. Default: "Remove"
+#: ./wcs/simplelayout/browser/simplelayout.py:30
+msgid "label_remove"
+msgstr ""
+
+#. Default: "Remove column"
+#: ./wcs/simplelayout/browser/simplelayout.py:31
+msgid "label_remove_col"
+msgstr ""
+
 #. Default: "Show title"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:141
 msgid "label_show_title"
@@ -204,9 +219,19 @@ msgstr ""
 msgid "label_text"
 msgstr ""
 
+#. Default: "3-column row (33%)"
+#: ./wcs/simplelayout/browser/simplelayout.py:33
+msgid "label_three_col"
+msgstr ""
+
 #. Default: "Title"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:137
 msgid "label_title"
+msgstr ""
+
+#. Default: "2-column row (50%)"
+#: ./wcs/simplelayout/browser/simplelayout.py:32
+msgid "label_two_col"
 msgstr ""
 
 #. Default: "Upload"
@@ -217,6 +242,11 @@ msgstr ""
 #. Default: "Youtube, or Vimeo URL"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:183
 msgid "label_video_url"
+msgstr ""
+
+#. Default: "Width"
+#: ./wcs/simplelayout/browser/simplelayout.py:35
+msgid "label_width"
 msgstr ""
 
 #. Default: "News will be sorted by this date"

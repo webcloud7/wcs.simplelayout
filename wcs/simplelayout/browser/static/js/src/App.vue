@@ -265,9 +265,6 @@ export default {
     margin: 20px 0;
     position: relative;
     min-height: 100px;
-    &:hover {
-      box-shadow: 0 0 2px 1px #000000;
-    }
   }
 }
 .btn-xs {

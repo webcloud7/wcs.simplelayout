@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-07-18 15:06+0000\n"
+"POT-Creation-Date: 2022-07-18 17:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -159,6 +159,11 @@ msgstr "Abwerts"
 msgid "label_edit"
 msgstr "Bearbeiten"
 
+#. Default: "4-column row (25%)"
+#: ./wcs/simplelayout/browser/simplelayout.py:34
+msgid "label_four_col"
+msgstr "4-Spalten (25%)"
+
 #. Default: "Image"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:166
 msgid "label_image"
@@ -184,6 +189,16 @@ msgstr "Informationen"
 msgid "label_mediafolder"
 msgstr "Media Order Verknüpfung"
 
+#. Default: "Remove"
+#: ./wcs/simplelayout/browser/simplelayout.py:30
+msgid "label_remove"
+msgstr "Entfernen"
+
+#. Default: "Remove column"
+#: ./wcs/simplelayout/browser/simplelayout.py:31
+msgid "label_remove_col"
+msgstr "Spalte entfernen"
+
 #. Default: "Show title"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:141
 msgid "label_show_title"
@@ -204,10 +219,20 @@ msgstr "Reihenfolge"
 msgid "label_text"
 msgstr "Text"
 
+#. Default: "3-column row (33%)"
+#: ./wcs/simplelayout/browser/simplelayout.py:33
+msgid "label_three_col"
+msgstr "3-Spalten (33%)"
+
 #. Default: "Title"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:137
 msgid "label_title"
 msgstr "Titel"
+
+#. Default: "2-column row (50%)"
+#: ./wcs/simplelayout/browser/simplelayout.py:32
+msgid "label_two_col"
+msgstr "2-Spalten (50%)"
 
 #. Default: "Upload"
 #: ./wcs/simplelayout/browser/simplelayout.py:27
@@ -218,6 +243,11 @@ msgstr "Upload"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:183
 msgid "label_video_url"
 msgstr "Youtube, oder Vimeo URL"
+
+#. Default: "Width"
+#: ./wcs/simplelayout/browser/simplelayout.py:35
+msgid "label_width"
+msgstr "Breite"
 
 #. Default: "News will be sorted by this date"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:126
