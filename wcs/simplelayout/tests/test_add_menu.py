@@ -1,4 +1,3 @@
-from datetime import datetime
 from ftw.builder import Builder
 from ftw.builder import create
 from ftw.testbrowser import browsing
@@ -11,7 +10,7 @@ class TestSampleTypes(FunctionalTesting):
     def test_blocks_not_in_add_menu(self, browser):
         page = create(Builder('content page').titled('A Page'))
         browser.login().visit(page)
-        self.assertEquals(['Content Page', 'Media Folder', 'News Folder'],
+        self.assertEquals(['ContentPage', 'Media Folder', 'News Folder'],
                           factoriesmenu.addable_types())
 
         newsfolder = create(Builder('news folder').titled('A News Folder'))

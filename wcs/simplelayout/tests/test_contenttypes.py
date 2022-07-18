@@ -10,7 +10,7 @@ class TestSampleTypes(FunctionalTesting):
     @browsing
     def test_add_page(self, browser):
         browser.login().visit()
-        factoriesmenu.add('Content Page')
+        factoriesmenu.add('ContentPage')
         browser.fill({'Title': u'This is a ContentPage'})
         browser.find_button_by_label('Save').click()
         self.assertEqual(u'This is a ContentPage', plone.first_heading())
