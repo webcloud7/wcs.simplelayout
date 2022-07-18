@@ -16305,6 +16305,19 @@ function executeScriptElements(containerElement) {
     scriptElement.parentNode.replaceChild(clonedElement, scriptElement);
   });
 }
+function copyDataForSubmit(name) {
+  var toSel = document.getElementById(name + "-to");
+  var toDataContainer = document.getElementById(name + "-toDataContainer");
+  while (toDataContainer.hasChildNodes())
+    toDataContainer.removeChild(toDataContainer.firstChild);
+  for (var i = 0; i < toSel.options.length; i++) {
+    var newNode = document.createElement("input");
+    newNode.setAttribute("name", name.replace(/-/g, ".") + ":list");
+    newNode.setAttribute("type", "hidden");
+    newNode.setAttribute("value", toSel.options[i].value);
+    toDataContainer.appendChild(newNode);
+  }
+}
 var BaseModal_vue_vue_type_style_index_0_lang = "";
 const _sfc_main$d = {
   name: "base-modal",
@@ -16398,6 +16411,10 @@ const _sfc_main$d = {
       body.innerHTML = doc2.getElementById("content").innerHTML;
       registry.scan(body);
       executeScriptElements(body);
+      document.querySelectorAll(".ordered-selection-field").forEach((element) => {
+        const destination = element.querySelector("[id$='toDataContainer']");
+        copyDataForSubmit(destination.id.replace("-toDataContainer", ""));
+      });
     },
     handleFormButtons() {
       const form = this.modal._element.querySelector("#form");

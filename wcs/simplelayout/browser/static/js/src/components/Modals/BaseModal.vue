@@ -31,7 +31,7 @@
 <script>
 import { useSimplelayoutStore } from "@/store.js";
 import registry from "@patternslib/patternslib/src/core/registry";
-import { executeScriptElements } from "@/utils.js"
+import { executeScriptElements, copyDataForSubmit } from "@/utils.js";
 
 export default {
   name: "base-modal",
@@ -129,6 +129,14 @@ export default {
       body.innerHTML = doc.getElementById("content").innerHTML;
       registry.scan(body);
       executeScriptElements(body);
+
+      // hack for oderselect_input.js
+      document
+        .querySelectorAll(".ordered-selection-field")
+        .forEach((element) => {
+          const destination = element.querySelector("[id$='toDataContainer']");
+          copyDataForSubmit(destination.id.replace("-toDataContainer", ""));
+        });
     },
     handleFormButtons() {
       const form = this.modal._element.querySelector("#form");
