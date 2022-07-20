@@ -1,20 +1,14 @@
-# from plone.app.robotframework.remote import RemoteLibrary
-from plone.testing.zope import WSGIServer
-from xmlrpc.client import ServerProxy
-from xmlrpc.server import SimpleXMLRPCServer
 import argparse
 import logging
 import os
 import sys
 import time
+import signal
 
 
 HAS_DEBUG_MODE = False
-HAS_VERBOSE_CONSOLE = False
-
+HAS_VERBOSE_CONSOLE = True
 ZSERVER_HOST = os.getenv("ZSERVER_HOST", "localhost")
-LISTENER_HOST = os.getenv("LISTENER_HOST", ZSERVER_HOST)
-LISTENER_PORT = int(os.getenv("LISTENER_PORT", 49999))
 
 
 def TIME():
@@ -42,25 +36,20 @@ def start(zope_layer_dotted_name):
 
     print(READY("Started Zope robot server"))
 
-    listener = SimpleXMLRPCServer((LISTENER_HOST, LISTENER_PORT), logRequests=False)
-    listener.allow_none = True
-    listener.register_function(zsl.zodb_setup, "zodb_setup")
-    listener.register_function(zsl.zodb_teardown, "zodb_teardown")
+    def wrapper_sigusr1(*args, **kwargs):
+        Zope2Server().zodb_setup(zope_layer_dotted_name)
+    signal.signal(signal.SIGUSR1, wrapper_sigusr1)
 
-    print_urls(zsl.zope_layer, listener)
+    def wrapper_sigusr2(*args, **kwargs):
+        Zope2Server().zodb_teardown(zope_layer_dotted_name)
+    signal.signal(signal.SIGUSR2, wrapper_sigusr2)
 
-    try:
-        listener.serve_forever()
-    finally:
-        print()
-        print(WAIT("Stopping Zope robot server"))
+    print_urls(zsl.zope_layer)
 
-        zsl.stop_zope_server()
-
-        print(READY("Zope robot server stopped"))
+    return zsl
 
 
-def print_urls(zope_layer, xmlrpc_server):
+def print_urls(zope_layer):
     """Prints the urls with the chosen ports.
     When using a port 0, the operating system chooses an open port.
     When doing that it is helpful that the URLs with the chosen ports are printed to stdout.
@@ -69,13 +58,12 @@ def print_urls(zope_layer, xmlrpc_server):
     for layer in zope_layer.baseResolutionOrder:
         # Walk up the testing layers and look for the first zserver in order to get the
         # actual server name and server port.
-        zserver = getattr(layer, "zserver", None)
-        if not zserver:
+        wsgi_server = getattr(layer, "server", None)
+        if not wsgi_server:
             continue
-        print(f"ZSERVER: http://{zserver.server_name}:{zserver.server_port}")
+        print(f"WSGI SERVER: http://{wsgi_server.effective_host}:{wsgi_server.effective_port}")
+        print(f"WSGI SERVER: PID '{os.getpid()}'")
         break
-
-    print("XMLRPC: http://{}:{}".format(*xmlrpc_server.server_address))
 
 
 def server():
@@ -104,29 +92,16 @@ def server():
         loglevel = logging.ERROR
     logging.basicConfig(level=loglevel)
 
-    # Set reload when available
     try:
-        start(args.layer)
+        zsl = start(args.layer)
+        while True:
+            time.sleep(1)
     except KeyboardInterrupt:
-        pass
+        print(WAIT("Stopping Zope robot server"))
 
+        zsl.stop_zope_server()
 
-# class RobotListener:
-
-#     ROBOT_LISTENER_API_VERSION = 2
-
-#     def __init__(self):
-#         server_listener_address = f"http://{LISTENER_HOST}:{LISTENER_PORT}"
-#         self.server = ServerProxy(server_listener_address)
-
-#     def start_test(self, name, attrs):
-#         self.server.zodb_setup()
-
-#     def end_test(self, name, attrs):
-#         self.server.zodb_teardown()
-
-
-# ZODB = RobotListener  # BBB
+        print(READY("Zope robot server stopped"))
 
 
 class Zope2Server:
@@ -282,44 +257,3 @@ def tear_down(setup_layers=setup_layers):
                 pass
         finally:
             del setup_layers[layer]
-
-
-# class Zope2ServerRemote(RemoteLibrary):
-#     """Provides ``remote_zodb_setup`` and ``remote_zodb_teardown`` -keywords to
-#     allow explicit test isolation via remote library calls when server is set
-#     up with robot-server and tests are run by a separate pybot process.
-#     *WARNING* These keywords does not with zope.testrunner (yet).
-#     """
-
-#     def remote_zodb_setup(self, layer_dotted_name):
-#         Zope2Server().zodb_setup(layer_dotted_name)
-
-#     def remote_zodb_teardown(self, layer_dotted_name):
-#         Zope2Server().zodb_teardown(layer_dotted_name)
-
-
-# class LazyStop:
-#     """Robot Framework listener for enabling lazy Zope2Server shutdown with
-#     normal Robot Framework test runner. Can be used to keep Zope2Server
-#     running between otherwise independent test suites with matching layer.
-#     Usage: pybot --listener plone.app.robotframework.LazyStop
-#     """
-
-#     ROBOT_LISTENER_API_VERSION = 2
-
-#     def __init__(self):
-#         Zope2Server.stop_zope_server_lazy = True
-
-#     def close(self):
-#         tear_down()
-
-
-# def setup(app):
-#     """Sphinx extension hook for enabling lazy Zope2Server shutdown with with
-#     ``sphinxcontrib-robotframework`` embedded test suites. Can be used to keep
-#     Zope2Server running between otherwise independent test suites with matching
-#     layer.
-#     Usage: extensions = ['plone.app.robotframework.server']
-#     """
-#     Zope2Server.stop_zope_server_lazy = True
-#     app.connect("build-finished", lambda app, exception: tear_down())
