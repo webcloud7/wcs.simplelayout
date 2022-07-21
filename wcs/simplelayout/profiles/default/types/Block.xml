@@ -19,7 +19,7 @@
   <element value="view"/>
  </property>
  <property name="default_view_fallback">False</property>
- <property name="add_permission">cmf.AddPortalContent</property>
+ <property name="add_permission">cmf.ModifyPortalContent</property>
  <property name="klass">wcs.simplelayout.contenttypes.block.Block</property>
  <property name="behaviors">
   <element value="plone.namefromtitle"/>
