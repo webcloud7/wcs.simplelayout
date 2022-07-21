@@ -16,7 +16,7 @@ class SimplelayoutView(BrowserView):
         return translate(msg, context=self.request)
 
     def can_modify(self):
-        return api.user.has_permission('Modify portal content')
+        return api.user.has_permission('Modify portal content', obj=self.context)
 
     def i18n(self):
         messages = {
