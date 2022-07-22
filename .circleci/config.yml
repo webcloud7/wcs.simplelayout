@@ -13,6 +13,7 @@ jobs:
       - image: webcloud7/plone-test:6.0.0a4.2
     environment:
       PIP_FIND_LINKS: /wheelhouse/
+      zope_i18n_compile_mo_files: "true"
     steps:
       - checkout
       - run: make install VENV_FOLDER=.
