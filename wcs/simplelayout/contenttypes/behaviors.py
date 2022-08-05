@@ -113,7 +113,7 @@ class ISimplelayout(model.Schema):
         title="Blocks Layout",
         description="The JSON representation of the object blocks layout. Must be a JSON array.",  # noqa
         schema=LAYOUT_SCHEMA,
-        default={"items": []},
+        defaultFactory=lambda: {"items": []},
         required=False,
     )
 
