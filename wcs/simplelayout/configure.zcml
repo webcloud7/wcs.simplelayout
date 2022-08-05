@@ -29,4 +29,16 @@
         />
 
     <adapter factory=".indexer.news_start_date" name="Date"/>
+
+    <subscriber
+        for="wcs.simplelayout.contenttypes.behaviors.IBlockMarker
+             zope.lifecycleevent.IObjectCopiedEvent"
+        handler=".subscribers.update_page_state_on_copy_paste_block"
+        />
+
+    <subscriber
+        for="wcs.simplelayout.contenttypes.behaviors.IBlockMarker
+             zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+        handler=".subscribers.update_page_state_on_block_remove"
+        />
 </configure>

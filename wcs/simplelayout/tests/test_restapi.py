@@ -7,7 +7,7 @@ from zope.component import getUtility
 from zope.schema.interfaces import IVocabularyFactory
 
 
-class TestSampleTypes(FunctionalTesting):
+class TestRestApi(FunctionalTesting):
 
     def setUp(self):
         super().setUp()
@@ -22,6 +22,7 @@ class TestSampleTypes(FunctionalTesting):
 
         block = create(Builder('all purpose listing block')
                        .titled('List stuff')
+                       .within(self.page)
                        .having(customViewFields=list(vocabulary.by_value.keys())))
         browser.login().visit(block, headers=self.api_headers)
         field_value = browser.json['customViewFields']
