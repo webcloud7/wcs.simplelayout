@@ -22,6 +22,7 @@ from wcs.simplelayout.contenttypes.behaviors import IBlockSortOptions
 from wcs.simplelayout.contenttypes.behaviors import IMediaFolderReference
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.utils import LOG
+from wcs.simplelayout.utils import add_missing_blocks
 from zope.component import adapter
 from zope.component import getMultiAdapter
 from zope.interface import implementer
@@ -184,27 +185,8 @@ class LayoutFieldSerializer(DefaultFieldSerializer):
     def __call__(self, *args):
         """ This method appends blocks missing in layout at the very end."""
         if self.field.__name__ == 'slblocks_layout':
-            backup = {
-                "@type": "row",
-                "items": [
-                    {
-                        "@type": "col",
-                        "width": "12",
-                        "items": []
-                    }
-                ]
-            }
             value = self.get_value()
-            result = {}
-            insert_simplelayout_blocks(self.context, result)
-
-            for uid in result['slblocks'].keys():
-                if uid not in str(value):
-                    backup['items'][0]['items'].append(uid)
-            if len(backup['items'][0]['items']):
-                value['items'].append(backup)
-                LOG.info(f'Amended {len(backup["items"][0]["items"])} blocks '
-                         f'on {self.context.absolute_url()}')
+            add_missing_blocks(self.context, value)
             return json_compatible(value)
         return super().__call__()
 
