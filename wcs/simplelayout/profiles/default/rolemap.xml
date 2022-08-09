@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<rolemap>
+  <permissions>
+    <permission name="wcs.simplelayout: Manage columns" acquire="False">
+      <role name="Manager" />
+      <role name="Site Administrator"/>
+      <role name="Editor"/>
+    </permission>
+    <permission name="wcs.simplelayout: Edit Layout" acquire="False">
+      <role name="Manager" />
+    </permission>
+  </permissions>
+</rolemap>

@@ -1,0 +1,15 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="wcs.simplelayout">
+
+    <permission
+        id="wcs.simplelayout.ManageColumns"
+        title="wcs.simplelayout: Manage columns"
+        />
+
+    <permission
+        id="wcs.simplelayout.EditLayout"
+        title="wcs.simplelayout: Edit Layout"
+        />
+
+</configure>
