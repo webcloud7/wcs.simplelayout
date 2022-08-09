@@ -6,8 +6,5 @@
       <role name="Site Administrator"/>
       <role name="Editor"/>
     </permission>
-    <permission name="wcs.simplelayout: Edit Layout" acquire="False">
-      <role name="Manager" />
-    </permission>
   </permissions>
 </rolemap>

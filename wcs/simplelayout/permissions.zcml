@@ -6,10 +6,5 @@
         id="wcs.simplelayout.ManageColumns"
         title="wcs.simplelayout: Manage columns"
         />
-
-    <permission
-        id="wcs.simplelayout.EditLayout"
-        title="wcs.simplelayout: Edit Layout"
-        />
-
+Z
 </configure>

@@ -7593,6 +7593,7 @@ const useSimplelayoutStore = defineStore({
     params: { expand: "types" },
     authToken: null,
     canModify: false,
+    canEditColumns: false,
     i18n: {}
   }),
   getters: {},
@@ -7615,6 +7616,13 @@ const useSimplelayoutStore = defineStore({
       } else {
         this.canModify = false;
         this.params = {};
+      }
+    },
+    setCanEditColumns(value) {
+      if (value == "True") {
+        this.canEditColumns = true;
+      } else {
+        this.canEditColumns = false;
       }
     },
     async fetchBlocks() {
@@ -23153,6 +23161,7 @@ const _sfc_main$7 = {
   mounted() {
     this.sl.setAuthenticatorToken(this.$refs.root.parentElement.getAttribute("data-token"));
     this.sl.setCanModify(this.$refs.root.parentElement.getAttribute("data-can-modify"));
+    this.sl.setCanEditColumns(this.$refs.root.parentElement.getAttribute("data-can-edit-columns"));
     this.sl.setI18nMessages(this.$refs.root.parentElement.getAttribute("data-i18n"));
     this.sl.fetchBlocks();
   },
@@ -23235,7 +23244,7 @@ function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
           key: `layout_${rowIndex}`,
           class: "sl-row"
         }, [
-          $setup.sl.canModify ? (openBlock(), createBlock(_component_RowControls, {
+          $setup.sl.canModify && $setup.sl.canEditColumns ? (openBlock(), createBlock(_component_RowControls, {
             key: 0,
             index: rowIndex
           }, null, 8, ["index"])) : createCommentVNode("", true),
@@ -23245,7 +23254,7 @@ function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
                 key: `column_${columnIndex}_${rowIndex}`,
                 class: normalizeClass(`sl-col col col-${column2.width}`)
               }, [
-                $setup.sl.canModify ? (openBlock(), createBlock(_component_ColControls, {
+                $setup.sl.canModify && $setup.sl.canEditColumns ? (openBlock(), createBlock(_component_ColControls, {
                   key: 0,
                   rowIndex,
                   colIndex: columnIndex,
@@ -23281,7 +23290,7 @@ function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
                   ]),
                   _: 2
                 }, 1040, ["list", "itemKey", "onEnd", "onStart"]),
-                row2.items.length === columnIndex + 1 && $setup.sl.canModify ? (openBlock(), createBlock(_component_ColControls, {
+                row2.items.length === columnIndex + 1 && $setup.sl.canModify && $setup.sl.canEditColumns ? (openBlock(), createBlock(_component_ColControls, {
                   key: 1,
                   rowIndex,
                   colIndex: columnIndex + 1,
@@ -23290,7 +23299,7 @@ function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
               ], 2);
             }), 128))
           ]),
-          $setup.sl.layouts.items.length === rowIndex + 1 && $setup.sl.canModify ? (openBlock(), createBlock(_component_RowControls, {
+          $setup.sl.layouts.items.length === rowIndex + 1 && $setup.sl.canModify && $setup.sl.canEditColumns ? (openBlock(), createBlock(_component_RowControls, {
             key: 1,
             index: rowIndex + 1
           }, null, 8, ["index"])) : createCommentVNode("", true)

@@ -13,4 +13,6 @@
   <adapter factory=".serializer.NewsListingBlockSerializer"/>
   <adapter factory=".serializer.AllPurposeListingBlockSerializer"/>
   <adapter factory=".serializer.CustomViewFieldsSerializer"/>
+
+  <adapter factory=".deserializer.LayoutFieldDeserializer"/>
 </configure>
