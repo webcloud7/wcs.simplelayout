@@ -66,6 +66,13 @@
         permission="zope2.DeleteObjects"
         />
 
+    <class class=".crud.AddView">
+        <require
+            permission="cmf.ModifyPortalContent"
+            interface="zope.publisher.interfaces.browser.IBrowserPage"
+            />
+    </class>
+
    <adapter for="wcs.simplelayout.contenttypes.behaviors.ISimplelayout
                  wcs.simplelayout.interfaces.ISimplelayoutLayer"
             name="plone.contentmenu.factories"
