@@ -108,7 +108,7 @@ class IBlockMarker(Interface):
 class ISimplelayout(model.Schema):
 
     model.fieldset("layout", label=_("Layout"), fields=["slblocks_layout"])
-
+    directives.omitted('slblocks_layout')
     slblocks_layout = JSONField(
         title="Blocks Layout",
         description="The JSON representation of the object blocks layout. Must be a JSON array.",  # noqa

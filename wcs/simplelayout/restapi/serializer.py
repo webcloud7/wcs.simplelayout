@@ -21,7 +21,6 @@ from wcs.simplelayout.contenttypes.behaviors import IBlockNewsOptions
 from wcs.simplelayout.contenttypes.behaviors import IBlockSortOptions
 from wcs.simplelayout.contenttypes.behaviors import IMediaFolderReference
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
-from wcs.simplelayout.utils import LOG
 from wcs.simplelayout.utils import add_missing_blocks
 from zope.component import adapter
 from zope.component import getMultiAdapter

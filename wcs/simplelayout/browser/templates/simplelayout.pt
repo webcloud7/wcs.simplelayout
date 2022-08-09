@@ -10,7 +10,8 @@
 
         <div tal:attributes="data-token context/@@authenticator/token;
                              data-i18n view/i18n;
-                             data-can-modify view/can_modify" id="app"></div>
+                             data-can-modify view/can_modify;
+                             data-can-edit-columns view/can_edit_columns" id="app"></div>
 
         <script type="module" tal:attributes="src string:${here/portal_url}/++resource++simplelayout/js/dist/simplelayout.es.js"></script>
 

@@ -5,7 +5,7 @@
       :key="`layout_${rowIndex}`"
     >
       <div class="sl-row">
-        <RowControls :index="rowIndex" v-if="sl.canModify" />
+        <RowControls :index="rowIndex" v-if="sl.canModify && sl.canEditColumns" />
 
         <div class="row">
           <div
@@ -14,7 +14,7 @@
             :class="`sl-col col col-${column.width}`"
           >
             <ColControls
-              v-if="sl.canModify"
+              v-if="sl.canModify && sl.canEditColumns"
               :rowIndex="rowIndex"
               :colIndex="columnIndex"
               :currentWidth="parseInt(column.width)"
@@ -56,7 +56,7 @@
             </draggable>
 
             <ColControls
-              v-if="row.items.length === columnIndex + 1 && sl.canModify"
+              v-if="row.items.length === columnIndex + 1 && sl.canModify && sl.canEditColumns"
               :rowIndex="rowIndex"
               :colIndex="columnIndex + 1"
               right
@@ -64,7 +64,7 @@
           </div>
         </div>
         <RowControls
-          v-if="sl.layouts.items.length === rowIndex + 1 && sl.canModify"
+          v-if="sl.layouts.items.length === rowIndex + 1 && sl.canModify && sl.canEditColumns"
           :index="rowIndex + 1"
         />
       </div>
@@ -185,6 +185,9 @@ export default {
     );
     this.sl.setCanModify(
       this.$refs.root.parentElement.getAttribute("data-can-modify")
+    );
+    this.sl.setCanEditColumns(
+      this.$refs.root.parentElement.getAttribute("data-can-edit-columns")
     );
     this.sl.setI18nMessages(
       this.$refs.root.parentElement.getAttribute("data-i18n")

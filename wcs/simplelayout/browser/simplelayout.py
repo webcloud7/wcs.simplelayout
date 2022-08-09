@@ -18,6 +18,9 @@ class SimplelayoutView(BrowserView):
     def can_modify(self):
         return api.user.has_permission('Modify portal content', obj=self.context)
 
+    def can_edit_columns(self):
+        return api.user.has_permission('wcs.simplelayout: Manage columns', obj=self.context)
+
     def i18n(self):
         messages = {
             'Actions': self._translate(_('label_actions', default='Actions')),
