@@ -18,13 +18,14 @@ class LayoutFieldDeserializer(DefaultFieldDeserializer):
         One exceptions is: if it is the first and only layout added.
         this happens upon creation of a page with the first block.
         """
+
         if self.field.__name__ == 'slblocks_layout':
             if api.user.has_permission('wcs.simplelayout: Manage columns', obj=self.context):
                 return super().__call__(value)                
 
             error = False
             current_value = self.field.get(self.context)
-            if len(current_value['items']) != value['items']:
+            if len(current_value['items']) != len(value['items']):
                 error = True
                 if value['items'] == 1:
                     error = False
