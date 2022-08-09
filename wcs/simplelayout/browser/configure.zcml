@@ -48,7 +48,7 @@
     <browser:page
         for="wcs.simplelayout.contenttypes.behaviors.ISimplelayout"
         name="sl-addable-blocks"
-        permission="cmf.AddPortalContent"
+        permission="cmf.ModifyPortalContent"
         class=".overlays.AddableBlocks"
         />
 
