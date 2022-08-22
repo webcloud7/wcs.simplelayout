@@ -7,13 +7,21 @@
     ref="sl-base-modal"
   >
     <div class="modal-dialog modal-dialog-scrollable modal-xl">
-      <div class="modal-content">
+      <div class="modal-content position-relative">
         <div class="modal-header">
           <h4 class="modal-title" id="modal-title">
             <slot name="title" />
           </h4>
+          <div
+            class="position-absolute top-50 start-50 modal-spinner"
+            v-if="modalLoading"
+          >
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
         </div>
-        <div class="modal-body"><slot name="body" /></div>
+        <div :class="`modal-body ${getLoadingClass}`"><slot name="body" /></div>
         <div class="modal-footer sl-base-modal-footer">
           <button
             id="form-buttons-cancel"
@@ -67,6 +75,7 @@ export default {
       modal: null,
       position: {},
       bootstrap: null,
+      modalLoading: false,
     };
   },
   mounted() {
@@ -75,11 +84,18 @@ export default {
   },
   methods: {
     async openModal(url, position) {
-      const response = await this.axioshtml.get(url);
-      this.position = position;
-      this.replaceModalContent(response);
-      this.handleFormButtons();
-      this.modal.show();
+      this.modalLoading = true;
+      try {
+        const response = await this.axioshtml.get(url);
+        this.position = position;
+        this.replaceModalContent(response);
+        this.handleFormButtons();
+        this.modal.show();
+      } catch (error) {
+        console.info(error);
+      } finally {
+        this.modalLoading = false;
+      }
     },
     async openFormModal(url, position) {
       const response = await this.axioshtml.get(url);
@@ -99,24 +115,32 @@ export default {
       let formData = new FormData(form);
       formData.append(button.getAttribute("name"), button.value);
       formData.append("expand", "types");
-      const response = await this.axioshtml.post(url, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Accept: "text/html,application/json",
-        },
-      });
-      const isJson = response.headers["content-type"] === "application/json";
-      const is204 = response.status === 204;
-      if (isJson || is204) {
-        // successful request
-        const data = response.data;
-        this.storeAction(this.position, data);
-        this.cleanBody();
-        this.modal.hide();
-      } else {
-        // Any form validation error means we got html back
-        this.replaceModalContent(response);
-        this.handleFormButtons();
+
+      this.modalLoading = true;
+      try {
+        const response = await this.axioshtml.post(url, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Accept: "text/html,application/json",
+          },
+        });
+        const isJson = response.headers["content-type"] === "application/json";
+        const is204 = response.status === 204;
+        if (isJson || is204) {
+          // successful request
+          const data = response.data;
+          this.storeAction(this.position, data);
+          this.cleanBody();
+          this.modal.hide();
+        } else {
+          // Any form validation error means we got html back
+          this.replaceModalContent(response);
+          this.handleFormButtons();
+        }
+      } catch (error) {
+        console.info(error);
+      } finally {
+        this.modalLoading = false;
       }
     },
     replaceModalContent(response) {
@@ -192,10 +216,23 @@ export default {
       );
     },
   },
+  computed: {
+    getLoadingClass() {
+      return this.modalLoading ? "loading" : "";
+    },
+  },
 };
 </script>
 <style lang="scss">
 .sl-base-modal {
   z-index: 1051 !important;
+}
+
+.modal-spinner {
+  z-index: 56;
+}
+
+.modal-body.loading {
+  filter: blur(4px);
 }
 </style>

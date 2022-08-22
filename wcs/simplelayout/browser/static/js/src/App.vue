@@ -1,5 +1,10 @@
 <template>
-  <div :class="`sl-container ${draggingClass}`" ref="root">
+  <div class="text-center" v-if="sl.loading">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  <div :class="`sl-container ${draggingClass}`" ref="root" v-if="!sl.loading">
     <template
       v-for="(row, rowIndex) in sl.layouts.items"
       :key="`layout_${rowIndex}`"
