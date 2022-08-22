@@ -92,17 +92,24 @@ export default {
         this.handleFormButtons();
         this.modal.show();
       } catch (error) {
-        console.info(error);
+        this.sl.addErrorMessage(error);
       } finally {
         this.modalLoading = false;
       }
     },
     async openFormModal(url, position) {
-      const response = await this.axioshtml.get(url);
-      this.position = position;
-      this.replaceModalContent(response);
-      this.handleFormButtons();
-      this.modal.show();
+      this.modalLoading = true;
+      try {
+        const response = await this.axioshtml.get(url);
+        this.position = position;
+        this.replaceModalContent(response);
+        this.modal.show();
+      } catch (error) {
+        this.sl.addErrorMessage(error);
+      } finally {
+        this.modalLoading = false;
+        this.handleFormButtons();
+      }
     },
     async handleSubmit(event) {
       event.preventDefault();
@@ -138,7 +145,7 @@ export default {
           this.handleFormButtons();
         }
       } catch (error) {
-        console.info(error);
+        this.sl.addErrorMessage(error);
       } finally {
         this.modalLoading = false;
       }

@@ -1,4 +1,5 @@
 <template>
+  <ErrorToasts />
   <div class="text-center" v-if="sl.loading">
     <div class="spinner-border" role="status">
       <span class="visually-hidden">Loading...</span>
@@ -93,6 +94,7 @@ import DeleteBlockModal from "@/components/Modals/DeleteBlockModal.vue";
 import InfoBlockModal from "@/components/Modals/InfoBlockModal.vue";
 import UploadModal from "@/components/Modals/UploadModal.vue";
 import draggable from "vuedraggable";
+import ErrorToasts from "@/components/ErrorToasts.vue";
 
 export default {
   components: {
@@ -105,6 +107,7 @@ export default {
     InfoBlockModal,
     UploadModal,
     draggable,
+    ErrorToasts,
   },
   setup() {
     const sl = useSimplelayoutStore();

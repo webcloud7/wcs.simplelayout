@@ -16,9 +16,21 @@ export const useSimplelayoutStore = defineStore({
     canModify: false,
     canEditColumns: false,
     i18n: {},
+    errors: [],
   }),
   getters: {},
   actions: {
+    addErrorMessage(error) {
+      console.info(error);
+      this.errors.push({
+        type: "error",
+        title: "Error",
+        text: "A error happend, please try again",
+      });
+    },
+    deleteErrorMessage(index) {
+      this.errors.splice(index, 1);
+    },
     setI18nMessages(messages) {
       this.i18n = JSON.parse(messages);
     },
@@ -50,14 +62,16 @@ export const useSimplelayoutStore = defineStore({
     async fetchBlocks() {
       this.loading = true;
       try {
-        const response = await this.axios.get(this.baseApiURL, { params: this.params });
+        const response = await this.axios.get(this.baseApiURL, {
+          params: this.params,
+        });
         this.blocks = response.data.slblocks;
         const layouts = response.data.slblocks_layout;
         if ("items" in layouts && layouts.items.length !== 0) {
           this.layouts = response.data.slblocks_layout;
         }
       } catch (error) {
-        console.info(error);
+        this.sl.addErrorMessage(error)
       } finally {
         this.loading = false;
       }
@@ -65,14 +79,16 @@ export const useSimplelayoutStore = defineStore({
     async modifyLayouts(data) {
       this.loading = true;
       try {
-        const response = await this.axios.patch(this.baseApiURL, data, { params: this.params });
+        const response = await this.axios.patch(this.baseApiURL, data, {
+          params: this.params,
+        });
         this.blocks = response.data.slblocks;
         const layouts = response.data.slblocks_layout;
         if ("items" in layouts) {
           this.layouts = response.data.slblocks_layout;
         }
       } catch (error) {
-        console.info(error);
+        this.sl.addErrorMessage(error)
       } finally {
         this.loading = false;
       }
