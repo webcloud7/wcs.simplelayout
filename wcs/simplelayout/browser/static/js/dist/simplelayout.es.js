@@ -10204,7 +10204,7 @@ const useSimplelayoutStore = defineStore({
           this.layouts = response.data.slblocks_layout;
         }
       } catch (error) {
-        console.info(error);
+        this.sl.addErrorMessage(error);
       } finally {
         this.loading = false;
       }
@@ -10221,7 +10221,7 @@ const useSimplelayoutStore = defineStore({
           this.layouts = response.data.slblocks_layout;
         }
       } catch (error) {
-        console.info(error);
+        this.sl.addErrorMessage(error);
       } finally {
         this.loading = false;
       }
@@ -10371,8 +10371,8 @@ const _hoisted_4$a = {
 };
 const _hoisted_5$9 = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Move", -1);
 const _hoisted_6$8 = ["id"];
-const _hoisted_7$6 = ["aria-labelledby"];
-const _hoisted_8$5 = ["onClick", "data-row", "data-col", "data-block"];
+const _hoisted_7$7 = ["aria-labelledby"];
+const _hoisted_8$6 = ["onClick", "data-row", "data-col", "data-block"];
 const _hoisted_9$3 = ["data-row", "data-col", "data-block"];
 function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockTitle = resolveComponent("BlockTitle");
@@ -10417,10 +10417,10 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                 "data-col": $props.columnIndex,
                 "data-block": $props.blockIndex,
                 href: "#"
-              }, toDisplayString(_ctx.$i18n(action.label)), 9, _hoisted_8$5)) : createCommentVNode("v-if", true)
+              }, toDisplayString(_ctx.$i18n(action.label)), 9, _hoisted_8$6)) : createCommentVNode("v-if", true)
             ]);
           }), 128))
-        ], 8, _hoisted_7$6)
+        ], 8, _hoisted_7$7)
       ], 64)) : (openBlock(), createElementBlock(Fragment, { key: 2 }, [
         createCommentVNode(" Only show add action "),
         $props.actions[0].enabled($props.rowIndex, $props.columnIndex, $props.blockIndex) ? (openBlock(), createElementBlock("button", {
@@ -10477,8 +10477,8 @@ const _hoisted_6$7 = {
   key: 0,
   class: "card-body"
 };
-const _hoisted_7$5 = { class: "card-text" };
-const _hoisted_8$4 = ["innerHTML"];
+const _hoisted_7$6 = { class: "card-text" };
+const _hoisted_8$5 = ["innerHTML"];
 function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockControls = resolveComponent("BlockControls");
   return openBlock(), createElementBlock("div", _hoisted_1$d, [
@@ -10497,12 +10497,12 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
       ])) : createCommentVNode("v-if", true)
     ]),
     Object.keys($props.block).length !== 0 ? (openBlock(), createElementBlock("div", _hoisted_6$7, [
-      createBaseVNode("div", _hoisted_7$5, [
+      createBaseVNode("div", _hoisted_7$6, [
         renderSlot(_ctx.$slots, "body", {}, () => [
           $props.block.text ? (openBlock(), createElementBlock("div", {
             key: 0,
             innerHTML: $props.block.text.data
-          }, null, 8, _hoisted_8$4)) : createCommentVNode("v-if", true)
+          }, null, 8, _hoisted_8$5)) : createCommentVNode("v-if", true)
         ])
       ])
     ])) : createCommentVNode("v-if", true),
@@ -10638,7 +10638,7 @@ const _hoisted_5$7 = [
   _hoisted_4$8
 ];
 const _hoisted_6$6 = ["aria-labelledby"];
-const _hoisted_7$4 = ["onClick"];
+const _hoisted_7$5 = ["onClick"];
 function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", {
     class: "sl-add-row-controls",
@@ -10670,7 +10670,7 @@ function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
               class: "dropdown-item",
               onClick: withModifiers(() => $options.createRow(row2.cols), ["prevent"]),
               href: "#"
-            }, toDisplayString(row2.label), 9, _hoisted_7$4)
+            }, toDisplayString(row2.label), 9, _hoisted_7$5)
           ]);
         }), 128))
       ], 8, _hoisted_6$6)
@@ -19228,23 +19228,30 @@ const _sfc_main$e = {
         this.handleFormButtons();
         this.modal.show();
       } catch (error) {
-        console.info(error);
+        this.sl.addErrorMessage(error);
       } finally {
         this.modalLoading = false;
       }
     },
     async openFormModal(url, position) {
-      const response = await this.axioshtml.get(url);
-      this.position = position;
-      this.replaceModalContent(response);
-      this.handleFormButtons();
-      this.modal.show();
+      this.modalLoading = true;
+      try {
+        const response = await this.axioshtml.get(url);
+        this.position = position;
+        this.replaceModalContent(response);
+        this.modal.show();
+      } catch (error) {
+        this.sl.addErrorMessage(error);
+      } finally {
+        this.modalLoading = false;
+        this.handleFormButtons();
+      }
     },
     async handleSubmit(event) {
       event.preventDefault();
       this.handleTinyMCE();
       const form = this.modal._element.querySelector("#form");
-      const url = form.getAttribute("actions");
+      const url = form.getAttribute("action");
       const button = event.currentTarget;
       let formData = new FormData(form);
       formData.append(button.getAttribute("name"), button.value);
@@ -19362,14 +19369,14 @@ const _hoisted_6$5 = {
   key: 0,
   class: "position-absolute top-50 start-50 modal-spinner"
 };
-const _hoisted_7$3 = /* @__PURE__ */ createBaseVNode("div", {
+const _hoisted_7$4 = /* @__PURE__ */ createBaseVNode("div", {
   class: "spinner-border",
   role: "status"
 }, [
   /* @__PURE__ */ createBaseVNode("span", { class: "visually-hidden" }, "Loading...")
 ], -1);
-const _hoisted_8$3 = [
-  _hoisted_7$3
+const _hoisted_8$4 = [
+  _hoisted_7$4
 ];
 const _hoisted_9$2 = /* @__PURE__ */ createBaseVNode("div", { class: "modal-footer sl-base-modal-footer" }, [
   /* @__PURE__ */ createBaseVNode("button", {
@@ -19387,7 +19394,7 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
           createBaseVNode("h4", _hoisted_5$5, [
             renderSlot(_ctx.$slots, "title")
           ]),
-          $data.modalLoading ? (openBlock(), createElementBlock("div", _hoisted_6$5, _hoisted_8$3)) : createCommentVNode("v-if", true)
+          $data.modalLoading ? (openBlock(), createElementBlock("div", _hoisted_6$5, _hoisted_8$4)) : createCommentVNode("v-if", true)
         ]),
         createBaseVNode("div", {
           class: normalizeClass(`modal-body ${$options.getLoadingClass}`)
@@ -26144,6 +26151,9 @@ const _sfc_main$7 = {
     draggingClass() {
       return this.dragging ? "sl-dragging" : "";
     },
+    loadingClass() {
+      return this.sl.loading ? "loading" : "";
+    },
     dragOptions() {
       return {
         animation: 200,
@@ -26190,28 +26200,30 @@ const _sfc_main$7 = {
     }
   }
 };
-const _hoisted_1$6 = {
+const _hoisted_1$6 = { class: "sl-row" };
+const _hoisted_2$6 = { class: "row" };
+const _hoisted_3$4 = {
+  key: 0,
+  class: "sl-block"
+};
+const _hoisted_4$4 = {
+  key: 0,
+  class: "sl-block sl-block-placeholder"
+};
+const _hoisted_5$3 = { class: "position-fixed top-50 left-50" };
+const _hoisted_6$3 = {
   key: 0,
   class: "text-center"
 };
-const _hoisted_2$6 = /* @__PURE__ */ createBaseVNode("div", {
+const _hoisted_7$3 = /* @__PURE__ */ createBaseVNode("div", {
   class: "spinner-border",
   role: "status"
 }, [
   /* @__PURE__ */ createBaseVNode("span", { class: "visually-hidden" }, "Loading...")
 ], -1);
-const _hoisted_3$4 = [
-  _hoisted_2$6
+const _hoisted_8$3 = [
+  _hoisted_7$3
 ];
-const _hoisted_4$4 = { class: "row" };
-const _hoisted_5$3 = {
-  key: 0,
-  class: "sl-block"
-};
-const _hoisted_6$3 = {
-  key: 0,
-  class: "sl-block sl-block-placeholder"
-};
 function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_ErrorToasts = resolveComponent("ErrorToasts");
   const _component_RowControls = resolveComponent("RowControls");
@@ -26225,79 +26237,82 @@ function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_UploadModal = resolveComponent("UploadModal");
   return openBlock(), createElementBlock(Fragment, null, [
     createVNode(_component_ErrorToasts),
-    $setup.sl.loading ? (openBlock(), createElementBlock("div", _hoisted_1$6, _hoisted_3$4)) : createCommentVNode("v-if", true),
-    !$setup.sl.loading ? (openBlock(), createElementBlock("div", {
-      key: 1,
+    createBaseVNode("div", {
       class: normalizeClass(`sl-container ${$options.draggingClass}`),
       ref: "root"
     }, [
       (openBlock(true), createElementBlock(Fragment, null, renderList($setup.sl.layouts.items, (row2, rowIndex) => {
         return openBlock(), createElementBlock("div", {
-          key: `layout_${rowIndex}`,
-          class: "sl-row"
+          class: normalizeClass(`${$options.loadingClass}`),
+          key: `layout_${rowIndex}`
         }, [
-          $setup.sl.canModify && $setup.sl.canEditColumns ? (openBlock(), createBlock(_component_RowControls, {
-            key: 0,
-            index: rowIndex
-          }, null, 8, ["index"])) : createCommentVNode("v-if", true),
-          createBaseVNode("div", _hoisted_4$4, [
-            (openBlock(true), createElementBlock(Fragment, null, renderList(row2.items, (column2, columnIndex) => {
-              return openBlock(), createElementBlock("div", {
-                key: `column_${columnIndex}_${rowIndex}`,
-                class: normalizeClass(`sl-col col col-${column2.width}`)
-              }, [
-                $setup.sl.canModify && $setup.sl.canEditColumns ? (openBlock(), createBlock(_component_ColControls, {
-                  key: 0,
-                  rowIndex,
-                  colIndex: columnIndex,
-                  currentWidth: parseInt(column2.width)
-                }, null, 8, ["rowIndex", "colIndex", "currentWidth"])) : createCommentVNode("v-if", true),
-                createVNode(_component_draggable, mergeProps($options.dragOptions, {
-                  list: column2.items,
-                  itemKey: (item) => _ctx.element,
-                  onEnd: $options.saveLayout,
-                  onStart: $options.startDraggingBlock
-                }), {
-                  item: withCtx(({ element, index: index2 }) => [
-                    element in $setup.sl.blocks ? (openBlock(), createElementBlock("div", _hoisted_5$3, [
-                      createVNode(_component_BlockRenderer, {
-                        actions: $data.actions,
-                        block: $setup.sl.blocks[element],
-                        rowIndex,
-                        columnIndex,
-                        blockIndex: index2
-                      }, null, 8, ["actions", "block", "rowIndex", "columnIndex", "blockIndex"])
-                    ])) : createCommentVNode("v-if", true)
-                  ]),
-                  footer: withCtx(() => [
-                    column2.items.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_6$3, [
-                      createVNode(_component_BlockRenderer, {
-                        actions: $data.actions,
-                        block: {},
-                        rowIndex,
-                        columnIndex,
-                        blockIndex: -1
-                      }, null, 8, ["actions", "rowIndex", "columnIndex"])
-                    ])) : createCommentVNode("v-if", true)
-                  ]),
-                  _: 2
-                }, 1040, ["list", "itemKey", "onEnd", "onStart"]),
-                row2.items.length === columnIndex + 1 && $setup.sl.canModify && $setup.sl.canEditColumns ? (openBlock(), createBlock(_component_ColControls, {
-                  key: 1,
-                  rowIndex,
-                  colIndex: columnIndex + 1,
-                  right: ""
-                }, null, 8, ["rowIndex", "colIndex"])) : createCommentVNode("v-if", true)
-              ], 2);
-            }), 128))
-          ]),
-          $setup.sl.layouts.items.length === rowIndex + 1 && $setup.sl.canModify && $setup.sl.canEditColumns ? (openBlock(), createBlock(_component_RowControls, {
-            key: 1,
-            index: rowIndex + 1
-          }, null, 8, ["index"])) : createCommentVNode("v-if", true)
-        ]);
-      }), 128))
-    ], 2)) : createCommentVNode("v-if", true),
+          createBaseVNode("div", _hoisted_1$6, [
+            $setup.sl.canModify && $setup.sl.canEditColumns ? (openBlock(), createBlock(_component_RowControls, {
+              key: 0,
+              index: rowIndex
+            }, null, 8, ["index"])) : createCommentVNode("v-if", true),
+            createBaseVNode("div", _hoisted_2$6, [
+              (openBlock(true), createElementBlock(Fragment, null, renderList(row2.items, (column2, columnIndex) => {
+                return openBlock(), createElementBlock("div", {
+                  key: `column_${columnIndex}_${rowIndex}`,
+                  class: normalizeClass(`sl-col col col-${column2.width}`)
+                }, [
+                  $setup.sl.canModify && $setup.sl.canEditColumns ? (openBlock(), createBlock(_component_ColControls, {
+                    key: 0,
+                    rowIndex,
+                    colIndex: columnIndex,
+                    currentWidth: parseInt(column2.width)
+                  }, null, 8, ["rowIndex", "colIndex", "currentWidth"])) : createCommentVNode("v-if", true),
+                  createVNode(_component_draggable, mergeProps($options.dragOptions, {
+                    list: column2.items,
+                    itemKey: (item) => _ctx.element,
+                    onEnd: $options.saveLayout,
+                    onStart: $options.startDraggingBlock
+                  }), {
+                    item: withCtx(({ element, index: index2 }) => [
+                      element in $setup.sl.blocks ? (openBlock(), createElementBlock("div", _hoisted_3$4, [
+                        createVNode(_component_BlockRenderer, {
+                          actions: $data.actions,
+                          block: $setup.sl.blocks[element],
+                          rowIndex,
+                          columnIndex,
+                          blockIndex: index2
+                        }, null, 8, ["actions", "block", "rowIndex", "columnIndex", "blockIndex"])
+                      ])) : createCommentVNode("v-if", true)
+                    ]),
+                    footer: withCtx(() => [
+                      column2.items.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_4$4, [
+                        createVNode(_component_BlockRenderer, {
+                          actions: $data.actions,
+                          block: {},
+                          rowIndex,
+                          columnIndex,
+                          blockIndex: -1
+                        }, null, 8, ["actions", "rowIndex", "columnIndex"])
+                      ])) : createCommentVNode("v-if", true)
+                    ]),
+                    _: 2
+                  }, 1040, ["list", "itemKey", "onEnd", "onStart"]),
+                  row2.items.length === columnIndex + 1 && $setup.sl.canModify && $setup.sl.canEditColumns ? (openBlock(), createBlock(_component_ColControls, {
+                    key: 1,
+                    rowIndex,
+                    colIndex: columnIndex + 1,
+                    right: ""
+                  }, null, 8, ["rowIndex", "colIndex"])) : createCommentVNode("v-if", true)
+                ], 2);
+              }), 128))
+            ]),
+            $setup.sl.layouts.items.length === rowIndex + 1 && $setup.sl.canModify && $setup.sl.canEditColumns ? (openBlock(), createBlock(_component_RowControls, {
+              key: 1,
+              index: rowIndex + 1
+            }, null, 8, ["index"])) : createCommentVNode("v-if", true)
+          ])
+        ], 2);
+      }), 128)),
+      createBaseVNode("div", _hoisted_5$3, [
+        $setup.sl.loading ? (openBlock(), createElementBlock("div", _hoisted_6$3, _hoisted_8$3)) : createCommentVNode("v-if", true)
+      ])
+    ], 2),
     createVNode(_component_AddBlockModal, { ref: "add-modal" }, null, 512),
     createVNode(_component_EditBlockModal, { ref: "edit-modal" }, null, 512),
     createVNode(_component_DeleteBlockModal, { ref: "delete-modal" }, null, 512),

@@ -1,12 +1,7 @@
 <template>
   <ErrorToasts />
-  <div class="text-center" v-if="sl.loading">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-  </div>
-  <div :class="`sl-container ${draggingClass}`" ref="root" v-if="!sl.loading">
-    <template
+  <div :class="`sl-container ${draggingClass}`" ref="root">
+    <div :class="`${loadingClass}`"
       v-for="(row, rowIndex) in sl.layouts.items"
       :key="`layout_${rowIndex}`"
     >
@@ -74,8 +69,16 @@
           :index="rowIndex + 1"
         />
       </div>
-    </template>
+    </div>
+    <div class="position-fixed top-50 left-50">
+      <div class="text-center" v-if="sl.loading">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </div>
   </div>
+
   <AddBlockModal ref="add-modal" />
   <EditBlockModal ref="edit-modal" />
   <DeleteBlockModal ref="delete-modal" />
@@ -206,6 +209,9 @@ export default {
     draggingClass() {
       return this.dragging ? "sl-dragging" : "";
     },
+    loadingClass() {
+      return this.sl.loading ? "loading" : "";
+    },
     dragOptions() {
       return {
         animation: 200,
@@ -315,5 +321,9 @@ export default {
   .sl-col {
     min-height: 140px;
   }
+}
+
+.sl-container > .loading {
+  filter: blur(4px);
 }
 </style>
