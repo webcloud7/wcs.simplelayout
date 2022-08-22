@@ -2,7 +2,7 @@
   <BlockStructure v-bind="$props">
     <template #body>
       total {{ data.items_total }}
-      <div class="table-responsive">
+      <div :class="`table-responsive ${loadingClass}`">
         <table class="table table-hover">
           <thead>
             <tr>
@@ -47,6 +47,13 @@
         @previous="fetchPrevious"
         :batching="data.batching"
       />
+      <div class="position-absolute top-50 start-50" v-if="loading">
+        <div class="text-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
     </template>
     <template #footer>
       <div class="card-footer">
@@ -111,6 +118,7 @@ export default {
   data() {
     return {
       data: { items: [], batching: null },
+      loading: false,
     };
   },
   created() {
@@ -122,18 +130,33 @@ export default {
     },
   },
   methods: {
-    async fetchData() {
-      const params = { params: { fullobjects: true } };
-      const response = await this.axios.get(this.block["@id"], params);
-      this.data = response.data;
+    async fetchData(url) {
+      this.loading = true;
+      try {
+        let response;
+        if (!url) {
+          const params = { params: { fullobjects: true } };
+          response = await this.axios.get(this.block["@id"], params);
+        } else {
+          response = await this.axios.get(url);
+        }
+        this.data = response.data;
+      } catch (error) {
+        this.sl.addErrorMessage(error);
+      } finally {
+        this.loading = false;
+      }
     },
-    async fetchNext(url) {
-      const response = await this.axios.get(url);
-      this.data = response.data;
+    fetchNext(url) {
+      this.fetchData(url);
     },
     async fetchPrevious(url) {
-      const response = await this.axios.get(url);
-      this.data = response.data;
+      this.fetchData(url);
+    },
+  },
+  computed: {
+    loadingClass() {
+      return this.loading ? "sl-loading" : "";
     },
   },
 };

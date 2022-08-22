@@ -70,8 +70,8 @@
         />
       </div>
     </div>
-    <div class="position-fixed top-50 left-50">
-      <div class="text-center" v-if="sl.loading">
+    <div class="position-fixed top-50 start-50" v-if="sl.loading">
+      <div class="text-center">
         <div class="spinner-border" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
@@ -210,7 +210,7 @@ export default {
       return this.dragging ? "sl-dragging" : "";
     },
     loadingClass() {
-      return this.sl.loading ? "loading" : "";
+      return this.sl.loading ? "sl-loading" : "";
     },
     dragOptions() {
       return {
@@ -323,7 +323,7 @@ export default {
   }
 }
 
-.sl-container > .loading {
+.sl-loading {
   filter: blur(4px);
 }
 </style>
