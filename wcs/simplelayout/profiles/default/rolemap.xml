@@ -6,5 +6,10 @@
       <role name="Site Administrator"/>
       <role name="Editor"/>
     </permission>
+    <permission name="wcs.simplelayout: Add Block" acquire="False">
+      <role name="Manager" />
+      <role name="Site Administrator"/>
+      <role name="Editor"/>
+    </permission>
   </permissions>
 </rolemap>

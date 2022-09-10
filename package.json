@@ -21,6 +21,7 @@
   "dependencies": {
     "@patternslib/patternslib": "9.0.0-beta.1",
     "axios": "^0.27.2",
+    "qs": "^6.10.5",
     "pinia": "^2.0.0-rc.10",
     "sass": "^1.51.0",
     "vue": "^3.2.33",
