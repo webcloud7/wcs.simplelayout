@@ -6,5 +6,10 @@
         id="wcs.simplelayout.ManageColumns"
         title="wcs.simplelayout: Manage columns"
         />
-Z
+
+    <permission
+        id="wcs.simplelayout.AddBlock"
+        title="wcs.simplelayout: Add Block"
+        />
+
 </configure>
