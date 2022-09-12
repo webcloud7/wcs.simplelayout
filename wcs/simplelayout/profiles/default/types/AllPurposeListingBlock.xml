@@ -16,7 +16,7 @@
   <element value="view"/>
  </property>
  <property name="default_view_fallback">False</property>
- <property name="add_permission">cmf.AddPortalContent</property>
+ <property name="add_permission">wcs.simplelayout.AddBlock</property>
  <property name="klass">plone.app.contenttypes.content.Collection</property>
  <property name="behaviors">
   <element value="plone.namefromtitle"/>

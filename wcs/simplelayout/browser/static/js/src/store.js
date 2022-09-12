@@ -7,11 +7,12 @@ export const useSimplelayoutStore = defineStore({
   state: () => ({
     layouts: { items: [row(1)] },
     blocks: {},
+    addableTypes: [],
     loading: false,
     baseURL: document.body.getAttribute("data-base-url"),
     baseApiURL: document.body.getAttribute("data-base-url") + "/++api++",
     portalURL: document.body.getAttribute("data-portal-url"),
-    params: { expand: "types" },
+    params: { expand: ["types", "actions"] },
     authToken: null,
     canModify: false,
     canEditColumns: false,
@@ -70,8 +71,9 @@ export const useSimplelayoutStore = defineStore({
         if ("items" in layouts && layouts.items.length !== 0) {
           this.layouts = response.data.slblocks_layout;
         }
+        this.addableTypes = response.data["@components"]["types"];
       } catch (error) {
-        this.sl.addErrorMessage(error)
+        this.sl.addErrorMessage(error);
       } finally {
         this.loading = false;
       }

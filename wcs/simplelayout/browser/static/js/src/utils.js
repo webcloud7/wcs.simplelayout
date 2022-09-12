@@ -1,7 +1,10 @@
 import axios from "axios";
+import qs from "qs";
 
 function axiosInstance() {
   const instance = axios.create({
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",

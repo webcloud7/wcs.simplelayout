@@ -1,12 +1,16 @@
 <template>
   <ErrorToasts />
   <div :class="`sl-container ${draggingClass}`" ref="root">
-    <div :class="`${loadingClass}`"
+    <div
+      :class="`${loadingClass}`"
       v-for="(row, rowIndex) in sl.layouts.items"
       :key="`layout_${rowIndex}`"
     >
       <div class="sl-row">
-        <RowControls :index="rowIndex" v-if="sl.canModify && sl.canEditColumns" />
+        <RowControls
+          :index="rowIndex"
+          v-if="sl.canModify && sl.canEditColumns"
+        />
 
         <div class="row">
           <div
@@ -57,7 +61,11 @@
             </draggable>
 
             <ColControls
-              v-if="row.items.length === columnIndex + 1 && sl.canModify && sl.canEditColumns"
+              v-if="
+                row.items.length === columnIndex + 1 &&
+                sl.canModify &&
+                sl.canEditColumns
+              "
               :rowIndex="rowIndex"
               :colIndex="columnIndex + 1"
               right
@@ -65,7 +73,11 @@
           </div>
         </div>
         <RowControls
-          v-if="sl.layouts.items.length === rowIndex + 1 && sl.canModify && sl.canEditColumns"
+          v-if="
+            sl.layouts.items.length === rowIndex + 1 &&
+            sl.canModify &&
+            sl.canEditColumns
+          "
           :index="rowIndex + 1"
         />
       </div>
@@ -123,7 +135,10 @@ export default {
         {
           label: "Add",
           action: this.openAddableBlocksModal,
-          enabled: () => true,
+          enabled: () => {
+            const addable = this.sl.addableTypes.filter((item) => item.addable);
+            return addable.length;
+          },
         },
         {
           label: "Edit",
@@ -136,9 +151,23 @@ export default {
         {
           label: "Delete",
           action: this.openDeleteBlocksModal,
-          enabled: (rowIndex, columnIndex) => {
-            return this.sl.layouts.items[rowIndex].items[columnIndex].items
-              .length;
+          enabled: (rowIndex, columnIndex, blockIndex) => {
+            const hasBlock =
+              this.sl.layouts.items[rowIndex].items[columnIndex].items.length;
+            if (!hasBlock) {
+              return false;
+            }
+
+            const uid =
+              this.sl.layouts.items[rowIndex].items[columnIndex].items[
+                blockIndex
+              ];
+
+            const actionIds = this.sl.blocks[uid]["@components"]["actions"][
+              "object_buttons"
+            ].map((item) => item.id);
+            const deletable = actionIds.indexOf("delete") != -1;
+            return deletable;
           },
         },
         {
