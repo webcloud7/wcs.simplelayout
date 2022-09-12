@@ -16,6 +16,8 @@ function axiosInstance() {
 
 function axiosNeutralInstance() {
   const instance = axios.create({
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
     headers: {
       Accept: "text/html",
     },

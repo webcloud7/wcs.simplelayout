@@ -126,6 +126,7 @@ export default {
       this.modalLoading = true;
       try {
         const response = await this.axioshtml.post(url, formData, {
+          params: this.sl.params,
           headers: {
             "Content-Type": "multipart/form-data",
             Accept: "text/html,application/json",

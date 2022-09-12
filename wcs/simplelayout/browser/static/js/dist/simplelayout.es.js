@@ -17990,6 +17990,7 @@ function axiosInstance() {
 }
 function axiosNeutralInstance() {
   const instance = axios.create({
+    paramsSerializer: (params) => lib.stringify(params, { arrayFormat: "repeat" }),
     headers: {
       Accept: "text/html"
     }
@@ -18103,6 +18104,7 @@ const _sfc_main$e = {
       this.modalLoading = true;
       try {
         const response = await this.axioshtml.post(url, formData, {
+          params: this.sl.params,
           headers: {
             "Content-Type": "multipart/form-data",
             Accept: "text/html,application/json"
