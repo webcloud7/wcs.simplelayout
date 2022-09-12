@@ -76,7 +76,7 @@ def insert_simplelayout_blocks(context, result):
 def expand_by_querystring(context, request, result):
     query = parse.parse_qs(request.get('QUERY_STRING', ''))
     if not request.form.get('expand') and 'expand' in query:
-        request.form['expand'] = query['expand'][0]
+        request.form['expand'] = ','.join(query['expand'])
         result.update(expandable_elements(context, request))
 
 
