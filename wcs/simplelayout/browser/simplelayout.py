@@ -36,5 +36,9 @@ class SimplelayoutView(BrowserView):
             '3-column row (33%)': self._translate(_('label_three_col', default='3-column row (33%)')),
             '4-column row (25%)': self._translate(_('label_four_col', default='4-column row (25%)')),
             'Width': self._translate(_('label_width', default='Width')),
+            'E-Mail': self._translate(_('label_email', default='E-Mail')),
+            'Departement': self._translate(_('label_department', default='Departement')),
+            'Function': self._translate(_('label_function', default='Function')),
+            'Address': self._translate(_('label_address', default='Address')),
         }
         return json.dumps(messages)
