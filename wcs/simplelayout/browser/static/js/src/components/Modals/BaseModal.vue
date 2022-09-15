@@ -217,7 +217,7 @@ export default {
       }
     },
     handleTinyMCE() {
-      [...this.modal._element.querySelectorAll("textarea")].forEach(
+      [...this.modal._element.querySelectorAll("textarea.pat-tinymce.richTextWidget")].forEach(
         (element) => {
           tinyMCE.get(element.id).save();
         }
