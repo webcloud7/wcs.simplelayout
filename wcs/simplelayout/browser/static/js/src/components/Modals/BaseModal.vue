@@ -114,7 +114,6 @@ export default {
     async handleSubmit(event) {
       event.preventDefault();
 
-      this.handleTinyMCE();
       const form = this.modal._element.querySelector("#form");
       const url = form.getAttribute("action");
       const button = event.currentTarget;
@@ -158,8 +157,16 @@ export default {
       const title = this.modal._element.querySelector(".modal-title");
       title.innerHTML = doc.querySelector("h1").innerHTML;
       doc.querySelector("h1").remove();
+
+      while (parent.firstChild) {
+        body.removeChild(parent.firstChild);
+      }
+
       body.innerHTML = doc.getElementById("content").innerHTML;
       registry.scan(body);
+      if (window.initReferenceWidget) {
+        window.initReferenceWidget();
+      }
       executeScriptElements(body);
 
       // hack for oderselect_input.js
@@ -215,13 +222,6 @@ export default {
       while (body.firstChild) {
         body.removeChild(body.firstChild);
       }
-    },
-    handleTinyMCE() {
-      [...this.modal._element.querySelectorAll("textarea.pat-tinymce.richTextWidget")].forEach(
-        (element) => {
-          tinyMCE.get(element.id).save();
-        }
-      );
     },
   },
   computed: {

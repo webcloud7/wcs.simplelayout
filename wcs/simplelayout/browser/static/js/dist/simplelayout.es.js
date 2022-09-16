@@ -344,13 +344,13 @@ class ReactiveEffect {
     if (!this.active) {
       return this.fn();
     }
-    let parent = activeEffect;
+    let parent2 = activeEffect;
     let lastShouldTrack = shouldTrack;
-    while (parent) {
-      if (parent === this) {
+    while (parent2) {
+      if (parent2 === this) {
         return;
       }
-      parent = parent.parent;
+      parent2 = parent2.parent;
     }
     try {
       this.parent = activeEffect;
@@ -1714,10 +1714,10 @@ function hasPropsChanged(prevProps, nextProps, emitsOptions) {
   }
   return false;
 }
-function updateHOCHostEl({ vnode, parent }, el) {
-  while (parent && parent.subTree === vnode) {
-    (vnode = parent.vnode).el = el;
-    parent = parent.parent;
+function updateHOCHostEl({ vnode, parent: parent2 }, el) {
+  while (parent2 && parent2.subTree === vnode) {
+    (vnode = parent2.vnode).el = el;
+    parent2 = parent2.parent;
   }
 }
 const isSuspense = (type) => type.__isSuspense;
@@ -1857,12 +1857,12 @@ function patchSuspense(n1, n2, container, anchor, parentComponent, isSVG, slotSc
     }
   }
 }
-function createSuspenseBoundary(vnode, parent, parentComponent, container, hiddenContainer, anchor, isSVG, slotScopeIds, optimized, rendererInternals, isHydrating = false) {
+function createSuspenseBoundary(vnode, parent2, parentComponent, container, hiddenContainer, anchor, isSVG, slotScopeIds, optimized, rendererInternals, isHydrating = false) {
   const { p: patch, m: move, um: unmount, n: next, o: { parentNode, remove: remove2 } } = rendererInternals;
   const timeout2 = toNumber(vnode.props && vnode.props.timeout);
   const suspense = {
     vnode,
-    parent,
+    parent: parent2,
     parentComponent,
     isSVG,
     container,
@@ -1902,15 +1902,15 @@ function createSuspenseBoundary(vnode, parent, parentComponent, container, hidde
       setActiveBranch(suspense, pendingBranch);
       suspense.pendingBranch = null;
       suspense.isInFallback = false;
-      let parent2 = suspense.parent;
+      let parent3 = suspense.parent;
       let hasUnresolvedAncestor = false;
-      while (parent2) {
-        if (parent2.pendingBranch) {
-          parent2.effects.push(...effects);
+      while (parent3) {
+        if (parent3.pendingBranch) {
+          parent3.effects.push(...effects);
           hasUnresolvedAncestor = true;
           break;
         }
-        parent2 = parent2.parent;
+        parent3 = parent3.parent;
       }
       if (!hasUnresolvedAncestor) {
         queuePostFlushCb(effects);
@@ -2658,7 +2658,7 @@ function defineAsyncComponent(source2) {
     }
   });
 }
-function createInnerComp(comp, { vnode: { ref: ref2, props, children, shapeFlag }, parent }) {
+function createInnerComp(comp, { vnode: { ref: ref2, props, children, shapeFlag }, parent: parent2 }) {
   const vnode = createVNode(comp, props, children);
   vnode.ref = ref2;
   return vnode;
@@ -4566,14 +4566,14 @@ function baseCreateRenderer(options, createHydrationFns) {
       if (!instance.isMounted) {
         let vnodeHook;
         const { el, props } = initialVNode;
-        const { bm, m, parent } = instance;
+        const { bm, m, parent: parent2 } = instance;
         const isAsyncWrapperVNode = isAsyncWrapper(initialVNode);
         toggleRecurse(instance, false);
         if (bm) {
           invokeArrayFns(bm);
         }
         if (!isAsyncWrapperVNode && (vnodeHook = props && props.onVnodeBeforeMount)) {
-          invokeVNodeHook(vnodeHook, parent, initialVNode);
+          invokeVNodeHook(vnodeHook, parent2, initialVNode);
         }
         toggleRecurse(instance, true);
         if (el && hydrateNode) {
@@ -4598,15 +4598,15 @@ function baseCreateRenderer(options, createHydrationFns) {
         }
         if (!isAsyncWrapperVNode && (vnodeHook = props && props.onVnodeMounted)) {
           const scopedInitialVNode = initialVNode;
-          queuePostRenderEffect(() => invokeVNodeHook(vnodeHook, parent, scopedInitialVNode), parentSuspense);
+          queuePostRenderEffect(() => invokeVNodeHook(vnodeHook, parent2, scopedInitialVNode), parentSuspense);
         }
-        if (initialVNode.shapeFlag & 256 || parent && isAsyncWrapper(parent.vnode) && parent.vnode.shapeFlag & 256) {
+        if (initialVNode.shapeFlag & 256 || parent2 && isAsyncWrapper(parent2.vnode) && parent2.vnode.shapeFlag & 256) {
           instance.a && queuePostRenderEffect(instance.a, parentSuspense);
         }
         instance.isMounted = true;
         initialVNode = container = anchor = null;
       } else {
-        let { next, bu, u, parent, vnode } = instance;
+        let { next, bu, u, parent: parent2, vnode } = instance;
         let originNext = next;
         let vnodeHook;
         toggleRecurse(instance, false);
@@ -4620,7 +4620,7 @@ function baseCreateRenderer(options, createHydrationFns) {
           invokeArrayFns(bu);
         }
         if (vnodeHook = next.props && next.props.onVnodeBeforeUpdate) {
-          invokeVNodeHook(vnodeHook, parent, next, vnode);
+          invokeVNodeHook(vnodeHook, parent2, next, vnode);
         }
         toggleRecurse(instance, true);
         const nextTree = renderComponentRoot(instance);
@@ -4643,7 +4643,7 @@ function baseCreateRenderer(options, createHydrationFns) {
           queuePostRenderEffect(u, parentSuspense);
         }
         if (vnodeHook = next.props && next.props.onVnodeUpdated) {
-          queuePostRenderEffect(() => invokeVNodeHook(vnodeHook, parent, next, vnode), parentSuspense);
+          queuePostRenderEffect(() => invokeVNodeHook(vnodeHook, parent2, next, vnode), parentSuspense);
         }
       }
     };
@@ -5499,14 +5499,14 @@ function invokeVNodeHook(hook, instance, vnode, prevVNode = null) {
 }
 const emptyAppContext = createAppContext();
 let uid$1 = 0;
-function createComponentInstance(vnode, parent, suspense) {
+function createComponentInstance(vnode, parent2, suspense) {
   const type = vnode.type;
-  const appContext = (parent ? parent.appContext : vnode.appContext) || emptyAppContext;
+  const appContext = (parent2 ? parent2.appContext : vnode.appContext) || emptyAppContext;
   const instance = {
     uid: uid$1++,
     vnode,
     type,
-    parent,
+    parent: parent2,
     appContext,
     root: null,
     next: null,
@@ -5519,7 +5519,7 @@ function createComponentInstance(vnode, parent, suspense) {
     exposed: null,
     exposeProxy: null,
     withProxy: null,
-    provides: parent ? parent.provides : Object.create(appContext.provides),
+    provides: parent2 ? parent2.provides : Object.create(appContext.provides),
     accessCache: null,
     renderCache: [],
     components: null,
@@ -5563,7 +5563,7 @@ function createComponentInstance(vnode, parent, suspense) {
   {
     instance.ctx = { _: instance };
   }
-  instance.root = parent ? parent.root : instance;
+  instance.root = parent2 ? parent2.root : instance;
   instance.emit = emit$1.bind(null, instance);
   if (vnode.ce) {
     vnode.ce(instance);
@@ -5881,13 +5881,13 @@ const svgNS = "http://www.w3.org/2000/svg";
 const doc = typeof document !== "undefined" ? document : null;
 const templateContainer = doc && /* @__PURE__ */ doc.createElement("template");
 const nodeOps = {
-  insert: (child, parent, anchor) => {
-    parent.insertBefore(child, anchor || null);
+  insert: (child, parent2, anchor) => {
+    parent2.insertBefore(child, anchor || null);
   },
   remove: (child) => {
-    const parent = child.parentNode;
-    if (parent) {
-      parent.removeChild(child);
+    const parent2 = child.parentNode;
+    if (parent2) {
+      parent2.removeChild(child);
     }
   },
   createElement: (tag, isSVG, is2, props) => {
@@ -5918,11 +5918,11 @@ const nodeOps = {
     }
     return cloned;
   },
-  insertStaticContent(content, parent, anchor, isSVG, start, end) {
-    const before = anchor ? anchor.previousSibling : parent.lastChild;
+  insertStaticContent(content, parent2, anchor, isSVG, start, end) {
+    const before = anchor ? anchor.previousSibling : parent2.lastChild;
     if (start && (start === end || start.nextSibling)) {
       while (true) {
-        parent.insertBefore(start.cloneNode(true), anchor);
+        parent2.insertBefore(start.cloneNode(true), anchor);
         if (start === end || !(start = start.nextSibling))
           break;
       }
@@ -5936,11 +5936,11 @@ const nodeOps = {
         }
         template2.removeChild(wrapper);
       }
-      parent.insertBefore(template2, anchor);
+      parent2.insertBefore(template2, anchor);
     }
     return [
-      before ? before.nextSibling : parent.firstChild,
-      anchor ? anchor.previousSibling : parent.lastChild
+      before ? before.nextSibling : parent2.firstChild,
+      anchor ? anchor.previousSibling : parent2.lastChild
     ];
   }
 };
@@ -6342,10 +6342,10 @@ class VueElement extends BaseClass {
             detail: args
           }));
         };
-        let parent = this;
-        while (parent = parent && (parent.parentNode || parent.host)) {
-          if (parent instanceof VueElement) {
-            instance.parent = parent._instance;
+        let parent2 = this;
+        while (parent2 = parent2 && (parent2.parentNode || parent2.host)) {
+          if (parent2 instanceof VueElement) {
+            instance.parent = parent2._instance;
             break;
           }
         }
@@ -10320,8 +10320,8 @@ var jquery = { exports: {} };
             return first === 1 && last === 0 ? function(elem) {
               return !!elem.parentNode;
             } : function(elem, _context, xml) {
-              var cache, uniqueCache, outerCache, node, nodeIndex, start, dir2 = simple !== forward ? "nextSibling" : "previousSibling", parent = elem.parentNode, name = ofType && elem.nodeName.toLowerCase(), useCache = !xml && !ofType, diff = false;
-              if (parent) {
+              var cache, uniqueCache, outerCache, node, nodeIndex, start, dir2 = simple !== forward ? "nextSibling" : "previousSibling", parent2 = elem.parentNode, name = ofType && elem.nodeName.toLowerCase(), useCache = !xml && !ofType, diff = false;
+              if (parent2) {
                 if (simple) {
                   while (dir2) {
                     node = elem;
@@ -10334,15 +10334,15 @@ var jquery = { exports: {} };
                   }
                   return true;
                 }
-                start = [forward ? parent.firstChild : parent.lastChild];
+                start = [forward ? parent2.firstChild : parent2.lastChild];
                 if (forward && useCache) {
-                  node = parent;
+                  node = parent2;
                   outerCache = node[expando2] || (node[expando2] = {});
                   uniqueCache = outerCache[node.uniqueID] || (outerCache[node.uniqueID] = {});
                   cache = uniqueCache[type] || [];
                   nodeIndex = cache[0] === dirruns && cache[1];
                   diff = nodeIndex && cache[2];
-                  node = nodeIndex && parent.childNodes[nodeIndex];
+                  node = nodeIndex && parent2.childNodes[nodeIndex];
                   while (node = ++nodeIndex && node && node[dir2] || (diff = nodeIndex = 0) || start.pop()) {
                     if (node.nodeType === 1 && ++diff && node === elem) {
                       uniqueCache[type] = [dirruns, nodeIndex, diff];
@@ -11136,8 +11136,8 @@ var jquery = { exports: {} };
     }
     jQuery.each({
       parent: function(elem) {
-        var parent = elem.parentNode;
-        return parent && parent.nodeType !== 11 ? parent : null;
+        var parent2 = elem.parentNode;
+        return parent2 && parent2.nodeType !== 11 ? parent2 : null;
       },
       parents: function(elem) {
         return dir(elem, "parentNode");
@@ -12892,11 +12892,11 @@ var jquery = { exports: {} };
       replaceWith: function() {
         var ignored = [];
         return domManip(this, arguments, function(elem) {
-          var parent = this.parentNode;
+          var parent2 = this.parentNode;
           if (jQuery.inArray(this, ignored) < 0) {
             jQuery.cleanData(getAll(this));
-            if (parent) {
-              parent.replaceChild(elem, this);
+            if (parent2) {
+              parent2.replaceChild(elem, this);
             }
           }
         }, ignored);
@@ -14002,18 +14002,18 @@ var jquery = { exports: {} };
     if (!support.optSelected) {
       jQuery.propHooks.selected = {
         get: function(elem) {
-          var parent = elem.parentNode;
-          if (parent && parent.parentNode) {
-            parent.parentNode.selectedIndex;
+          var parent2 = elem.parentNode;
+          if (parent2 && parent2.parentNode) {
+            parent2.parentNode.selectedIndex;
           }
           return null;
         },
         set: function(elem) {
-          var parent = elem.parentNode;
-          if (parent) {
-            parent.selectedIndex;
-            if (parent.parentNode) {
-              parent.parentNode.selectedIndex;
+          var parent2 = elem.parentNode;
+          if (parent2) {
+            parent2.selectedIndex;
+            if (parent2.parentNode) {
+              parent2.parentNode.selectedIndex;
             }
           }
         }
@@ -15657,10 +15657,10 @@ const show = (el) => {
 const find_parents = (el, selector) => {
   var _a, _b, _c, _d;
   const ret = [];
-  let parent = (_b = (_a = el == null ? void 0 : el.parentNode) == null ? void 0 : _a.closest) == null ? void 0 : _b.call(_a, selector);
-  while (parent) {
-    ret.push(parent);
-    parent = (_d = (_c = parent.parentNode) == null ? void 0 : _c.closest) == null ? void 0 : _d.call(_c, selector);
+  let parent2 = (_b = (_a = el == null ? void 0 : el.parentNode) == null ? void 0 : _a.closest) == null ? void 0 : _b.call(_a, selector);
+  while (parent2) {
+    ret.push(parent2);
+    parent2 = (_d = (_c = parent2.parentNode) == null ? void 0 : _c.closest) == null ? void 0 : _d.call(_c, selector);
   }
   return ret;
 };
@@ -15669,11 +15669,11 @@ const find_scoped = (el, selector) => {
 };
 const get_parents = (el) => {
   const parents = [];
-  let parent = el == null ? void 0 : el.parentNode;
-  while (parent) {
-    parents.push(parent);
-    parent = parent == null ? void 0 : parent.parentNode;
-    parent = parent instanceof HTMLElement ? parent : null;
+  let parent2 = el == null ? void 0 : el.parentNode;
+  while (parent2) {
+    parents.push(parent2);
+    parent2 = parent2 == null ? void 0 : parent2.parentNode;
+    parent2 = parent2 instanceof HTMLElement ? parent2 : null;
   }
   return parents;
 };
@@ -15801,11 +15801,11 @@ ConsoleWriter.prototype = {
       console.error.apply(console, messages);
   }
 };
-function Logger(name, parent) {
+function Logger(name, parent2) {
   this._loggers = {};
   this.name = name || "";
-  this._parent = parent || null;
-  if (!parent) {
+  this._parent = parent2 || null;
+  if (!parent2) {
     this._enabled = true;
     this._level = Level.WARN;
   }
@@ -19366,15 +19366,15 @@ var parseKeys = function parseQueryStringKeys(givenKey, val, options, valuesPars
   var brackets2 = /(\[[^[\]]*])/;
   var child = /(\[[^[\]]*])/g;
   var segment = options.depth > 0 && brackets2.exec(key);
-  var parent = segment ? key.slice(0, segment.index) : key;
+  var parent2 = segment ? key.slice(0, segment.index) : key;
   var keys = [];
-  if (parent) {
-    if (!options.plainObjects && has.call(Object.prototype, parent)) {
+  if (parent2) {
+    if (!options.plainObjects && has.call(Object.prototype, parent2)) {
       if (!options.allowPrototypes) {
         return;
       }
     }
-    keys.push(parent);
+    keys.push(parent2);
   }
   var i = 0;
   while (options.depth > 0 && (segment = child.exec(key)) !== null && i < options.depth) {
@@ -19564,7 +19564,6 @@ const _sfc_main$f = {
     },
     async handleSubmit(event) {
       event.preventDefault();
-      this.handleTinyMCE();
       const form = this.modal._element.querySelector("#form");
       const url = form.getAttribute("action");
       const button = event.currentTarget;
@@ -19604,8 +19603,14 @@ const _sfc_main$f = {
       const title = this.modal._element.querySelector(".modal-title");
       title.innerHTML = doc2.querySelector("h1").innerHTML;
       doc2.querySelector("h1").remove();
+      while (parent.firstChild) {
+        body.removeChild(parent.firstChild);
+      }
       body.innerHTML = doc2.getElementById("content").innerHTML;
       registry.scan(body);
+      if (window.initReferenceWidget) {
+        window.initReferenceWidget();
+      }
       executeScriptElements(body);
       document.querySelectorAll(".ordered-selection-field").forEach((element) => {
         const destination = element.querySelector("[id$='toDataContainer']");
@@ -19652,13 +19657,6 @@ const _sfc_main$f = {
       while (body.firstChild) {
         body.removeChild(body.firstChild);
       }
-    },
-    handleTinyMCE() {
-      [...this.modal._element.querySelectorAll("textarea.pat-tinymce.richTextWidget")].forEach(
-        (element) => {
-          tinyMCE.get(element.id).save();
-        }
-      );
     }
   },
   computed: {
@@ -20317,19 +20315,19 @@ function getRect(el, relativeToContainingBlock, relativeToNonStaticParent, undoS
   };
 }
 function isScrolledPast(el, elSide, parentSide) {
-  var parent = getParentAutoScrollElement(el, true), elSideVal = getRect(el)[elSide];
-  while (parent) {
-    var parentSideVal = getRect(parent)[parentSide], visible = void 0;
+  var parent2 = getParentAutoScrollElement(el, true), elSideVal = getRect(el)[elSide];
+  while (parent2) {
+    var parentSideVal = getRect(parent2)[parentSide], visible = void 0;
     if (parentSide === "top" || parentSide === "left") {
       visible = elSideVal >= parentSideVal;
     } else {
       visible = elSideVal <= parentSideVal;
     }
     if (!visible)
-      return parent;
-    if (parent === getWindowScrollingElement())
+      return parent2;
+    if (parent2 === getWindowScrollingElement())
       break;
-    parent = getParentAutoScrollElement(parent, false);
+    parent2 = getParentAutoScrollElement(parent2, false);
   }
   return false;
 }
@@ -21169,30 +21167,30 @@ Sortable.prototype = {
       this._lastY = touchEvt.clientY;
       _hideGhostForTarget();
       var target = document.elementFromPoint(touchEvt.clientX, touchEvt.clientY);
-      var parent = target;
+      var parent2 = target;
       while (target && target.shadowRoot) {
         target = target.shadowRoot.elementFromPoint(touchEvt.clientX, touchEvt.clientY);
-        if (target === parent)
+        if (target === parent2)
           break;
-        parent = target;
+        parent2 = target;
       }
       dragEl.parentNode[expando]._isOutsideThisEl(target);
-      if (parent) {
+      if (parent2) {
         do {
-          if (parent[expando]) {
+          if (parent2[expando]) {
             var inserted = void 0;
-            inserted = parent[expando]._onDragOver({
+            inserted = parent2[expando]._onDragOver({
               clientX: touchEvt.clientX,
               clientY: touchEvt.clientY,
               target,
-              rootEl: parent
+              rootEl: parent2
             });
             if (inserted && !this.options.dragoverBubble) {
               break;
             }
           }
-          target = parent;
-        } while (parent = parent.parentNode);
+          target = parent2;
+        } while (parent2 = parent2.parentNode);
       }
       _unhideGhostForTarget();
     }
