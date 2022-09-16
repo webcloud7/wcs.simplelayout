@@ -9,8 +9,8 @@
     </template>
     <template #body>
       <div class="row">
-        <div class="col-sm-6">
-          <div class="card-img-top sl-memberblock-image" v-if="block.image">
+        <div class="col-sm-6" v-if="block.image">
+          <div class="card-img-top sl-memberblock-image">
             <img
               :src="block.image.scales.great.download"
               :alt="block.image_alt_text"

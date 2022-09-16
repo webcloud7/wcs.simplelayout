@@ -27371,11 +27371,11 @@ const _sfc_main$2 = {
 const _hoisted_1$2 = { class: "sl-contact-title" };
 const _hoisted_2$2 = ["href"];
 const _hoisted_3$1 = { class: "row" };
-const _hoisted_4$1 = { class: "col-sm-6" };
-const _hoisted_5$1 = {
+const _hoisted_4$1 = {
   key: 0,
-  class: "card-img-top sl-memberblock-image"
+  class: "col-sm-6"
 };
+const _hoisted_5$1 = { class: "card-img-top sl-memberblock-image" };
 const _hoisted_6$1 = ["src", "alt"];
 const _hoisted_7 = { class: "col-sm-6" };
 const _hoisted_8 = { key: 0 };
@@ -27401,14 +27401,14 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
     ]),
     body: withCtx(() => [
       createBaseVNode("div", _hoisted_3$1, [
-        createBaseVNode("div", _hoisted_4$1, [
-          $props.block.image ? (openBlock(), createElementBlock("div", _hoisted_5$1, [
+        $props.block.image ? (openBlock(), createElementBlock("div", _hoisted_4$1, [
+          createBaseVNode("div", _hoisted_5$1, [
             createBaseVNode("img", {
               src: $props.block.image.scales.great.download,
               alt: $props.block.image_alt_text
             }, null, 8, _hoisted_6$1)
-          ])) : createCommentVNode("", true)
-        ]),
+          ])
+        ])) : createCommentVNode("", true),
         createBaseVNode("div", _hoisted_7, [
           $props.block.organization ? (openBlock(), createElementBlock("p", _hoisted_8, toDisplayString(_ctx.$i18n("organization")) + ": " + toDisplayString($props.block.organization), 1)) : createCommentVNode("", true),
           $props.block.departement ? (openBlock(), createElementBlock("p", _hoisted_9, toDisplayString(_ctx.$i18n("Departement")) + ": " + toDisplayString($props.block.departement), 1)) : createCommentVNode("", true),
