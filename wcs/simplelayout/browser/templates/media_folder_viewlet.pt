@@ -1,6 +1,6 @@
 <div class="listingblocks-ref-viewlet" tal:condition="view/listingblocks" i18n:domain="ftw.simplelayout">
     <h5 class="d-inline-block" i18n:translate="">This media folder is used for the following listing(s)</h5>
-    <ul class="list-group list-group-horizontal d-inline-block mb-4">
+    <ul class="list-group list-group-horizontal mb-4">
         <li class="list-group-item" tal:repeat="item view/listingblocks">
             <a tal:attributes="href item/url" tal:content="item/title"></a>
             <tal:state condition="item/review_state">
