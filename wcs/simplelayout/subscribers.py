@@ -44,6 +44,9 @@ def update_page_state_on_block_remove(block, event):
         if parent is not event.oldParent:
             return
 
+    if not ISimplelayout(parent, None):
+        return
+
     page_layout = ISimplelayout(parent).slblocks_layout
     new_page_layout = json.dumps(page_layout) \
         .replace(f'"{block_uid}", ', '') \
