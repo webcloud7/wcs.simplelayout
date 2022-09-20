@@ -18182,7 +18182,7 @@ const _sfc_main$g = {
       [
         ...this.modal._element.querySelectorAll("textarea.pat-tinymce.richTextWidget")
       ].forEach((element) => {
-        registry.tinymce.constructor.get(element.id).save();
+        tinyMCE.get(element.id).save();
       });
     },
     cleanBody() {

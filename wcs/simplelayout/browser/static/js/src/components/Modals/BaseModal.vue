@@ -221,7 +221,7 @@ export default {
           "textarea.pat-tinymce.richTextWidget"
         ),
       ].forEach((element) => {
-        registry.tinymce.constructor.get(element.id).save();
+        tinyMCE.get(element.id).save();
       });
     },
     cleanBody() {
