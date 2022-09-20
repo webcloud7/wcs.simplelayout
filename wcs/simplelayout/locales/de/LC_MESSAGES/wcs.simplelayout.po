@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-09-20 08:25+0000\n"
+"POT-Creation-Date: 2022-09-20 13:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -205,9 +205,19 @@ msgid "label_information"
 msgstr "Informationen"
 
 #. Default: "Mediafolder reference"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:296
+#: ./wcs/simplelayout/contenttypes/behaviors.py:295
 msgid "label_mediafolder"
 msgstr "Media Order Verknüpfung"
+
+#. Default: "No referenced content found"
+#: ./wcs/simplelayout/browser/simplelayout.py:44
+msgid "label_no_ref_content"
+msgstr "Kein Inhalt gefunden"
+
+#. Default: "Referenced content"
+#: ./wcs/simplelayout/browser/simplelayout.py:43
+msgid "label_ref_content"
+msgstr "Verwandter Inhalt"
 
 #. Default: "Remove"
 #: ./wcs/simplelayout/browser/simplelayout.py:33
@@ -280,57 +290,57 @@ msgid "news_date_label"
 msgstr "News Datum"
 
 #. Default: "You can not filter by path and current context at the same time."
-#: ./wcs/simplelayout/contenttypes/behaviors.py:280
+#: ./wcs/simplelayout/contenttypes/behaviors.py:279
 msgid "news_listing_config_current_context_and_path_error"
 msgstr ""
 
 #. Default: "Only show news items from the current context."
-#: ./wcs/simplelayout/contenttypes/behaviors.py:224
+#: ./wcs/simplelayout/contenttypes/behaviors.py:223
 msgid "news_listing_config_filter_current_context_description"
 msgstr "Falls aktiviert werden nur die News aus dem aktuellen Bereich angezeigt."
 
 #. Default: "Limit to current context"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:222
+#: ./wcs/simplelayout/contenttypes/behaviors.py:221
 msgid "news_listing_config_filter_current_context_label"
 msgstr "News aus dem aktuellen Bereich"
 
 #. Default: "Only show news items from a specific path. If there is no path, news from the current area will be shown"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:238
+#: ./wcs/simplelayout/contenttypes/behaviors.py:237
 msgid "news_listing_config_filter_path_description"
 msgstr "News werden aus dem, oder den ausgewällten Bereichen angezeit, falls leer, wird der aktuelle Bereich nach News durchsucht."
 
 #. Default: "Limit to path"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:236
+#: ./wcs/simplelayout/contenttypes/behaviors.py:235
 msgid "news_listing_config_filter_path_label"
 msgstr "Nach Bereich einschränken"
 
 #. Default: "Only news younger than this value will be rendered. Enter 0 for no limitation."
-#: ./wcs/simplelayout/contenttypes/behaviors.py:268
+#: ./wcs/simplelayout/contenttypes/behaviors.py:267
 msgid "news_listing_config_maximum_age_description"
 msgstr "Stellt News dar, welche nicht älter als der angegebene Wert sind. 0 bedeutet keine Einschränkung."
 
 #. Default: "Maximum age (days)"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:266
+#: ./wcs/simplelayout/contenttypes/behaviors.py:265
 msgid "news_listing_config_maximum_age_label"
 msgstr "Maximales alter (Tage)"
 
 #. Default: "The number of news entries to be shown at most. Enter 0 for no limitation."
-#: ./wcs/simplelayout/contenttypes/behaviors.py:248
+#: ./wcs/simplelayout/contenttypes/behaviors.py:247
 msgid "news_listing_config_quantity_description"
 msgstr "Definiert die maximale Anzahl News, welche aufgelistst wird. 0 bedeutet keine Einschränkung"
 
 #. Default: "Quantity"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:247
+#: ./wcs/simplelayout/contenttypes/behaviors.py:246
 msgid "news_listing_config_quantity_label"
 msgstr "Anzahl News"
 
 #. Default: "Only news with the selected subjects will be shown."
-#: ./wcs/simplelayout/contenttypes/behaviors.py:257
+#: ./wcs/simplelayout/contenttypes/behaviors.py:256
 msgid "news_listing_config_subjects_description"
 msgstr ""
 
 #. Default: "Filter by subject"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:255
+#: ./wcs/simplelayout/contenttypes/behaviors.py:254
 msgid "news_listing_config_subjects_label"
 msgstr "Stichwort filter"
 

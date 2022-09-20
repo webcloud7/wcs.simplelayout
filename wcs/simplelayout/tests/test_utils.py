@@ -12,6 +12,7 @@ class TestUtils(FunctionalTesting):
             'ImageListingBlock',
             'NewsListingBlock',
             'AllPurposeListingBlock',
+            'RelatedContentBlock',
         )
         self.assertEqual(
             block_ids,
