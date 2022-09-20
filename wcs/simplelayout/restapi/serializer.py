@@ -108,7 +108,7 @@ class NewsListingBlockSerializer(SerializeToJson):
             if not relations:
                 paths = '/'.join(self.context.aq_parent.getPhysicalPath())
             else:
-                paths = ['/'.join(item.to_object.getPhysicalPath()) for item in paths if item.to_object]
+                paths = ['/'.join(item.to_object.getPhysicalPath()) for item in relations if item.to_object]
 
             query = {
                 'path': paths,
