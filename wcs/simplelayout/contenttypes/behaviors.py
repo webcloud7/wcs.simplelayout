@@ -217,6 +217,15 @@ class IBlockSortOptions(model.Schema):
 @provider(IFormFieldProvider)
 class IBlockNewsOptions(model.Schema):
 
+    current_context = schema.Bool(
+        title=_(u'news_listing_config_filter_current_context_label',
+                default=u'Limit to current context'),
+        description=_(
+            u'news_listing_config_filter_current_context_description',
+            default=u'Only show news items from the current context.'),
+        default=True,
+    )
+
     directives.widget('filter_by_path',
                       ReferenceBrowserWidget,
                       allow_nonsearched_types=False,
@@ -261,6 +270,17 @@ class IBlockNewsOptions(model.Schema):
         default=0,
         required=True,
     )
+
+    @invariant
+    def is_either_path_or_context(obj):
+        """Checks if not both path and current context are defined.
+        """
+        if obj.current_context and obj.filter_by_path:
+            raise Invalid(_(
+                u'news_listing_config_current_context_and_path_error',
+                default=u'You can not filter by path and current context '
+                        u'at the same time.')
+            )
 
 
 @provider(IFormFieldProvider)

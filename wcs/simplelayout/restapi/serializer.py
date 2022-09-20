@@ -104,11 +104,14 @@ class NewsListingBlockSerializer(SerializeToJson):
             sort_on = 'Date'
 
             relations = IBlockNewsOptions(self.context).filter_by_path
+            current_context = IBlockNewsOptions(self.context).current_context
             paths = ''
-            if not relations:
+            if current_context:
                 paths = '/'.join(self.context.aq_parent.getPhysicalPath())
-            else:
+            elif relations:
                 paths = ['/'.join(item.to_object.getPhysicalPath()) for item in relations if item.to_object]
+            else:
+                paths = '/'.join(api.portal.get().getPhysicalPath())
 
             query = {
                 'path': paths,

@@ -40,5 +40,7 @@ class SimplelayoutView(BrowserView):
             'Departement': self._translate(_('label_department', default='Departement')),
             'Function': self._translate(_('label_function', default='Function')),
             'Address': self._translate(_('label_address', default='Address')),
+            'Referenced content': self._translate(_('label_ref_content', default='Referenced content')),
+            'No referenced content found': self._translate(_('label_no_ref_content', default='No referenced content found')),
         }
         return json.dumps(messages)
