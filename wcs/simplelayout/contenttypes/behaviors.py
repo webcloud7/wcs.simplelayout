@@ -1,7 +1,6 @@
 from ftw.referencewidget.widget import ReferenceBrowserWidget
 from plone.app.dexterity.textindexer.directives import searchable
 from plone.app.textfield import RichText
-from plone.app.vocabularies.catalog import CatalogSource
 from plone.autoform import directives
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.namedfile.field import NamedBlobImage
@@ -218,17 +217,20 @@ class IBlockSortOptions(model.Schema):
 @provider(IFormFieldProvider)
 class IBlockNewsOptions(model.Schema):
 
+    directives.widget('filter_by_path',
+                      ReferenceBrowserWidget,
+                      allow_nonsearched_types=False,
+                      start='parent',
+                      override=True)
     filter_by_path = RelationList(
         title=_('news_listing_config_filter_path_label',
                 default='Limit to path'),
         description=_('news_listing_config_filter_path_description',
                       default='Only show news items from a specific path.'
                       ' If there is no path, news from the current area will be shown'),
-        value_type=RelationChoice(
-            source=CatalogSource(),
-        ),
         required=False,
         missing_value=[],
+        default=[],
     )
 
     quantity = schema.Int(
