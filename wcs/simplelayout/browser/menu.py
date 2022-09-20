@@ -25,7 +25,7 @@ class SimplelayoutFactoriesMenu(FactoriesMenu):
         def is_block_fti(menu_item):
             if '++add++' not in menu_item.get('action', ''):
                 # Not a factory menu item
-                return False
+                return True
 
             ftis = api.portal.get_tool('portal_types')
             fti = ftis.get(menu_item['id'], None)
