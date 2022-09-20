@@ -114,6 +114,7 @@ export default {
     async handleSubmit(event) {
       event.preventDefault();
 
+      this.handleTinyMCE();
       const form = this.modal._element.querySelector("#form");
       const url = form.getAttribute("action");
       const button = event.currentTarget;
@@ -213,6 +214,15 @@ export default {
       event.stopPropagation();
       this.cleanBody();
       this.modal.hide();
+    },
+    handleTinyMCE() {
+      [
+        ...this.modal._element.querySelectorAll(
+          "textarea.pat-tinymce.richTextWidget"
+        ),
+      ].forEach((element) => {
+        registry.tinymce.constructor.get(element.id).save();
+      });
     },
     cleanBody() {
       if (!this.cleanUpBody) {

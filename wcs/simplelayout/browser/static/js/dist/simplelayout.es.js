@@ -19564,6 +19564,7 @@ const _sfc_main$f = {
     },
     async handleSubmit(event) {
       event.preventDefault();
+      this.handleTinyMCE();
       const form = this.modal._element.querySelector("#form");
       const url = form.getAttribute("action");
       const button = event.currentTarget;
@@ -19648,6 +19649,15 @@ const _sfc_main$f = {
       event.stopPropagation();
       this.cleanBody();
       this.modal.hide();
+    },
+    handleTinyMCE() {
+      [
+        ...this.modal._element.querySelectorAll(
+          "textarea.pat-tinymce.richTextWidget"
+        )
+      ].forEach((element) => {
+        registry.tinymce.constructor.get(element.id).save();
+      });
     },
     cleanBody() {
       if (!this.cleanUpBody) {
