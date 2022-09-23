@@ -100,7 +100,7 @@ class NewsListingBlockSerializer(SerializeToJson):
         include_items = self.request.form.get("include_items", include_items)
         include_items = boolean_value(include_items)
         if include_items:
-            sort_order = 'ascending'
+            sort_order = 'descending'
             sort_on = 'Date'
 
             relations = IBlockNewsOptions(self.context).filter_by_path
