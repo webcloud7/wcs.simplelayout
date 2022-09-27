@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-09-20 13:08+0000\n"
+"POT-Creation-Date: 2022-09-27 19:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -135,7 +135,7 @@ msgid "label_addable_blocks"
 msgstr ""
 
 #. Default: "Address"
-#: ./wcs/simplelayout/browser/simplelayout.py:42
+#: ./wcs/simplelayout/browser/simplelayout.py:43
 msgid "label_address"
 msgstr ""
 
@@ -180,7 +180,7 @@ msgid "label_four_col"
 msgstr ""
 
 #. Default: "Function"
-#: ./wcs/simplelayout/browser/simplelayout.py:41
+#: ./wcs/simplelayout/browser/simplelayout.py:42
 msgid "label_function"
 msgstr ""
 
@@ -210,12 +210,17 @@ msgid "label_mediafolder"
 msgstr ""
 
 #. Default: "No referenced content found"
-#: ./wcs/simplelayout/browser/simplelayout.py:44
+#: ./wcs/simplelayout/browser/simplelayout.py:45
 msgid "label_no_ref_content"
 msgstr ""
 
+#. Default: "Organization"
+#: ./wcs/simplelayout/browser/simplelayout.py:41
+msgid "label_organization"
+msgstr ""
+
 #. Default: "Referenced content"
-#: ./wcs/simplelayout/browser/simplelayout.py:43
+#: ./wcs/simplelayout/browser/simplelayout.py:44
 msgid "label_ref_content"
 msgstr ""
 
