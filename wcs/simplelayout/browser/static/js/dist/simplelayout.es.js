@@ -10375,7 +10375,7 @@ const _hoisted_5$c = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" 
 const _hoisted_6$b = ["id"];
 const _hoisted_7$8 = ["aria-labelledby"];
 const _hoisted_8$6 = ["onClick", "data-row", "data-col", "data-block"];
-const _hoisted_9$5 = ["data-row", "data-col", "data-block"];
+const _hoisted_9$6 = ["data-row", "data-col", "data-block"];
 function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockTitle = resolveComponent("BlockTitle");
   return openBlock(), createElementBlock("div", _hoisted_1$g, [
@@ -10433,7 +10433,7 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
           "data-col": $props.columnIndex,
           "data-block": $props.blockIndex,
           href: "#"
-        }, toDisplayString(_ctx.$i18n($props.actions[0].label)), 9, _hoisted_9$5)) : createCommentVNode("v-if", true)
+        }, toDisplayString(_ctx.$i18n($props.actions[0].label)), 9, _hoisted_9$6)) : createCommentVNode("v-if", true)
       ], 64))
     ])) : createCommentVNode("v-if", true)
   ]);
@@ -10465,6 +10465,15 @@ const _sfc_main$l = {
       type: Object,
       required: true
     }
+  },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
+  },
+  computed: {
+    rowsLength() {
+      return this.sl.layouts.items[this.rowIndex].items.length;
+    }
   }
 };
 const _hoisted_1$f = { class: "card" };
@@ -10472,15 +10481,21 @@ const _hoisted_2$f = ["id"];
 const _hoisted_3$b = { class: "card-header" };
 const _hoisted_4$b = {
   key: 0,
-  class: "card-img-top sl-card-image"
-};
-const _hoisted_5$b = ["src", "alt"];
-const _hoisted_6$a = {
-  key: 0,
   class: "card-body"
 };
-const _hoisted_7$7 = { class: "card-text" };
-const _hoisted_8$5 = ["innerHTML"];
+const _hoisted_5$b = { class: "card-text" };
+const _hoisted_6$a = { class: "d-flex flex-wrap flex-row-reverse gap-3" };
+const _hoisted_7$7 = {
+  key: 0,
+  class: "sl-card-image"
+};
+const _hoisted_8$5 = { class: "d-table m-0 text-center" };
+const _hoisted_9$5 = ["src", "alt"];
+const _hoisted_10$4 = {
+  key: 0,
+  class: "figure-caption mt-1"
+};
+const _hoisted_11$3 = ["innerHTML"];
 function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockControls = resolveComponent("BlockControls");
   return openBlock(), createElementBlock("div", _hoisted_1$f, [
@@ -10490,21 +10505,27 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
     createBaseVNode("div", _hoisted_3$b, [
       createVNode(_component_BlockControls, normalizeProps(guardReactiveProps(_ctx.$props)), null, 16)
     ]),
-    renderSlot(_ctx.$slots, "top", {}, () => [
-      $props.block.image ? (openBlock(), createElementBlock("div", _hoisted_4$b, [
-        createBaseVNode("img", {
-          src: $props.block.image.scales.great.download,
-          alt: $props.block.image_alt_text
-        }, null, 8, _hoisted_5$b)
-      ])) : createCommentVNode("v-if", true)
-    ]),
-    Object.keys($props.block).length !== 0 ? (openBlock(), createElementBlock("div", _hoisted_6$a, [
-      createBaseVNode("div", _hoisted_7$7, [
+    renderSlot(_ctx.$slots, "top"),
+    Object.keys($props.block).length !== 0 ? (openBlock(), createElementBlock("div", _hoisted_4$b, [
+      createBaseVNode("div", _hoisted_5$b, [
         renderSlot(_ctx.$slots, "body", {}, () => [
-          $props.block.text ? (openBlock(), createElementBlock("div", {
-            key: 0,
-            innerHTML: $props.block.text.data
-          }, null, 8, _hoisted_8$5)) : createCommentVNode("v-if", true)
+          createBaseVNode("div", _hoisted_6$a, [
+            $props.block.image ? (openBlock(), createElementBlock("div", _hoisted_7$7, [
+              createBaseVNode("figure", _hoisted_8$5, [
+                createBaseVNode("img", {
+                  class: "figure-img m-0",
+                  src: $props.block.image.scales.great.download,
+                  alt: $props.block.image_alt_text
+                }, null, 8, _hoisted_9$5),
+                $props.block.image_caption ? (openBlock(), createElementBlock("figcaption", _hoisted_10$4, toDisplayString($props.block.image_caption), 1)) : createCommentVNode("v-if", true)
+              ])
+            ])) : createCommentVNode("v-if", true),
+            $props.block.text ? (openBlock(), createElementBlock("div", {
+              key: 1,
+              class: "sl-card-text",
+              innerHTML: $props.block.text.data
+            }, null, 8, _hoisted_11$3)) : createCommentVNode("v-if", true)
+          ])
         ])
       ])
     ])) : createCommentVNode("v-if", true),
