@@ -3,7 +3,7 @@
     <template #body>
       <h5>{{ $i18n("Referenced content") }}</h5>
       <div class="list-group">
-        <template v-for="item in block.relatedItems" :key="item['@id']">
+        <template v-for="item in filteredItems" :key="item['@id']">
           <a
             class="list-group-item list-group-item-action d-flex justify-content-between align-items-start"
             :href="item['@id']"
@@ -25,7 +25,7 @@
         </template>
         <a
           class="list-group-item list-group-item-action disabled"
-          v-if="!block.relatedItems.length"
+          v-if="!filteredItems.length"
         >
           {{ $i18n("No referenced content found") }}
         </a>
@@ -76,6 +76,11 @@ export default {
   setup() {
     const sl = useSimplelayoutStore();
     return { sl };
+  },
+  computed: {
+    filteredItems() {
+      return this.block.relatedItems.filter((item) => Boolean(item));
+    },
   },
   methods: {
     async fetchWorkflowTitles() {
