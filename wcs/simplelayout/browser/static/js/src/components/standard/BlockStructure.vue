@@ -4,18 +4,32 @@
     <div class="card-header">
       <BlockControls v-bind="$props" />
     </div>
-    <slot name="top">
-      <div class="card-img-top sl-card-image" v-if="block.image">
-        <img
-          :src="block.image.scales.great.download"
-          :alt="block.image_alt_text"
-        />
-      </div>
-    </slot>
+    <slot name="top"></slot>
     <div class="card-body" v-if="Object.keys(block).length !== 0">
       <div class="card-text">
         <slot name="body">
-          <div v-if="block.text" v-html="block.text.data" />
+          <div class="d-flex flex-wrap flex-row-reverse gap-3">
+            <div class="sl-card-image" v-if="block.image">
+              <figure class="d-table m-0 text-center">
+                <img
+                  class="figure-img m-0"
+                  :src="block.image.scales.great.download"
+                  :alt="block.image_alt_text"
+                />
+                <figcaption
+                  v-if="block.image_caption"
+                  class="figure-caption mt-1"
+                >
+                  {{ block.image_caption }}
+                </figcaption>
+              </figure>
+            </div>
+            <div
+              class="sl-card-text"
+              v-if="block.text"
+              v-html="block.text.data"
+            />
+          </div>
         </slot>
       </div>
     </div>
@@ -24,6 +38,7 @@
 </template>
 <script>
 import BlockControls from "@/components/Controls/BlockControls.vue";
+import { useSimplelayoutStore } from "@/store.js";
 export default {
   components: {
     BlockControls,
@@ -50,14 +65,29 @@ export default {
       required: true,
     },
   },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
+  },
+  computed: {
+    rowsLength() {
+      return this.sl.layouts.items[this.rowIndex].items.length;
+    },
+  },
 };
 </script>
 <style lang="scss">
 .sl-card-image {
-  aspect-ratio: 16 / 10;
+  min-width: 200px;
+  flex-basis: 200px;
+  flex-grow: 1;
   background-color: var(--bs-gray-200);
   align-items: center;
   display: flex;
   justify-content: center;
+}
+.sl-card-text {
+  flex-basis: 300px;
+  flex-grow: 999;
 }
 </style>
