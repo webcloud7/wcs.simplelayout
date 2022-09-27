@@ -38,6 +38,7 @@ class SimplelayoutView(BrowserView):
             'Width': self._translate(_('label_width', default='Width')),
             'E-Mail': self._translate(_('label_email', default='E-Mail')),
             'Departement': self._translate(_('label_department', default='Departement')),
+            'Organization': self._translate(_('label_organization', default='Organization')),
             'Function': self._translate(_('label_function', default='Function')),
             'Address': self._translate(_('label_address', default='Address')),
             'Referenced content': self._translate(_('label_ref_content', default='Referenced content')),
