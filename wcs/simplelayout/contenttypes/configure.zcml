@@ -65,6 +65,12 @@
         provides=".behaviors.IMediaFolderReference"
         />
 
+    <plone:behavior
+        title="Link fields"
+        description="Extends the content with a internal and external link field"
+        provides=".behaviors.ILink"
+        />
+
     <subscriber
         for=".behaviors.IMediaFolderReference
             zope.lifecycleevent.IObjectAddedEvent"

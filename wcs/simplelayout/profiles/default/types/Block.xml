@@ -27,6 +27,7 @@
   <element value="wcs.simplelayout.contenttypes.behaviors.IBlockTitle"/>
   <element value="wcs.simplelayout.contenttypes.behaviors.IBlockText"/>
   <element value="wcs.simplelayout.contenttypes.behaviors.IBlockImage"/>
+  <element value="wcs.simplelayout.contenttypes.behaviors.ILink"/>
  </property>
  <property name="schema"></property>
  <property
