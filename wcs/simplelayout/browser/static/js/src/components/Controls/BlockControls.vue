@@ -12,7 +12,7 @@
       v-if="sl.canModify"
     >
       <button
-        v-if="blockIndex > -1"
+        v-if="blockIndex > -1 && sl.canAddBlocks"
         class="btn btn-secondary btn-sm sl-handle sl-move-button"
       >
         <img v-bind="moveIcon" />

@@ -137,7 +137,7 @@ export default {
           action: this.openAddableBlocksModal,
           enabled: () => {
             const addable = this.sl.addableTypes.filter((item) => item.addable);
-            return addable.length;
+            return this.sl.canAddBlocks && addable.length;
           },
         },
         {
@@ -228,6 +228,9 @@ export default {
     );
     this.sl.setCanEditColumns(
       this.$refs.root.parentElement.getAttribute("data-can-edit-columns")
+    );
+    this.sl.setCanAddBlocks(
+      this.$refs.root.parentElement.getAttribute("data-can-addblocks")
     );
     this.sl.setI18nMessages(
       this.$refs.root.parentElement.getAttribute("data-i18n")
