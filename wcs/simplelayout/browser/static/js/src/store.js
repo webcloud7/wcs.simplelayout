@@ -16,6 +16,7 @@ export const useSimplelayoutStore = defineStore({
     authToken: null,
     canModify: false,
     canEditColumns: false,
+    canAddBlocks: false,
     i18n: {},
     errors: [],
   }),
@@ -58,6 +59,13 @@ export const useSimplelayoutStore = defineStore({
         this.canEditColumns = true;
       } else {
         this.canEditColumns = false;
+      }
+    },
+    setCanAddBlocks(value) {
+      if (value == "True") {
+        this.canAddBlocks = true;
+      } else {
+        this.canAddBlocks = false;
       }
     },
     async fetchBlocks() {
