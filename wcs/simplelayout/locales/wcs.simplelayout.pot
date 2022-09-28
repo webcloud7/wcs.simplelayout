@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-09-27 19:09+0000\n"
+"POT-Creation-Date: 2022-09-28 09:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,6 +26,10 @@ msgstr ""
 msgid "Default Block title with (Show title option)"
 msgstr ""
 
+#: ./wcs/simplelayout/contenttypes/configure.zcml:72
+msgid "Extends the content with a internal and external link field"
+msgstr ""
+
 #: ./wcs/simplelayout/contenttypes/configure.zcml:66
 msgid "Extends the content with a reference field to a media folder"
 msgstr ""
@@ -34,8 +38,20 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
+#: ./wcs/simplelayout/contenttypes/behaviors.py:330
+msgid "It's not possible to have an internal_link and an external_link together"
+msgstr ""
+
 #: ./wcs/simplelayout/contenttypes/behaviors.py:109
 msgid "Layout"
+msgstr ""
+
+#: ./wcs/simplelayout/contenttypes/behaviors.py:306
+msgid "Link"
+msgstr ""
+
+#: ./wcs/simplelayout/contenttypes/configure.zcml:72
+msgid "Link fields"
 msgstr ""
 
 #: ./wcs/simplelayout/contenttypes/configure.zcml:18
@@ -119,13 +135,18 @@ msgstr ""
 msgid "description_image_alt_text"
 msgstr ""
 
+#. Default: "Use the link section to redirect to another content or website."
+#: ./wcs/simplelayout/contenttypes/behaviors.py:308
+msgid "description_link_fieldset"
+msgstr ""
+
 #. Default: "Actions"
-#: ./wcs/simplelayout/browser/simplelayout.py:26
+#: ./wcs/simplelayout/browser/simplelayout.py:29
 msgid "label_actions"
 msgstr ""
 
 #. Default: "Add"
-#: ./wcs/simplelayout/browser/simplelayout.py:27
+#: ./wcs/simplelayout/browser/simplelayout.py:30
 msgid "label_add"
 msgstr ""
 
@@ -135,7 +156,7 @@ msgid "label_addable_blocks"
 msgstr ""
 
 #. Default: "Address"
-#: ./wcs/simplelayout/browser/simplelayout.py:43
+#: ./wcs/simplelayout/browser/simplelayout.py:46
 msgid "label_address"
 msgstr ""
 
@@ -145,17 +166,17 @@ msgid "label_ascending"
 msgstr ""
 
 #. Default: "Contents (Listing)"
-#: ./wcs/simplelayout/browser/simplelayout.py:32
+#: ./wcs/simplelayout/browser/simplelayout.py:35
 msgid "label_contents"
 msgstr ""
 
 #. Default: "Delete"
-#: ./wcs/simplelayout/browser/simplelayout.py:29
+#: ./wcs/simplelayout/browser/simplelayout.py:32
 msgid "label_delete"
 msgstr ""
 
 #. Default: "Departement"
-#: ./wcs/simplelayout/browser/simplelayout.py:40
+#: ./wcs/simplelayout/browser/simplelayout.py:43
 msgid "label_department"
 msgstr ""
 
@@ -165,22 +186,27 @@ msgid "label_descending"
 msgstr ""
 
 #. Default: "Edit"
-#: ./wcs/simplelayout/browser/simplelayout.py:28
+#: ./wcs/simplelayout/browser/simplelayout.py:31
 msgid "label_edit"
 msgstr ""
 
 #. Default: "E-Mail"
-#: ./wcs/simplelayout/browser/simplelayout.py:39
+#: ./wcs/simplelayout/browser/simplelayout.py:42
 msgid "label_email"
 msgstr ""
 
+#. Default: "External URL"
+#: ./wcs/simplelayout/contenttypes/behaviors.py:316
+msgid "label_external_link"
+msgstr ""
+
 #. Default: "4-column row (25%)"
-#: ./wcs/simplelayout/browser/simplelayout.py:37
+#: ./wcs/simplelayout/browser/simplelayout.py:40
 msgid "label_four_col"
 msgstr ""
 
 #. Default: "Function"
-#: ./wcs/simplelayout/browser/simplelayout.py:42
+#: ./wcs/simplelayout/browser/simplelayout.py:45
 msgid "label_function"
 msgstr ""
 
@@ -200,8 +226,18 @@ msgid "label_image_caption"
 msgstr ""
 
 #. Default: "Information"
-#: ./wcs/simplelayout/browser/simplelayout.py:31
+#: ./wcs/simplelayout/browser/simplelayout.py:34
 msgid "label_information"
+msgstr ""
+
+#. Default: "Internal link"
+#: ./wcs/simplelayout/contenttypes/behaviors.py:323
+msgid "label_internal_link"
+msgstr ""
+
+#. Default: "Links to a internal or external target"
+#: ./wcs/simplelayout/browser/simplelayout.py:49
+msgid "label_link_target"
 msgstr ""
 
 #. Default: "Mediafolder reference"
@@ -210,27 +246,27 @@ msgid "label_mediafolder"
 msgstr ""
 
 #. Default: "No referenced content found"
-#: ./wcs/simplelayout/browser/simplelayout.py:45
+#: ./wcs/simplelayout/browser/simplelayout.py:48
 msgid "label_no_ref_content"
 msgstr ""
 
 #. Default: "Organization"
-#: ./wcs/simplelayout/browser/simplelayout.py:41
+#: ./wcs/simplelayout/browser/simplelayout.py:44
 msgid "label_organization"
 msgstr ""
 
 #. Default: "Referenced content"
-#: ./wcs/simplelayout/browser/simplelayout.py:44
+#: ./wcs/simplelayout/browser/simplelayout.py:47
 msgid "label_ref_content"
 msgstr ""
 
 #. Default: "Remove"
-#: ./wcs/simplelayout/browser/simplelayout.py:33
+#: ./wcs/simplelayout/browser/simplelayout.py:36
 msgid "label_remove"
 msgstr ""
 
 #. Default: "Remove column"
-#: ./wcs/simplelayout/browser/simplelayout.py:34
+#: ./wcs/simplelayout/browser/simplelayout.py:37
 msgid "label_remove_col"
 msgstr ""
 
@@ -255,7 +291,7 @@ msgid "label_text"
 msgstr ""
 
 #. Default: "3-column row (33%)"
-#: ./wcs/simplelayout/browser/simplelayout.py:36
+#: ./wcs/simplelayout/browser/simplelayout.py:39
 msgid "label_three_col"
 msgstr ""
 
@@ -265,12 +301,12 @@ msgid "label_title"
 msgstr ""
 
 #. Default: "2-column row (50%)"
-#: ./wcs/simplelayout/browser/simplelayout.py:35
+#: ./wcs/simplelayout/browser/simplelayout.py:38
 msgid "label_two_col"
 msgstr ""
 
 #. Default: "Upload"
-#: ./wcs/simplelayout/browser/simplelayout.py:30
+#: ./wcs/simplelayout/browser/simplelayout.py:33
 msgid "label_upload"
 msgstr ""
 
@@ -280,7 +316,7 @@ msgid "label_video_url"
 msgstr ""
 
 #. Default: "Width"
-#: ./wcs/simplelayout/browser/simplelayout.py:38
+#: ./wcs/simplelayout/browser/simplelayout.py:41
 msgid "label_width"
 msgstr ""
 

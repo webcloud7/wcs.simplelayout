@@ -121,9 +121,9 @@ class ISimplelayout(model.Schema):
 class INews(model.Schema):
 
     news_date = schema.Datetime(
-        title=_(u'news_date_label', default=u'Date'),
-        description=_(u'news_date_description',
-                      default=u'News will be sorted by this date'),
+        title=_('news_date_label', default='Date'),
+        description=_('news_date_description',
+                      default='News will be sorted by this date'),
         required=True,
         defaultFactory=utils.today,
     )
@@ -218,11 +218,11 @@ class IBlockSortOptions(model.Schema):
 class IBlockNewsOptions(model.Schema):
 
     current_context = schema.Bool(
-        title=_(u'news_listing_config_filter_current_context_label',
-                default=u'Limit to current context'),
+        title=_('news_listing_config_filter_current_context_label',
+                default='Limit to current context'),
         description=_(
-            u'news_listing_config_filter_current_context_description',
-            default=u'Only show news items from the current context.'),
+            'news_listing_config_filter_current_context_description',
+            default='Only show news items from the current context.'),
         default=True,
     )
 
@@ -277,9 +277,9 @@ class IBlockNewsOptions(model.Schema):
         """
         if obj.current_context and obj.filter_by_path:
             raise Invalid(_(
-                u'news_listing_config_current_context_and_path_error',
-                default=u'You can not filter by path and current context '
-                        u'at the same time.')
+                'news_listing_config_current_context_and_path_error',
+                default='You can not filter by path and current context '
+                        'at the same time.')
             )
 
 
@@ -292,6 +292,41 @@ class IMediaFolderReference(model.Schema):
                       override=True,
                       selectable=['MediaFolder', ])
     mediafolder = Relation(
-        title=_(u'label_mediafolder', default=u'Mediafolder reference'),
+        title=_('label_mediafolder', default='Mediafolder reference'),
         required=False,
     )
+
+
+@provider(IFormFieldProvider)
+class ILink(model.Schema):
+    """Add internal and external link field."""
+
+    model.fieldset(
+        'link',
+        label=_('Link'),
+        fields=('external_link', 'internal_link'),
+        description=_(
+            u"description_link_fieldset",
+            default=(
+                u"Use the link section to redirect to another content or website.")
+        )
+    )
+
+    external_link = schema.URI(
+        title=_('label_external_link', default='External URL'),
+        required=False)
+
+    directives.widget('internal_link',
+                      ReferenceBrowserWidget,
+                      allow_nonsearched_types=True)
+    internal_link = Relation(
+        title=_('label_internal_link', default='Internal link'),
+        required=False,
+    )
+
+    @invariant
+    def link_invariant(data):
+        if data.external_link and data.internal_link:
+            raise Invalid(_(
+                u"It's not possible to have an internal_link and an "
+                u"external_link together"))

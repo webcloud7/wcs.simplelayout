@@ -7746,21 +7746,69 @@ const _sfc_main$n = {
       type: Object,
       required: true
     }
+  },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
+  },
+  computed: {
+    blockLink() {
+      if (this.block.internal_link) {
+        return this.block.internal_link["@id"];
+      }
+      if (this.block.external_link) {
+        return this.block.external_link;
+      }
+      return null;
+    }
   }
 };
-const _hoisted_1$h = { class: "card-title" };
+const _hoisted_1$h = {
+  key: 0,
+  class: "card-title"
+};
 const _hoisted_2$h = { class: "position-relative d-inline-block pe-2" };
 const _hoisted_3$d = {
   key: 0,
   class: "h6 text-black text-opacity-50"
 };
+const _hoisted_4$d = ["href", "title"];
+const _hoisted_5$d = { class: "position-relative d-inline-block pe-2" };
+const _hoisted_6$c = /* @__PURE__ */ createBaseVNode("svg", {
+  xmlns: "http://www.w3.org/2000/svg",
+  width: "23",
+  height: "23",
+  fill: "currentColor",
+  class: "bi bi-link-45deg",
+  viewBox: "0 0 16 16"
+}, [
+  /* @__PURE__ */ createBaseVNode("path", { d: "M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z" }),
+  /* @__PURE__ */ createBaseVNode("path", { d: "M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z" })
+], -1);
+const _hoisted_7$9 = {
+  key: 0,
+  class: "h6 text-black text-opacity-50"
+};
 function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("h4", _hoisted_1$h, [
+  return !$options.blockLink ? (openBlock(), createElementBlock("h4", _hoisted_1$h, [
     createBaseVNode("div", _hoisted_2$h, [
       createTextVNode(toDisplayString($props.block.title) + " ", 1),
       !$props.block.show_title ? (openBlock(), createElementBlock("span", _hoisted_3$d, "(hidden title)")) : createCommentVNode("", true)
     ])
-  ]);
+  ])) : (openBlock(), createElementBlock("a", {
+    key: 1,
+    class: "card-title",
+    href: $options.blockLink,
+    title: _ctx.$i18n("Links to a internal or external target")
+  }, [
+    createBaseVNode("h4", null, [
+      createBaseVNode("div", _hoisted_5$d, [
+        _hoisted_6$c,
+        createTextVNode(" " + toDisplayString($props.block.title) + " ", 1),
+        !$props.block.show_title ? (openBlock(), createElementBlock("span", _hoisted_7$9, "(hidden title)")) : createCommentVNode("", true)
+      ])
+    ])
+  ], 8, _hoisted_4$d));
 }
 var BlockTitle = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$n]]);
 var BlockControls_vue_vue_type_style_index_0_lang = "";
