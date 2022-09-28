@@ -28,9 +28,11 @@ from zope.interface import implementer
 from zope.interface import Interface
 from zope.schema.interfaces import IList
 import json
+import logging
 
 
 BLOCKS_SCHEMA = json.dumps({"type": "object", "properties": {}})
+LOG = logging.getLogger(__name__)
 
 
 def insert_simplelayout_blocks(context, result):
@@ -66,10 +68,24 @@ def insert_simplelayout_blocks(context, result):
 
     catalog = api.portal.get_tool('portal_catalog')
     brains = catalog(**query)
-    blocks = getMultiAdapter(
-        (brains, context.REQUEST),
-        ISerializeToJson
-    )(fullobjects=True)["items"]
+
+    blocks = []
+    for item in brains:
+        try:
+            obj = item.getObject()
+        except KeyError:
+            LOG.warning(
+                "Brain getObject error: {} doesn't exist anymore".format(
+                    item.getPath()
+                )
+            )
+            continue
+
+        block_data = getMultiAdapter((obj, context.REQUEST), ISerializeToJson)(
+            include_items=False
+        )
+        blocks.append(block_data)
+
     result['slblocks'] = {block['UID']: block for block in blocks}
 
 
@@ -126,13 +142,18 @@ class NewsListingBlockSerializer(SerializeToJson):
                 query['Date.query'] = date
                 query['Date.range'] = 'min'
 
-            if 'b_size' not in self.request.form:
+            original_b_size = self.request.form.pop('b_size', None)
+            if original_b_size is None:
                 self.request.form['b_size'] = IBlockNewsOptions(self.context).quantity
             lazy_resultset = api.portal.get_tool('portal_catalog').searchResults(**query)
             search_result = getMultiAdapter(
                 (lazy_resultset, self.request), ISerializeToJson)(
                     fullobjects="fullobjects" in list(self.request.form)
             )
+            if original_b_size is None:
+                del self.request.form['b_size']
+            else:
+                self.request.form['b_size'] = original_b_size
 
             del search_result['@id']
             result.update(search_result)
@@ -158,13 +179,19 @@ class BlockSortOptionsSerializer(SerializeToJson):
                 'sort_order': sort_order,
             }
 
-            if 'b_size' not in self.request.form:
+            original_b_size = self.request.form.pop('b_size', None)
+            if original_b_size is None:
                 self.request.form['b_size'] = 10
             lazy_resultset = api.portal.get_tool('portal_catalog').searchResults(**query)
             search_result = getMultiAdapter(
                 (lazy_resultset, self.request), ISerializeToJson)(
                     fullobjects="fullobjects" in list(self.request.form)
             )
+
+            if original_b_size is None:
+                del self.request.form['b_size']
+            else:
+                self.request.form['b_size'] = original_b_size
 
             del search_result['@id']
             result.update(search_result)

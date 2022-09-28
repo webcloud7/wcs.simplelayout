@@ -107,3 +107,13 @@ class TestRestApi(FunctionalTesting):
                          )
 
         self.assertIn('You cannot change the block order', str(browser.json))
+
+    @browsing
+    def test_slblocks_contains_all_blocks(self, browser):
+        # There is a default batch size for lazyset result (serializer)
+        for number in range(30):
+            create(Builder('block').titled('Block 1').within(self.page))
+        self.assertEqual(30, len(self.page.objectIds()))
+
+        browser.login().visit(self.page, headers=self.api_headers)
+        self.assertEqual(30, len(tuple(browser.json['slblocks'].keys())))
