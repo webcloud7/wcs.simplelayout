@@ -98,9 +98,13 @@ export const useSimplelayoutStore = defineStore({
           this.layouts = response.data.slblocks_layout;
         }
       } catch (error) {
-        this.sl.addErrorMessage(error)
+        this.sl.addErrorMessage(error);
       } finally {
         this.loading = false;
+        const SimplelayoutUpdateEvent = new Event("simplelayout-update");
+        document.body
+          .querySelector("#app.simplelayout-app")
+          .dispatchEvent(SimplelayoutUpdateEvent);
       }
     },
     async addRowToLayout(row, index) {
