@@ -27877,7 +27877,10 @@ const _hoisted_4 = ["src"];
 const _hoisted_5 = { class: "col-10" };
 const _hoisted_6 = { class: "card-body" };
 const _hoisted_7 = { class: "card-title" };
-const _hoisted_8 = { class: "card-text d-flex justify-content-between align-items-start" };
+const _hoisted_8 = {
+  key: 0,
+  class: "card-text d-flex justify-content-between align-items-start"
+};
 const _hoisted_9 = ["href", "title"];
 const _hoisted_10 = { class: "portal-type" };
 const _hoisted_11 = {
@@ -27897,15 +27900,16 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
           }, [
             createBaseVNode("div", _hoisted_2$1, [
               createBaseVNode("div", _hoisted_3, [
-                createBaseVNode("img", {
+                item.image ? (openBlock(), createElementBlock("img", {
+                  key: 0,
                   src: item.image.scales.preview.download,
                   class: "img-fluid rounded-start"
-                }, null, 8, _hoisted_4)
+                }, null, 8, _hoisted_4)) : createCommentVNode("", true)
               ]),
               createBaseVNode("div", _hoisted_5, [
                 createBaseVNode("div", _hoisted_6, [
                   createBaseVNode("h5", _hoisted_7, toDisplayString(item.title), 1),
-                  createBaseVNode("p", _hoisted_8, [
+                  item.link ? (openBlock(), createElementBlock("p", _hoisted_8, [
                     createBaseVNode("a", {
                       class: "btn btn-success",
                       href: item.link["@id"],
@@ -27919,7 +27923,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
                         class: normalizeClass(`state-${item.link.review_state}`)
                       }, toDisplayString($data.workflowTitleMapping[item.link.review_state]), 3)
                     ])) : createCommentVNode("", true)
-                  ])
+                  ])) : createCommentVNode("", true)
                 ])
               ])
             ])

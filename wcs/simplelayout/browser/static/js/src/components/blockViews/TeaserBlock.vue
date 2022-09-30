@@ -8,6 +8,7 @@
             <div class="row g-0">
               <div class="col-2">
                 <img
+                  v-if="item.image"
                   :src="item.image.scales.preview.download"
                   class="img-fluid rounded-start"
                 />
@@ -17,6 +18,7 @@
                   <h5 class="card-title">{{ item.title }}</h5>
                   <p
                     class="card-text d-flex justify-content-between align-items-start"
+                    v-if="item.link"
                   >
                     <a
                       class="btn btn-success"
