@@ -11,7 +11,9 @@
             <div class="ms-2 me-auto">
               {{ item.title }}
               ({{ item["@id"] }})
-              <span class="portal-type">({{ item["@type"] }})</span>
+              <span class="portal-type"
+                >({{ sl.contentTypeTitles[item["@type"]] }})</span
+              >
             </div>
             <span
               class="badge bg-primary rounded-pill"

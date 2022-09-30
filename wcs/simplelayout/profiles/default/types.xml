@@ -12,4 +12,5 @@
  <object name="NewsListingBlock" meta_type="Dexterity FTI"/>
  <object name="AllPurposeListingBlock" meta_type="Dexterity FTI"/>
  <object name="RelatedContentBlock" meta_type="Dexterity FTI"/>
+ <object name="TeaserBlock" meta_type="Dexterity FTI"/>
 </object>
