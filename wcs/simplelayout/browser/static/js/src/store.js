@@ -165,6 +165,10 @@ export const useSimplelayoutStore = defineStore({
     },
     async modifyBlock(data) {
       this.blocks[data.UID] = data;
+      const SimplelayoutBlockUpdateEvent = new Event("simplelayout-block-update");
+      document.body
+        .querySelector("#app.simplelayout-app")
+        .dispatchEvent(SimplelayoutBlockUpdateEvent);
     },
     async deleteBlock(position) {
       let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
