@@ -235,6 +235,7 @@ export default {
     this.sl.setI18nMessages(
       this.$refs.root.parentElement.getAttribute("data-i18n")
     );
+    this.sl.fetchContentTypeTitles();
     this.sl.fetchBlocks();
   },
   computed: {

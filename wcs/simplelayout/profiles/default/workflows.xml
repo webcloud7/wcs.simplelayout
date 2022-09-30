@@ -8,5 +8,6 @@
   <type type_id="NewsListingBlock"/>
   <type type_id="RelatedContentBlock"/>
   <type type_id="AllPurposeListingBlock"/>
+  <type type_id="TeaserBlock"/>
  </bindings>
 </object>

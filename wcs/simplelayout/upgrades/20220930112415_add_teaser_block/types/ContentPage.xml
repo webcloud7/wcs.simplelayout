@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object name="ContentPage" meta_type="Dexterity FTI" i18n:domain="plone"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <property name="allowed_content_types" purge="False">
+  <element value="TeaserBlock"/>
+ </property>
+</object>

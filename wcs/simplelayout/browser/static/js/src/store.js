@@ -17,6 +17,7 @@ export const useSimplelayoutStore = defineStore({
     canModify: false,
     canEditColumns: false,
     canAddBlocks: false,
+    contentTypeTitles: {},
     i18n: {},
     errors: [],
   }),
@@ -68,6 +69,18 @@ export const useSimplelayoutStore = defineStore({
         this.canAddBlocks = false;
       }
     },
+
+    async fetchContentTypeTitles() {
+      const response = await this.axios.get(
+        this.portalURL + "/@vocabularies/plone.app.vocabularies.PortalTypes"
+      );
+      response.data.items.forEach((item) => {
+        this.contentTypeTitles[item.token] = item.title
+          .replace(/(\[.+?\])/g, "")
+          .trim();
+      });
+    },
+
     async fetchBlocks() {
       this.loading = true;
       try {
