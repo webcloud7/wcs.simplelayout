@@ -70,6 +70,20 @@ class VideoBlockBuilder(BlockBuilder):
 builder_registry.register('video block', VideoBlockBuilder)
 
 
+class NewsListingBlockBuilder(BlockBuilder):
+    portal_type = 'NewsListingBlock'
+
+
+builder_registry.register('news listing block', NewsListingBlockBuilder)
+
+
+class FileListingBlockBuilder(BlockBuilder):
+    portal_type = 'FileListingBlock'
+
+
+builder_registry.register('file listing block', FileListingBlockBuilder)
+
+
 class AllPurposeBlockBuilder(BlockBuilder):
     portal_type = 'AllPurposeListingBlock'
 
