@@ -143,8 +143,11 @@ class NewsListingBlockSerializer(SerializeToJson):
                 query['Date.range'] = 'min'
 
             original_b_size = self.request.form.pop('b_size', None)
+            original_actual_url = self.request['ACTUAL_URL']
             if original_b_size is None:
                 self.request.form['b_size'] = IBlockNewsOptions(self.context).quantity
+            self.request['ACTUAL_URL'] = self.context.absolute_url()
+
             lazy_resultset = api.portal.get_tool('portal_catalog').searchResults(**query)
             search_result = getMultiAdapter(
                 (lazy_resultset, self.request), ISerializeToJson)(
@@ -154,6 +157,8 @@ class NewsListingBlockSerializer(SerializeToJson):
                 del self.request.form['b_size']
             else:
                 self.request.form['b_size'] = original_b_size
+
+            self.request['ACTUAL_URL'] = original_actual_url
 
             del search_result['@id']
             result.update(search_result)
@@ -180,8 +185,11 @@ class BlockSortOptionsSerializer(SerializeToJson):
             }
 
             original_b_size = self.request.form.pop('b_size', None)
+            original_actual_url = self.request['ACTUAL_URL']
             if original_b_size is None:
                 self.request.form['b_size'] = 10
+            self.request['ACTUAL_URL'] = self.context.absolute_url()
+
             lazy_resultset = api.portal.get_tool('portal_catalog').searchResults(**query)
             search_result = getMultiAdapter(
                 (lazy_resultset, self.request), ISerializeToJson)(
@@ -192,6 +200,8 @@ class BlockSortOptionsSerializer(SerializeToJson):
                 del self.request.form['b_size']
             else:
                 self.request.form['b_size'] = original_b_size
+
+            self.request['ACTUAL_URL'] = original_actual_url
 
             del search_result['@id']
             result.update(search_result)
