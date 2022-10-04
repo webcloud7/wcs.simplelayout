@@ -17,7 +17,7 @@ class TestRestApi(FunctionalTesting):
 
     def setUp(self):
         super().setUp()
-        self.grant('Manater')
+        self.grant('Manager')
         self.page = create(Builder('content page').titled('Test page'))
 
     def _setup_blocks_with_layout(self):
@@ -170,7 +170,6 @@ class TestRestApi(FunctionalTesting):
             block_result['batching']['next'].replace(':80', '')
         )
 
-
     @browsing
     def test_hypermedia_batch_urls_are_correct_on_file_listing_block(self, browser):
         intids = getUtility(IIntIds)
@@ -220,3 +219,21 @@ class TestRestApi(FunctionalTesting):
             block.absolute_url() + '?b_start=10',
             block_result['batching']['next'].replace(':80', '')
         )
+
+    @browsing
+    def test_make_sure_tree_is_not_included(self, browser):
+        subpage = create(Builder('content page').within(self.page).titled('Subpage'))
+        subsubpage = create(Builder('content page').within(subpage).titled('SubSubpage'))
+        subsubsubpage = create(Builder('content page').within(subsubpage).titled('SubSubSubpage'))
+
+        browser.exception_bubbling = True
+        browser.login().open(
+            self.page.absolute_url() + '?include_items=1&fullobjects=1',
+            headers=self.api_headers)
+        self.assertEqual(1, len(browser.json['items']))
+        self.assertEqual(subpage.absolute_url(),
+                         browser.json['items'][0]['@id'].replace(':80', ''))
+
+        self.assertNotIn('items', tuple(browser.json['items'][0].keys()))
+
+        self.assertNotIn(subsubsubpage.Title(), str(browser.json))

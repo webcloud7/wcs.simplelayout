@@ -9,12 +9,12 @@ from plone.restapi.interfaces import ISerializeToJson
 from plone.restapi.interfaces import ISerializeToJsonSummary
 from plone.restapi.serializer.converters import datetimelike_to_iso
 from plone.restapi.serializer.converters import json_compatible
-from plone.restapi.serializer.dxcontent import SerializeFolderToJson
 from plone.restapi.serializer.dxcontent import SerializeToJson
 from plone.restapi.serializer.dxfields import CollectionFieldSerializer
 from plone.restapi.serializer.dxfields import DefaultFieldSerializer
 from plone.restapi.serializer.expansion import expandable_elements
 from plone.schema import IJSONField
+from Products.CMFCore.utils import getToolByName
 from urllib import parse
 from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
 from wcs.simplelayout.contenttypes.behaviors import IBlockNewsOptions
@@ -98,12 +98,54 @@ def expand_by_querystring(context, request, result):
 
 @implementer(ISerializeToJson)
 @adapter(ISimplelayout, Interface)
-class SimplelayoutSerializer(SerializeFolderToJson):
+class SimplelayoutSerializer(SerializeToJson):
+    def _build_query(self):
+        path = "/".join(self.context.getPhysicalPath())
+        query = {
+            "path": {"depth": 1, "query": path},
+            "sort_on": "getObjPositionInParent",
+        }
+        return query
 
     def __call__(self, version=None, include_items=True):
-        result = super().__call__(version, include_items)
+        folder_metadata = super().__call__(version=version)
+
+        folder_metadata.update({"is_folderish": True})
+        result = folder_metadata
+
+        # Only include items if request and kwarg really want it to inlcude.
+        # This prevents a recursive inclusion of all items (tree), since
+        # the ISerializeToJson of brains calls the serializer with the argument
+        # include_items=False. But so far this go ignored if the request parameter
+        # include_items was present.
+        include_items_request = self.request.get("include_items", include_items)
+        include_items_request = boolean_value(include_items_request)
+
+        if include_items and include_items_request:
+            query = self._build_query()
+
+            catalog = getToolByName(self.context, "portal_catalog")
+            brains = catalog(query)
+
+            batch = HypermediaBatch(self.request, brains)
+
+            result["items_total"] = batch.items_total
+            if batch.links:
+                result["batching"] = batch.links
+
+            if "fullobjects" in list(self.request.form):
+                result["items"] = getMultiAdapter(
+                    (brains, self.request), ISerializeToJson
+                )(fullobjects=True)["items"]
+            else:
+                result["items"] = [
+                    getMultiAdapter((brain, self.request), ISerializeToJsonSummary)()
+                    for brain in batch
+                ]
+
         expand_by_querystring(self.context, self.request, result)
         insert_simplelayout_blocks(self.context, result)
+
         return result
 
 
