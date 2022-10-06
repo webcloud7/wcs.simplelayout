@@ -238,8 +238,9 @@ class TestRestApi(FunctionalTesting):
         self.assertNotIn(subsubsubpage.Title(), str(browser.json))
 
     @browsing
-    def test_make_sure_slblocks_are_not_included_on_subpage(self, browser):
+    def test_make_sure_slblocks_and_slblocks_layout_are_not_included_on_subpage(self, browser):
         subpage = create(Builder('content page').within(self.page).titled('Subpage'))
+        block1 = create(Builder('block').titled('Block 1').within(subpage))
 
         browser.login().open(
             self.page.absolute_url() + '?include_items=1&fullobjects=1',
@@ -250,9 +251,10 @@ class TestRestApi(FunctionalTesting):
                          browser.json['items'][0]['@id'].replace(':80', ''))
 
         self.assertEqual({}, browser.json['items'][0]['slblocks'])
+        self.assertEqual({}, browser.json['items'][0]['slblocks_layout'])
 
     @browsing
-    def test_not_blocks_in_items_key(self, browser):
+    def test_no_blocks_in_items_key(self, browser):
         block1 = create(Builder('block').titled('Block 1').within(self.page))
         block2 = create(Builder('block').titled('Block 2').within(self.page))
         subpage = create(Builder('content page').titled('Supage').within(self.page))

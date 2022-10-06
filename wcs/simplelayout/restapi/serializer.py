@@ -272,6 +272,9 @@ class LayoutFieldSerializer(DefaultFieldSerializer):
     def __call__(self, *args):
         """ This method appends blocks missing in layout at the very end."""
         if self.field.__name__ == 'slblocks_layout':
+            if self.context.absolute_url() != self.context.REQUEST.ACTUAL_URL:
+                return json_compatible({})
+
             value = self.get_value()
             add_missing_blocks(self.context, value)
             return json_compatible(value)
