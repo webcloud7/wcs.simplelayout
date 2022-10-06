@@ -35,7 +35,7 @@ BLOCKS_SCHEMA = json.dumps({"type": "object", "properties": {}})
 LOG = logging.getLogger(__name__)
 
 
-def insert_simplelayout_blocks(context, result):
+def insert_simplelayout_blocks(context, result, include_items):
     """
     Enriches the default result for simpelayout pages with sblocks.
 
@@ -54,6 +54,11 @@ def insert_simplelayout_blocks(context, result):
         },
     }
     """
+
+    if not include_items:
+        result['slblocks'] = {}
+        return
+
     query = {
         'path': {'depth': 1, 'query': '/'.join(context.getPhysicalPath())},
         'object_provides': IBlockMarker.__identifier__,
@@ -144,7 +149,7 @@ class SimplelayoutSerializer(SerializeToJson):
                 ]
 
         expand_by_querystring(self.context, self.request, result)
-        insert_simplelayout_blocks(self.context, result)
+        insert_simplelayout_blocks(self.context, result, include_items)
 
         return result
 

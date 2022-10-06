@@ -226,7 +226,6 @@ class TestRestApi(FunctionalTesting):
         subsubpage = create(Builder('content page').within(subpage).titled('SubSubpage'))
         subsubsubpage = create(Builder('content page').within(subsubpage).titled('SubSubSubpage'))
 
-        browser.exception_bubbling = True
         browser.login().open(
             self.page.absolute_url() + '?include_items=1&fullobjects=1',
             headers=self.api_headers)
@@ -237,3 +236,17 @@ class TestRestApi(FunctionalTesting):
         self.assertNotIn('items', tuple(browser.json['items'][0].keys()))
 
         self.assertNotIn(subsubsubpage.Title(), str(browser.json))
+
+    @browsing
+    def test_make_sure_slblocks_are_not_included_on_subpage(self, browser):
+        subpage = create(Builder('content page').within(self.page).titled('Subpage'))
+
+        browser.login().open(
+            self.page.absolute_url() + '?include_items=1&fullobjects=1',
+            headers=self.api_headers)
+
+        self.assertEqual(1, len(browser.json['items']))
+        self.assertEqual(subpage.absolute_url(),
+                         browser.json['items'][0]['@id'].replace(':80', ''))
+
+        self.assertEqual({}, browser.json['items'][0]['slblocks'])
