@@ -254,6 +254,26 @@ class TestRestApi(FunctionalTesting):
         self.assertEqual({}, browser.json['items'][0]['slblocks_layout'])
 
     @browsing
+    def test_make_sure_slblocks_and_slblocks_layout_are_included_on_page(self, browser):
+        subpage = create(Builder('content page').within(self.page).titled('Subpage'))
+        block1 = create(Builder('block').titled('Block 1').within(subpage))
+
+        browser.login().open(
+            subpage.absolute_url(),
+            headers=self.api_headers)
+        self.assertIn(block1.UID(), str(browser.json['slblocks_layout']))
+        browser.open(
+            subpage.absolute_url() + '?include_items=1&fullobjects=1',
+            headers=self.api_headers)
+        self.assertIn(block1.UID(), str(browser.json['slblocks_layout']))
+
+        # Test with explicit ++api++ traverser
+        browser.open(
+            subpage.absolute_url() + '/++api++',
+            headers=self.api_headers)
+        self.assertIn(block1.UID(), str(browser.json['slblocks_layout']))
+
+    @browsing
     def test_no_blocks_in_items_key(self, browser):
         block1 = create(Builder('block').titled('Block 1').within(self.page))
         block2 = create(Builder('block').titled('Block 2').within(self.page))
