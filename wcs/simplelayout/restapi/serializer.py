@@ -109,6 +109,7 @@ class SimplelayoutSerializer(SerializeToJson):
         query = {
             "path": {"depth": 1, "query": path},
             "sort_on": "getObjPositionInParent",
+            "object_provides": {"not": IBlockMarker.__identifier__},
         }
         return query
 

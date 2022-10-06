@@ -250,3 +250,17 @@ class TestRestApi(FunctionalTesting):
                          browser.json['items'][0]['@id'].replace(':80', ''))
 
         self.assertEqual({}, browser.json['items'][0]['slblocks'])
+
+    @browsing
+    def test_not_blocks_in_items_key(self, browser):
+        block1 = create(Builder('block').titled('Block 1').within(self.page))
+        block2 = create(Builder('block').titled('Block 2').within(self.page))
+        subpage = create(Builder('content page').titled('Supage').within(self.page))
+
+        browser.login().visit(self.page, headers=self.api_headers)
+
+        items_urls = [item['@id'].replace(':80', '') for item in browser.json['items']]
+
+        self.assertNotIn(block1.absolute_url(), items_urls)
+        self.assertNotIn(block2.absolute_url(), items_urls)
+        self.assertIn(subpage.absolute_url(), items_urls)
