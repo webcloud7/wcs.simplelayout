@@ -226,7 +226,6 @@ class TestRestApi(FunctionalTesting):
         subsubpage = create(Builder('content page').within(subpage).titled('SubSubpage'))
         subsubsubpage = create(Builder('content page').within(subsubpage).titled('SubSubSubpage'))
 
-        browser.exception_bubbling = True
         browser.login().open(
             self.page.absolute_url() + '?include_items=1&fullobjects=1',
             headers=self.api_headers)
@@ -237,3 +236,33 @@ class TestRestApi(FunctionalTesting):
         self.assertNotIn('items', tuple(browser.json['items'][0].keys()))
 
         self.assertNotIn(subsubsubpage.Title(), str(browser.json))
+
+    @browsing
+    def test_make_sure_slblocks_and_slblocks_layout_are_not_included_on_subpage(self, browser):
+        subpage = create(Builder('content page').within(self.page).titled('Subpage'))
+        block1 = create(Builder('block').titled('Block 1').within(subpage))
+
+        browser.login().open(
+            self.page.absolute_url() + '?include_items=1&fullobjects=1',
+            headers=self.api_headers)
+
+        self.assertEqual(1, len(browser.json['items']))
+        self.assertEqual(subpage.absolute_url(),
+                         browser.json['items'][0]['@id'].replace(':80', ''))
+
+        self.assertEqual({}, browser.json['items'][0]['slblocks'])
+        self.assertEqual({}, browser.json['items'][0]['slblocks_layout'])
+
+    @browsing
+    def test_no_blocks_in_items_key(self, browser):
+        block1 = create(Builder('block').titled('Block 1').within(self.page))
+        block2 = create(Builder('block').titled('Block 2').within(self.page))
+        subpage = create(Builder('content page').titled('Supage').within(self.page))
+
+        browser.login().visit(self.page, headers=self.api_headers)
+
+        items_urls = [item['@id'].replace(':80', '') for item in browser.json['items']]
+
+        self.assertNotIn(block1.absolute_url(), items_urls)
+        self.assertNotIn(block2.absolute_url(), items_urls)
+        self.assertIn(subpage.absolute_url(), items_urls)
