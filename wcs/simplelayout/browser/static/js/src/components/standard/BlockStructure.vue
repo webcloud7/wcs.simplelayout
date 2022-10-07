@@ -12,8 +12,15 @@
             <div class="sl-card-image" v-if="block.image">
               <figure class="d-table m-0 text-center">
                 <img
+                  v-if="block.image.scales.great"
                   class="figure-img m-0"
                   :src="block.image.scales.great.download"
+                  :alt="block.image_alt_text"
+                />
+                <img
+                  v-else
+                  class="figure-img m-0"
+                  :src="block.image.download"
                   :alt="block.image_alt_text"
                 />
                 <figcaption

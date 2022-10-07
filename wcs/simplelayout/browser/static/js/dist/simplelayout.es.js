@@ -9149,11 +9149,12 @@ const _hoisted_7$8 = {
 };
 const _hoisted_8$6 = { class: "d-table m-0 text-center" };
 const _hoisted_9$6 = ["src", "alt"];
-const _hoisted_10$5 = {
-  key: 0,
+const _hoisted_10$5 = ["src", "alt"];
+const _hoisted_11$4 = {
+  key: 2,
   class: "figure-caption mt-1"
 };
-const _hoisted_11$4 = ["innerHTML"];
+const _hoisted_12$3 = ["innerHTML"];
 function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockControls = resolveComponent("BlockControls");
   return openBlock(), createElementBlock("div", _hoisted_1$g, [
@@ -9170,19 +9171,25 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
           createBaseVNode("div", _hoisted_6$b, [
             $props.block.image ? (openBlock(), createElementBlock("div", _hoisted_7$8, [
               createBaseVNode("figure", _hoisted_8$6, [
-                createBaseVNode("img", {
+                $props.block.image.scales.great ? (openBlock(), createElementBlock("img", {
+                  key: 0,
                   class: "figure-img m-0",
                   src: $props.block.image.scales.great.download,
                   alt: $props.block.image_alt_text
-                }, null, 8, _hoisted_9$6),
-                $props.block.image_caption ? (openBlock(), createElementBlock("figcaption", _hoisted_10$5, toDisplayString($props.block.image_caption), 1)) : createCommentVNode("", true)
+                }, null, 8, _hoisted_9$6)) : (openBlock(), createElementBlock("img", {
+                  key: 1,
+                  class: "figure-img m-0",
+                  src: $props.block.image.download,
+                  alt: $props.block.image_alt_text
+                }, null, 8, _hoisted_10$5)),
+                $props.block.image_caption ? (openBlock(), createElementBlock("figcaption", _hoisted_11$4, toDisplayString($props.block.image_caption), 1)) : createCommentVNode("", true)
               ])
             ])) : createCommentVNode("", true),
             $props.block.text ? (openBlock(), createElementBlock("div", {
               key: 1,
               class: "sl-card-text",
               innerHTML: $props.block.text.data
-            }, null, 8, _hoisted_11$4)) : createCommentVNode("", true)
+            }, null, 8, _hoisted_12$3)) : createCommentVNode("", true)
           ])
         ])
       ])
