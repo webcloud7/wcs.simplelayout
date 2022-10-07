@@ -8726,6 +8726,9 @@ function row(cols) {
     items: colsArray.map(() => column(cols))
   };
 }
+const portalURL = document.body.getAttribute("data-portal-url");
+const baseURL = document.body.getAttribute("data-base-url");
+const baseApiURL = baseURL.replace(portalURL, portalURL + "/++api++");
 const useSimplelayoutStore = defineStore({
   id: "simplelayoutStore",
   state: () => ({
@@ -8733,9 +8736,9 @@ const useSimplelayoutStore = defineStore({
     blocks: {},
     addableTypes: [],
     loading: false,
-    baseURL: document.body.getAttribute("data-base-url"),
-    baseApiURL: document.body.getAttribute("data-base-url") + "/++api++",
-    portalURL: document.body.getAttribute("data-portal-url"),
+    baseURL,
+    baseApiURL,
+    portalURL,
     params: { expand: ["types", "actions"] },
     authToken: null,
     canModify: false,
@@ -8794,7 +8797,7 @@ const useSimplelayoutStore = defineStore({
     },
     async fetchContentTypeTitles() {
       const response = await this.axios.get(
-        this.portalURL + "/@vocabularies/plone.app.vocabularies.PortalTypes"
+        this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.PortalTypes"
       );
       response.data.items.forEach((item) => {
         this.contentTypeTitles[item.token] = item.title.replace(/(\[.+?\])/g, "").trim();
@@ -17025,14 +17028,14 @@ var cookies$1 = utils$e.isStandardBrowserEnv() ? function standardBrowserEnv() {
 var isAbsoluteURL$1 = function isAbsoluteURL2(url) {
   return /^([a-z][a-z\d+\-.]*:)?\/\//i.test(url);
 };
-var combineURLs$1 = function combineURLs2(baseURL, relativeURL) {
-  return relativeURL ? baseURL.replace(/\/+$/, "") + "/" + relativeURL.replace(/^\/+/, "") : baseURL;
+var combineURLs$1 = function combineURLs2(baseURL2, relativeURL) {
+  return relativeURL ? baseURL2.replace(/\/+$/, "") + "/" + relativeURL.replace(/^\/+/, "") : baseURL2;
 };
 var isAbsoluteURL = isAbsoluteURL$1;
 var combineURLs = combineURLs$1;
-var buildFullPath$2 = function buildFullPath2(baseURL, requestedURL) {
-  if (baseURL && !isAbsoluteURL(requestedURL)) {
-    return combineURLs(baseURL, requestedURL);
+var buildFullPath$2 = function buildFullPath2(baseURL2, requestedURL) {
+  if (baseURL2 && !isAbsoluteURL(requestedURL)) {
+    return combineURLs(baseURL2, requestedURL);
   }
   return requestedURL;
 };
@@ -27752,7 +27755,7 @@ const _sfc_main$2 = {
   methods: {
     async fetchWorkflowTitles() {
       const response = await this.axios.get(
-        this.portalURL + "/@vocabularies/plone.app.vocabularies.WorkflowStates"
+        this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.WorkflowStates"
       );
       response.data.items.forEach((item) => {
         this.workflowTitleMapping[item.token] = item.title.replace(/(\[.+?\])/g, "").trim();
@@ -27869,7 +27872,7 @@ const _sfc_main$1 = {
   methods: {
     async fetchWorkflowTitles() {
       const response = await this.axios.get(
-        this.portalURL + "/@vocabularies/plone.app.vocabularies.WorkflowStates"
+        this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.WorkflowStates"
       );
       response.data.items.forEach((item) => {
         this.workflowTitleMapping[item.token] = item.title.replace(/(\[.+?\])/g, "").trim();

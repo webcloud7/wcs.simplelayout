@@ -87,7 +87,7 @@ export default {
   methods: {
     async fetchWorkflowTitles() {
       const response = await this.axios.get(
-        this.portalURL + "/@vocabularies/plone.app.vocabularies.WorkflowStates"
+        this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.WorkflowStates"
       );
       response.data.items.forEach((item) => {
         this.workflowTitleMapping[item.token] = item.title

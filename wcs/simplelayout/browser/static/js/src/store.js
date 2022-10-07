@@ -1,6 +1,10 @@
 import { defineStore } from "pinia";
 import { row } from "@/template.js";
 
+const portalURL = document.body.getAttribute("data-portal-url");
+const baseURL = document.body.getAttribute("data-base-url");
+const baseApiURL = baseURL.replace(portalURL, portalURL + "/++api++");
+
 export const useSimplelayoutStore = defineStore({
   // id is required so that Pinia can connect the store to the devtools
   id: "simplelayoutStore",
@@ -9,9 +13,9 @@ export const useSimplelayoutStore = defineStore({
     blocks: {},
     addableTypes: [],
     loading: false,
-    baseURL: document.body.getAttribute("data-base-url"),
-    baseApiURL: document.body.getAttribute("data-base-url") + "/++api++",
-    portalURL: document.body.getAttribute("data-portal-url"),
+    baseURL: baseURL,
+    baseApiURL: baseApiURL,
+    portalURL: portalURL,
     params: { expand: ["types", "actions"] },
     authToken: null,
     canModify: false,
@@ -72,7 +76,7 @@ export const useSimplelayoutStore = defineStore({
 
     async fetchContentTypeTitles() {
       const response = await this.axios.get(
-        this.portalURL + "/@vocabularies/plone.app.vocabularies.PortalTypes"
+        this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.PortalTypes"
       );
       response.data.items.forEach((item) => {
         this.contentTypeTitles[item.token] = item.title
