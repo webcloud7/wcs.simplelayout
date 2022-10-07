@@ -67,7 +67,8 @@ def insert_simplelayout_blocks(context, result, include_items):
     # Only insert blocks if the request was made on the content itself.
     # This avoids a possible max recursion depth exeeded error on
     # listings, like collections.
-    if context.absolute_url() != context.REQUEST.ACTUAL_URL.removesuffix('/++api++'):
+    actual_url = context.REQUEST.ACTUAL_URL.replace('/++api++', '')
+    if context.absolute_url() != actual_url.removesuffix('/'):
         result['slblocks'] = {}
         return
 
@@ -272,7 +273,8 @@ class LayoutFieldSerializer(DefaultFieldSerializer):
     def __call__(self, *args):
         """ This method appends blocks missing in layout at the very end."""
         if self.field.__name__ == 'slblocks_layout':
-            if self.context.absolute_url() != self.context.REQUEST.ACTUAL_URL.removesuffix('/++api++'):
+            actual_url = self.context.REQUEST.ACTUAL_URL.replace('/++api++', '')
+            if self.context.absolute_url() != actual_url.removesuffix('/'):
                 return json_compatible({})
 
             value = self.get_value()

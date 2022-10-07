@@ -268,8 +268,9 @@ class TestRestApi(FunctionalTesting):
         self.assertIn(block1.UID(), str(browser.json['slblocks_layout']))
 
         # Test with explicit ++api++ traverser
+        api_url = self.portal.absolute_url() + '/++api++'
         browser.open(
-            subpage.absolute_url() + '/++api++',
+            subpage.absolute_url().replace(self.portal.absolute_url(), api_url),
             headers=self.api_headers)
         self.assertIn(block1.UID(), str(browser.json['slblocks_layout']))
 
