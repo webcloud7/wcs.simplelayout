@@ -49,6 +49,7 @@ def update_page_state_on_block_remove(block, event):
 
     page_layout = ISimplelayout(parent).slblocks_layout
     new_page_layout = json.dumps(page_layout) \
+        .replace(f', "{block_uid}"', '') \
         .replace(f'"{block_uid}", ', '') \
         .replace(f'"{block_uid}"', '')
     ISimplelayout(parent).slblocks_layout = json.loads(new_page_layout)

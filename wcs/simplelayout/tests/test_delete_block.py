@@ -45,7 +45,7 @@ class TestDeleteBlock(FunctionalTesting):
                                    'width': '12'}]}]},
             ISimplelayout(self.page).slblocks_layout)
 
-    def test_delete_block_removes_block_from_layout(self):
+    def test_delete_first_block_removes_block_from_layout(self):
 
         state = {'items': [{'@type': 'row',
                             'items': [{'@type': 'col',
@@ -58,5 +58,37 @@ class TestDeleteBlock(FunctionalTesting):
             {'items': [{'@type': 'row',
                         'items': [{'@type': 'col',
                                    'items': [self.block3.UID()],
+                                   'width': '12'}]}]},
+            ISimplelayout(self.page).slblocks_layout)
+
+    def test_delete_last_block_removes_block_from_layout(self):
+
+        state = {'items': [{'@type': 'row',
+                            'items': [{'@type': 'col',
+                                       'items': [self.block1.UID(), self.block3.UID()],
+                                       'width': '12'}]}]}
+        ISimplelayout(self.page).slblocks_layout = state
+
+        self.page.manage_delObjects(ids=[self.block3.getId()])
+        self.assertEqual(
+            {'items': [{'@type': 'row',
+                        'items': [{'@type': 'col',
+                                   'items': [self.block1.UID()],
+                                   'width': '12'}]}]},
+            ISimplelayout(self.page).slblocks_layout)
+
+    def test_delete_in_between_block_removes_block_from_layout(self):
+
+        state = {'items': [{'@type': 'row',
+                            'items': [{'@type': 'col',
+                                       'items': [self.block1.UID(), self.block2.UID(), self.block3.UID()],
+                                       'width': '12'}]}]}
+        ISimplelayout(self.page).slblocks_layout = state
+
+        self.page.manage_delObjects(ids=[self.block2.getId()])
+        self.assertEqual(
+            {'items': [{'@type': 'row',
+                        'items': [{'@type': 'col',
+                                   'items': [self.block1.UID(), self.block3.UID()],
                                    'width': '12'}]}]},
             ISimplelayout(self.page).slblocks_layout)
