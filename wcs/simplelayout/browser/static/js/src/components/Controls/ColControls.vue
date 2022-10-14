@@ -107,9 +107,16 @@ export default {
       return classes;
     },
     hasBlocks() {
-      const blocks =
-        this.sl.layouts.items[this.rowIndex].items[this.colIndex].items.length;
-      return Boolean(blocks);
+      const stateBlockUids =
+        this.sl.layouts.items[this.rowIndex].items[this.colIndex].items;
+
+      // Make sure all blocks from the state do actually exist
+      // Sometimes there are blocks in the state, that have been deleted.
+      const actualBlockUids = Object.keys(this.sl.blocks);
+      const realBlocks = stateBlockUids.filter((uid) => {
+        return actualBlockUids.indexOf(uid) !== -1;
+      });
+      return Boolean(realBlocks.length);
     },
   },
 };

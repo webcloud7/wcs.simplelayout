@@ -9436,8 +9436,12 @@ const _sfc_main$i = {
       return classes;
     },
     hasBlocks() {
-      const blocks = this.sl.layouts.items[this.rowIndex].items[this.colIndex].items.length;
-      return Boolean(blocks);
+      const stateBlockUids = this.sl.layouts.items[this.rowIndex].items[this.colIndex].items;
+      const actualBlockUids = Object.keys(this.sl.blocks);
+      const realBlocks = stateBlockUids.filter((uid2) => {
+        return actualBlockUids.indexOf(uid2) !== -1;
+      });
+      return Boolean(realBlocks.length);
     }
   }
 };
