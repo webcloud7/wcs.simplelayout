@@ -191,7 +191,7 @@ class NewsListingBlockSerializer(SerializeToJson):
                 query['Date.query'] = date
                 query['Date.range'] = 'min'
 
-            original_b_size = self.request.form.pop('b_size', None)
+            original_b_size = self.request.form.get('b_size', None)
             original_actual_url = self.request['ACTUAL_URL']
             if original_b_size is None:
                 self.request.form['b_size'] = IBlockNewsOptions(self.context).quantity
@@ -233,7 +233,7 @@ class BlockSortOptionsSerializer(SerializeToJson):
                 'sort_order': sort_order,
             }
 
-            original_b_size = self.request.form.pop('b_size', None)
+            original_b_size = self.request.form.get('b_size', None)
             original_actual_url = self.request['ACTUAL_URL']
             if original_b_size is None:
                 self.request.form['b_size'] = 10
