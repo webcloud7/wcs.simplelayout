@@ -5,7 +5,7 @@
         <template v-for="image in data.items" :key="image.UID">
           <div class="col sl-image-listing position-relative">
             <div class="sl-image-wrapper">
-              <figure class="d-table m-0 text-center" :style="`height: ${getCachedHeight(image.image.scales.preview.height)}px`">
+              <figure class="d-table m-0 text-center">
                 <img
                   :src="image.image.scales.preview.download"
                   v-if="image.image.scales.preview"
@@ -16,6 +16,7 @@
               </figure>
               <div class="actions position-absolute sl-img-actions me-4 mt-2">
                 <button
+                  v-if="canEditImage(image)"
                   class="btn btn-light"
                   @click="openImageEditModal"
                   :data-url="image['@id']"
@@ -128,7 +129,13 @@ export default {
       try {
         let response;
         if (!url) {
-          const params = { params: { fullobjects: true, b_size: 3 } };
+          const params = {
+            params: {
+              fullobjects: true,
+              b_size: 3,
+              expand: "actions",
+            },
+          };
           response = await this.axios.get(this.block["@id"], params);
         } else {
           response = await this.axios.get(url);
@@ -150,11 +157,12 @@ export default {
     openImageEditModal() {
       this.$refs["edit-image-modal"].openEditImageModal(event);
     },
-    getCachedHeight(height) {
-      if (height > this.cachedHeight) {
-        this.cachedHeight = height;
-      }
-      return this.cachedHeight;
+    canEditImage(image) {
+      const actionIds = image["@components"]["actions"]["object"].map(
+        (item) => item.id
+      );
+      const editable = actionIds.indexOf("edit") != -1;
+      return editable;
     },
   },
   computed: {
@@ -181,6 +189,10 @@ export default {
   align-items: center;
   display: flex;
   justify-content: center;
+  img {
+    object-fit: contain;
+    height: 250px;
+  }
 }
 
 .sl-img-actions {
