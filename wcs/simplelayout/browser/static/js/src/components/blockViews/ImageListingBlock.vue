@@ -5,7 +5,7 @@
         <template v-for="image in data.items" :key="image.UID">
           <div class="col sl-image-listing position-relative">
             <div class="sl-image-wrapper">
-              <figure class="d-table m-0 text-center">
+              <figure class="d-table m-0 text-center" :style="`height: ${getCachedHeight(image.image.scales.preview.height)}px`">
                 <img
                   :src="image.image.scales.preview.download"
                   v-if="image.image.scales.preview"
@@ -111,6 +111,7 @@ export default {
       data: { items: [], batching: null },
       loading: false,
       currentURL: "",
+      cachedHeight: 0,
     };
   },
   created() {
@@ -149,11 +150,16 @@ export default {
     openImageEditModal() {
       this.$refs["edit-image-modal"].openEditImageModal(event);
     },
+    getCachedHeight(height) {
+      if (height > this.cachedHeight) {
+        this.cachedHeight = height;
+      }
+      return this.cachedHeight;
+    },
   },
   computed: {
     loadingClass() {
-      return "asd";
-      // return this.loading ? "sl-loading" : "";
+      return this.loading ? "sl-loading" : "";
     },
     rowClasses() {
       return `row row-cols-3 gy-4 fade ${!this.loading ? "show" : ""}`;
