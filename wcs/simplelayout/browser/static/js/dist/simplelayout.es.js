@@ -7651,7 +7651,7 @@ const useSimplelayoutStore = defineStore({
       }
     },
     async fetchContentTypeTitles() {
-      const response = await this.axios.get(this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.PortalTypes");
+      const response = await this.axios.get(this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.PortalTypes?b_size=100");
       response.data.items.forEach((item) => {
         this.contentTypeTitles[item.token] = item.title.replace(/(\[.+?\])/g, "").trim();
       });
