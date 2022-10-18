@@ -60,6 +60,13 @@
         />
 
     <browser:page
+        for="*"
+        name="edit.json"
+        class=".crud.EditForm"
+        permission="cmf.ModifyPortalContent"
+        />
+
+    <browser:page
         for="wcs.simplelayout.contenttypes.behaviors.IBlockMarker"
         name="delete_confirmation"
         class=".crud.BlockDeleteConfirmationForm"

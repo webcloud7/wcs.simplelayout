@@ -1,38 +1,51 @@
 <template>
   <BlockStructure v-bind="$props">
     <template #body>
-      total {{ data.items_total }}
-      <div :class="`table-responsive ${loadingClass}`">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Type</th>
-              <th>Title</th>
-              <th>Size</th>
-              <th>Modified</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="file in data.items" :key="file.UID">
-              <template v-if="file['@type'] === 'Image'">
-                <td>{{ file.image["content-type"] }}</td>
-                <td>
-                  <a :href="file.image.download">{{ file.title }}</a>
-                </td>
-                <td>{{ file.image.size }}</td>
+      <div :class="rowClasses">
+        <template v-for="image in data.items" :key="image.UID">
+          <div class="col sl-image-listing position-relative">
+            <div class="sl-image-wrapper">
+              <template v-if="getLink(image)">
+                <a :href="getLink(image)">
+                  <figure class="d-table m-0 text-center">
+                    <img
+                      :src="image.image.scales.preview.download"
+                      v-if="image.image.scales.preview"
+                    />
+                    <figcaption v-if="image.title" class="figure-caption mt-1">
+                      {{ image.title }}
+                    </figcaption>
+                  </figure>
+                </a>
               </template>
-              <template v-if="file['@type'] === 'File'">
-                <td>{{ file.file["content-type"] }}</td>
-                <td>
-                  <a :href="file.file.download">{{ file.title }}</a>
-                </td>
-                <td>{{ file.file.size }}</td>
+              <template v-else>
+                <figure class="d-table m-0 text-center">
+                  <img
+                    :src="image.image.scales.preview.download"
+                    v-if="image.image.scales.preview"
+                  />
+                  <figcaption v-if="image.title" class="figure-caption mt-1">
+                    {{ image.title }}
+                  </figcaption>
+                </figure>
               </template>
-              <td>{{ file.modified }}</td>
-            </tr>
-          </tbody>
-        </table>
+
+<!--               <div class="actions position-absolute sl-img-actions me-4 mt-2">
+                <button
+                  v-if="canEditImage(image)"
+                  class="btn btn-light"
+                  @click="openImageEditModal"
+                  :data-url="image['@id']"
+                >
+                  Edit
+                </button>
+              </div>
+ -->
+            </div>
+          </div>
+        </template>
       </div>
+      total {{ data.items_total }}
       <Pagination
         v-if="data.batching"
         @next="fetchNext"
@@ -46,6 +59,8 @@
           </div>
         </div>
       </div>
+
+      <EditImageModal :block="block" ref="edit-image-modal" />
     </template>
     <template #footer>
       <div class="card-footer">
@@ -75,11 +90,13 @@
 import { useSimplelayoutStore } from "@/store.js";
 import BlockStructure from "@/components/standard/BlockStructure.vue";
 import Pagination from "@/components/Pagination.vue";
+import EditImageModal from "@/components/Modals/EditImageModal.vue";
 
 export default {
   components: {
     BlockStructure,
     Pagination,
+    EditImageModal,
   },
   props: {
     actions: {
@@ -111,6 +128,8 @@ export default {
     return {
       data: { items: [], batching: null },
       loading: false,
+      currentURL: "",
+      cachedHeight: 0,
     };
   },
   created() {
@@ -118,7 +137,7 @@ export default {
   },
   watch: {
     "block.modified"() {
-      this.fetchData();
+      this.fetchData(this.currentURL);
     },
   },
   methods: {
@@ -127,12 +146,19 @@ export default {
       try {
         let response;
         if (!url) {
-          const params = { params: { fullobjects: true } };
+          const params = {
+            params: {
+              fullobjects: true,
+              b_size: 3,
+              expand: "actions",
+            },
+          };
           response = await this.axios.get(this.block["@id"], params);
         } else {
           response = await this.axios.get(url);
         }
         this.data = response.data;
+        this.currentURL = response.request.responseURL;
       } catch (error) {
         this.sl.addErrorMessage(error);
       } finally {
@@ -145,11 +171,59 @@ export default {
     async fetchPrevious(url) {
       this.fetchData(url);
     },
+    openImageEditModal() {
+      this.$refs["edit-image-modal"].openEditImageModal(event);
+    },
+    canEditImage(image) {
+      const actionIds = image["@components"]["actions"]["object"].map(
+        (item) => item.id
+      );
+      const editable = actionIds.indexOf("edit") != -1;
+      return editable;
+    },
+    getLink(image) {
+      if (image.internal_link) {
+        return image.internal_link["@id"];
+      }
+
+      if (image.external_link) {
+        return image.external_link;
+      }
+      return null;
+    },
   },
   computed: {
     loadingClass() {
       return this.loading ? "sl-loading" : "";
     },
+    rowClasses() {
+      return `row row-cols-3 gy-4 fade ${!this.loading ? "show" : ""}`;
+    },
   },
 };
 </script>
+<style lang="scss">
+.sl-image-listing {
+  flex-basis: 200px;
+  flex-grow: 1;
+  > img {
+    width: 100%;
+  }
+}
+
+.sl-image-wrapper {
+  background-color: var(--bs-gray-200);
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  img {
+    object-fit: contain;
+    height: 250px;
+  }
+}
+
+.sl-img-actions {
+  top: 0;
+  right: 0;
+}
+</style>
