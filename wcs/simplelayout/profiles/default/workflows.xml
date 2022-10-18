@@ -9,5 +9,6 @@
   <type type_id="RelatedContentBlock"/>
   <type type_id="AllPurposeListingBlock"/>
   <type type_id="TeaserBlock"/>
+  <type type_id="IframeBlock"/>
  </bindings>
 </object>
