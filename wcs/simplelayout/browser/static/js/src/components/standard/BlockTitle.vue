@@ -37,6 +37,9 @@
       </div>
     </h4>
   </a>
+  <div class="sl-block-byline text-muted">
+    {{ blockByline }}
+  </div>
 </template>
 <script>
 import { useSimplelayoutStore } from "@/store.js";
@@ -63,6 +66,19 @@ export default {
 
       return null;
     },
+    blockByline() {
+      const infos = [this.sl.contentTypeTitles[this.block["@type"]]];
+
+      if (this.block.block_template) {
+        infos.push(`${this.$i18n("View")}: ${this.block.block_template.title}`);
+      }
+      return infos.join(" | ");
+    },
   },
 };
 </script>
+<style lang="scss">
+.sl-block-byline {
+  font-size: 0.85rem;
+}
+</style>

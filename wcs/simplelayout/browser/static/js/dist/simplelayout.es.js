@@ -7747,6 +7747,7 @@ const useSimplelayoutStore = defineStore({
     }
   }
 });
+var BlockTitle_vue_vue_type_style_index_0_lang = "";
 var _export_sfc = (sfc, props) => {
   const target = sfc.__vccOpts || sfc;
   for (const [key, val] of props) {
@@ -7774,6 +7775,13 @@ const _sfc_main$q = {
         return this.block.external_link;
       }
       return null;
+    },
+    blockByline() {
+      const infos = [this.sl.contentTypeTitles[this.block["@type"]]];
+      if (this.block.block_template) {
+        infos.push(`${this.$i18n("View")}: ${this.block.block_template.title}`);
+      }
+      return infos.join(" | ");
     }
   }
 };
@@ -7803,26 +7811,30 @@ const _hoisted_7$a = {
   key: 0,
   class: "h6 text-black text-opacity-50"
 };
+const _hoisted_8$8 = { class: "sl-block-byline text-muted" };
 function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
-  return !$options.blockLink ? (openBlock(), createElementBlock("h4", _hoisted_1$j, [
-    createBaseVNode("div", _hoisted_2$j, [
-      createTextVNode(toDisplayString($props.block.title) + " ", 1),
-      !$props.block.show_title ? (openBlock(), createElementBlock("span", _hoisted_3$f, "(hidden title)")) : createCommentVNode("", true)
-    ])
-  ])) : (openBlock(), createElementBlock("a", {
-    key: 1,
-    class: "card-title",
-    href: $options.blockLink,
-    title: _ctx.$i18n("Links to a internal or external target")
-  }, [
-    createBaseVNode("h4", null, [
-      createBaseVNode("div", _hoisted_5$f, [
-        _hoisted_6$d,
-        createTextVNode(" " + toDisplayString($props.block.title) + " ", 1),
-        !$props.block.show_title ? (openBlock(), createElementBlock("span", _hoisted_7$a, "(hidden title)")) : createCommentVNode("", true)
+  return openBlock(), createElementBlock(Fragment, null, [
+    !$options.blockLink ? (openBlock(), createElementBlock("h4", _hoisted_1$j, [
+      createBaseVNode("div", _hoisted_2$j, [
+        createTextVNode(toDisplayString($props.block.title) + " ", 1),
+        !$props.block.show_title ? (openBlock(), createElementBlock("span", _hoisted_3$f, "(hidden title)")) : createCommentVNode("", true)
       ])
-    ])
-  ], 8, _hoisted_4$f));
+    ])) : (openBlock(), createElementBlock("a", {
+      key: 1,
+      class: "card-title",
+      href: $options.blockLink,
+      title: _ctx.$i18n("Links to a internal or external target")
+    }, [
+      createBaseVNode("h4", null, [
+        createBaseVNode("div", _hoisted_5$f, [
+          _hoisted_6$d,
+          createTextVNode(" " + toDisplayString($props.block.title) + " ", 1),
+          !$props.block.show_title ? (openBlock(), createElementBlock("span", _hoisted_7$a, "(hidden title)")) : createCommentVNode("", true)
+        ])
+      ])
+    ], 8, _hoisted_4$f)),
+    createBaseVNode("div", _hoisted_8$8, toDisplayString($options.blockByline), 1)
+  ], 64);
 }
 var BlockTitle = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$q]]);
 var BlockControls_vue_vue_type_style_index_0_lang = "";
