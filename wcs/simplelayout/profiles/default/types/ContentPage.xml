@@ -22,6 +22,7 @@
   <element value="AllPurposeListingBlock"/>
   <element value="RelatedContentBlock"/>
   <element value="TeaserBlock"/>
+  <element value="IframeBlock"/>
  </property>
  <property name="allow_discussion">False</property>
  <property name="default_view">@@simplelayout-view</property>
