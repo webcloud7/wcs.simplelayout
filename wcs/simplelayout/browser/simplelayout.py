@@ -48,5 +48,9 @@ class SimplelayoutView(BrowserView):
             'No referenced content found': self._translate(_('label_no_ref_content', default='No referenced content found')),
             'Links to a internal or external target': self._translate(_('label_link_target', default='Links to a internal or external target')),
             'Go to content': self._translate(_('label_got_to', default='Go to content')),
+            '(hidden title)': self._translate(_('label_hidden_title', default='(hidden title)')),
+            'View': self._translate(_('label_view', default='View')),
+            'Go the the referenced Media Folder': self._translate(_('label_go_to_mediafolder', default='Go the the referenced Media Folder')),
+            'Click here to create a new Media Folder': self._translate(_('label_create_mediafolder', default='Click here to create a new Media Folder')),
         }
         return json.dumps(messages)

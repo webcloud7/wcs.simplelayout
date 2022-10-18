@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-09-30 15:35+0000\n"
+"POT-Creation-Date: 2022-10-18 18:05+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -118,7 +118,7 @@ msgstr ""
 msgid "Simplelayout Content Page"
 msgstr ""
 
-#: ./wcs/simplelayout/browser/configure.zcml:86
+#: ./wcs/simplelayout/browser/configure.zcml:93
 msgid "The 'add' menu - allows the user to add new content items in the context"
 msgstr ""
 
@@ -170,6 +170,11 @@ msgstr ""
 msgid "label_contents"
 msgstr ""
 
+#. Default: "Click here to create a new Media Folder"
+#: ./wcs/simplelayout/browser/simplelayout.py:54
+msgid "label_create_mediafolder"
+msgstr ""
+
 #. Default: "Delete"
 #: ./wcs/simplelayout/browser/simplelayout.py:32
 msgid "label_delete"
@@ -210,9 +215,19 @@ msgstr ""
 msgid "label_function"
 msgstr ""
 
+#. Default: "Go the the referenced Media Folder"
+#: ./wcs/simplelayout/browser/simplelayout.py:53
+msgid "label_go_to_mediafolder"
+msgstr ""
+
 #. Default: "Go to content"
 #: ./wcs/simplelayout/browser/simplelayout.py:50
 msgid "label_got_to"
+msgstr ""
+
+#. Default: "(hidden title)"
+#: ./wcs/simplelayout/browser/simplelayout.py:51
+msgid "label_hidden_title"
 msgstr ""
 
 #. Default: "Image"
@@ -318,6 +333,11 @@ msgstr ""
 #. Default: "Youtube, or Vimeo URL"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:182
 msgid "label_video_url"
+msgstr ""
+
+#. Default: "View"
+#: ./wcs/simplelayout/browser/simplelayout.py:52
+msgid "label_view"
 msgstr ""
 
 #. Default: "Width"

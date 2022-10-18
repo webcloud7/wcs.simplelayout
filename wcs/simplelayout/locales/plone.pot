@@ -41,3 +41,15 @@ msgstr ""
 
 msgid "NewsFolder"
 msgstr ""
+
+msgid "NewsListingBlock"
+msgstr ""
+
+msgid "IframeBlock"
+msgstr ""
+
+msgid "TeaserBlock"
+msgstr ""
+
+msgid "RelatedContentBlock"
+msgstr ""

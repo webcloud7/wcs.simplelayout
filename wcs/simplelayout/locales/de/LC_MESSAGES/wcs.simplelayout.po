@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-09-30 15:35+0000\n"
+"POT-Creation-Date: 2022-10-18 18:05+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -118,7 +118,7 @@ msgstr "Video URL Feld für Blöcke"
 msgid "Simplelayout Content Page"
 msgstr ""
 
-#: ./wcs/simplelayout/browser/configure.zcml:86
+#: ./wcs/simplelayout/browser/configure.zcml:93
 msgid "The 'add' menu - allows the user to add new content items in the context"
 msgstr ""
 
@@ -170,6 +170,11 @@ msgstr "Abwerts"
 msgid "label_contents"
 msgstr "Inhalte"
 
+#. Default: "Click here to create a new Media Folder"
+#: ./wcs/simplelayout/browser/simplelayout.py:54
+msgid "label_create_mediafolder"
+msgstr "Medien Ordner erstellen"
+
 #. Default: "Delete"
 #: ./wcs/simplelayout/browser/simplelayout.py:32
 msgid "label_delete"
@@ -210,10 +215,20 @@ msgstr "4-Spalten (25%)"
 msgid "label_function"
 msgstr "Funktion"
 
+#. Default: "Go the the referenced Media Folder"
+#: ./wcs/simplelayout/browser/simplelayout.py:53
+msgid "label_go_to_mediafolder"
+msgstr "Zum Medien Ordner"
+
 #. Default: "Go to content"
 #: ./wcs/simplelayout/browser/simplelayout.py:50
 msgid "label_got_to"
 msgstr "Zum Inhalt"
+
+#. Default: "(hidden title)"
+#: ./wcs/simplelayout/browser/simplelayout.py:51
+msgid "label_hidden_title"
+msgstr "Versteckter Titel"
 
 #. Default: "Image"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:165
@@ -320,6 +335,11 @@ msgstr "Upload"
 msgid "label_video_url"
 msgstr "Youtube, oder Vimeo URL"
 
+#. Default: "View"
+#: ./wcs/simplelayout/browser/simplelayout.py:52
+msgid "label_view"
+msgstr "Ansicht"
+
 #. Default: "Width"
 #: ./wcs/simplelayout/browser/simplelayout.py:41
 msgid "label_width"
@@ -338,7 +358,7 @@ msgstr "News Datum"
 #. Default: "You can not filter by path and current context at the same time."
 #: ./wcs/simplelayout/contenttypes/behaviors.py:279
 msgid "news_listing_config_current_context_and_path_error"
-msgstr ""
+msgstr "Es ist nicht möglich nach Pfad zu filtern und auf den aktuellen Bereich einzuschränken."
 
 #. Default: "Only show news items from the current context."
 #: ./wcs/simplelayout/contenttypes/behaviors.py:223
@@ -383,7 +403,7 @@ msgstr "Anzahl News"
 #. Default: "Only news with the selected subjects will be shown."
 #: ./wcs/simplelayout/contenttypes/behaviors.py:256
 msgid "news_listing_config_subjects_description"
-msgstr ""
+msgstr "Nur News mit den auswgewählten Stichwörter werden angezeigt."
 
 #. Default: "Filter by subject"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:254

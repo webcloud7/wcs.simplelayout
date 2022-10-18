@@ -72,14 +72,14 @@
           >
             <input type="hidden" name="_authenticator" :value="sl.authToken" />
             <button type="submit" class="btn btn-success btn-sm">
-              Click here to create a new Media Folder
+              {{ $i18n("Click here to create a new Media Folder") }}
             </button>
           </form>
           <a
             v-else
             :href="block.mediafolder['@id']"
             class="btn btn-success btn-sm"
-            >Go the the referenced Media Folder</a
+            >{{ $i18n("Go the the referenced Media Folder") }}</a
           >
         </div>
       </div>

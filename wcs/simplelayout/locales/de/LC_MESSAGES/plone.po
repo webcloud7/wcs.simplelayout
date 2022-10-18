@@ -26,6 +26,9 @@ msgstr "Inhaltsseite"
 msgid "FileListingBlock"
 msgstr "Datei-Auflistung"
 
+msgid "IframeBlock"
+msgstr "IFrame Block"
+
 msgid "ImageListingBlock"
 msgstr "Bild-Auflistung"
 
@@ -37,6 +40,15 @@ msgstr "News"
 
 msgid "NewsFolder"
 msgstr "News Bereich"
+
+msgid "NewsListingBlock"
+msgstr "News-Auflistung"
+
+msgid "RelatedContentBlock"
+msgstr "Verwandte Inhalte"
+
+msgid "TeaserBlock"
+msgstr "Teaser Block"
 
 msgid "VideoBlock"
 msgstr "Video"
