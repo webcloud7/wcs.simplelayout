@@ -25902,6 +25902,15 @@ const _sfc_main$5 = {
       const actionIds = image["@components"]["actions"]["object"].map((item) => item.id);
       const editable = actionIds.indexOf("edit") != -1;
       return editable;
+    },
+    getLink(image) {
+      if (image.internal_link) {
+        return image.internal_link["@id"];
+      }
+      if (image.external_link) {
+        return image.external_link;
+      }
+      return null;
     }
   },
   computed: {
@@ -25914,19 +25923,27 @@ const _sfc_main$5 = {
   }
 };
 const _hoisted_1$5 = { class: "sl-image-wrapper" };
-const _hoisted_2$5 = { class: "d-table m-0 text-center" };
-const _hoisted_3$4 = ["src"];
-const _hoisted_4$4 = {
+const _hoisted_2$5 = ["href"];
+const _hoisted_3$4 = { class: "d-table m-0 text-center" };
+const _hoisted_4$4 = ["src"];
+const _hoisted_5$4 = {
   key: 1,
   class: "figure-caption mt-1"
 };
-const _hoisted_5$4 = { class: "actions position-absolute sl-img-actions me-4 mt-2" };
-const _hoisted_6$4 = ["data-url"];
-const _hoisted_7$2 = {
+const _hoisted_6$4 = {
+  key: 1,
+  class: "d-table m-0 text-center"
+};
+const _hoisted_7$2 = ["src"];
+const _hoisted_8$2 = {
+  key: 1,
+  class: "figure-caption mt-1"
+};
+const _hoisted_9$2 = {
   key: 1,
   class: "position-absolute top-50 start-50"
 };
-const _hoisted_8$2 = /* @__PURE__ */ createBaseVNode("div", { class: "text-center" }, [
+const _hoisted_10$2 = /* @__PURE__ */ createBaseVNode("div", { class: "text-center" }, [
   /* @__PURE__ */ createBaseVNode("div", {
     class: "spinner-border",
     role: "status"
@@ -25934,21 +25951,21 @@ const _hoisted_8$2 = /* @__PURE__ */ createBaseVNode("div", { class: "text-cente
     /* @__PURE__ */ createBaseVNode("span", { class: "visually-hidden" }, "Loading...")
   ])
 ], -1);
-const _hoisted_9$2 = [
-  _hoisted_8$2
+const _hoisted_11$2 = [
+  _hoisted_10$2
 ];
-const _hoisted_10$2 = { class: "card-footer" };
-const _hoisted_11$2 = {
+const _hoisted_12$1 = { class: "card-footer" };
+const _hoisted_13$1 = {
   key: 0,
   class: "mediafolder-link"
 };
-const _hoisted_12$1 = ["action"];
-const _hoisted_13$1 = ["value"];
-const _hoisted_14$1 = /* @__PURE__ */ createBaseVNode("button", {
+const _hoisted_14$1 = ["action"];
+const _hoisted_15$1 = ["value"];
+const _hoisted_16$1 = /* @__PURE__ */ createBaseVNode("button", {
   type: "submit",
   class: "btn btn-success btn-sm"
 }, " Click here to create a new Media Folder ", -1);
-const _hoisted_15$1 = ["href"];
+const _hoisted_17$1 = ["href"];
 function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_Pagination = resolveComponent("Pagination");
   const _component_EditImageModal = resolveComponent("EditImageModal");
@@ -25964,21 +25981,24 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
             class: "col sl-image-listing position-relative"
           }, [
             createBaseVNode("div", _hoisted_1$5, [
-              createBaseVNode("figure", _hoisted_2$5, [
+              $options.getLink(image) ? (openBlock(), createElementBlock("a", {
+                key: 0,
+                href: $options.getLink(image)
+              }, [
+                createBaseVNode("figure", _hoisted_3$4, [
+                  image.image.scales.preview ? (openBlock(), createElementBlock("img", {
+                    key: 0,
+                    src: image.image.scales.preview.download
+                  }, null, 8, _hoisted_4$4)) : createCommentVNode("", true),
+                  image.title ? (openBlock(), createElementBlock("figcaption", _hoisted_5$4, toDisplayString(image.title), 1)) : createCommentVNode("", true)
+                ])
+              ], 8, _hoisted_2$5)) : (openBlock(), createElementBlock("figure", _hoisted_6$4, [
                 image.image.scales.preview ? (openBlock(), createElementBlock("img", {
                   key: 0,
                   src: image.image.scales.preview.download
-                }, null, 8, _hoisted_3$4)) : createCommentVNode("", true),
-                image.title ? (openBlock(), createElementBlock("figcaption", _hoisted_4$4, toDisplayString(image.title), 1)) : createCommentVNode("", true)
-              ]),
-              createBaseVNode("div", _hoisted_5$4, [
-                $options.canEditImage(image) ? (openBlock(), createElementBlock("button", {
-                  key: 0,
-                  class: "btn btn-light",
-                  onClick: _cache[0] || (_cache[0] = (...args) => $options.openImageEditModal && $options.openImageEditModal(...args)),
-                  "data-url": image["@id"]
-                }, " Edit ", 8, _hoisted_6$4)) : createCommentVNode("", true)
-              ])
+                }, null, 8, _hoisted_7$2)) : createCommentVNode("", true),
+                image.title ? (openBlock(), createElementBlock("figcaption", _hoisted_8$2, toDisplayString(image.title), 1)) : createCommentVNode("", true)
+              ]))
             ])
           ]);
         }), 128))
@@ -25990,15 +26010,15 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
         onPrevious: $options.fetchPrevious,
         batching: $data.data.batching
       }, null, 8, ["onNext", "onPrevious", "batching"])) : createCommentVNode("", true),
-      $data.loading ? (openBlock(), createElementBlock("div", _hoisted_7$2, _hoisted_9$2)) : createCommentVNode("", true),
+      $data.loading ? (openBlock(), createElementBlock("div", _hoisted_9$2, _hoisted_11$2)) : createCommentVNode("", true),
       createVNode(_component_EditImageModal, {
         block: $props.block,
         ref: "edit-image-modal"
       }, null, 8, ["block"])
     ]),
     footer: withCtx(() => [
-      createBaseVNode("div", _hoisted_10$2, [
-        $setup.sl.canModify ? (openBlock(), createElementBlock("div", _hoisted_11$2, [
+      createBaseVNode("div", _hoisted_12$1, [
+        $setup.sl.canModify ? (openBlock(), createElementBlock("div", _hoisted_13$1, [
           !$props.block.mediafolder ? (openBlock(), createElementBlock("form", {
             key: 0,
             method: "POST",
@@ -26008,13 +26028,13 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
               type: "hidden",
               name: "_authenticator",
               value: $setup.sl.authToken
-            }, null, 8, _hoisted_13$1),
-            _hoisted_14$1
-          ], 8, _hoisted_12$1)) : (openBlock(), createElementBlock("a", {
+            }, null, 8, _hoisted_15$1),
+            _hoisted_16$1
+          ], 8, _hoisted_14$1)) : (openBlock(), createElementBlock("a", {
             key: 1,
             href: $props.block.mediafolder["@id"],
             class: "btn btn-success btn-sm"
-          }, "Go the the referenced Media Folder", 8, _hoisted_15$1))
+          }, "Go the the referenced Media Folder", 8, _hoisted_17$1))
         ])) : createCommentVNode("", true)
       ])
     ]),

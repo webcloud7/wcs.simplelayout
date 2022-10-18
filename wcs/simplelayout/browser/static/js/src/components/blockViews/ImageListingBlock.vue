@@ -5,16 +5,32 @@
         <template v-for="image in data.items" :key="image.UID">
           <div class="col sl-image-listing position-relative">
             <div class="sl-image-wrapper">
-              <figure class="d-table m-0 text-center">
-                <img
-                  :src="image.image.scales.preview.download"
-                  v-if="image.image.scales.preview"
-                />
-                <figcaption v-if="image.title" class="figure-caption mt-1">
-                  {{ image.title }}
-                </figcaption>
-              </figure>
-              <div class="actions position-absolute sl-img-actions me-4 mt-2">
+              <template v-if="getLink(image)">
+                <a :href="getLink(image)">
+                  <figure class="d-table m-0 text-center">
+                    <img
+                      :src="image.image.scales.preview.download"
+                      v-if="image.image.scales.preview"
+                    />
+                    <figcaption v-if="image.title" class="figure-caption mt-1">
+                      {{ image.title }}
+                    </figcaption>
+                  </figure>
+                </a>
+              </template>
+              <template v-else>
+                <figure class="d-table m-0 text-center">
+                  <img
+                    :src="image.image.scales.preview.download"
+                    v-if="image.image.scales.preview"
+                  />
+                  <figcaption v-if="image.title" class="figure-caption mt-1">
+                    {{ image.title }}
+                  </figcaption>
+                </figure>
+              </template>
+
+<!--               <div class="actions position-absolute sl-img-actions me-4 mt-2">
                 <button
                   v-if="canEditImage(image)"
                   class="btn btn-light"
@@ -24,6 +40,7 @@
                   Edit
                 </button>
               </div>
+ -->
             </div>
           </div>
         </template>
@@ -163,6 +180,16 @@ export default {
       );
       const editable = actionIds.indexOf("edit") != -1;
       return editable;
+    },
+    getLink(image) {
+      if (image.internal_link) {
+        return image.internal_link["@id"];
+      }
+
+      if (image.external_link) {
+        return image.external_link;
+      }
+      return null;
     },
   },
   computed: {
