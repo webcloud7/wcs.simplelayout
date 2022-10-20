@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-10-18 18:05+0000\n"
+"POT-Creation-Date: 2022-10-20 19:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,7 +34,7 @@ msgstr ""
 msgid "Extends the content with a reference field to a media folder"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/behaviors.py:160
+#: ./wcs/simplelayout/contenttypes/behaviors.py:159
 msgid "Image"
 msgstr ""
 
@@ -42,7 +42,7 @@ msgstr ""
 msgid "It's not possible to have an internal_link and an external_link together"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/behaviors.py:109
+#: ./wcs/simplelayout/contenttypes/behaviors.py:108
 msgid "Layout"
 msgstr ""
 
@@ -122,16 +122,16 @@ msgstr ""
 msgid "The 'add' menu - allows the user to add new content items in the context"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/behaviors.py:199
+#: ./wcs/simplelayout/contenttypes/behaviors.py:198
 msgid "This is no a valid youtube, or vimeo url."
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/behaviors.py:183
+#: ./wcs/simplelayout/contenttypes/behaviors.py:182
 msgid "Youtube format: http(s)://youtu.be/VIDEO_ID (add start parameter to let the vide start at a specific position)<br/>Youtube (no-cookie) format: https://www.youtube-nocookie.com/embed/VIDEO_ID<br/>Vimeo format: http(s)://vimeo.com/(channels/groups)/VIDEO_ID"
 msgstr ""
 
 #. Default: "Enter an alternative text for the image"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:171
+#: ./wcs/simplelayout/contenttypes/behaviors.py:170
 msgid "description_image_alt_text"
 msgstr ""
 
@@ -231,17 +231,17 @@ msgid "label_hidden_title"
 msgstr ""
 
 #. Default: "Image"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:165
+#: ./wcs/simplelayout/contenttypes/behaviors.py:164
 msgid "label_image"
 msgstr ""
 
 #. Default: "Image alternative text"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:169
+#: ./wcs/simplelayout/contenttypes/behaviors.py:168
 msgid "label_image_alt_text"
 msgstr ""
 
 #. Default: "Image caption"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:175
+#: ./wcs/simplelayout/contenttypes/behaviors.py:174
 msgid "label_image_caption"
 msgstr ""
 
@@ -291,22 +291,22 @@ msgid "label_remove_col"
 msgstr ""
 
 #. Default: "Show title"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:140
+#: ./wcs/simplelayout/contenttypes/behaviors.py:139
 msgid "label_show_title"
 msgstr ""
 
 #. Default: "Sort by"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:205
+#: ./wcs/simplelayout/contenttypes/behaviors.py:204
 msgid "label_sort_on"
 msgstr ""
 
 #. Default: "Sort order"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:211
+#: ./wcs/simplelayout/contenttypes/behaviors.py:210
 msgid "label_sort_order"
 msgstr ""
 
 #. Default: "Text"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:151
+#: ./wcs/simplelayout/contenttypes/behaviors.py:150
 msgid "label_text"
 msgstr ""
 
@@ -316,7 +316,7 @@ msgid "label_three_col"
 msgstr ""
 
 #. Default: "Title"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:136
+#: ./wcs/simplelayout/contenttypes/behaviors.py:135
 msgid "label_title"
 msgstr ""
 
@@ -331,7 +331,7 @@ msgid "label_upload"
 msgstr ""
 
 #. Default: "Youtube, or Vimeo URL"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:182
+#: ./wcs/simplelayout/contenttypes/behaviors.py:181
 msgid "label_video_url"
 msgstr ""
 
@@ -346,12 +346,12 @@ msgid "label_width"
 msgstr ""
 
 #. Default: "News will be sorted by this date"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:125
+#: ./wcs/simplelayout/contenttypes/behaviors.py:124
 msgid "news_date_description"
 msgstr ""
 
 #. Default: "Date"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:124
+#: ./wcs/simplelayout/contenttypes/behaviors.py:123
 msgid "news_date_label"
 msgstr ""
 
@@ -361,12 +361,12 @@ msgid "news_listing_config_current_context_and_path_error"
 msgstr ""
 
 #. Default: "Only show news items from the current context."
-#: ./wcs/simplelayout/contenttypes/behaviors.py:223
+#: ./wcs/simplelayout/contenttypes/behaviors.py:222
 msgid "news_listing_config_filter_current_context_description"
 msgstr ""
 
 #. Default: "Limit to current context"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:221
+#: ./wcs/simplelayout/contenttypes/behaviors.py:220
 msgid "news_listing_config_filter_current_context_label"
 msgstr ""
 
