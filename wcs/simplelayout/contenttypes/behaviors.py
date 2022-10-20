@@ -1,3 +1,4 @@
+from ftw.referencewidget.sources import ReferenceObjSourceBinder
 from ftw.referencewidget.widget import ReferenceBrowserWidget
 from plone.app.dexterity.textindexer.directives import searchable
 from plone.app.textfield import RichText
@@ -12,6 +13,7 @@ from wcs.simplelayout.contenttypes import utils
 from wcs.simplelayout.contenttypes.vocabs import sort_index_vocabulary
 from wcs.simplelayout.contenttypes.vocabs import sort_order_vocabulary
 from z3c.relationfield import RelationList
+from z3c.relationfield import RelationChoice
 from z3c.relationfield.schema import Relation
 from zope import schema
 from zope.interface import Interface
@@ -226,6 +228,7 @@ class IBlockNewsOptions(model.Schema):
         required=False,
     )
 
+    directives.read_permission(filter_by_path='wcs.simplelayout.restrictedRead')
     directives.widget('filter_by_path',
                       ReferenceBrowserWidget,
                       allow_nonsearched_types=False,
@@ -285,15 +288,17 @@ class IBlockNewsOptions(model.Schema):
 
 @provider(IFormFieldProvider)
 class IMediaFolderReference(model.Schema):
+    directives.read_permission(mediafolder='wcs.simplelayout.restrictedRead')
     directives.widget('mediafolder',
                       ReferenceBrowserWidget,
                       allow_nonsearched_types=True,
                       start='parent',
                       override=True,
                       selectable=['MediaFolder', ])
-    mediafolder = Relation(
+    mediafolder = RelationChoice(
         title=_('label_mediafolder', default='Mediafolder reference'),
         required=False,
+        source=ReferenceObjSourceBinder()
     )
 
 
