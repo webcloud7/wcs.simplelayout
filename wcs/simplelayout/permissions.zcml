@@ -11,4 +11,9 @@
         id="wcs.simplelayout.AddBlock"
         title="wcs.simplelayout: Add Block"
         />
+
+    <permission
+        id="wcs.simplelayout.restrictedRead"
+        title="wcs.simplelayout: Restricted Read"
+        />
 </configure>

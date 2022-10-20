@@ -1,7 +1,8 @@
-from wcs.simplelayout.testing import SIMPLELAYOUT_FUNCTIONAL_TESTING
+from copy import deepcopy
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from unittest import TestCase
+from wcs.simplelayout.testing import SIMPLELAYOUT_FUNCTIONAL_TESTING
 import transaction
 import wcs.simplelayout.tests.builders  # noqa
 
@@ -9,10 +10,12 @@ import wcs.simplelayout.tests.builders  # noqa
 class FunctionalTesting(TestCase):
     layer = SIMPLELAYOUT_FUNCTIONAL_TESTING
 
-    api_headers = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-    }
+    @property
+    def api_headers(self):
+        return deepcopy({
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        })
 
     def setUp(self):
         self.portal = self.layer['portal']

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<rolemap>
+  <permissions>
+    <permission name="wcs.simplelayout: Restricted Read" acquire="False">
+      <role name="Authenticated"/>
+      <role name="Manager" />
+    </permission>
+  </permissions>
+</rolemap>

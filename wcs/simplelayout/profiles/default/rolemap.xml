@@ -11,5 +11,9 @@
       <role name="Site Administrator"/>
       <role name="Editor"/>
     </permission>
+    <permission name="wcs.simplelayout: Restricted Read" acquire="False">
+      <role name="Authenticated"/>
+      <role name="Manager" />
+    </permission>
   </permissions>
 </rolemap>
