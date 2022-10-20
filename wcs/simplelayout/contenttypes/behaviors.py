@@ -4,14 +4,13 @@ from plone.app.textfield import RichText
 from plone.autoform import directives
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.namedfile.field import NamedBlobImage
-from plone.restapi import _
 from plone.schema import JSONField
 from plone.supermodel import model
 from plone.supermodel.directives import primary
+from wcs.simplelayout import _
 from wcs.simplelayout.contenttypes import utils
 from wcs.simplelayout.contenttypes.vocabs import sort_index_vocabulary
 from wcs.simplelayout.contenttypes.vocabs import sort_order_vocabulary
-from z3c.relationfield import RelationChoice
 from z3c.relationfield import RelationList
 from z3c.relationfield.schema import Relation
 from zope import schema
@@ -224,6 +223,7 @@ class IBlockNewsOptions(model.Schema):
             'news_listing_config_filter_current_context_description',
             default='Only show news items from the current context.'),
         default=True,
+        required=False,
     )
 
     directives.widget('filter_by_path',
