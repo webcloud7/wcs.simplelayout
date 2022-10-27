@@ -7,27 +7,11 @@
             <div class="sl-image-wrapper">
               <template v-if="getLink(image)">
                 <a :href="getLink(image)">
-                  <figure class="d-table m-0 text-center">
-                    <img
-                      :src="image.image.scales.preview.download"
-                      v-if="image.image.scales.preview"
-                    />
-                    <figcaption v-if="image.title" class="figure-caption mt-1">
-                      {{ image.title }}
-                    </figcaption>
-                  </figure>
+                  <ImageListingImage :image="image" />
                 </a>
               </template>
               <template v-else>
-                <figure class="d-table m-0 text-center">
-                  <img
-                    :src="image.image.scales.preview.download"
-                    v-if="image.image.scales.preview"
-                  />
-                  <figcaption v-if="image.title" class="figure-caption mt-1">
-                    {{ image.title }}
-                  </figcaption>
-                </figure>
+                <ImageListingImage :image="image" />
               </template>
 
 <!--               <div class="actions position-absolute sl-img-actions me-4 mt-2">
@@ -91,12 +75,14 @@ import { useSimplelayoutStore } from "@/store.js";
 import BlockStructure from "@/components/standard/BlockStructure.vue";
 import Pagination from "@/components/Pagination.vue";
 import EditImageModal from "@/components/Modals/EditImageModal.vue";
+import ImageListingImage from "@/components/blockViews/helpers/ImageListingImage.vue";
 
 export default {
   components: {
     BlockStructure,
     Pagination,
     EditImageModal,
+    ImageListingImage,
   },
   props: {
     actions: {

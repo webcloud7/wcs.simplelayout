@@ -184,7 +184,9 @@ const toRawType = (value) => {
 };
 const isPlainObject$2 = (val) => toTypeString(val) === "[object Object]";
 const isIntegerKey = (key) => isString$2(key) && key !== "NaN" && key[0] !== "-" && "" + parseInt(key, 10) === key;
-const isReservedProp = /* @__PURE__ */ makeMap(",key,ref,ref_for,ref_key,onVnodeBeforeMount,onVnodeMounted,onVnodeBeforeUpdate,onVnodeUpdated,onVnodeBeforeUnmount,onVnodeUnmounted");
+const isReservedProp = /* @__PURE__ */ makeMap(
+  ",key,ref,ref_for,ref_key,onVnodeBeforeMount,onVnodeMounted,onVnodeBeforeUpdate,onVnodeUpdated,onVnodeBeforeUnmount,onVnodeUnmounted"
+);
 const cacheStringFunction = (fn) => {
   const cache = /* @__PURE__ */ Object.create(null);
   return (str) => {
@@ -224,11 +226,12 @@ const getGlobalThis = () => {
 let activeEffectScope;
 class EffectScope {
   constructor(detached = false) {
+    this.detached = detached;
     this.active = true;
     this.effects = [];
     this.cleanups = [];
+    this.parent = activeEffectScope;
     if (!detached && activeEffectScope) {
-      this.parent = activeEffectScope;
       this.index = (activeEffectScope.scopes || (activeEffectScope.scopes = [])).push(this) - 1;
     }
   }
@@ -263,13 +266,14 @@ class EffectScope {
           this.scopes[i].stop(true);
         }
       }
-      if (this.parent && !fromParent) {
+      if (!this.detached && this.parent && !fromParent) {
         const last = this.parent.scopes.pop();
         if (last && last !== this) {
           this.parent.scopes[this.index] = last;
           last.index = this.index;
         }
       }
+      this.parent = void 0;
       this.active = false;
     }
   }
@@ -538,7 +542,9 @@ function triggerEffect(effect2, debuggerEventExtraInfo) {
   }
 }
 const isNonTrackableKeys = /* @__PURE__ */ makeMap(`__proto__,__v_isRef,__isVue`);
-const builtInSymbols = new Set(/* @__PURE__ */ Object.getOwnPropertyNames(Symbol).filter((key) => key !== "arguments" && key !== "caller").map((key) => Symbol[key]).filter(isSymbol$1));
+const builtInSymbols = new Set(
+  /* @__PURE__ */ Object.getOwnPropertyNames(Symbol).filter((key) => key !== "arguments" && key !== "caller").map((key) => Symbol[key]).filter(isSymbol$1)
+);
 const get = /* @__PURE__ */ createGetter();
 const shallowGet = /* @__PURE__ */ createGetter(false, true);
 const readonlyGet = /* @__PURE__ */ createGetter(true);
@@ -612,10 +618,10 @@ function createSetter(shallow = false) {
     if (isReadonly(oldValue) && isRef(oldValue) && !isRef(value)) {
       return false;
     }
-    if (!shallow && !isReadonly(value)) {
-      if (!isShallow(value)) {
-        value = toRaw(value);
+    if (!shallow) {
+      if (!isShallow(value) && !isReadonly(value)) {
         oldValue = toRaw(oldValue);
+        value = toRaw(value);
       }
       if (!isArray$5(target) && isRef(oldValue) && !isRef(value)) {
         oldValue.value = value;
@@ -1035,10 +1041,11 @@ class RefImpl {
     return this._value;
   }
   set value(newVal) {
-    newVal = this.__v_isShallow ? newVal : toRaw(newVal);
+    const useDirectValue = this.__v_isShallow || isShallow(newVal) || isReadonly(newVal);
+    newVal = useDirectValue ? newVal : toRaw(newVal);
     if (hasChanged(newVal, this._rawValue)) {
       this._rawValue = newVal;
-      this._value = this.__v_isShallow ? newVal : toReactive(newVal);
+      this._value = useDirectValue ? newVal : toReactive(newVal);
       triggerRefValue(this);
     }
   }
@@ -1108,11 +1115,13 @@ function toRef(object, key, defaultValue) {
   const val = object[key];
   return isRef(val) ? val : new ObjectRefImpl(object, key, defaultValue);
 }
+var _a;
 class ComputedRefImpl {
   constructor(getter, _setter, isReadonly2, isSSR) {
     this._setter = _setter;
     this.dep = void 0;
     this.__v_isRef = true;
+    this[_a] = false;
     this._dirty = true;
     this.effect = new ReactiveEffect(getter, () => {
       if (!this._dirty) {
@@ -1137,6 +1146,7 @@ class ComputedRefImpl {
     this._setter(newValue);
   }
 }
+_a = "__v_isReadonly";
 function computed$1(getterOrOptions, debugOptions, isSSR = false) {
   let getter;
   let setter;
@@ -1296,15 +1306,11 @@ let isFlushing = false;
 let isFlushPending = false;
 const queue = [];
 let flushIndex = 0;
-const pendingPreFlushCbs = [];
-let activePreFlushCbs = null;
-let preFlushIndex = 0;
 const pendingPostFlushCbs = [];
 let activePostFlushCbs = null;
 let postFlushIndex = 0;
 const resolvedPromise = /* @__PURE__ */ Promise.resolve();
 let currentFlushPromise = null;
-let currentPreFlushParentJob = null;
 function nextTick(fn) {
   const p2 = currentFlushPromise || resolvedPromise;
   return fn ? p2.then(this ? fn.bind(this) : fn) : p2;
@@ -1320,7 +1326,7 @@ function findInsertionIndex(id) {
   return start;
 }
 function queueJob(job) {
-  if ((!queue.length || !queue.includes(job, isFlushing && job.allowRecurse ? flushIndex + 1 : flushIndex)) && job !== currentPreFlushParentJob) {
+  if (!queue.length || !queue.includes(job, isFlushing && job.allowRecurse ? flushIndex + 1 : flushIndex)) {
     if (job.id == null) {
       queue.push(job);
     } else {
@@ -1341,38 +1347,27 @@ function invalidateJob(job) {
     queue.splice(i, 1);
   }
 }
-function queueCb(cb, activeQueue, pendingQueue, index2) {
+function queuePostFlushCb(cb) {
   if (!isArray$5(cb)) {
-    if (!activeQueue || !activeQueue.includes(cb, cb.allowRecurse ? index2 + 1 : index2)) {
-      pendingQueue.push(cb);
+    if (!activePostFlushCbs || !activePostFlushCbs.includes(cb, cb.allowRecurse ? postFlushIndex + 1 : postFlushIndex)) {
+      pendingPostFlushCbs.push(cb);
     }
   } else {
-    pendingQueue.push(...cb);
+    pendingPostFlushCbs.push(...cb);
   }
   queueFlush();
 }
-function queuePreFlushCb(cb) {
-  queueCb(cb, activePreFlushCbs, pendingPreFlushCbs, preFlushIndex);
-}
-function queuePostFlushCb(cb) {
-  queueCb(cb, activePostFlushCbs, pendingPostFlushCbs, postFlushIndex);
-}
-function flushPreFlushCbs(seen, parentJob = null) {
-  if (pendingPreFlushCbs.length) {
-    currentPreFlushParentJob = parentJob;
-    activePreFlushCbs = [...new Set(pendingPreFlushCbs)];
-    pendingPreFlushCbs.length = 0;
-    for (preFlushIndex = 0; preFlushIndex < activePreFlushCbs.length; preFlushIndex++) {
-      activePreFlushCbs[preFlushIndex]();
+function flushPreFlushCbs(seen, i = isFlushing ? flushIndex + 1 : 0) {
+  for (; i < queue.length; i++) {
+    const cb = queue[i];
+    if (cb && cb.pre) {
+      queue.splice(i, 1);
+      i--;
+      cb();
     }
-    activePreFlushCbs = null;
-    preFlushIndex = 0;
-    currentPreFlushParentJob = null;
-    flushPreFlushCbs(seen, parentJob);
   }
 }
 function flushPostFlushCbs(seen) {
-  flushPreFlushCbs();
   if (pendingPostFlushCbs.length) {
     const deduped = [...new Set(pendingPostFlushCbs)];
     pendingPostFlushCbs.length = 0;
@@ -1390,11 +1385,20 @@ function flushPostFlushCbs(seen) {
   }
 }
 const getId = (job) => job.id == null ? Infinity : job.id;
+const comparator = (a, b) => {
+  const diff = getId(a) - getId(b);
+  if (diff === 0) {
+    if (a.pre && !b.pre)
+      return -1;
+    if (b.pre && !a.pre)
+      return 1;
+  }
+  return diff;
+};
 function flushJobs(seen) {
   isFlushPending = false;
   isFlushing = true;
-  flushPreFlushCbs(seen);
-  queue.sort((a, b) => getId(a) - getId(b));
+  queue.sort(comparator);
   const check = NOOP;
   try {
     for (flushIndex = 0; flushIndex < queue.length; flushIndex++) {
@@ -1411,21 +1415,21 @@ function flushJobs(seen) {
     flushPostFlushCbs();
     isFlushing = false;
     currentFlushPromise = null;
-    if (queue.length || pendingPreFlushCbs.length || pendingPostFlushCbs.length) {
-      flushJobs(seen);
+    if (queue.length || pendingPostFlushCbs.length) {
+      flushJobs();
     }
   }
 }
 let devtools;
 let buffer = [];
 function setDevtoolsHook(hook, target) {
-  var _a, _b;
+  var _a2, _b;
   devtools = hook;
   if (devtools) {
     devtools.enabled = true;
     buffer.forEach(({ event: event2, args }) => devtools.emit(event2, ...args));
     buffer = [];
-  } else if (typeof window !== "undefined" && window.HTMLElement && !((_b = (_a = window.navigator) === null || _a === void 0 ? void 0 : _a.userAgent) === null || _b === void 0 ? void 0 : _b.includes("jsdom"))) {
+  } else if (typeof window !== "undefined" && window.HTMLElement && !((_b = (_a2 = window.navigator) === null || _a2 === void 0 ? void 0 : _a2.userAgent) === null || _b === void 0 ? void 0 : _b.includes("jsdom"))) {
     const replay = target.__VUE_DEVTOOLS_HOOK_REPLAY__ = target.__VUE_DEVTOOLS_HOOK_REPLAY__ || [];
     replay.push((newHook) => {
       setDevtoolsHook(newHook, target);
@@ -1504,7 +1508,9 @@ function normalizeEmitsOptions(comp, appContext, asMixin = false) {
     }
   }
   if (!raw && !hasExtends) {
-    cache.set(comp, null);
+    if (isObject$2(comp)) {
+      cache.set(comp, null);
+    }
     return null;
   }
   if (isArray$5(raw)) {
@@ -1512,7 +1518,9 @@ function normalizeEmitsOptions(comp, appContext, asMixin = false) {
   } else {
     extend$3(normalized, raw);
   }
-  cache.set(comp, normalized);
+  if (isObject$2(comp)) {
+    cache.set(comp, normalized);
+  }
   return normalized;
 }
 function isEmitListener(options, key) {
@@ -1548,10 +1556,14 @@ function withCtx(fn, ctx = currentRenderingInstance, isNonScopedSlot) {
       setBlockTracking(-1);
     }
     const prevInstance = setCurrentRenderingInstance(ctx);
-    const res = fn(...args);
-    setCurrentRenderingInstance(prevInstance);
-    if (renderFnWithContext._d) {
-      setBlockTracking(1);
+    let res;
+    try {
+      res = fn(...args);
+    } finally {
+      setCurrentRenderingInstance(prevInstance);
+      if (renderFnWithContext._d) {
+        setBlockTracking(1);
+      }
     }
     return res;
   };
@@ -1746,7 +1758,16 @@ function mountSuspense(vnode, container, anchor, parentComponent, parentSuspense
   if (suspense.deps > 0) {
     triggerEvent(vnode, "onPending");
     triggerEvent(vnode, "onFallback");
-    patch(null, vnode.ssFallback, container, anchor, parentComponent, null, isSVG, slotScopeIds);
+    patch(
+      null,
+      vnode.ssFallback,
+      container,
+      anchor,
+      parentComponent,
+      null,
+      isSVG,
+      slotScopeIds
+    );
     setActiveBranch(suspense, vnode.ssFallback);
   } else {
     suspense.resolve();
@@ -1766,7 +1787,17 @@ function patchSuspense(n1, n2, container, anchor, parentComponent, isSVG, slotSc
       if (suspense.deps <= 0) {
         suspense.resolve();
       } else if (isInFallback) {
-        patch(activeBranch, newFallback, container, anchor, parentComponent, null, isSVG, slotScopeIds, optimized);
+        patch(
+          activeBranch,
+          newFallback,
+          container,
+          anchor,
+          parentComponent,
+          null,
+          isSVG,
+          slotScopeIds,
+          optimized
+        );
         setActiveBranch(suspense, newFallback);
       }
     } else {
@@ -1785,7 +1816,17 @@ function patchSuspense(n1, n2, container, anchor, parentComponent, isSVG, slotSc
         if (suspense.deps <= 0) {
           suspense.resolve();
         } else {
-          patch(activeBranch, newFallback, container, anchor, parentComponent, null, isSVG, slotScopeIds, optimized);
+          patch(
+            activeBranch,
+            newFallback,
+            container,
+            anchor,
+            parentComponent,
+            null,
+            isSVG,
+            slotScopeIds,
+            optimized
+          );
           setActiveBranch(suspense, newFallback);
         }
       } else if (activeBranch && isSameVNodeType(newBranch, activeBranch)) {
@@ -1896,7 +1937,17 @@ function createSuspenseBoundary(vnode, parent2, parentComponent, container, hidd
         if (!suspense.isInFallback) {
           return;
         }
-        patch(null, fallbackVNode, container2, anchor2, parentComponent2, null, isSVG2, slotScopeIds, optimized);
+        patch(
+          null,
+          fallbackVNode,
+          container2,
+          anchor2,
+          parentComponent2,
+          null,
+          isSVG2,
+          slotScopeIds,
+          optimized
+        );
         setActiveBranch(suspense, fallbackVNode);
       };
       const delayEnter = fallbackVNode.transition && fallbackVNode.transition.mode === "out-in";
@@ -1904,7 +1955,12 @@ function createSuspenseBoundary(vnode, parent2, parentComponent, container, hidd
         activeBranch.transition.afterLeave = mountFallback;
       }
       suspense.isInFallback = true;
-      unmount(activeBranch, parentComponent2, null, true);
+      unmount(
+        activeBranch,
+        parentComponent2,
+        null,
+        true
+      );
       if (!delayEnter) {
         mountFallback();
       }
@@ -1935,7 +1991,15 @@ function createSuspenseBoundary(vnode, parent2, parentComponent, container, hidd
           vnode2.el = hydratedEl;
         }
         const placeholder = !hydratedEl && instance.subTree.el;
-        setupRenderEffect(instance, vnode2, parentNode(hydratedEl || instance.subTree.el), hydratedEl ? null : next(instance.subTree), suspense, isSVG, optimized);
+        setupRenderEffect(
+          instance,
+          vnode2,
+          parentNode(hydratedEl || instance.subTree.el),
+          hydratedEl ? null : next(instance.subTree),
+          suspense,
+          isSVG,
+          optimized
+        );
         if (placeholder) {
           remove2(placeholder);
         }
@@ -2146,7 +2210,10 @@ function doWatch(source2, cb, { immediate, deep, flush, onTrack, onTrigger } = E
   } else if (flush === "post") {
     scheduler = () => queuePostRenderEffect(job, instance && instance.suspense);
   } else {
-    scheduler = () => queuePreFlushCb(job);
+    job.pre = true;
+    if (instance)
+      job.id = instance.uid;
+    scheduler = () => queueJob(job);
   }
   const effect2 = new ReactiveEffect(getter, scheduler);
   if (cb) {
@@ -2682,10 +2749,14 @@ const KeepAliveImpl = {
       cache.delete(key);
       keys.delete(key);
     }
-    watch(() => [props.include, props.exclude], ([include, exclude]) => {
-      include && pruneCache((name) => matches$1(include, name));
-      exclude && pruneCache((name) => !matches$1(exclude, name));
-    }, { flush: "post", deep: true });
+    watch(
+      () => [props.include, props.exclude],
+      ([include, exclude]) => {
+        include && pruneCache((name) => matches$1(include, name));
+        exclude && pruneCache((name) => !matches$1(exclude, name));
+      },
+      { flush: "post", deep: true }
+    );
     let pendingCacheKey = null;
     const cacheSubtree = () => {
       if (pendingCacheKey != null) {
@@ -2839,7 +2910,7 @@ function injectHook(type, hook, target = currentInstance, prepend = false) {
     return wrappedHook;
   }
 }
-const createHook = (lifecycle) => (hook, target = currentInstance) => (!isInSSRComponentSetup || lifecycle === "sp") && injectHook(lifecycle, hook, target);
+const createHook = (lifecycle) => (hook, target = currentInstance) => (!isInSSRComponentSetup || lifecycle === "sp") && injectHook(lifecycle, (...args) => hook(...args), target);
 const onBeforeMount = createHook("bm");
 const onMounted = createHook("m");
 const onBeforeUpdate = createHook("bu");
@@ -2978,7 +3049,12 @@ function createSlots(slots, dynamicSlots) {
         slots[slot[j].name] = slot[j].fn;
       }
     } else if (slot) {
-      slots[slot.name] = slot.fn;
+      slots[slot.name] = slot.key ? (...args) => {
+        const res = slot.fn(...args);
+        if (res)
+          res.key = slot.key;
+        return res;
+      } : slot.fn;
     }
   }
   return slots;
@@ -2993,7 +3069,9 @@ function renderSlot(slots, name, props = {}, fallback, noSlotted) {
   }
   openBlock();
   const validSlotContent = slot && ensureValidVNode(slot(props));
-  const rendered = createBlock(Fragment, { key: props.key || `_${name}` }, validSlotContent || (fallback ? fallback() : []), validSlotContent && slots._ === 1 ? 64 : -2);
+  const rendered = createBlock(Fragment, {
+    key: props.key || validSlotContent && validSlotContent.key || `_${name}`
+  }, validSlotContent || (fallback ? fallback() : []), validSlotContent && slots._ === 1 ? 64 : -2);
   if (!noSlotted && rendered.scopeId) {
     rendered.slotScopeIds = [rendered.scopeId + "-s"];
   }
@@ -3013,10 +3091,10 @@ function ensureValidVNode(vnodes) {
     return true;
   }) ? vnodes : null;
 }
-function toHandlers(obj) {
+function toHandlers(obj, preserveCaseIfNecessary) {
   const ret = {};
   for (const key in obj) {
-    ret[toHandlerKey(key)] = obj[key];
+    ret[preserveCaseIfNecessary && /[A-Z]/.test(key) ? `on:${key}` : toHandlerKey(key)] = obj[key];
   }
   return ret;
 }
@@ -3350,7 +3428,9 @@ function resolveMergedOptions(instance) {
     }
     mergeOptions(resolved, base, optionMergeStrategies);
   }
-  cache.set(base, resolved);
+  if (isObject$2(base)) {
+    cache.set(base, resolved);
+  }
   return resolved;
 }
 function mergeOptions(to, from, strats, asMixin = false) {
@@ -3614,7 +3694,9 @@ function normalizePropsOptions(comp, appContext, asMixin = false) {
     }
   }
   if (!raw && !hasExtends) {
-    cache.set(comp, EMPTY_ARR);
+    if (isObject$2(comp)) {
+      cache.set(comp, EMPTY_ARR);
+    }
     return EMPTY_ARR;
   }
   if (isArray$5(raw)) {
@@ -3643,7 +3725,9 @@ function normalizePropsOptions(comp, appContext, asMixin = false) {
     }
   }
   const res = [normalized, needCastKeys];
-  cache.set(comp, res);
+  if (isObject$2(comp)) {
+    cache.set(comp, res);
+  }
   return res;
 }
 function validatePropName(key) {
@@ -3674,6 +3758,8 @@ const normalizeSlot = (key, rawSlot, ctx) => {
     return rawSlot;
   }
   const normalized = withCtx((...args) => {
+    if (false)
+      ;
     return normalizeSlotValue(rawSlot(...args));
   }, ctx);
   normalized._c = false;
@@ -3888,7 +3974,7 @@ function setRef(rawRef, oldRawRef, parentSuspense, vnode, isUnmount = false) {
     if (_isString || _isRef) {
       const doSet = () => {
         if (rawRef.f) {
-          const existing = _isString ? refs[ref2] : ref2.value;
+          const existing = _isString ? hasOwn$2(setupState, ref2) ? setupState[ref2] : refs[ref2] : ref2.value;
           if (isUnmount) {
             isArray$5(existing) && remove(existing, refValue);
           } else {
@@ -3952,7 +4038,7 @@ function createHydrationFunctions(rendererInternals) {
     const isFragmentStart = isComment(node) && node.data === "[";
     const onMismatch = () => handleMismatch(node, vnode, parentComponent, parentSuspense, slotScopeIds, isFragmentStart);
     const { type, ref: ref2, shapeFlag, patchFlag } = vnode;
-    const domType = node.nodeType;
+    let domType = node.nodeType;
     vnode.el = node;
     if (patchFlag === -2) {
       optimized = false;
@@ -3984,9 +4070,11 @@ function createHydrationFunctions(rendererInternals) {
         }
         break;
       case Static:
-        if (domType !== 1 && domType !== 3) {
-          nextNode = onMismatch();
-        } else {
+        if (isFragmentStart) {
+          node = nextSibling(node);
+          domType = node.nodeType;
+        }
+        if (domType === 1 || domType === 3) {
           nextNode = node;
           const needToAdoptContent = !vnode.children.length;
           for (let i = 0; i < vnode.staticCount; i++) {
@@ -3997,7 +4085,9 @@ function createHydrationFunctions(rendererInternals) {
             }
             nextNode = nextSibling(nextNode);
           }
-          return nextNode;
+          return isFragmentStart ? nextSibling(nextNode) : nextNode;
+        } else {
+          onMismatch();
         }
         break;
       case Fragment:
@@ -4180,7 +4270,7 @@ function createHydrationRenderer(options) {
 function baseCreateRenderer(options, createHydrationFns) {
   const target = getGlobalThis();
   target.__VUE__ = true;
-  const { insert: hostInsert, remove: hostRemove, patchProp: hostPatchProp, createElement: hostCreateElement, createText: hostCreateText, createComment: hostCreateComment, setText: hostSetText, setElementText: hostSetElementText, parentNode: hostParentNode, nextSibling: hostNextSibling, setScopeId: hostSetScopeId = NOOP, cloneNode: hostCloneNode, insertStaticContent: hostInsertStaticContent } = options;
+  const { insert: hostInsert, remove: hostRemove, patchProp: hostPatchProp, createElement: hostCreateElement, createText: hostCreateText, createComment: hostCreateComment, setText: hostSetText, setElementText: hostSetElementText, parentNode: hostParentNode, nextSibling: hostNextSibling, setScopeId: hostSetScopeId = NOOP, insertStaticContent: hostInsertStaticContent } = options;
   const patch = (n1, n2, container, anchor = null, parentComponent = null, parentSuspense = null, isSVG = false, slotScopeIds = null, optimized = !!n2.dynamicChildren) => {
     if (n1 === n2) {
       return;
@@ -4275,34 +4365,30 @@ function baseCreateRenderer(options, createHydrationFns) {
   const mountElement = (vnode, container, anchor, parentComponent, parentSuspense, isSVG, slotScopeIds, optimized) => {
     let el;
     let vnodeHook;
-    const { type, props, shapeFlag, transition, patchFlag, dirs } = vnode;
-    if (vnode.el && hostCloneNode !== void 0 && patchFlag === -1) {
-      el = vnode.el = hostCloneNode(vnode.el);
-    } else {
-      el = vnode.el = hostCreateElement(vnode.type, isSVG, props && props.is, props);
-      if (shapeFlag & 8) {
-        hostSetElementText(el, vnode.children);
-      } else if (shapeFlag & 16) {
-        mountChildren(vnode.children, el, null, parentComponent, parentSuspense, isSVG && type !== "foreignObject", slotScopeIds, optimized);
-      }
-      if (dirs) {
-        invokeDirectiveHook(vnode, null, parentComponent, "created");
-      }
-      if (props) {
-        for (const key in props) {
-          if (key !== "value" && !isReservedProp(key)) {
-            hostPatchProp(el, key, null, props[key], isSVG, vnode.children, parentComponent, parentSuspense, unmountChildren);
-          }
-        }
-        if ("value" in props) {
-          hostPatchProp(el, "value", null, props.value);
-        }
-        if (vnodeHook = props.onVnodeBeforeMount) {
-          invokeVNodeHook(vnodeHook, parentComponent, vnode);
-        }
-      }
-      setScopeId(el, vnode, vnode.scopeId, slotScopeIds, parentComponent);
+    const { type, props, shapeFlag, transition, dirs } = vnode;
+    el = vnode.el = hostCreateElement(vnode.type, isSVG, props && props.is, props);
+    if (shapeFlag & 8) {
+      hostSetElementText(el, vnode.children);
+    } else if (shapeFlag & 16) {
+      mountChildren(vnode.children, el, null, parentComponent, parentSuspense, isSVG && type !== "foreignObject", slotScopeIds, optimized);
     }
+    if (dirs) {
+      invokeDirectiveHook(vnode, null, parentComponent, "created");
+    }
+    if (props) {
+      for (const key in props) {
+        if (key !== "value" && !isReservedProp(key)) {
+          hostPatchProp(el, key, null, props[key], isSVG, vnode.children, parentComponent, parentSuspense, unmountChildren);
+        }
+      }
+      if ("value" in props) {
+        hostPatchProp(el, "value", null, props.value);
+      }
+      if (vnodeHook = props.onVnodeBeforeMount) {
+        invokeVNodeHook(vnodeHook, parentComponent, vnode);
+      }
+    }
+    setScopeId(el, vnode, vnode.scopeId, slotScopeIds, parentComponent);
     if (dirs) {
       invokeDirectiveHook(vnode, null, parentComponent, "beforeMount");
     }
@@ -4412,6 +4498,13 @@ function baseCreateRenderer(options, createHydrationFns) {
   };
   const patchProps = (el, vnode, oldProps, newProps, parentComponent, parentSuspense, isSVG) => {
     if (oldProps !== newProps) {
+      if (oldProps !== EMPTY_OBJ) {
+        for (const key in oldProps) {
+          if (!isReservedProp(key) && !(key in newProps)) {
+            hostPatchProp(el, key, oldProps[key], null, isSVG, vnode.children, parentComponent, parentSuspense, unmountChildren);
+          }
+        }
+      }
       for (const key in newProps) {
         if (isReservedProp(key))
           continue;
@@ -4419,13 +4512,6 @@ function baseCreateRenderer(options, createHydrationFns) {
         const prev = oldProps[key];
         if (next !== prev && key !== "value") {
           hostPatchProp(el, key, prev, next, isSVG, vnode.children, parentComponent, parentSuspense, unmountChildren);
-        }
-      }
-      if (oldProps !== EMPTY_OBJ) {
-        for (const key in oldProps) {
-          if (!isReservedProp(key) && !(key in newProps)) {
-            hostPatchProp(el, key, oldProps[key], null, isSVG, vnode.children, parentComponent, parentSuspense, unmountChildren);
-          }
         }
       }
       if ("value" in newProps) {
@@ -4522,7 +4608,9 @@ function baseCreateRenderer(options, createHydrationFns) {
             hydrateNode(el, instance.subTree, instance, parentSuspense, null);
           };
           if (isAsyncWrapperVNode) {
-            initialVNode.type.__asyncLoader().then(() => !instance.isUnmounted && hydrateSubTree());
+            initialVNode.type.__asyncLoader().then(
+              () => !instance.isUnmounted && hydrateSubTree()
+            );
           } else {
             hydrateSubTree();
           }
@@ -4564,7 +4652,15 @@ function baseCreateRenderer(options, createHydrationFns) {
         const nextTree = renderComponentRoot(instance);
         const prevTree = instance.subTree;
         instance.subTree = nextTree;
-        patch(prevTree, nextTree, hostParentNode(prevTree.el), getNextHostNode(prevTree), instance, parentSuspense, isSVG);
+        patch(
+          prevTree,
+          nextTree,
+          hostParentNode(prevTree.el),
+          getNextHostNode(prevTree),
+          instance,
+          parentSuspense,
+          isSVG
+        );
         next.el = nextTree.el;
         if (originNext === null) {
           updateHOCHostEl(instance, nextTree.el);
@@ -4577,7 +4673,11 @@ function baseCreateRenderer(options, createHydrationFns) {
         }
       }
     };
-    const effect2 = instance.effect = new ReactiveEffect(componentUpdateFn, () => queueJob(update), instance.scope);
+    const effect2 = instance.effect = new ReactiveEffect(
+      componentUpdateFn,
+      () => queueJob(update),
+      instance.scope
+    );
     const update = instance.update = () => effect2.run();
     update.id = instance.uid;
     toggleRecurse(instance, true);
@@ -4591,7 +4691,7 @@ function baseCreateRenderer(options, createHydrationFns) {
     updateProps(instance, nextVNode.props, prevProps, optimized);
     updateSlots(instance, nextVNode.children, optimized);
     pauseTracking();
-    flushPreFlushCbs(void 0, instance.update);
+    flushPreFlushCbs();
     resetTracking();
   };
   const patchChildren = (n1, n2, container, anchor, parentComponent, parentSuspense, isSVG, slotScopeIds, optimized = false) => {
@@ -4933,6 +5033,7 @@ function baseCreateRenderer(options, createHydrationFns) {
     } else {
       patch(container._vnode || null, vnode, container, null, null, null, isSVG);
     }
+    flushPreFlushCbs();
     flushPostFlushCbs();
     container._vnode = vnode;
   };
@@ -5334,7 +5435,11 @@ function normalizeVNode(child) {
   if (child == null || typeof child === "boolean") {
     return createVNode(Comment);
   } else if (isArray$5(child)) {
-    return createVNode(Fragment, null, child.slice());
+    return createVNode(
+      Fragment,
+      null,
+      child.slice()
+    );
   } else if (typeof child === "object") {
     return cloneIfMounted(child);
   } else {
@@ -5342,7 +5447,7 @@ function normalizeVNode(child) {
   }
 }
 function cloneIfMounted(child) {
-  return child.el === null || child.memo ? child : cloneVNode(child);
+  return child.el === null && child.patchFlag !== -1 || child.memo ? child : cloneVNode(child);
 }
 function normalizeChildren(vnode, children) {
   let type = 0;
@@ -5574,7 +5679,7 @@ function finishComponentSetup(instance, isSSR, skipOptions) {
   const Component = instance.type;
   if (!instance.render) {
     if (!isSSR && compile$1 && !Component.render) {
-      const template2 = Component.template;
+      const template2 = Component.template || resolveMergedOptions(instance).template;
       if (template2) {
         const { isCustomElement, compilerOptions } = instance.appContext.config;
         const { delimiters, compilerOptions: componentCompilerOptions } = Component;
@@ -5787,7 +5892,7 @@ function isMemoSame(cached, memo) {
   }
   return true;
 }
-const version$1 = "3.2.37";
+const version$1 = "3.2.41";
 const _ssrUtils = {
   createComponentInstance,
   setupComponent,
@@ -5832,13 +5937,6 @@ const nodeOps = {
   querySelector: (selector) => doc.querySelector(selector),
   setScopeId(el, id) {
     el.setAttribute(id, "");
-  },
-  cloneNode(el) {
-    const cloned = el.cloneNode(true);
-    if (`_value` in el) {
-      cloned._value = el._value;
-    }
-    return cloned;
   },
   insertStaticContent(content, parent2, anchor, isSVG, start, end) {
     const before = anchor ? anchor.previousSibling : parent2.lastChild;
@@ -6001,24 +6099,6 @@ function patchDOMProp(el, key, value, prevChildren, parentComponent, parentSuspe
   }
   needRemove && el.removeAttribute(key);
 }
-const [_getNow, skipTimestampCheck] = /* @__PURE__ */ (() => {
-  let _getNow2 = Date.now;
-  let skipTimestampCheck2 = false;
-  if (typeof window !== "undefined") {
-    if (Date.now() > document.createEvent("Event").timeStamp) {
-      _getNow2 = performance.now.bind(performance);
-    }
-    const ffMatch = navigator.userAgent.match(/firefox\/(\d+)/i);
-    skipTimestampCheck2 = !!(ffMatch && Number(ffMatch[1]) <= 53);
-  }
-  return [_getNow2, skipTimestampCheck2];
-})();
-let cachedNow = 0;
-const p = /* @__PURE__ */ Promise.resolve();
-const reset = () => {
-  cachedNow = 0;
-};
-const getNow = () => cachedNow || (p.then(reset), cachedNow = _getNow());
 function addEventListener(el, event2, handler, options) {
   el.addEventListener(event2, handler, options);
 }
@@ -6052,14 +6132,20 @@ function parseName(name) {
       options[m[0].toLowerCase()] = true;
     }
   }
-  return [hyphenate(name.slice(2)), options];
+  const event2 = name[2] === ":" ? name.slice(3) : hyphenate(name.slice(2));
+  return [event2, options];
 }
+let cachedNow = 0;
+const p = /* @__PURE__ */ Promise.resolve();
+const getNow = () => cachedNow || (p.then(() => cachedNow = 0), cachedNow = Date.now());
 function createInvoker(initialValue, instance) {
   const invoker = (e) => {
-    const timeStamp = e.timeStamp || _getNow();
-    if (skipTimestampCheck || timeStamp >= invoker.attached - 1) {
-      callWithAsyncErrorHandling(patchStopImmediatePropagation(e, invoker.value), instance, 5, [e]);
+    if (!e._vts) {
+      e._vts = Date.now();
+    } else if (e._vts <= invoker.attached) {
+      return;
     }
+    callWithAsyncErrorHandling(patchStopImmediatePropagation(e, invoker.value), instance, 5, [e]);
   };
   invoker.value = initialValue;
   invoker.attached = getNow();
@@ -6931,7 +7017,10 @@ function initVModelForSSR() {
     if (typeof vnode.type !== "string") {
       return;
     }
-    const modelToUse = resolveDynamicModel(vnode.type.toUpperCase(), vnode.props && vnode.props.type);
+    const modelToUse = resolveDynamicModel(
+      vnode.type.toUpperCase(),
+      vnode.props && vnode.props.type
+    );
     if (modelToUse.getSSRProps) {
       return modelToUse.getSSRProps(binding, vnode);
     }
@@ -7244,7 +7333,7 @@ var vue_runtime_esmBundler = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Objec
 }, Symbol.toStringTag, { value: "Module" }));
 var isVue2 = false;
 /*!
-  * pinia v2.0.14
+  * pinia v2.0.23
   * (c) 2022 Eduardo San Martin Morote
   * @license MIT
   */
@@ -7314,6 +7403,12 @@ function triggerSubscriptions(subscriptions, ...args) {
   });
 }
 function mergeReactiveObjects(target, patchToApply) {
+  if (target instanceof Map && patchToApply instanceof Map) {
+    patchToApply.forEach((value, key) => target.set(key, value));
+  }
+  if (target instanceof Set && patchToApply instanceof Set) {
+    patchToApply.forEach(target.add, target);
+  }
   for (const key in patchToApply) {
     if (!patchToApply.hasOwnProperty(key))
       continue;
@@ -7478,7 +7573,7 @@ function createSetupStore($id, setup, options = {}, pinia2, hot, isOptionsStore)
     },
     $dispose
   };
-  const store = reactive(assign$1({}, partialStore));
+  const store = reactive(partialStore);
   pinia2._s.set($id, store);
   const setupStore = pinia2._e.run(() => {
     scope = effectScope();
@@ -7651,7 +7746,9 @@ const useSimplelayoutStore = defineStore({
       }
     },
     async fetchContentTypeTitles() {
-      const response = await this.axios.get(this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.PortalTypes?b_size=100");
+      const response = await this.axios.get(
+        this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.PortalTypes?b_size=100"
+      );
       response.data.items.forEach((item) => {
         this.contentTypeTitles[item.token] = item.title.replace(/(\[.+?\])/g, "").trim();
       });
@@ -7741,7 +7838,10 @@ const useSimplelayoutStore = defineStore({
     },
     async deleteBlock(position) {
       let newLayouts = JSON.parse(JSON.stringify(this.layouts.items));
-      newLayouts[position.rowIndex].items[position.columnIndex].items.splice(position.blockIndex, 1);
+      newLayouts[position.rowIndex].items[position.columnIndex].items.splice(
+        position.blockIndex,
+        1
+      );
       const data2 = { slblocks_layout: { items: newLayouts } };
       this.modifyLayouts(data2);
     }
@@ -7755,7 +7855,7 @@ var _export_sfc = (sfc, props) => {
   }
   return target;
 };
-const _sfc_main$q = {
+const _sfc_main$r = {
   props: {
     block: {
       type: Object,
@@ -7785,16 +7885,16 @@ const _sfc_main$q = {
     }
   }
 };
-const _hoisted_1$j = {
+const _hoisted_1$k = {
   key: 0,
   class: "card-title"
 };
 const _hoisted_2$j = { class: "position-relative d-inline-block pe-2" };
-const _hoisted_3$f = {
+const _hoisted_3$g = {
   key: 0,
   class: "h6 text-black text-opacity-50"
 };
-const _hoisted_4$f = ["href", "title"];
+const _hoisted_4$g = ["href", "title"];
 const _hoisted_5$f = { class: "position-relative d-inline-block pe-2" };
 const _hoisted_6$d = /* @__PURE__ */ createBaseVNode("svg", {
   xmlns: "http://www.w3.org/2000/svg",
@@ -7812,12 +7912,12 @@ const _hoisted_7$a = {
   class: "h6 text-black text-opacity-50"
 };
 const _hoisted_8$8 = { class: "sl-block-byline text-muted" };
-function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(Fragment, null, [
-    !$options.blockLink ? (openBlock(), createElementBlock("h4", _hoisted_1$j, [
+    !$options.blockLink ? (openBlock(), createElementBlock("h4", _hoisted_1$k, [
       createBaseVNode("div", _hoisted_2$j, [
         createTextVNode(toDisplayString($props.block.title) + " ", 1),
-        !$props.block.show_title ? (openBlock(), createElementBlock("span", _hoisted_3$f, toDisplayString(_ctx.$i18n("(hidden title)")), 1)) : createCommentVNode("", true)
+        !$props.block.show_title ? (openBlock(), createElementBlock("span", _hoisted_3$g, toDisplayString(_ctx.$i18n("(hidden title)")), 1)) : createCommentVNode("", true)
       ])
     ])) : (openBlock(), createElementBlock("a", {
       key: 1,
@@ -7832,13 +7932,13 @@ function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
           !$props.block.show_title ? (openBlock(), createElementBlock("span", _hoisted_7$a, '$i18n("(hidden title)")')) : createCommentVNode("", true)
         ])
       ])
-    ], 8, _hoisted_4$f)),
+    ], 8, _hoisted_4$g)),
     createBaseVNode("div", _hoisted_8$8, toDisplayString($options.blockByline), 1)
   ], 64);
 }
-var BlockTitle = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$q]]);
+var BlockTitle = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$r]]);
 var BlockControls_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$p = {
+const _sfc_main$q = {
   components: {
     BlockTitle
   },
@@ -7885,13 +7985,13 @@ const _sfc_main$p = {
     }
   }
 };
-const _hoisted_1$i = { class: "d-flex justify-content-end align-items-start sl-header-wrapper flex-wrap" };
+const _hoisted_1$j = { class: "d-flex justify-content-end align-items-start sl-header-wrapper flex-wrap" };
 const _hoisted_2$i = { class: "sl-title-wrapper me-auto" };
-const _hoisted_3$e = {
+const _hoisted_3$f = {
   key: 0,
   class: "btn-group btn-group-xs sl-add-block-controls"
 };
-const _hoisted_4$e = {
+const _hoisted_4$f = {
   key: 0,
   class: "btn btn-secondary btn-sm sl-handle sl-move-button"
 };
@@ -7900,9 +8000,9 @@ const _hoisted_6$c = ["id"];
 const _hoisted_7$9 = ["aria-labelledby"];
 const _hoisted_8$7 = ["onClick", "data-row", "data-col", "data-block"];
 const _hoisted_9$7 = ["data-row", "data-col", "data-block"];
-function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockTitle = resolveComponent("BlockTitle");
-  return openBlock(), createElementBlock("div", _hoisted_1$i, [
+  return openBlock(), createElementBlock("div", _hoisted_1$j, [
     createBaseVNode("div", _hoisted_2$i, [
       renderSlot(_ctx.$slots, "title", {}, () => [
         $props.block.title ? (openBlock(), createBlock(_component_BlockTitle, {
@@ -7911,8 +8011,8 @@ function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
         }, null, 8, ["block"])) : createCommentVNode("", true)
       ])
     ]),
-    $setup.sl.canModify ? (openBlock(), createElementBlock("div", _hoisted_3$e, [
-      $props.blockIndex > -1 && $setup.sl.canAddBlocks ? (openBlock(), createElementBlock("button", _hoisted_4$e, [
+    $setup.sl.canModify ? (openBlock(), createElementBlock("div", _hoisted_3$f, [
+      $props.blockIndex > -1 && $setup.sl.canAddBlocks ? (openBlock(), createElementBlock("button", _hoisted_4$f, [
         createBaseVNode("img", normalizeProps(guardReactiveProps($options.moveIcon)), null, 16),
         _hoisted_5$e
       ])) : createCommentVNode("", true),
@@ -7961,9 +8061,9 @@ function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
     ])) : createCommentVNode("", true)
   ]);
 }
-var BlockControls = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$p]]);
+var BlockControls = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$q]]);
 var BlockStructure_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$o = {
+const _sfc_main$p = {
   components: {
     BlockControls
   },
@@ -7999,10 +8099,10 @@ const _sfc_main$o = {
     }
   }
 };
-const _hoisted_1$h = { class: "card" };
+const _hoisted_1$i = { class: "card" };
 const _hoisted_2$h = ["id"];
-const _hoisted_3$d = { class: "card-header" };
-const _hoisted_4$d = {
+const _hoisted_3$e = { class: "card-header" };
+const _hoisted_4$e = {
   key: 0,
   class: "card-body"
 };
@@ -8019,18 +8119,18 @@ const _hoisted_11$4 = {
   key: 2,
   class: "figure-caption mt-1"
 };
-const _hoisted_12$3 = ["innerHTML"];
-function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_12$2 = ["innerHTML"];
+function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockControls = resolveComponent("BlockControls");
-  return openBlock(), createElementBlock("div", _hoisted_1$h, [
+  return openBlock(), createElementBlock("div", _hoisted_1$i, [
     createBaseVNode("a", {
       id: $props.block["id"]
     }, null, 8, _hoisted_2$h),
-    createBaseVNode("div", _hoisted_3$d, [
+    createBaseVNode("div", _hoisted_3$e, [
       createVNode(_component_BlockControls, normalizeProps(guardReactiveProps(_ctx.$props)), null, 16)
     ]),
     renderSlot(_ctx.$slots, "top"),
-    Object.keys($props.block).length !== 0 ? (openBlock(), createElementBlock("div", _hoisted_4$d, [
+    Object.keys($props.block).length !== 0 ? (openBlock(), createElementBlock("div", _hoisted_4$e, [
       createBaseVNode("div", _hoisted_5$d, [
         renderSlot(_ctx.$slots, "body", {}, () => [
           createBaseVNode("div", _hoisted_6$b, [
@@ -8054,7 +8154,7 @@ function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
               key: 1,
               class: "sl-card-text",
               innerHTML: $props.block.text.data
-            }, null, 8, _hoisted_12$3)) : createCommentVNode("", true)
+            }, null, 8, _hoisted_12$2)) : createCommentVNode("", true)
           ])
         ])
       ])
@@ -8062,8 +8162,8 @@ function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
     renderSlot(_ctx.$slots, "footer")
   ]);
 }
-var BlockStructure = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$o]]);
-const _sfc_main$n = {
+var BlockStructure = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$p]]);
+const _sfc_main$o = {
   components: {
     BlockStructure
   },
@@ -8090,16 +8190,16 @@ const _sfc_main$n = {
     }
   }
 };
-function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockStructure = resolveComponent("BlockStructure");
   return openBlock(), createBlock(_component_BlockStructure, normalizeProps(guardReactiveProps(_ctx.$props)), null, 16);
 }
-var BlockFallbackView = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$n]]);
+var BlockFallbackView = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$o]]);
 var __glob_0_2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   "default": BlockFallbackView
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$m = {
+const _sfc_main$n = {
   components: {
     BlockFallbackView
   },
@@ -8136,19 +8236,19 @@ const _sfc_main$m = {
     }
   }
 };
-const _hoisted_1$g = { key: 0 };
+const _hoisted_1$h = { key: 0 };
 const _hoisted_2$g = { key: 1 };
-function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockFallbackView = resolveComponent("BlockFallbackView");
-  return $options.getBlockViewComponentByName !== void 0 ? (openBlock(), createElementBlock("div", _hoisted_1$g, [
+  return $options.getBlockViewComponentByName !== void 0 ? (openBlock(), createElementBlock("div", _hoisted_1$h, [
     (openBlock(), createBlock(resolveDynamicComponent($options.getBlockViewComponentByName), normalizeProps(guardReactiveProps(_ctx.$props)), null, 16))
   ])) : (openBlock(), createElementBlock("div", _hoisted_2$g, [
     createVNode(_component_BlockFallbackView, normalizeProps(guardReactiveProps(_ctx.$props)), null, 16)
   ]));
 }
-var BlockRenderer = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$m]]);
+var BlockRenderer = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$n]]);
 var RowControls_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$l = {
+const _sfc_main$m = {
   props: {
     index: {
       type: Number,
@@ -8179,25 +8279,25 @@ const _sfc_main$l = {
     }
   }
 };
-const _hoisted_1$f = { class: "btn-group btn-group-xs" };
+const _hoisted_1$g = { class: "btn-group btn-group-xs" };
 const _hoisted_2$f = ["id"];
-const _hoisted_3$c = /* @__PURE__ */ createBaseVNode("span", {
+const _hoisted_3$d = /* @__PURE__ */ createBaseVNode("span", {
   "aria-haspopup": "true",
   class: "caret"
 }, null, -1);
-const _hoisted_4$c = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
+const _hoisted_4$d = /* @__PURE__ */ createBaseVNode("span", { class: "sr-only" }, "Toggle Dropdown", -1);
 const _hoisted_5$c = [
-  _hoisted_3$c,
-  _hoisted_4$c
+  _hoisted_3$d,
+  _hoisted_4$d
 ];
 const _hoisted_6$a = ["aria-labelledby"];
 const _hoisted_7$7 = ["onClick"];
-function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", {
     class: "sl-add-row-controls",
     style: normalizeStyle(`z-index:${1e3 - $props.index * 2}`)
   }, [
-    createBaseVNode("div", _hoisted_1$f, [
+    createBaseVNode("div", _hoisted_1$g, [
       createBaseVNode("button", {
         type: "button",
         class: "btn btn-primary",
@@ -8230,7 +8330,7 @@ function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ], 4);
 }
-var RowControls = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l]]);
+var RowControls = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$m]]);
 function ColWidths(asMapping) {
   const widths = [
     { cols: 12, label: "100%" },
@@ -8245,7 +8345,7 @@ function ColWidths(asMapping) {
   return widths;
 }
 var ColControls_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$k = {
+const _sfc_main$l = {
   setup() {
     const sl = useSimplelayoutStore();
     return { sl };
@@ -8307,19 +8407,19 @@ const _sfc_main$k = {
     }
   }
 };
-const _hoisted_1$e = { class: "btn-group btn-group-xs" };
+const _hoisted_1$f = { class: "btn-group btn-group-xs" };
 const _hoisted_2$e = ["id"];
-const _hoisted_3$b = ["aria-labelledby"];
-const _hoisted_4$b = ["onClick"];
+const _hoisted_3$c = ["aria-labelledby"];
+const _hoisted_4$c = ["onClick"];
 const _hoisted_5$b = { class: "btn-group btn-group-xs sl-row-controls" };
-function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(Fragment, null, [
     $props.currentWidth ? (openBlock(), createElementBlock("div", {
       key: 0,
       class: "sl-remove-col-controls",
       style: normalizeStyle(`z-index:${1e3 - 1 - $props.rowIndex * 2}`)
     }, [
-      createBaseVNode("div", _hoisted_1$e, [
+      createBaseVNode("div", _hoisted_1$f, [
         !$options.hasBlocks ? (openBlock(), createElementBlock("button", {
           key: 0,
           class: "btn btn-xs btn-danger",
@@ -8346,10 +8446,10 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
                 class: "dropdown-item",
                 onClick: () => $options.newWidth(width.cols),
                 href: "#"
-              }, toDisplayString(width.label), 9, _hoisted_4$b)
+              }, toDisplayString(width.label), 9, _hoisted_4$c)
             ]);
           }), 128))
-        ], 8, _hoisted_3$b)
+        ], 8, _hoisted_3$c)
       ])
     ], 4)) : createCommentVNode("", true),
     createBaseVNode("div", {
@@ -8365,7 +8465,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
     ], 2)
   ], 64);
 }
-var ColControls = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k]]);
+var ColControls = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l]]);
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 function getDefaultExportFromCjs(x) {
   return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
@@ -8387,7 +8487,7 @@ function getAugmentedNamespace(n) {
 }
 var jquery = { exports: {} };
 /*!
- * jQuery JavaScript Library v3.6.0
+ * jQuery JavaScript Library v3.6.1
  * https://jquery.com/
  *
  * Includes Sizzle.js
@@ -8397,7 +8497,7 @@ var jquery = { exports: {} };
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2021-03-02T17:08Z
+ * Date: 2022-08-26T17:52Z
  */
 (function(module2) {
   (function(global2, factory) {
@@ -8459,7 +8559,7 @@ var jquery = { exports: {} };
       }
       return typeof obj === "object" || typeof obj === "function" ? class2type[toString2.call(obj)] || "object" : typeof obj;
     }
-    var version2 = "3.6.0", jQuery = function(selector, context) {
+    var version2 = "3.6.1", jQuery = function(selector, context) {
       return new jQuery.fn.init(selector, context);
     };
     jQuery.fn = jQuery.prototype = {
@@ -8610,7 +8710,10 @@ var jquery = { exports: {} };
         var ret = results || [];
         if (arr2 != null) {
           if (isArrayLike(Object(arr2))) {
-            jQuery.merge(ret, typeof arr2 === "string" ? [arr2] : arr2);
+            jQuery.merge(
+              ret,
+              typeof arr2 === "string" ? [arr2] : arr2
+            );
           } else {
             push2.call(ret, arr2);
           }
@@ -8664,9 +8767,12 @@ var jquery = { exports: {} };
     if (typeof Symbol === "function") {
       jQuery.fn[Symbol.iterator] = arr[Symbol.iterator];
     }
-    jQuery.each("Boolean Number String Function Array Date RegExp Object Error Symbol".split(" "), function(_i, name) {
-      class2type["[object " + name + "]"] = name.toLowerCase();
-    });
+    jQuery.each(
+      "Boolean Number String Function Array Date RegExp Object Error Symbol".split(" "),
+      function(_i, name) {
+        class2type["[object " + name + "]"] = name.toLowerCase();
+      }
+    );
     function isArrayLike(obj) {
       var length = !!obj && "length" in obj && obj.length, type = toType(obj);
       if (isFunction2(obj) || isWindow(obj)) {
@@ -8688,16 +8794,16 @@ var jquery = { exports: {} };
           }
         }
         return -1;
-      }, booleans = "checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped", whitespace = "[\\x20\\t\\r\\n\\f]", identifier = "(?:\\\\[\\da-fA-F]{1,6}" + whitespace + "?|\\\\[^\\r\\n\\f]|[\\w-]|[^\0-\\x7f])+", attributes = "\\[" + whitespace + "*(" + identifier + ")(?:" + whitespace + "*([*^$|!~]?=)" + whitespace + `*(?:'((?:\\\\.|[^\\\\'])*)'|"((?:\\\\.|[^\\\\"])*)"|(` + identifier + "))|)" + whitespace + "*\\]", pseudos = ":(" + identifier + `)(?:\\((('((?:\\\\.|[^\\\\'])*)'|"((?:\\\\.|[^\\\\"])*)")|((?:\\\\.|[^\\\\()[\\]]|` + attributes + ")*)|.*)\\)|)", rwhitespace = new RegExp(whitespace + "+", "g"), rtrim2 = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g"), rcomma = new RegExp("^" + whitespace + "*," + whitespace + "*"), rcombinators = new RegExp("^" + whitespace + "*([>+~]|" + whitespace + ")" + whitespace + "*"), rdescend = new RegExp(whitespace + "|>"), rpseudo = new RegExp(pseudos), ridentifier = new RegExp("^" + identifier + "$"), matchExpr = {
+      }, booleans = "checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped", whitespace2 = "[\\x20\\t\\r\\n\\f]", identifier = "(?:\\\\[\\da-fA-F]{1,6}" + whitespace2 + "?|\\\\[^\\r\\n\\f]|[\\w-]|[^\0-\\x7f])+", attributes = "\\[" + whitespace2 + "*(" + identifier + ")(?:" + whitespace2 + "*([*^$|!~]?=)" + whitespace2 + `*(?:'((?:\\\\.|[^\\\\'])*)'|"((?:\\\\.|[^\\\\"])*)"|(` + identifier + "))|)" + whitespace2 + "*\\]", pseudos = ":(" + identifier + `)(?:\\((('((?:\\\\.|[^\\\\'])*)'|"((?:\\\\.|[^\\\\"])*)")|((?:\\\\.|[^\\\\()[\\]]|` + attributes + ")*)|.*)\\)|)", rwhitespace = new RegExp(whitespace2 + "+", "g"), rtrim2 = new RegExp("^" + whitespace2 + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace2 + "+$", "g"), rcomma = new RegExp("^" + whitespace2 + "*," + whitespace2 + "*"), rcombinators = new RegExp("^" + whitespace2 + "*([>+~]|" + whitespace2 + ")" + whitespace2 + "*"), rdescend = new RegExp(whitespace2 + "|>"), rpseudo = new RegExp(pseudos), ridentifier = new RegExp("^" + identifier + "$"), matchExpr = {
         "ID": new RegExp("^#(" + identifier + ")"),
         "CLASS": new RegExp("^\\.(" + identifier + ")"),
         "TAG": new RegExp("^(" + identifier + "|[*])"),
         "ATTR": new RegExp("^" + attributes),
         "PSEUDO": new RegExp("^" + pseudos),
-        "CHILD": new RegExp("^:(only|first|last|nth|nth-last)-(child|of-type)(?:\\(" + whitespace + "*(even|odd|(([+-]|)(\\d*)n|)" + whitespace + "*(?:([+-]|)" + whitespace + "*(\\d+)|))" + whitespace + "*\\)|)", "i"),
+        "CHILD": new RegExp("^:(only|first|last|nth|nth-last)-(child|of-type)(?:\\(" + whitespace2 + "*(even|odd|(([+-]|)(\\d*)n|)" + whitespace2 + "*(?:([+-]|)" + whitespace2 + "*(\\d+)|))" + whitespace2 + "*\\)|)", "i"),
         "bool": new RegExp("^(?:" + booleans + ")$", "i"),
-        "needsContext": new RegExp("^" + whitespace + "*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\(" + whitespace + "*((?:-\\d)?\\d*)" + whitespace + "*\\)|)(?=[^-]|$)", "i")
-      }, rhtml2 = /HTML$/i, rinputs = /^(?:input|select|textarea|button)$/i, rheader = /^h\d$/i, rnative = /^[^{]+\{\s*\[native \w/, rquickExpr2 = /^(?:#([\w-]+)|(\w+)|\.([\w-]+))$/, rsibling = /[+~]/, runescape = new RegExp("\\\\[\\da-fA-F]{1,6}" + whitespace + "?|\\\\([^\\r\\n\\f])", "g"), funescape = function(escape2, nonHex) {
+        "needsContext": new RegExp("^" + whitespace2 + "*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\(" + whitespace2 + "*((?:-\\d)?\\d*)" + whitespace2 + "*\\)|)(?=[^-]|$)", "i")
+      }, rhtml2 = /HTML$/i, rinputs = /^(?:input|select|textarea|button)$/i, rheader = /^h\d$/i, rnative = /^[^{]+\{\s*\[native \w/, rquickExpr2 = /^(?:#([\w-]+)|(\w+)|\.([\w-]+))$/, rsibling = /[+~]/, runescape = new RegExp("\\\\[\\da-fA-F]{1,6}" + whitespace2 + "?|\\\\([^\\r\\n\\f])", "g"), funescape = function(escape2, nonHex) {
         var high = "0x" + escape2.slice(1) - 65536;
         return nonHex ? nonHex : high < 0 ? String.fromCharCode(high + 65536) : String.fromCharCode(high >> 10 | 55296, high & 1023 | 56320);
       }, rcssescape = /([\0-\x1f\x7f]|^-?\d)|^-$|[^\0-\x1f\x7f-\uFFFF\w-]/g, fcssescape = function(ch, asCodePoint) {
@@ -8710,11 +8816,17 @@ var jquery = { exports: {} };
         return "\\" + ch;
       }, unloadHandler = function() {
         setDocument();
-      }, inDisabledFieldset = addCombinator(function(elem) {
-        return elem.disabled === true && elem.nodeName.toLowerCase() === "fieldset";
-      }, { dir: "parentNode", next: "legend" });
+      }, inDisabledFieldset = addCombinator(
+        function(elem) {
+          return elem.disabled === true && elem.nodeName.toLowerCase() === "fieldset";
+        },
+        { dir: "parentNode", next: "legend" }
+      );
       try {
-        push3.apply(arr2 = slice3.call(preferredDoc.childNodes), preferredDoc.childNodes);
+        push3.apply(
+          arr2 = slice3.call(preferredDoc.childNodes),
+          preferredDoc.childNodes
+        );
         arr2[preferredDoc.childNodes.length].nodeType;
       } catch (e) {
         push3 = {
@@ -8783,7 +8895,10 @@ var jquery = { exports: {} };
                 newSelector = groups.join(",");
               }
               try {
-                push3.apply(results, newContext.querySelectorAll(newSelector));
+                push3.apply(
+                  results,
+                  newContext.querySelectorAll(newSelector)
+                );
                 return results;
               } catch (qsaError) {
                 nonnativeSelectorCache(selector, true);
@@ -9001,10 +9116,10 @@ var jquery = { exports: {} };
             var input;
             docElem.appendChild(el).innerHTML = "<a id='" + expando2 + "'></a><select id='" + expando2 + "-\r\\' msallowcapture=''><option selected=''></option></select>";
             if (el.querySelectorAll("[msallowcapture^='']").length) {
-              rbuggyQSA.push("[*^$]=" + whitespace + `*(?:''|"")`);
+              rbuggyQSA.push("[*^$]=" + whitespace2 + `*(?:''|"")`);
             }
             if (!el.querySelectorAll("[selected]").length) {
-              rbuggyQSA.push("\\[" + whitespace + "*(?:value|" + booleans + ")");
+              rbuggyQSA.push("\\[" + whitespace2 + "*(?:value|" + booleans + ")");
             }
             if (!el.querySelectorAll("[id~=" + expando2 + "-]").length) {
               rbuggyQSA.push("~=");
@@ -9013,7 +9128,7 @@ var jquery = { exports: {} };
             input.setAttribute("name", "");
             el.appendChild(input);
             if (!el.querySelectorAll("[name='']").length) {
-              rbuggyQSA.push("\\[" + whitespace + "*name" + whitespace + "*=" + whitespace + `*(?:''|"")`);
+              rbuggyQSA.push("\\[" + whitespace2 + "*name" + whitespace2 + "*=" + whitespace2 + `*(?:''|"")`);
             }
             if (!el.querySelectorAll(":checked").length) {
               rbuggyQSA.push(":checked");
@@ -9030,7 +9145,7 @@ var jquery = { exports: {} };
             input.setAttribute("type", "hidden");
             el.appendChild(input).setAttribute("name", "D");
             if (el.querySelectorAll("[name=d]").length) {
-              rbuggyQSA.push("name" + whitespace + "*[*^$|!~]?=");
+              rbuggyQSA.push("name" + whitespace2 + "*[*^$|!~]?=");
             }
             if (el.querySelectorAll(":enabled").length !== 2) {
               rbuggyQSA.push(":enabled", ":disabled");
@@ -9244,9 +9359,14 @@ var jquery = { exports: {} };
           },
           "CLASS": function(className) {
             var pattern = classCache[className + " "];
-            return pattern || (pattern = new RegExp("(^|" + whitespace + ")" + className + "(" + whitespace + "|$)")) && classCache(className, function(elem) {
-              return pattern.test(typeof elem.className === "string" && elem.className || typeof elem.getAttribute !== "undefined" && elem.getAttribute("class") || "");
-            });
+            return pattern || (pattern = new RegExp("(^|" + whitespace2 + ")" + className + "(" + whitespace2 + "|$)")) && classCache(
+              className,
+              function(elem) {
+                return pattern.test(
+                  typeof elem.className === "string" && elem.className || typeof elem.getAttribute !== "undefined" && elem.getAttribute("class") || ""
+                );
+              }
+            );
           },
           "ATTR": function(name, operator, check) {
             return function(elem) {
@@ -9613,7 +9733,11 @@ var jquery = { exports: {} };
           postFinder = setMatcher(postFinder, postSelector);
         }
         return markFunction(function(seed, results, context, xml) {
-          var temp, i2, elem, preMap = [], postMap = [], preexisting = results.length, elems = seed || multipleContexts(selector || "*", context.nodeType ? [context] : context, []), matcherIn = preFilter && (seed || !selector) ? condense(elems, preMap, preFilter, context, xml) : elems, matcherOut = matcher ? postFinder || (seed ? preFilter : preexisting || postFilter) ? [] : results : matcherIn;
+          var temp, i2, elem, preMap = [], postMap = [], preexisting = results.length, elems = seed || multipleContexts(
+            selector || "*",
+            context.nodeType ? [context] : context,
+            []
+          ), matcherIn = preFilter && (seed || !selector) ? condense(elems, preMap, preFilter, context, xml) : elems, matcherOut = matcher ? postFinder || (seed ? preFilter : preexisting || postFilter) ? [] : results : matcherIn;
           if (matcher) {
             matcher(matcherIn, matcherOut, context, xml);
           }
@@ -9647,7 +9771,9 @@ var jquery = { exports: {} };
               }
             }
           } else {
-            matcherOut = condense(matcherOut === results ? matcherOut.splice(preexisting, matcherOut.length) : matcherOut);
+            matcherOut = condense(
+              matcherOut === results ? matcherOut.splice(preexisting, matcherOut.length) : matcherOut
+            );
             if (postFinder) {
               postFinder(null, results, matcherOut, xml);
             } else {
@@ -9678,7 +9804,16 @@ var jquery = { exports: {} };
                   break;
                 }
               }
-              return setMatcher(i2 > 1 && elementMatcher(matchers), i2 > 1 && toSelector(tokens.slice(0, i2 - 1).concat({ value: tokens[i2 - 2].type === " " ? "*" : "" })).replace(rtrim2, "$1"), matcher, i2 < j && matcherFromTokens(tokens.slice(i2, j)), j < len && matcherFromTokens(tokens = tokens.slice(j)), j < len && toSelector(tokens));
+              return setMatcher(
+                i2 > 1 && elementMatcher(matchers),
+                i2 > 1 && toSelector(
+                  tokens.slice(0, i2 - 1).concat({ value: tokens[i2 - 2].type === " " ? "*" : "" })
+                ).replace(rtrim2, "$1"),
+                matcher,
+                i2 < j && matcherFromTokens(tokens.slice(i2, j)),
+                j < len && matcherFromTokens(tokens = tokens.slice(j)),
+                j < len && toSelector(tokens)
+              );
             }
             matchers.push(matcher);
           }
@@ -9761,7 +9896,10 @@ var jquery = { exports: {} };
               elementMatchers.push(cached);
             }
           }
-          cached = compilerCache(selector, matcherFromGroupMatchers(elementMatchers, setMatchers));
+          cached = compilerCache(
+            selector,
+            matcherFromGroupMatchers(elementMatchers, setMatchers)
+          );
           cached.selector = selector;
         }
         return cached;
@@ -9787,7 +9925,10 @@ var jquery = { exports: {} };
               break;
             }
             if (find2 = Expr.find[type]) {
-              if (seed = find2(token.matches[0].replace(runescape, funescape), rsibling.test(tokens[0].type) && testContext(context.parentNode) || context)) {
+              if (seed = find2(
+                token.matches[0].replace(runescape, funescape),
+                rsibling.test(tokens[0].type) && testContext(context.parentNode) || context
+              )) {
                 tokens.splice(i2, 1);
                 selector = seed.length && toSelector(tokens);
                 if (!selector) {
@@ -9799,7 +9940,13 @@ var jquery = { exports: {} };
             }
           }
         }
-        (compiled || compile2(selector, match2))(seed, context, !documentIsHTML, results, !context || rsibling.test(selector) && testContext(context.parentNode) || context);
+        (compiled || compile2(selector, match2))(
+          seed,
+          context,
+          !documentIsHTML,
+          results,
+          !context || rsibling.test(selector) && testContext(context.parentNode) || context
+        );
         return results;
       };
       support2.sortStable = expando2.split("").sort(sortOrder).join("") === expando2;
@@ -9930,7 +10077,11 @@ var jquery = { exports: {} };
         return this.pushStack(winnow(this, selector || [], true));
       },
       is: function(selector) {
-        return !!winnow(this, typeof selector === "string" && rneedsContext.test(selector) ? jQuery(selector) : selector || [], false).length;
+        return !!winnow(
+          this,
+          typeof selector === "string" && rneedsContext.test(selector) ? jQuery(selector) : selector || [],
+          false
+        ).length;
       }
     });
     var rootjQuery, rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]+))$/, init = jQuery.fn.init = function(selector, context, root2) {
@@ -9948,7 +10099,11 @@ var jquery = { exports: {} };
         if (match2 && (match2[1] || !context)) {
           if (match2[1]) {
             context = context instanceof jQuery ? context[0] : context;
-            jQuery.merge(this, jQuery.parseHTML(match2[1], context && context.nodeType ? context.ownerDocument || context : document2, true));
+            jQuery.merge(this, jQuery.parseHTML(
+              match2[1],
+              context && context.nodeType ? context.ownerDocument || context : document2,
+              true
+            ));
             if (rsingleTag.test(match2[1]) && jQuery.isPlainObject(context)) {
               for (match2 in context) {
                 if (isFunction2(this[match2])) {
@@ -10022,13 +10177,22 @@ var jquery = { exports: {} };
         if (typeof elem === "string") {
           return indexOf2.call(jQuery(elem), this[0]);
         }
-        return indexOf2.call(this, elem.jquery ? elem[0] : elem);
+        return indexOf2.call(
+          this,
+          elem.jquery ? elem[0] : elem
+        );
       },
       add: function(selector, context) {
-        return this.pushStack(jQuery.uniqueSort(jQuery.merge(this.get(), jQuery(selector, context))));
+        return this.pushStack(
+          jQuery.uniqueSort(
+            jQuery.merge(this.get(), jQuery(selector, context))
+          )
+        );
       },
       addBack: function(selector) {
-        return this.add(selector == null ? this.prevObject : this.prevObject.filter(selector));
+        return this.add(
+          selector == null ? this.prevObject : this.prevObject.filter(selector)
+        );
       }
     });
     function sibling(cur, dir2) {
@@ -10284,7 +10448,10 @@ var jquery = { exports: {} };
                   if (returned && isFunction2(returned.promise)) {
                     returned.promise().progress(newDefer.notify).done(newDefer.resolve).fail(newDefer.reject);
                   } else {
-                    newDefer[tuple[0] + "With"](this, fn ? [returned] : arguments);
+                    newDefer[tuple[0] + "With"](
+                      this,
+                      fn ? [returned] : arguments
+                    );
                   }
                 });
               });
@@ -10307,10 +10474,24 @@ var jquery = { exports: {} };
                   then = returned && (typeof returned === "object" || typeof returned === "function") && returned.then;
                   if (isFunction2(then)) {
                     if (special) {
-                      then.call(returned, resolve2(maxDepth, deferred2, Identity, special), resolve2(maxDepth, deferred2, Thrower, special));
+                      then.call(
+                        returned,
+                        resolve2(maxDepth, deferred2, Identity, special),
+                        resolve2(maxDepth, deferred2, Thrower, special)
+                      );
                     } else {
                       maxDepth++;
-                      then.call(returned, resolve2(maxDepth, deferred2, Identity, special), resolve2(maxDepth, deferred2, Thrower, special), resolve2(maxDepth, deferred2, Identity, deferred2.notifyWith));
+                      then.call(
+                        returned,
+                        resolve2(maxDepth, deferred2, Identity, special),
+                        resolve2(maxDepth, deferred2, Thrower, special),
+                        resolve2(
+                          maxDepth,
+                          deferred2,
+                          Identity,
+                          deferred2.notifyWith
+                        )
+                      );
                     }
                   } else {
                     if (handler !== Identity) {
@@ -10324,7 +10505,10 @@ var jquery = { exports: {} };
                     mightThrow();
                   } catch (e) {
                     if (jQuery.Deferred.exceptionHook) {
-                      jQuery.Deferred.exceptionHook(e, process2.stackTrace);
+                      jQuery.Deferred.exceptionHook(
+                        e,
+                        process2.stackTrace
+                      );
                     }
                     if (depth + 1 >= maxDepth) {
                       if (handler !== Thrower) {
@@ -10346,9 +10530,28 @@ var jquery = { exports: {} };
               };
             }
             return jQuery.Deferred(function(newDefer) {
-              tuples[0][3].add(resolve2(0, newDefer, isFunction2(onProgress) ? onProgress : Identity, newDefer.notifyWith));
-              tuples[1][3].add(resolve2(0, newDefer, isFunction2(onFulfilled) ? onFulfilled : Identity));
-              tuples[2][3].add(resolve2(0, newDefer, isFunction2(onRejected) ? onRejected : Thrower));
+              tuples[0][3].add(
+                resolve2(
+                  0,
+                  newDefer,
+                  isFunction2(onProgress) ? onProgress : Identity,
+                  newDefer.notifyWith
+                )
+              );
+              tuples[1][3].add(
+                resolve2(
+                  0,
+                  newDefer,
+                  isFunction2(onFulfilled) ? onFulfilled : Identity
+                )
+              );
+              tuples[2][3].add(
+                resolve2(
+                  0,
+                  newDefer,
+                  isFunction2(onRejected) ? onRejected : Thrower
+                )
+              );
             }).promise();
           },
           promise: function(obj) {
@@ -10359,9 +10562,15 @@ var jquery = { exports: {} };
           var list = tuple[2], stateString = tuple[5];
           promise[tuple[1]] = list.add;
           if (stateString) {
-            list.add(function() {
-              state = stateString;
-            }, tuples[3 - i][2].disable, tuples[3 - i][3].disable, tuples[0][2].lock, tuples[0][3].lock);
+            list.add(
+              function() {
+                state = stateString;
+              },
+              tuples[3 - i][2].disable,
+              tuples[3 - i][3].disable,
+              tuples[0][2].lock,
+              tuples[0][3].lock
+            );
           }
           list.add(tuple[3].fire);
           deferred[tuple[0]] = function() {
@@ -10387,7 +10596,12 @@ var jquery = { exports: {} };
           };
         };
         if (remaining <= 1) {
-          adoptValue(singleValue, primary.done(updateFunc(i)).resolve, primary.reject, !remaining);
+          adoptValue(
+            singleValue,
+            primary.done(updateFunc(i)).resolve,
+            primary.reject,
+            !remaining
+          );
           if (primary.state() === "pending" || isFunction2(resolveValues[i] && resolveValues[i].then)) {
             return primary.then();
           }
@@ -10467,7 +10681,11 @@ var jquery = { exports: {} };
         }
         if (fn) {
           for (; i < len; i++) {
-            fn(elems[i], key, raw ? value : value.call(elems[i], i, fn(elems[i], key)));
+            fn(
+              elems[i],
+              key,
+              raw ? value : value.call(elems[i], i, fn(elems[i], key))
+            );
           }
         }
       }
@@ -10921,7 +11139,11 @@ var jquery = { exports: {} };
     function setGlobalEval(elems, refElements) {
       var i = 0, l = elems.length;
       for (; i < l; i++) {
-        dataPriv.set(elems[i], "globalEval", !refElements || dataPriv.get(refElements[i], "globalEval"));
+        dataPriv.set(
+          elems[i],
+          "globalEval",
+          !refElements || dataPriv.get(refElements[i], "globalEval")
+        );
       }
     }
     var rhtml = /<|&#?\w+;/;
@@ -11304,7 +11526,11 @@ var jquery = { exports: {} };
             }
           } else if (saved.length) {
             dataPriv.set(this, type, {
-              value: jQuery.event.trigger(jQuery.extend(saved[0], jQuery.Event.prototype), saved.slice(1), this)
+              value: jQuery.event.trigger(
+                jQuery.extend(saved[0], jQuery.Event.prototype),
+                saved.slice(1),
+                this
+              )
             });
             event2.stopImmediatePropagation();
           }
@@ -11408,8 +11634,8 @@ var jquery = { exports: {} };
           leverageNative(this, type);
           return true;
         },
-        _default: function() {
-          return true;
+        _default: function(event2) {
+          return dataPriv.get(event2.target, type);
         },
         delegateType
       };
@@ -11445,7 +11671,11 @@ var jquery = { exports: {} };
         var handleObj, type;
         if (types && types.preventDefault && types.handleObj) {
           handleObj = types.handleObj;
-          jQuery(types.delegateTarget).off(handleObj.namespace ? handleObj.origType + "." + handleObj.namespace : handleObj.origType, handleObj.selector, handleObj.handler);
+          jQuery(types.delegateTarget).off(
+            handleObj.namespace ? handleObj.origType + "." + handleObj.namespace : handleObj.origType,
+            handleObj.selector,
+            handleObj.handler
+          );
           return this;
         }
         if (typeof types === "object") {
@@ -11466,7 +11696,7 @@ var jquery = { exports: {} };
         });
       }
     });
-    var rnoInnerhtml = /<script|<style|<link/i, rchecked = /checked\s*(?:[^=]|=\s*.checked.)/i, rcleanScript = /^\s*<!(?:\[CDATA\[|--)|(?:\]\]|--)>\s*$/g;
+    var rnoInnerhtml = /<script|<style|<link/i, rchecked = /checked\s*(?:[^=]|=\s*.checked.)/i, rcleanScript = /^\s*<!\[CDATA\[|\]\]>\s*$/g;
     function manipulationTarget(elem, content) {
       if (nodeName(elem, "table") && nodeName(content.nodeType !== 11 ? content : content.firstChild, "tr")) {
         return jQuery(elem).children("tbody")[0] || elem;
@@ -11756,6 +11986,7 @@ var jquery = { exports: {} };
       };
     });
     var rnumnonpx = new RegExp("^(" + pnum + ")(?!px)[a-z%]+$", "i");
+    var rcustomProp = /^--/;
     var getStyles = function(elem) {
       var view = elem.ownerDocument.defaultView;
       if (!view || !view.opener) {
@@ -11776,6 +12007,11 @@ var jquery = { exports: {} };
       return ret;
     };
     var rboxStyle = new RegExp(cssExpand.join("|"), "i");
+    var whitespace = "[\\x20\\t\\r\\n\\f]";
+    var rtrimCSS = new RegExp(
+      "^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$",
+      "g"
+    );
     (function() {
       function computeStyleTests() {
         if (!div) {
@@ -11847,10 +12083,13 @@ var jquery = { exports: {} };
       });
     })();
     function curCSS(elem, name, computed2) {
-      var width, minWidth, maxWidth, ret, style = elem.style;
+      var width, minWidth, maxWidth, ret, isCustomProp = rcustomProp.test(name), style = elem.style;
       computed2 = computed2 || getStyles(elem);
       if (computed2) {
         ret = computed2.getPropertyValue(name) || computed2[name];
+        if (isCustomProp) {
+          ret = ret.replace(rtrimCSS, "$1");
+        }
         if (ret === "" && !isAttached(elem)) {
           ret = jQuery.style(elem, name);
         }
@@ -11898,7 +12137,7 @@ var jquery = { exports: {} };
       }
       return vendorProps[name] = vendorPropName(name) || name;
     }
-    var rdisplayswap = /^(none|table(?!-c[ea]).+)/, rcustomProp = /^--/, cssShow = { position: "absolute", visibility: "hidden", display: "block" }, cssNormalTransform = {
+    var rdisplayswap = /^(none|table(?!-c[ea]).+)/, cssShow = { position: "absolute", visibility: "hidden", display: "block" }, cssNormalTransform = {
       letterSpacing: "0",
       fontWeight: "400"
     };
@@ -11932,7 +12171,9 @@ var jquery = { exports: {} };
         }
       }
       if (!isBorderBox && computedVal >= 0) {
-        delta += Math.max(0, Math.ceil(elem["offset" + dimension[0].toUpperCase() + dimension.slice(1)] - computedVal - delta - extra - 0.5)) || 0;
+        delta += Math.max(0, Math.ceil(
+          elem["offset" + dimension[0].toUpperCase() + dimension.slice(1)] - computedVal - delta - extra - 0.5
+        )) || 0;
       }
       return delta;
     }
@@ -11952,7 +12193,14 @@ var jquery = { exports: {} };
         }
       }
       val = parseFloat(val) || 0;
-      return val + boxModelAdjustment(elem, dimension, extra || (isBorderBox ? "border" : "content"), valueIsBorderBox, styles, val) + "px";
+      return val + boxModelAdjustment(
+        elem,
+        dimension,
+        extra || (isBorderBox ? "border" : "content"),
+        valueIsBorderBox,
+        styles,
+        val
+      ) + "px";
     }
     jQuery.extend({
       cssHooks: {
@@ -12058,9 +12306,17 @@ var jquery = { exports: {} };
           }
         },
         set: function(elem, value, extra) {
-          var matches2, styles = getStyles(elem), scrollboxSizeBuggy = !support.scrollboxSize() && styles.position === "absolute", boxSizingNeeded = scrollboxSizeBuggy || extra, isBorderBox = boxSizingNeeded && jQuery.css(elem, "boxSizing", false, styles) === "border-box", subtract = extra ? boxModelAdjustment(elem, dimension, extra, isBorderBox, styles) : 0;
+          var matches2, styles = getStyles(elem), scrollboxSizeBuggy = !support.scrollboxSize() && styles.position === "absolute", boxSizingNeeded = scrollboxSizeBuggy || extra, isBorderBox = boxSizingNeeded && jQuery.css(elem, "boxSizing", false, styles) === "border-box", subtract = extra ? boxModelAdjustment(
+            elem,
+            dimension,
+            extra,
+            isBorderBox,
+            styles
+          ) : 0;
           if (isBorderBox && scrollboxSizeBuggy) {
-            subtract -= Math.ceil(elem["offset" + dimension[0].toUpperCase() + dimension.slice(1)] - parseFloat(styles[dimension]) - boxModelAdjustment(elem, dimension, "border", false, styles) - 0.5);
+            subtract -= Math.ceil(
+              elem["offset" + dimension[0].toUpperCase() + dimension.slice(1)] - parseFloat(styles[dimension]) - boxModelAdjustment(elem, dimension, "border", false, styles) - 0.5
+            );
           }
           if (subtract && (matches2 = rcssNum.exec(value)) && (matches2[3] || "px") !== "px") {
             elem.style[dimension] = value;
@@ -12070,13 +12326,16 @@ var jquery = { exports: {} };
         }
       };
     });
-    jQuery.cssHooks.marginLeft = addGetHookIf(support.reliableMarginLeft, function(elem, computed2) {
-      if (computed2) {
-        return (parseFloat(curCSS(elem, "marginLeft")) || elem.getBoundingClientRect().left - swap(elem, { marginLeft: 0 }, function() {
-          return elem.getBoundingClientRect().left;
-        })) + "px";
+    jQuery.cssHooks.marginLeft = addGetHookIf(
+      support.reliableMarginLeft,
+      function(elem, computed2) {
+        if (computed2) {
+          return (parseFloat(curCSS(elem, "marginLeft")) || elem.getBoundingClientRect().left - swap(elem, { marginLeft: 0 }, function() {
+            return elem.getBoundingClientRect().left;
+          })) + "px";
+        }
       }
-    });
+    );
     jQuery.each({
       margin: "",
       padding: "",
@@ -12133,7 +12392,13 @@ var jquery = { exports: {} };
       run: function(percent) {
         var eased, hooks = Tween.propHooks[this.prop];
         if (this.options.duration) {
-          this.pos = eased = jQuery.easing[this.easing](percent, this.options.duration * percent, 0, 1, this.options.duration);
+          this.pos = eased = jQuery.easing[this.easing](
+            percent,
+            this.options.duration * percent,
+            0,
+            1,
+            this.options.duration
+          );
         } else {
           this.pos = eased = percent;
         }
@@ -12406,7 +12671,13 @@ var jquery = { exports: {} };
         duration: options.duration,
         tweens: [],
         createTween: function(prop, end) {
-          var tween = jQuery.Tween(elem, animation.opts, prop, end, animation.opts.specialEasing[prop] || animation.opts.easing);
+          var tween = jQuery.Tween(
+            elem,
+            animation.opts,
+            prop,
+            end,
+            animation.opts.specialEasing[prop] || animation.opts.easing
+          );
           animation.tweens.push(tween);
           return tween;
         },
@@ -12443,11 +12714,13 @@ var jquery = { exports: {} };
         animation.opts.start.call(elem, animation);
       }
       animation.progress(animation.opts.progress).done(animation.opts.done, animation.opts.complete).fail(animation.opts.fail).always(animation.opts.always);
-      jQuery.fx.timer(jQuery.extend(tick, {
-        elem,
-        anim: animation,
-        queue: animation.opts.queue
-      }));
+      jQuery.fx.timer(
+        jQuery.extend(tick, {
+          elem,
+          anim: animation,
+          queue: animation.opts.queue
+        })
+      );
       return animation;
     }
     jQuery.Animation = jQuery.extend(Animation, {
@@ -12853,81 +13126,83 @@ var jquery = { exports: {} };
     }
     jQuery.fn.extend({
       addClass: function(value) {
-        var classes, elem, cur, curValue, clazz, j, finalValue, i = 0;
+        var classNames, cur, curValue, className, i, finalValue;
         if (isFunction2(value)) {
-          return this.each(function(j2) {
-            jQuery(this).addClass(value.call(this, j2, getClass(this)));
+          return this.each(function(j) {
+            jQuery(this).addClass(value.call(this, j, getClass(this)));
           });
         }
-        classes = classesToArray(value);
-        if (classes.length) {
-          while (elem = this[i++]) {
-            curValue = getClass(elem);
-            cur = elem.nodeType === 1 && " " + stripAndCollapse(curValue) + " ";
+        classNames = classesToArray(value);
+        if (classNames.length) {
+          return this.each(function() {
+            curValue = getClass(this);
+            cur = this.nodeType === 1 && " " + stripAndCollapse(curValue) + " ";
             if (cur) {
-              j = 0;
-              while (clazz = classes[j++]) {
-                if (cur.indexOf(" " + clazz + " ") < 0) {
-                  cur += clazz + " ";
+              for (i = 0; i < classNames.length; i++) {
+                className = classNames[i];
+                if (cur.indexOf(" " + className + " ") < 0) {
+                  cur += className + " ";
                 }
               }
               finalValue = stripAndCollapse(cur);
               if (curValue !== finalValue) {
-                elem.setAttribute("class", finalValue);
+                this.setAttribute("class", finalValue);
               }
             }
-          }
+          });
         }
         return this;
       },
       removeClass: function(value) {
-        var classes, elem, cur, curValue, clazz, j, finalValue, i = 0;
+        var classNames, cur, curValue, className, i, finalValue;
         if (isFunction2(value)) {
-          return this.each(function(j2) {
-            jQuery(this).removeClass(value.call(this, j2, getClass(this)));
+          return this.each(function(j) {
+            jQuery(this).removeClass(value.call(this, j, getClass(this)));
           });
         }
         if (!arguments.length) {
           return this.attr("class", "");
         }
-        classes = classesToArray(value);
-        if (classes.length) {
-          while (elem = this[i++]) {
-            curValue = getClass(elem);
-            cur = elem.nodeType === 1 && " " + stripAndCollapse(curValue) + " ";
+        classNames = classesToArray(value);
+        if (classNames.length) {
+          return this.each(function() {
+            curValue = getClass(this);
+            cur = this.nodeType === 1 && " " + stripAndCollapse(curValue) + " ";
             if (cur) {
-              j = 0;
-              while (clazz = classes[j++]) {
-                while (cur.indexOf(" " + clazz + " ") > -1) {
-                  cur = cur.replace(" " + clazz + " ", " ");
+              for (i = 0; i < classNames.length; i++) {
+                className = classNames[i];
+                while (cur.indexOf(" " + className + " ") > -1) {
+                  cur = cur.replace(" " + className + " ", " ");
                 }
               }
               finalValue = stripAndCollapse(cur);
               if (curValue !== finalValue) {
-                elem.setAttribute("class", finalValue);
+                this.setAttribute("class", finalValue);
               }
             }
-          }
+          });
         }
         return this;
       },
       toggleClass: function(value, stateVal) {
-        var type = typeof value, isValidValue = type === "string" || Array.isArray(value);
+        var classNames, className, i, self2, type = typeof value, isValidValue = type === "string" || Array.isArray(value);
+        if (isFunction2(value)) {
+          return this.each(function(i2) {
+            jQuery(this).toggleClass(
+              value.call(this, i2, getClass(this), stateVal),
+              stateVal
+            );
+          });
+        }
         if (typeof stateVal === "boolean" && isValidValue) {
           return stateVal ? this.addClass(value) : this.removeClass(value);
         }
-        if (isFunction2(value)) {
-          return this.each(function(i) {
-            jQuery(this).toggleClass(value.call(this, i, getClass(this), stateVal), stateVal);
-          });
-        }
+        classNames = classesToArray(value);
         return this.each(function() {
-          var className, i, self2, classNames;
           if (isValidValue) {
-            i = 0;
             self2 = jQuery(this);
-            classNames = classesToArray(value);
-            while (className = classNames[i++]) {
+            for (i = 0; i < classNames.length; i++) {
+              className = classNames[i];
               if (self2.hasClass(className)) {
                 self2.removeClass(className);
               } else {
@@ -12940,7 +13215,10 @@ var jquery = { exports: {} };
               dataPriv.set(this, "__className__", className);
             }
             if (this.setAttribute) {
-              this.setAttribute("class", className || value === false ? "" : dataPriv.get(this, "__className__") || "");
+              this.setAttribute(
+                "class",
+                className || value === false ? "" : dataPriv.get(this, "__className__") || ""
+              );
             }
           }
         });
@@ -13147,10 +13425,14 @@ var jquery = { exports: {} };
         return event2.result;
       },
       simulate: function(type, elem, event2) {
-        var e = jQuery.extend(new jQuery.Event(), event2, {
-          type,
-          isSimulated: true
-        });
+        var e = jQuery.extend(
+          new jQuery.Event(),
+          event2,
+          {
+            type,
+            isSimulated: true
+          }
+        );
         jQuery.event.trigger(e, null, elem);
       }
     });
@@ -13220,7 +13502,12 @@ var jquery = { exports: {} };
           if (traditional || rbracket.test(prefix)) {
             add2(prefix, v);
           } else {
-            buildParams(prefix + "[" + (typeof v === "object" && v != null ? i : "") + "]", v, traditional, add2);
+            buildParams(
+              prefix + "[" + (typeof v === "object" && v != null ? i : "") + "]",
+              v,
+              traditional,
+              add2
+            );
           }
         });
       } else if (!traditional && toType(obj) === "object") {
@@ -13579,7 +13866,10 @@ var jquery = { exports: {} };
         if (s.data && s.hasContent && s.contentType !== false || options.contentType) {
           jqXHR.setRequestHeader("Content-Type", s.contentType);
         }
-        jqXHR.setRequestHeader("Accept", s.dataTypes[0] && s.accepts[s.dataTypes[0]] ? s.accepts[s.dataTypes[0]] + (s.dataTypes[0] !== "*" ? ", " + allTypes + "; q=0.01" : "") : s.accepts["*"]);
+        jqXHR.setRequestHeader(
+          "Accept",
+          s.dataTypes[0] && s.accepts[s.dataTypes[0]] ? s.accepts[s.dataTypes[0]] + (s.dataTypes[0] !== "*" ? ", " + allTypes + "; q=0.01" : "") : s.accepts["*"]
+        );
         for (i in s.headers) {
           jqXHR.setRequestHeader(i, s.headers[i]);
         }
@@ -13677,7 +13967,10 @@ var jquery = { exports: {} };
           jqXHR.statusCode(statusCode);
           statusCode = void 0;
           if (fireGlobals) {
-            globalEventContext.trigger(isSuccess ? "ajaxSuccess" : "ajaxError", [jqXHR, s, isSuccess ? success : error]);
+            globalEventContext.trigger(
+              isSuccess ? "ajaxSuccess" : "ajaxError",
+              [jqXHR, s, isSuccess ? success : error]
+            );
           }
           completeDeferred.fireWith(callbackContext, [jqXHR, statusText]);
           if (fireGlobals) {
@@ -13810,7 +14103,13 @@ var jquery = { exports: {} };
         return {
           send: function(headers, complete) {
             var i, xhr2 = options.xhr();
-            xhr2.open(options.type, options.url, options.async, options.username, options.password);
+            xhr2.open(
+              options.type,
+              options.url,
+              options.async,
+              options.username,
+              options.password
+            );
             if (options.xhrFields) {
               for (i in options.xhrFields) {
                 xhr2[i] = options.xhrFields[i];
@@ -13835,10 +14134,18 @@ var jquery = { exports: {} };
                     if (typeof xhr2.status !== "number") {
                       complete(0, "error");
                     } else {
-                      complete(xhr2.status, xhr2.statusText);
+                      complete(
+                        xhr2.status,
+                        xhr2.statusText
+                      );
                     }
                   } else {
-                    complete(xhrSuccessStatus[xhr2.status] || xhr2.status, xhr2.statusText, (xhr2.responseType || "text") !== "text" || typeof xhr2.responseText !== "string" ? { binary: xhr2.response } : { text: xhr2.responseText }, xhr2.getAllResponseHeaders());
+                    complete(
+                      xhrSuccessStatus[xhr2.status] || xhr2.status,
+                      xhr2.statusText,
+                      (xhr2.responseType || "text") !== "text" || typeof xhr2.responseText !== "string" ? { binary: xhr2.response } : { text: xhr2.responseText },
+                      xhr2.getAllResponseHeaders()
+                    );
                   }
                 }
               };
@@ -14131,7 +14438,7 @@ var jquery = { exports: {} };
       }
     });
     jQuery.each({ scrollLeft: "pageXOffset", scrollTop: "pageYOffset" }, function(method, prop) {
-      var top = prop === "pageYOffset";
+      var top = "pageYOffset" === prop;
       jQuery.fn[method] = function(val) {
         return access(this, function(elem, method2, val2) {
           var win;
@@ -14144,7 +14451,10 @@ var jquery = { exports: {} };
             return win ? win[prop] : elem[method2];
           }
           if (win) {
-            win.scrollTo(!top ? val2 : win.pageXOffset, top ? val2 : win.pageYOffset);
+            win.scrollTo(
+              !top ? val2 : win.pageXOffset,
+              top ? val2 : win.pageYOffset
+            );
           } else {
             elem[method2] = val2;
           }
@@ -14152,12 +14462,15 @@ var jquery = { exports: {} };
       };
     });
     jQuery.each(["top", "left"], function(_i, prop) {
-      jQuery.cssHooks[prop] = addGetHookIf(support.pixelPosition, function(elem, computed2) {
-        if (computed2) {
-          computed2 = curCSS(elem, prop);
-          return rnumnonpx.test(computed2) ? jQuery(elem).position()[prop] + "px" : computed2;
+      jQuery.cssHooks[prop] = addGetHookIf(
+        support.pixelPosition,
+        function(elem, computed2) {
+          if (computed2) {
+            computed2 = curCSS(elem, prop);
+            return rnumnonpx.test(computed2) ? jQuery(elem).position()[prop] + "px" : computed2;
+          }
         }
-      });
+      );
     });
     jQuery.each({ Height: "height", Width: "width" }, function(name, type) {
       jQuery.each({
@@ -14174,7 +14487,13 @@ var jquery = { exports: {} };
             }
             if (elem.nodeType === 9) {
               doc2 = elem.documentElement;
-              return Math.max(elem.body["scroll" + name], doc2["scroll" + name], elem.body["offset" + name], doc2["offset" + name], doc2["client" + name]);
+              return Math.max(
+                elem.body["scroll" + name],
+                doc2["scroll" + name],
+                elem.body["offset" + name],
+                doc2["offset" + name],
+                doc2["client" + name]
+              );
             }
             return value2 === void 0 ? jQuery.css(elem, type2, extra) : jQuery.style(elem, type2, value2, extra);
           }, type, chainable ? margin : void 0, chainable);
@@ -14210,12 +14529,15 @@ var jquery = { exports: {} };
         return this.mouseenter(fnOver).mouseleave(fnOut || fnOver);
       }
     });
-    jQuery.each("blur focus focusin focusout resize scroll click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit keydown keypress keyup contextmenu".split(" "), function(_i, name) {
-      jQuery.fn[name] = function(data2, fn) {
-        return arguments.length > 0 ? this.on(name, null, data2, fn) : this.trigger(name);
-      };
-    });
-    var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
+    jQuery.each(
+      "blur focus focusin focusout resize scroll click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit keydown keypress keyup contextmenu".split(" "),
+      function(_i, name) {
+        jQuery.fn[name] = function(data2, fn) {
+          return arguments.length > 0 ? this.on(name, null, data2, fn) : this.trigger(name);
+        };
+      }
+    );
+    var rtrim = /^[\s\uFEFF\xA0]+|([^\s\uFEFF\xA0])[\s\uFEFF\xA0]+$/g;
     jQuery.proxy = function(fn, context) {
       var tmp, args, proxy;
       if (typeof context === "string") {
@@ -14253,7 +14575,7 @@ var jquery = { exports: {} };
       return (type === "number" || type === "string") && !isNaN(obj - parseFloat(obj));
     };
     jQuery.trim = function(text) {
-      return text == null ? "" : (text + "").replace(rtrim, "");
+      return text == null ? "" : (text + "").replace(rtrim, "$1");
     };
     var _jQuery = window2.jQuery, _$ = window2.$;
     jQuery.noConflict = function(deep) {
@@ -14304,7 +14626,9 @@ const remove_event_listener = (el, id) => {
   }
 };
 const await_event = (el, event_name) => {
-  return new Promise((resolve2) => el.addEventListener(event_name, resolve2, { once: true }));
+  return new Promise(
+    (resolve2) => el.addEventListener(event_name, resolve2, { once: true })
+  );
 };
 const await_pattern_init = (pattern) => {
   return new Promise((resolve2) => pattern.one("init", resolve2));
@@ -14405,9 +14729,9 @@ const show = (el) => {
   el.removeAttribute("hidden", "");
 };
 const find_parents = (el, selector) => {
-  var _a, _b, _c, _d;
+  var _a2, _b, _c, _d;
   const ret = [];
-  let parent2 = (_b = (_a = el == null ? void 0 : el.parentNode) == null ? void 0 : _a.closest) == null ? void 0 : _b.call(_a, selector);
+  let parent2 = (_b = (_a2 = el == null ? void 0 : el.parentNode) == null ? void 0 : _a2.closest) == null ? void 0 : _b.call(_a2, selector);
   while (parent2) {
     ret.push(parent2);
     parent2 = (_d = (_c = parent2.parentNode) == null ? void 0 : _c.closest) == null ? void 0 : _d.call(_c, selector);
@@ -14510,11 +14834,16 @@ const dom = {
 if (!Function.prototype.bind) {
   Function.prototype.bind = function(oThis) {
     if (typeof this !== "function") {
-      throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+      throw new TypeError(
+        "Function.prototype.bind - what is trying to be bound is not callable"
+      );
     }
     var aArgs = Array.prototype.slice.call(arguments, 1), fToBind = this, fNOP = function() {
     }, fBound = function() {
-      return fToBind.apply(this instanceof fNOP && oThis ? this : oThis, aArgs.concat(Array.prototype.slice.call(arguments)));
+      return fToBind.apply(
+        this instanceof fNOP && oThis ? this : oThis,
+        aArgs.concat(Array.prototype.slice.call(arguments))
+      );
     };
     fNOP.prototype = this.prototype;
     fBound.prototype = new fNOP();
@@ -14689,7 +15018,9 @@ var singleBoundJQueryPlugin = function(pattern, method, options) {
     pat = pattern.init($el, options);
     if (method) {
       if (pat[method] === void 0) {
-        $.error("Method " + method + " does not exist on jQuery." + pattern.name);
+        $.error(
+          "Method " + method + " does not exist on jQuery." + pattern.name
+        );
         return false;
       }
       if (method.charAt(0) === "_") {
@@ -14878,13 +15209,15 @@ function addURLQueryParameter(fullURL, param, value) {
   return newURL;
 }
 function removeDuplicateObjects(objs) {
-  const comparator = function(k, v) {
+  const comparator2 = function(k, v) {
     return this[k] === v;
   };
   return objs.reduce(function(list, next_obj) {
     let is_duplicate = false;
     for (const obj of list) {
-      is_duplicate = Object.keys(obj).length === Object.keys(next_obj).length && Object.entries(obj).filter((it) => !comparator.bind(next_obj)(it[0], it[1])).length === 0;
+      is_duplicate = Object.keys(obj).length === Object.keys(next_obj).length && Object.entries(obj).filter(
+        (it) => !comparator2.bind(next_obj)(it[0], it[1])
+      ).length === 0;
     }
     if (!is_duplicate) {
       list.push(next_obj);
@@ -14900,7 +15233,10 @@ function mergeStack(stack2, length) {
   for (const frame of stack2) {
     const frame_length = frame.length - 1;
     for (let x = 0; x < length; x++) {
-      results[x] = $.extend(results[x] || {}, frame[x > frame_length ? frame_length : x]);
+      results[x] = $.extend(
+        results[x] || {},
+        frame[x > frame_length ? frame_length : x]
+      );
     }
   }
   return results;
@@ -15097,13 +15433,13 @@ const registry = {
     }
   },
   transformPattern(name, content) {
-    var _a;
+    var _a2;
     if (disabled[name]) {
       log.debug(`Skipping disabled pattern: ${name}.`);
       return;
     }
     const pattern = registry.patterns[name];
-    const transform = pattern.transform || ((_a = pattern.prototype) == null ? void 0 : _a.transform);
+    const transform = pattern.transform || ((_a2 = pattern.prototype) == null ? void 0 : _a2.transform);
     if (transform) {
       try {
         transform($(content));
@@ -15159,10 +15495,13 @@ const registry = {
         selectors.unshift(pattern.trigger);
       }
     }
-    let matches2 = dom.querySelectorAllAndMe(content, selectors.map((it) => it.trim().replace(/,$/, "")).join(","));
+    let matches2 = dom.querySelectorAllAndMe(
+      content,
+      selectors.map((it) => it.trim().replace(/,$/, "")).join(",")
+    );
     matches2 = matches2.filter((el) => {
-      var _a, _b, _c, _d, _e, _f, _g, _h;
-      return !el.matches(".disable-patterns") && !((_b = (_a = el == null ? void 0 : el.parentNode) == null ? void 0 : _a.closest) == null ? void 0 : _b.call(_a, ".disable-patterns")) && !((_d = (_c = el == null ? void 0 : el.parentNode) == null ? void 0 : _c.closest) == null ? void 0 : _d.call(_c, "pre")) && !((_f = (_e = el == null ? void 0 : el.parentNode) == null ? void 0 : _e.closest) == null ? void 0 : _f.call(_e, "template")) && !el.matches(".cant-touch-this") && !((_h = (_g = el == null ? void 0 : el.parentNode) == null ? void 0 : _g.closest) == null ? void 0 : _h.call(_g, ".cant-touch-this"));
+      var _a2, _b, _c, _d, _e, _f, _g, _h;
+      return !el.matches(".disable-patterns") && !((_b = (_a2 = el == null ? void 0 : el.parentNode) == null ? void 0 : _a2.closest) == null ? void 0 : _b.call(_a2, ".disable-patterns")) && !((_d = (_c = el == null ? void 0 : el.parentNode) == null ? void 0 : _c.closest) == null ? void 0 : _d.call(_c, "pre")) && !((_f = (_e = el == null ? void 0 : el.parentNode) == null ? void 0 : _e.closest) == null ? void 0 : _f.call(_e, "template")) && !el.matches(".cant-touch-this") && !((_h = (_g = el == null ? void 0 : el.parentNode) == null ? void 0 : _g.closest) == null ? void 0 : _h.call(_g, ".cant-touch-this"));
     });
     for (const el of matches2.reverse()) {
       for (const name of patterns) {
@@ -15183,9 +15522,12 @@ const registry = {
     }
     registry.patterns[name] = pattern;
     if (pattern.jquery_plugin) {
-      const plugin_name = ("pat-" + name).replace(/-([a-zA-Z])/g, function(match2, p1) {
-        return p1.toUpperCase();
-      });
+      const plugin_name = ("pat-" + name).replace(
+        /-([a-zA-Z])/g,
+        function(match2, p1) {
+          return p1.toUpperCase();
+        }
+      );
       $.fn[plugin_name] = utils$l.jqueryPlugin(pattern);
       $.fn[plugin_name.replace(/^pat/, "pattern")] = $.fn[plugin_name];
     }
@@ -15609,7 +15951,13 @@ var settle$1 = function settle2(resolve2, reject, response) {
   if (!response.status || !validateStatus2 || validateStatus2(response.status)) {
     resolve2(response);
   } else {
-    reject(new AxiosError$4("Request failed with status code " + response.status, [AxiosError$4.ERR_BAD_REQUEST, AxiosError$4.ERR_BAD_RESPONSE][Math.floor(response.status / 100) - 4], response.config, response.request, response));
+    reject(new AxiosError$4(
+      "Request failed with status code " + response.status,
+      [AxiosError$4.ERR_BAD_REQUEST, AxiosError$4.ERR_BAD_RESPONSE][Math.floor(response.status / 100) - 4],
+      response.config,
+      response.request,
+      response
+    ));
   }
 };
 var utils$e = utils$k;
@@ -15847,7 +16195,12 @@ var xhr = function xhrAdapter(config) {
       if (config.timeoutErrorMessage) {
         timeoutErrorMessage = config.timeoutErrorMessage;
       }
-      reject(new AxiosError$2(timeoutErrorMessage, transitional3.clarifyTimeoutError ? AxiosError$2.ETIMEDOUT : AxiosError$2.ECONNABORTED, config, request2));
+      reject(new AxiosError$2(
+        timeoutErrorMessage,
+        transitional3.clarifyTimeoutError ? AxiosError$2.ETIMEDOUT : AxiosError$2.ECONNABORTED,
+        config,
+        request2
+      ));
       request2 = null;
     };
     if (utils$a.isStandardBrowserEnv()) {
@@ -16037,21 +16390,43 @@ function throwIfCancellationRequested(config) {
 var dispatchRequest$1 = function dispatchRequest2(config) {
   throwIfCancellationRequested(config);
   config.headers = config.headers || {};
-  config.data = transformData.call(config, config.data, config.headers, config.transformRequest);
-  config.headers = utils$7.merge(config.headers.common || {}, config.headers[config.method] || {}, config.headers);
-  utils$7.forEach(["delete", "get", "head", "post", "put", "patch", "common"], function cleanHeaderConfig(method) {
-    delete config.headers[method];
-  });
+  config.data = transformData.call(
+    config,
+    config.data,
+    config.headers,
+    config.transformRequest
+  );
+  config.headers = utils$7.merge(
+    config.headers.common || {},
+    config.headers[config.method] || {},
+    config.headers
+  );
+  utils$7.forEach(
+    ["delete", "get", "head", "post", "put", "patch", "common"],
+    function cleanHeaderConfig(method) {
+      delete config.headers[method];
+    }
+  );
   var adapter = config.adapter || defaults$4.adapter;
   return adapter(config).then(function onAdapterResolution(response) {
     throwIfCancellationRequested(config);
-    response.data = transformData.call(config, response.data, response.headers, config.transformResponse);
+    response.data = transformData.call(
+      config,
+      response.data,
+      response.headers,
+      config.transformResponse
+    );
     return response;
   }, function onAdapterRejection(reason) {
     if (!isCancel(reason)) {
       throwIfCancellationRequested(config);
       if (reason && reason.response) {
-        reason.response.data = transformData.call(config, reason.response.data, reason.response.headers, config.transformResponse);
+        reason.response.data = transformData.call(
+          config,
+          reason.response.data,
+          reason.response.headers,
+          config.transformResponse
+        );
       }
     }
     return Promise.reject(reason);
@@ -16151,11 +16526,19 @@ validators$1.transitional = function transitional2(validator2, version2, message
   }
   return function(value, opt, opts) {
     if (validator2 === false) {
-      throw new AxiosError(formatMessage(opt, " has been removed" + (version2 ? " in " + version2 : "")), AxiosError.ERR_DEPRECATED);
+      throw new AxiosError(
+        formatMessage(opt, " has been removed" + (version2 ? " in " + version2 : "")),
+        AxiosError.ERR_DEPRECATED
+      );
     }
     if (version2 && !deprecatedWarnings[opt]) {
       deprecatedWarnings[opt] = true;
-      console.warn(formatMessage(opt, " has been deprecated since v" + version2 + " and will be removed in the near future"));
+      console.warn(
+        formatMessage(
+          opt,
+          " has been deprecated since v" + version2 + " and will be removed in the near future"
+        )
+      );
     }
     return validator2 ? validator2(value, opt, opts) : true;
   };
@@ -16491,13 +16874,19 @@ var implementation$1 = function bind3(that) {
   var bound;
   var binder = function() {
     if (this instanceof bound) {
-      var result = target.apply(this, args.concat(slice.call(arguments)));
+      var result = target.apply(
+        this,
+        args.concat(slice.call(arguments))
+      );
       if (Object(result) === result) {
         return result;
       }
       return this;
     } else {
-      return target.apply(that, args.concat(slice.call(arguments)));
+      return target.apply(
+        that,
+        args.concat(slice.call(arguments))
+      );
     }
   };
   var boundLength = Math.max(0, target.length - args.length);
@@ -16752,7 +17141,7 @@ var getIntrinsic = function GetIntrinsic2(name, allowMissing) {
   if (arguments.length > 1 && typeof allowMissing !== "boolean") {
     throw new $TypeError$1('"allowMissing" argument must be a boolean');
   }
-  if ($exec(/^%?[^%]*%?$/g, name) === null) {
+  if ($exec(/^%?[^%]*%?$/, name) === null) {
     throw new $SyntaxError("`%` may not be present anywhere but at the beginning and end of the intrinsic name");
   }
   var parts = stringToPath(name);
@@ -16828,7 +17217,11 @@ var callBind$1 = { exports: {} };
     if ($gOPD2 && $defineProperty) {
       var desc = $gOPD2(func, "length");
       if (desc.configurable) {
-        $defineProperty(func, "length", { value: 1 + $max(0, originalFunction.length - (arguments.length - 1)) });
+        $defineProperty(
+          func,
+          "length",
+          { value: 1 + $max(0, originalFunction.length - (arguments.length - 1)) }
+        );
       }
     }
     return func;
@@ -17793,7 +18186,24 @@ var stringify$1 = function stringify2(object, prefix, generateArrayPrefix, comma
     sideChannel2.set(object, step);
     var valueSideChannel = getSideChannel();
     valueSideChannel.set(sentinel, sideChannel2);
-    pushToArray(values, stringify2(value, keyPrefix, generateArrayPrefix, commaRoundTrip, strictNullHandling, skipNulls, encoder, filter, sort2, allowDots, serializeDate2, format, formatter, encodeValuesOnly, charset, valueSideChannel));
+    pushToArray(values, stringify2(
+      value,
+      keyPrefix,
+      generateArrayPrefix,
+      commaRoundTrip,
+      strictNullHandling,
+      skipNulls,
+      encoder,
+      filter,
+      sort2,
+      allowDots,
+      serializeDate2,
+      format,
+      formatter,
+      encodeValuesOnly,
+      charset,
+      valueSideChannel
+    ));
   }
   return values;
 };
@@ -17879,7 +18289,24 @@ var stringify_1 = function(object, opts) {
     if (options.skipNulls && obj[key] === null) {
       continue;
     }
-    pushToArray(keys, stringify$1(obj[key], key, generateArrayPrefix, commaRoundTrip, options.strictNullHandling, options.skipNulls, options.encode ? options.encoder : null, options.filter, options.sort, options.allowDots, options.serializeDate, options.format, options.formatter, options.encodeValuesOnly, options.charset, sideChannel2));
+    pushToArray(keys, stringify$1(
+      obj[key],
+      key,
+      generateArrayPrefix,
+      commaRoundTrip,
+      options.strictNullHandling,
+      options.skipNulls,
+      options.encode ? options.encoder : null,
+      options.filter,
+      options.sort,
+      options.allowDots,
+      options.serializeDate,
+      options.format,
+      options.formatter,
+      options.encodeValuesOnly,
+      options.charset,
+      sideChannel2
+    ));
   }
   var joined = keys.join(options.delimiter);
   var prefix = options.addQueryPrefix === true ? "?" : "";
@@ -17960,9 +18387,12 @@ var parseValues = function parseQueryStringValues(str, options) {
       val = options.strictNullHandling ? null : "";
     } else {
       key = options.decoder(part.slice(0, pos), defaults$1.decoder, charset, "key");
-      val = utils.maybeMap(parseArrayValue(part.slice(pos + 1), options), function(encodedVal) {
-        return options.decoder(encodedVal, defaults$1.decoder, charset, "value");
-      });
+      val = utils.maybeMap(
+        parseArrayValue(part.slice(pos + 1), options),
+        function(encodedVal) {
+          return options.decoder(encodedVal, defaults$1.decoder, charset, "value");
+        }
+      );
     }
     if (val && options.interpretNumericEntities && charset === "iso-8859-1") {
       val = interpretNumericEntities(val);
@@ -18136,7 +18566,7 @@ function copyDataForSubmit(name) {
   }
 }
 var BaseModal_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$j = {
+const _sfc_main$k = {
   name: "base-modal",
   props: {
     cleanUpBody: {
@@ -18274,7 +18704,9 @@ const _sfc_main$j = {
         submitButton.addEventListener("click", this.handleSubmit);
         form.addEventListener("submit", this.handleSubmit);
       } else {
-        cancelButton = this.modal._element.querySelector("#form-buttons-cancel");
+        cancelButton = this.modal._element.querySelector(
+          "#form-buttons-cancel"
+        );
       }
       cancelButton.addEventListener("click", this.handleCancel);
       const footer = this.modal._element.querySelector(".sl-base-modal-footer");
@@ -18294,7 +18726,9 @@ const _sfc_main$j = {
     },
     handleTinyMCE() {
       [
-        ...this.modal._element.querySelectorAll("textarea.pat-tinymce.richTextWidget")
+        ...this.modal._element.querySelectorAll(
+          "textarea.pat-tinymce.richTextWidget"
+        )
       ].forEach((element) => {
         tinyMCE.get(element.id).save();
       });
@@ -18315,7 +18749,7 @@ const _sfc_main$j = {
     }
   }
 };
-const _hoisted_1$d = {
+const _hoisted_1$e = {
   class: "modal fade sl-base-modal",
   tabindex: "-1",
   "aria-labelledby": "modal-title",
@@ -18323,8 +18757,8 @@ const _hoisted_1$d = {
   ref: "sl-base-modal"
 };
 const _hoisted_2$d = { class: "modal-dialog modal-dialog-scrollable modal-xl" };
-const _hoisted_3$a = { class: "modal-content position-relative" };
-const _hoisted_4$a = { class: "modal-header" };
+const _hoisted_3$b = { class: "modal-content position-relative" };
+const _hoisted_4$b = { class: "modal-header" };
 const _hoisted_5$a = {
   class: "modal-title",
   id: "modal-title"
@@ -18350,11 +18784,11 @@ const _hoisted_9$5 = /* @__PURE__ */ createBaseVNode("div", { class: "modal-foot
     value: "Cancel"
   }, " Close ")
 ], -1);
-function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$d, [
+function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$e, [
     createBaseVNode("div", _hoisted_2$d, [
-      createBaseVNode("div", _hoisted_3$a, [
-        createBaseVNode("div", _hoisted_4$a, [
+      createBaseVNode("div", _hoisted_3$b, [
+        createBaseVNode("div", _hoisted_4$b, [
           createBaseVNode("h4", _hoisted_5$a, [
             renderSlot(_ctx.$slots, "title")
           ]),
@@ -18370,8 +18804,8 @@ function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ], 512);
 }
-var BaseModal = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j]]);
-const _sfc_main$i = {
+var BaseModal = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k]]);
+const _sfc_main$j = {
   name: "add-modal",
   components: {
     BaseModal
@@ -18411,19 +18845,24 @@ const _sfc_main$i = {
       this.addableBlocksModal.show();
     },
     storeAction(position, data2) {
-      this.sl.addBlockToColumn(position.rowIndex, position.columnIndex, position.blockIndex + 1, data2["UID"]);
+      this.sl.addBlockToColumn(
+        position.rowIndex,
+        position.columnIndex,
+        position.blockIndex + 1,
+        data2["UID"]
+      );
     }
   }
 };
-function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     storeAction: $options.storeAction,
     ref: "modal"
   }, null, 8, ["storeAction"]);
 }
-var AddBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i]]);
-const _sfc_main$h = {
+var AddBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j]]);
+const _sfc_main$i = {
   name: "edit-modal",
   components: {
     BaseModal
@@ -18462,15 +18901,15 @@ const _sfc_main$h = {
     }
   }
 };
-function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     storeAction: $options.storeAction,
     ref: "modal"
   }, null, 8, ["storeAction"]);
 }
-var EditBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h]]);
-const _sfc_main$g = {
+var EditBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i]]);
+const _sfc_main$h = {
   name: "delete-modal",
   components: {
     BaseModal
@@ -18509,15 +18948,15 @@ const _sfc_main$g = {
     }
   }
 };
-function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     storeAction: $options.storeAction,
     ref: "modal"
   }, null, 8, ["storeAction"]);
 }
-var DeleteBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$g]]);
-const _sfc_main$f = {
+var DeleteBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h]]);
+const _sfc_main$g = {
   name: "info-modal",
   components: {
     BaseModal
@@ -18557,15 +18996,15 @@ const _sfc_main$f = {
     }
   }
 };
-function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     modalOptions: $data.options,
     ref: "modal"
   }, null, 8, ["modalOptions"]);
 }
-var InfoBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$f]]);
-const _sfc_main$e = {
+var InfoBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$g]]);
+const _sfc_main$f = {
   name: "upload-modal",
   components: {
     BaseModal
@@ -18594,7 +19033,10 @@ const _sfc_main$e = {
         url: `${this.getBlockURL(position)}/@@fileUpload`,
         showTitle: false
       };
-      const upload = new window.__patternslib_registry.upload(this.$refs["upload"], options);
+      const upload = new window.__patternslib_registry.upload(
+        this.$refs["upload"],
+        options
+      );
       this.uploadBlockModal._element.addEventListener("hide.bs.modal", () => {
         this.reloadBlock(position);
         upload.dropzone.destroy();
@@ -18615,27 +19057,26 @@ const _sfc_main$e = {
     }
   }
 };
-const _hoisted_1$c = /* @__PURE__ */ createTextVNode("Upload");
-const _hoisted_2$c = {
+const _hoisted_1$d = {
   class: "upload",
   ref: "upload"
 };
-function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     cleanUpBody: false,
     ref: "modal"
   }, {
     title: withCtx(() => [
-      _hoisted_1$c
+      createTextVNode("Upload")
     ]),
     body: withCtx(() => [
-      createBaseVNode("div", _hoisted_2$c, null, 512)
+      createBaseVNode("div", _hoisted_1$d, null, 512)
     ]),
     _: 1
   }, 512);
 }
-var UploadModal = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e]]);
+var UploadModal = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$f]]);
 var vuedraggable_umd = { exports: {} };
 var require$$0 = /* @__PURE__ */ getAugmentedNamespace(vue_runtime_esmBundler);
 /**!
@@ -23836,11 +24277,15 @@ var require$$1 = /* @__PURE__ */ getAugmentedNamespace(sortable_esm);
             var stringMethod = methods[0];
             var regexMethod = methods[1];
             redefine(String.prototype, KEY, stringMethod);
-            redefine(RegExp.prototype, SYMBOL, length == 2 ? function(string, arg) {
-              return regexMethod.call(string, this, arg);
-            } : function(string) {
-              return regexMethod.call(string, this);
-            });
+            redefine(
+              RegExp.prototype,
+              SYMBOL,
+              length == 2 ? function(string, arg) {
+                return regexMethod.call(string, this, arg);
+              } : function(string) {
+                return regexMethod.call(string, this);
+              }
+            );
           }
           if (sham)
             createNonEnumerableProperty(RegExp.prototype[SYMBOL], "sham", true);
@@ -24944,7 +25389,7 @@ var require$$1 = /* @__PURE__ */ getAugmentedNamespace(sortable_esm);
   });
 })(vuedraggable_umd);
 var draggable = /* @__PURE__ */ getDefaultExportFromCjs(vuedraggable_umd.exports);
-const _sfc_main$d = {
+const _sfc_main$e = {
   setup() {
     const sl = useSimplelayoutStore();
     return { sl };
@@ -24968,13 +25413,13 @@ const _sfc_main$d = {
     }
   }
 };
-const _hoisted_1$b = {
+const _hoisted_1$c = {
   class: "toast-container position-fixed top-0 start-50 p-3 mt-8",
   ref: "toasts"
 };
-const _hoisted_2$b = { class: "toast-header" };
-const _hoisted_3$9 = { class: "me-auto" };
-const _hoisted_4$9 = /* @__PURE__ */ createBaseVNode("small", { class: "text-muted" }, "just now", -1);
+const _hoisted_2$c = { class: "toast-header" };
+const _hoisted_3$a = { class: "me-auto" };
+const _hoisted_4$a = /* @__PURE__ */ createBaseVNode("small", { class: "text-muted" }, "just now", -1);
 const _hoisted_5$9 = /* @__PURE__ */ createBaseVNode("button", {
   type: "button",
   class: "btn-close",
@@ -24982,8 +25427,8 @@ const _hoisted_5$9 = /* @__PURE__ */ createBaseVNode("button", {
   "aria-label": "Close"
 }, null, -1);
 const _hoisted_6$8 = { class: "toast-body" };
-function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$b, [
+function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$c, [
     (openBlock(true), createElementBlock(Fragment, null, renderList($setup.sl.errors, (message, index2) => {
       return openBlock(), createElementBlock("div", {
         class: normalizeClass(`toast fade show ${$options.getTypeClass(message)}`),
@@ -24994,9 +25439,9 @@ function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
         "data-has-event": false,
         key: index2
       }, [
-        createBaseVNode("div", _hoisted_2$b, [
-          createBaseVNode("strong", _hoisted_3$9, toDisplayString(message.title), 1),
-          _hoisted_4$9,
+        createBaseVNode("div", _hoisted_2$c, [
+          createBaseVNode("strong", _hoisted_3$a, toDisplayString(message.title), 1),
+          _hoisted_4$a,
           _hoisted_5$9
         ]),
         createBaseVNode("div", _hoisted_6$8, toDisplayString(message.text), 1)
@@ -25004,9 +25449,9 @@ function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
     }), 128))
   ], 512);
 }
-var ErrorToasts = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d]]);
+var ErrorToasts = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e]]);
 var App_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$c = {
+const _sfc_main$d = {
   components: {
     BlockRenderer,
     RowControls,
@@ -25064,7 +25509,9 @@ const _sfc_main$c = {
             if (!uid2) {
               return false;
             }
-            const addable = this.sl.blocks[uid2]["@components"]["types"].filter((item) => item.addable);
+            const addable = this.sl.blocks[uid2]["@components"]["types"].filter(
+              (item) => item.addable
+            );
             return addable.length;
           }
         },
@@ -25083,7 +25530,9 @@ const _sfc_main$c = {
             if (!uid2) {
               return false;
             }
-            const addable = this.sl.blocks[uid2]["@components"]["types"].filter((item) => item.addable);
+            const addable = this.sl.blocks[uid2]["@components"]["types"].filter(
+              (item) => item.addable
+            );
             return addable.length;
           }
         }
@@ -25091,11 +25540,21 @@ const _sfc_main$c = {
     };
   },
   mounted() {
-    this.sl.setAuthenticatorToken(this.$refs.root.parentElement.getAttribute("data-token"));
-    this.sl.setCanModify(this.$refs.root.parentElement.getAttribute("data-can-modify"));
-    this.sl.setCanEditColumns(this.$refs.root.parentElement.getAttribute("data-can-edit-columns"));
-    this.sl.setCanAddBlocks(this.$refs.root.parentElement.getAttribute("data-can-addblocks"));
-    this.sl.setI18nMessages(this.$refs.root.parentElement.getAttribute("data-i18n"));
+    this.sl.setAuthenticatorToken(
+      this.$refs.root.parentElement.getAttribute("data-token")
+    );
+    this.sl.setCanModify(
+      this.$refs.root.parentElement.getAttribute("data-can-modify")
+    );
+    this.sl.setCanEditColumns(
+      this.$refs.root.parentElement.getAttribute("data-can-edit-columns")
+    );
+    this.sl.setCanAddBlocks(
+      this.$refs.root.parentElement.getAttribute("data-can-addblocks")
+    );
+    this.sl.setI18nMessages(
+      this.$refs.root.parentElement.getAttribute("data-i18n")
+    );
     this.sl.fetchContentTypeTitles();
     this.sl.fetchBlocks();
   },
@@ -25152,13 +25611,13 @@ const _sfc_main$c = {
     }
   }
 };
-const _hoisted_1$a = { class: "sl-row" };
-const _hoisted_2$a = { class: "row" };
-const _hoisted_3$8 = {
+const _hoisted_1$b = { class: "sl-row" };
+const _hoisted_2$b = { class: "row" };
+const _hoisted_3$9 = {
   key: 0,
   class: "sl-block"
 };
-const _hoisted_4$8 = {
+const _hoisted_4$9 = {
   key: 0,
   class: "sl-block sl-block-placeholder"
 };
@@ -25177,7 +25636,7 @@ const _hoisted_6$7 = /* @__PURE__ */ createBaseVNode("div", { class: "text-cente
 const _hoisted_7$5 = [
   _hoisted_6$7
 ];
-function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_ErrorToasts = resolveComponent("ErrorToasts");
   const _component_RowControls = resolveComponent("RowControls");
   const _component_ColControls = resolveComponent("ColControls");
@@ -25199,12 +25658,12 @@ function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
           class: normalizeClass(`${$options.loadingClass}`),
           key: `layout_${rowIndex}`
         }, [
-          createBaseVNode("div", _hoisted_1$a, [
+          createBaseVNode("div", _hoisted_1$b, [
             $setup.sl.canModify && $setup.sl.canEditColumns ? (openBlock(), createBlock(_component_RowControls, {
               key: 0,
               index: rowIndex
             }, null, 8, ["index"])) : createCommentVNode("", true),
-            createBaseVNode("div", _hoisted_2$a, [
+            createBaseVNode("div", _hoisted_2$b, [
               (openBlock(true), createElementBlock(Fragment, null, renderList(row2.items, (column2, columnIndex) => {
                 return openBlock(), createElementBlock("div", {
                   key: `column_${columnIndex}_${rowIndex}`,
@@ -25223,7 +25682,7 @@ function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
                     onStart: $options.startDraggingBlock
                   }), {
                     item: withCtx(({ element, index: index2 }) => [
-                      element in $setup.sl.blocks ? (openBlock(), createElementBlock("div", _hoisted_3$8, [
+                      element in $setup.sl.blocks ? (openBlock(), createElementBlock("div", _hoisted_3$9, [
                         createVNode(_component_BlockRenderer, {
                           actions: $data.actions,
                           block: $setup.sl.blocks[element],
@@ -25234,7 +25693,7 @@ function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
                       ])) : createCommentVNode("", true)
                     ]),
                     footer: withCtx(() => [
-                      column2.items.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_4$8, [
+                      column2.items.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_4$9, [
                         createVNode(_component_BlockRenderer, {
                           actions: $data.actions,
                           block: {},
@@ -25271,12 +25730,12 @@ function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
     createVNode(_component_UploadModal, { ref: "upload-modal" }, null, 512)
   ], 64);
 }
-var App = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c]]);
+var App = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d]]);
 function _typeof(e) {
-  return (_typeof = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(e2) {
+  return (_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(e2) {
     return typeof e2;
   } : function(e2) {
-    return e2 && typeof Symbol == "function" && e2.constructor === Symbol && e2 !== Symbol.prototype ? "symbol" : typeof e2;
+    return e2 && "function" == typeof Symbol && e2.constructor === Symbol && e2 !== Symbol.prototype ? "symbol" : typeof e2;
   })(e);
 }
 function plugin(e, n) {
@@ -25304,23 +25763,23 @@ function registerOnVue3(e, n, o) {
   e.config.globalProperties[n] = o, e[n] = o;
 }
 function isAxiosLike(e) {
-  return e && typeof e.get == "function" && typeof e.post == "function";
+  return e && "function" == typeof e.get && "function" == typeof e.post;
 }
 function migrateToMultipleInstances(e) {
   return { axios: e, $http: e };
 }
 function isValidConfig(e) {
-  return _typeof(e) === "object" && Object.keys(e).every(function(n) {
+  return "object" === _typeof(e) && Object.keys(e).every(function(n) {
     return isAxiosLike(e[n]);
   });
 }
 function getVueVersion(e) {
   return e && e.version && Number(e.version.split(".")[0]);
 }
-(typeof exports == "undefined" ? "undefined" : _typeof(exports)) == "object" ? module.exports = plugin : typeof define == "function" && define.amd ? define([], function() {
+"object" == ("undefined" == typeof exports ? "undefined" : _typeof(exports)) ? module.exports = plugin : "function" == typeof define && define.amd ? define([], function() {
   return plugin;
 }) : window.Vue && window.axios && window.Vue.use && Vue.use(plugin, window.axios);
-const _sfc_main$b = {
+const _sfc_main$c = {
   props: {
     batching: {
       type: Object,
@@ -25339,14 +25798,14 @@ const _sfc_main$b = {
     }
   }
 };
-const _hoisted_1$9 = {
+const _hoisted_1$a = {
   key: 0,
   "aria-label": "Pagination for this listing"
 };
-const _hoisted_2$9 = { class: "pagination" };
-function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
-  return $props.batching ? (openBlock(), createElementBlock("nav", _hoisted_1$9, [
-    createBaseVNode("ul", _hoisted_2$9, [
+const _hoisted_2$a = { class: "pagination" };
+function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
+  return $props.batching ? (openBlock(), createElementBlock("nav", _hoisted_1$a, [
+    createBaseVNode("ul", _hoisted_2$a, [
       createBaseVNode("li", {
         class: normalizeClass($props.batching.prev ? "page-item" : "page-item disabled")
       }, [
@@ -25368,9 +25827,9 @@ function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ])) : createCommentVNode("", true);
 }
-var Pagination = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$b]]);
+var Pagination = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c]]);
 var AllPurposeListingBlock_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$a = {
+const _sfc_main$b = {
   components: {
     BlockStructure,
     Pagination
@@ -25447,10 +25906,10 @@ const _sfc_main$a = {
     }
   }
 };
-const _hoisted_1$8 = { class: "table table-hover allpuropseblock-listing" };
-const _hoisted_2$8 = ["onClick"];
-const _hoisted_3$7 = { key: 0 };
-const _hoisted_4$7 = { key: 1 };
+const _hoisted_1$9 = { class: "table table-hover allpuropseblock-listing" };
+const _hoisted_2$9 = ["onClick"];
+const _hoisted_3$8 = { key: 0 };
+const _hoisted_4$8 = { key: 1 };
 const _hoisted_5$7 = ["src"];
 const _hoisted_6$6 = ["src"];
 const _hoisted_7$4 = { key: 2 };
@@ -25469,7 +25928,7 @@ const _hoisted_9$4 = /* @__PURE__ */ createBaseVNode("div", { class: "text-cente
 const _hoisted_10$4 = [
   _hoisted_9$4
 ];
-function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_Pagination = resolveComponent("Pagination");
   const _component_BlockStructure = resolveComponent("BlockStructure");
   return openBlock(), createBlock(_component_BlockStructure, normalizeProps(guardReactiveProps(_ctx.$props)), {
@@ -25478,7 +25937,7 @@ function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
       createBaseVNode("div", {
         class: normalizeClass(`table-responsive ${$options.loadingClass}`)
       }, [
-        createBaseVNode("table", _hoisted_1$8, [
+        createBaseVNode("table", _hoisted_1$9, [
           createBaseVNode("thead", null, [
             createBaseVNode("tr", null, [
               (openBlock(true), createElementBlock(Fragment, null, renderList(this.data.customViewFields, (col) => {
@@ -25498,14 +25957,14 @@ function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
                   return openBlock(), createElementBlock(Fragment, {
                     key: col.token
                   }, [
-                    col.token == "getObjSize" ? (openBlock(), createElementBlock("td", _hoisted_3$7, [
+                    col.token == "getObjSize" ? (openBlock(), createElementBlock("td", _hoisted_3$8, [
                       item["@type"] == "File" ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
                         createTextVNode(toDisplayString(item.file.size), 1)
                       ], 64)) : createCommentVNode("", true),
                       item["@type"] == "Image" ? (openBlock(), createElementBlock(Fragment, { key: 1 }, [
                         createTextVNode(toDisplayString(item.image.size), 1)
                       ], 64)) : createCommentVNode("", true)
-                    ])) : col.token == "mime_type" ? (openBlock(), createElementBlock("td", _hoisted_4$7, [
+                    ])) : col.token == "mime_type" ? (openBlock(), createElementBlock("td", _hoisted_4$8, [
                       item["@type"] == "File" ? (openBlock(), createElementBlock("img", {
                         key: 0,
                         src: `${$setup.sl.baseURL}/@@iconresolver/mimetype-${item.file["content-type"]}`
@@ -25517,7 +25976,7 @@ function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
                     ])) : (openBlock(), createElementBlock("td", _hoisted_7$4, toDisplayString(item[col.token]), 1))
                   ], 64);
                 }), 128))
-              ], 8, _hoisted_2$8);
+              ], 8, _hoisted_2$9);
             }), 128))
           ])
         ])
@@ -25533,12 +25992,12 @@ function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
     _: 1
   }, 16);
 }
-var AllPurposeListingBlock = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a]]);
+var AllPurposeListingBlock = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$b]]);
 var __glob_0_0 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   "default": AllPurposeListingBlock
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$9 = {
+const _sfc_main$a = {
   components: {
     BlockStructure
   },
@@ -25565,16 +26024,16 @@ const _sfc_main$9 = {
     }
   }
 };
-function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockStructure = resolveComponent("BlockStructure");
   return openBlock(), createBlock(_component_BlockStructure, normalizeProps(guardReactiveProps(_ctx.$props)), null, 16);
 }
-var Block = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$9]]);
+var Block = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a]]);
 var __glob_0_1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   "default": Block
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$8 = {
+const _sfc_main$9 = {
   components: {
     BlockStructure,
     Pagination
@@ -25650,8 +26109,8 @@ const _sfc_main$8 = {
     }
   }
 };
-const _hoisted_1$7 = { class: "table table-hover" };
-const _hoisted_2$7 = /* @__PURE__ */ createBaseVNode("thead", null, [
+const _hoisted_1$8 = { class: "table table-hover" };
+const _hoisted_2$8 = /* @__PURE__ */ createBaseVNode("thead", null, [
   /* @__PURE__ */ createBaseVNode("tr", null, [
     /* @__PURE__ */ createBaseVNode("th", null, "Type"),
     /* @__PURE__ */ createBaseVNode("th", null, "Title"),
@@ -25659,8 +26118,8 @@ const _hoisted_2$7 = /* @__PURE__ */ createBaseVNode("thead", null, [
     /* @__PURE__ */ createBaseVNode("th", null, "Modified")
   ])
 ], -1);
-const _hoisted_3$6 = ["src"];
-const _hoisted_4$6 = ["href"];
+const _hoisted_3$7 = ["src"];
+const _hoisted_4$7 = ["href"];
 const _hoisted_5$6 = ["src"];
 const _hoisted_6$5 = ["href"];
 const _hoisted_7$3 = {
@@ -25683,14 +26142,14 @@ const _hoisted_11$3 = {
   key: 0,
   class: "mediafolder-link"
 };
-const _hoisted_12$2 = ["action"];
-const _hoisted_13$2 = ["value"];
-const _hoisted_14$2 = {
+const _hoisted_12$1 = ["action"];
+const _hoisted_13$1 = ["value"];
+const _hoisted_14$1 = {
   type: "submit",
   class: "btn btn-success btn-sm"
 };
-const _hoisted_15$2 = ["href"];
-function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_15$1 = ["href"];
+function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_Pagination = resolveComponent("Pagination");
   const _component_BlockStructure = resolveComponent("BlockStructure");
   return openBlock(), createBlock(_component_BlockStructure, normalizeProps(guardReactiveProps(_ctx.$props)), {
@@ -25699,8 +26158,8 @@ function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
       createBaseVNode("div", {
         class: normalizeClass(`table-responsive ${$options.loadingClass}`)
       }, [
-        createBaseVNode("table", _hoisted_1$7, [
-          _hoisted_2$7,
+        createBaseVNode("table", _hoisted_1$8, [
+          _hoisted_2$8,
           createBaseVNode("tbody", null, [
             (openBlock(true), createElementBlock(Fragment, null, renderList($data.data.items, (file) => {
               return openBlock(), createElementBlock("tr", {
@@ -25710,12 +26169,12 @@ function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
                   createBaseVNode("td", null, [
                     createBaseVNode("img", {
                       src: `${$setup.sl.baseURL}/@@iconresolver/mimetype-${file.image["content-type"]}`
-                    }, null, 8, _hoisted_3$6)
+                    }, null, 8, _hoisted_3$7)
                   ]),
                   createBaseVNode("td", null, [
                     createBaseVNode("a", {
                       href: file.image.download
-                    }, toDisplayString(file.title), 9, _hoisted_4$6)
+                    }, toDisplayString(file.title), 9, _hoisted_4$7)
                   ]),
                   createBaseVNode("td", null, toDisplayString(file.image.size), 1)
                 ], 64)) : createCommentVNode("", true),
@@ -25758,26 +26217,26 @@ function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
               type: "hidden",
               name: "_authenticator",
               value: $setup.sl.authToken
-            }, null, 8, _hoisted_13$2),
-            createBaseVNode("button", _hoisted_14$2, toDisplayString(_ctx.$i18n("Click here to create a new Media Folder")), 1)
-          ], 8, _hoisted_12$2)) : (openBlock(), createElementBlock("a", {
+            }, null, 8, _hoisted_13$1),
+            createBaseVNode("button", _hoisted_14$1, toDisplayString(_ctx.$i18n("Click here to create a new Media Folder")), 1)
+          ], 8, _hoisted_12$1)) : (openBlock(), createElementBlock("a", {
             key: 1,
             href: $props.block.mediafolder["@id"],
             class: "btn btn-success btn-sm"
-          }, toDisplayString(_ctx.$i18n("Go the the referenced Media Folder")), 9, _hoisted_15$2))
+          }, toDisplayString(_ctx.$i18n("Go the the referenced Media Folder")), 9, _hoisted_15$1))
         ])) : createCommentVNode("", true)
       ])
     ]),
     _: 1
   }, 16);
 }
-var FileListingBlock = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8]]);
+var FileListingBlock = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$9]]);
 var __glob_0_3 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   "default": FileListingBlock
 }, Symbol.toStringTag, { value: "Module" }));
 var IframeBlock_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$7 = {
+const _sfc_main$8 = {
   components: {
     BlockStructure
   },
@@ -25804,41 +26263,40 @@ const _sfc_main$7 = {
     }
   }
 };
-const _hoisted_1$6 = { class: "sl-contact-title" };
-const _hoisted_2$6 = /* @__PURE__ */ createTextVNode(" Iframe URL: ");
-const _hoisted_3$5 = ["href"];
-const _hoisted_4$5 = { class: "sl-iframe" };
-const _hoisted_5$5 = ["src", "height"];
-function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$7 = { class: "sl-contact-title" };
+const _hoisted_2$7 = ["href"];
+const _hoisted_3$6 = { class: "sl-iframe" };
+const _hoisted_4$6 = ["src", "height"];
+function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockStructure = resolveComponent("BlockStructure");
   return openBlock(), createBlock(_component_BlockStructure, normalizeProps(guardReactiveProps(_ctx.$props)), {
     top: withCtx(() => [
-      createBaseVNode("div", _hoisted_1$6, [
+      createBaseVNode("div", _hoisted_1$7, [
         createBaseVNode("h5", null, [
-          _hoisted_2$6,
+          createTextVNode(" Iframe URL: "),
           createBaseVNode("a", {
             href: $props.block.iframe_url
-          }, toDisplayString($props.block.iframe_url), 9, _hoisted_3$5)
+          }, toDisplayString($props.block.iframe_url), 9, _hoisted_2$7)
         ])
       ])
     ]),
     body: withCtx(() => [
-      createBaseVNode("div", _hoisted_4$5, [
+      createBaseVNode("div", _hoisted_3$6, [
         createBaseVNode("iframe", {
           src: $props.block.iframe_url,
           height: $props.block.iframe_height
-        }, null, 8, _hoisted_5$5)
+        }, null, 8, _hoisted_4$6)
       ])
     ]),
     _: 1
   }, 16);
 }
-var IframeBlock = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7]]);
+var IframeBlock = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8]]);
 var __glob_0_4 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   "default": IframeBlock
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$6 = {
+const _sfc_main$7 = {
   name: "edit-image-modal",
   components: {
     BaseModal
@@ -25881,20 +26339,57 @@ const _sfc_main$6 = {
     }
   }
 };
-function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     storeAction: $options.storeAction,
     ref: "modal"
   }, null, 8, ["storeAction"]);
 }
-var EditImageModal = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6]]);
+var EditImageModal = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7]]);
+const _sfc_main$6 = {
+  props: {
+    image: {
+      type: Object,
+      required: true
+    }
+  },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
+  }
+};
+const _hoisted_1$6 = { class: "d-table m-0 text-center" };
+const _hoisted_2$6 = ["src"];
+const _hoisted_3$5 = ["src"];
+const _hoisted_4$5 = ["src"];
+const _hoisted_5$5 = {
+  key: 3,
+  class: "figure-caption mt-1"
+};
+function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("figure", _hoisted_1$6, [
+    $props.image.image && $props.image.image.scales && $props.image.image.scales.preview ? (openBlock(), createElementBlock("img", {
+      key: 0,
+      src: $props.image.image.scales.preview.download
+    }, null, 8, _hoisted_2$6)) : $props.image.file ? (openBlock(), createElementBlock("img", {
+      key: 1,
+      src: `${$setup.sl.baseURL}/@@iconresolver/mimetype-${$props.image.file["content-type"]}`
+    }, null, 8, _hoisted_3$5)) : (openBlock(), createElementBlock("img", {
+      key: 2,
+      src: `${$setup.sl.baseURL}/@@iconresolver/x-octagon`
+    }, null, 8, _hoisted_4$5)),
+    $props.image.title ? (openBlock(), createElementBlock("figcaption", _hoisted_5$5, toDisplayString($props.image.title), 1)) : createCommentVNode("", true)
+  ]);
+}
+var ImageListingImage = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6]]);
 var ImageListingBlock_vue_vue_type_style_index_0_lang = "";
 const _sfc_main$5 = {
   components: {
     BlockStructure,
     Pagination,
-    EditImageModal
+    EditImageModal,
+    ImageListingImage
   },
   props: {
     actions: {
@@ -25973,7 +26468,9 @@ const _sfc_main$5 = {
       this.$refs["edit-image-modal"].openEditImageModal(event);
     },
     canEditImage(image) {
-      const actionIds = image["@components"]["actions"]["object"].map((item) => item.id);
+      const actionIds = image["@components"]["actions"]["object"].map(
+        (item) => item.id
+      );
       const editable = actionIds.indexOf("edit") != -1;
       return editable;
     },
@@ -25998,26 +26495,11 @@ const _sfc_main$5 = {
 };
 const _hoisted_1$5 = { class: "sl-image-wrapper" };
 const _hoisted_2$5 = ["href"];
-const _hoisted_3$4 = { class: "d-table m-0 text-center" };
-const _hoisted_4$4 = ["src"];
-const _hoisted_5$4 = {
-  key: 1,
-  class: "figure-caption mt-1"
-};
-const _hoisted_6$4 = {
-  key: 1,
-  class: "d-table m-0 text-center"
-};
-const _hoisted_7$2 = ["src"];
-const _hoisted_8$2 = {
-  key: 1,
-  class: "figure-caption mt-1"
-};
-const _hoisted_9$2 = {
+const _hoisted_3$4 = {
   key: 1,
   class: "position-absolute top-50 start-50"
 };
-const _hoisted_10$2 = /* @__PURE__ */ createBaseVNode("div", { class: "text-center" }, [
+const _hoisted_4$4 = /* @__PURE__ */ createBaseVNode("div", { class: "text-center" }, [
   /* @__PURE__ */ createBaseVNode("div", {
     class: "spinner-border",
     role: "status"
@@ -26025,22 +26507,23 @@ const _hoisted_10$2 = /* @__PURE__ */ createBaseVNode("div", { class: "text-cent
     /* @__PURE__ */ createBaseVNode("span", { class: "visually-hidden" }, "Loading...")
   ])
 ], -1);
-const _hoisted_11$2 = [
-  _hoisted_10$2
+const _hoisted_5$4 = [
+  _hoisted_4$4
 ];
-const _hoisted_12$1 = { class: "card-footer" };
-const _hoisted_13$1 = {
+const _hoisted_6$4 = { class: "card-footer" };
+const _hoisted_7$2 = {
   key: 0,
   class: "mediafolder-link"
 };
-const _hoisted_14$1 = ["action"];
-const _hoisted_15$1 = ["value"];
-const _hoisted_16$1 = {
+const _hoisted_8$2 = ["action"];
+const _hoisted_9$2 = ["value"];
+const _hoisted_10$2 = {
   type: "submit",
   class: "btn btn-success btn-sm"
 };
-const _hoisted_17$1 = ["href"];
+const _hoisted_11$2 = ["href"];
 function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
+  const _component_ImageListingImage = resolveComponent("ImageListingImage");
   const _component_Pagination = resolveComponent("Pagination");
   const _component_EditImageModal = resolveComponent("EditImageModal");
   const _component_BlockStructure = resolveComponent("BlockStructure");
@@ -26059,20 +26542,11 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
                 key: 0,
                 href: $options.getLink(image)
               }, [
-                createBaseVNode("figure", _hoisted_3$4, [
-                  image.image.scales.preview ? (openBlock(), createElementBlock("img", {
-                    key: 0,
-                    src: image.image.scales.preview.download
-                  }, null, 8, _hoisted_4$4)) : createCommentVNode("", true),
-                  image.title ? (openBlock(), createElementBlock("figcaption", _hoisted_5$4, toDisplayString(image.title), 1)) : createCommentVNode("", true)
-                ])
-              ], 8, _hoisted_2$5)) : (openBlock(), createElementBlock("figure", _hoisted_6$4, [
-                image.image.scales.preview ? (openBlock(), createElementBlock("img", {
-                  key: 0,
-                  src: image.image.scales.preview.download
-                }, null, 8, _hoisted_7$2)) : createCommentVNode("", true),
-                image.title ? (openBlock(), createElementBlock("figcaption", _hoisted_8$2, toDisplayString(image.title), 1)) : createCommentVNode("", true)
-              ]))
+                createVNode(_component_ImageListingImage, { image }, null, 8, ["image"])
+              ], 8, _hoisted_2$5)) : (openBlock(), createBlock(_component_ImageListingImage, {
+                key: 1,
+                image
+              }, null, 8, ["image"]))
             ])
           ]);
         }), 128))
@@ -26084,15 +26558,15 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
         onPrevious: $options.fetchPrevious,
         batching: $data.data.batching
       }, null, 8, ["onNext", "onPrevious", "batching"])) : createCommentVNode("", true),
-      $data.loading ? (openBlock(), createElementBlock("div", _hoisted_9$2, _hoisted_11$2)) : createCommentVNode("", true),
+      $data.loading ? (openBlock(), createElementBlock("div", _hoisted_3$4, _hoisted_5$4)) : createCommentVNode("", true),
       createVNode(_component_EditImageModal, {
         block: $props.block,
         ref: "edit-image-modal"
       }, null, 8, ["block"])
     ]),
     footer: withCtx(() => [
-      createBaseVNode("div", _hoisted_12$1, [
-        $setup.sl.canModify ? (openBlock(), createElementBlock("div", _hoisted_13$1, [
+      createBaseVNode("div", _hoisted_6$4, [
+        $setup.sl.canModify ? (openBlock(), createElementBlock("div", _hoisted_7$2, [
           !$props.block.mediafolder ? (openBlock(), createElementBlock("form", {
             key: 0,
             method: "POST",
@@ -26102,13 +26576,13 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
               type: "hidden",
               name: "_authenticator",
               value: $setup.sl.authToken
-            }, null, 8, _hoisted_15$1),
-            createBaseVNode("button", _hoisted_16$1, toDisplayString(_ctx.$i18n("Click here to create a new Media Folder")), 1)
-          ], 8, _hoisted_14$1)) : (openBlock(), createElementBlock("a", {
+            }, null, 8, _hoisted_9$2),
+            createBaseVNode("button", _hoisted_10$2, toDisplayString(_ctx.$i18n("Click here to create a new Media Folder")), 1)
+          ], 8, _hoisted_8$2)) : (openBlock(), createElementBlock("a", {
             key: 1,
             href: $props.block.mediafolder["@id"],
             class: "btn btn-success btn-sm"
-          }, toDisplayString(_ctx.$i18n("Go the the referenced Media Folder")), 9, _hoisted_17$1))
+          }, toDisplayString(_ctx.$i18n("Go the the referenced Media Folder")), 9, _hoisted_11$2))
         ])) : createCommentVNode("", true)
       ])
     ]),
@@ -26420,7 +26894,9 @@ const _sfc_main$2 = {
   },
   methods: {
     async fetchWorkflowTitles() {
-      const response = await this.axios.get(this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.WorkflowStates");
+      const response = await this.axios.get(
+        this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.WorkflowStates"
+      );
       response.data.items.forEach((item) => {
         this.workflowTitleMapping[item.token] = item.title.replace(/(\[.+?\])/g, "").trim();
       });
@@ -26535,7 +27011,9 @@ const _sfc_main$1 = {
   },
   methods: {
     async fetchWorkflowTitles() {
-      const response = await this.axios.get(this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.WorkflowStates");
+      const response = await this.axios.get(
+        this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.WorkflowStates"
+      );
       response.data.items.forEach((item) => {
         this.workflowTitleMapping[item.token] = item.title.replace(/(\[.+?\])/g, "").trim();
       });
