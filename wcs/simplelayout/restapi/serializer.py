@@ -192,6 +192,10 @@ class NewsListingBlockSerializer(SerializeToJson):
                 query['Date.query'] = date
                 query['Date.range'] = 'min'
 
+            subjects = IBlockNewsOptions(self.context).subjects
+            if len(subjects) != 0:
+                query['Subject'] = subjects
+
             original_b_size = self.request.form.get('b_size', None)
             original_actual_url = self.request['ACTUAL_URL']
             if original_b_size is None:
