@@ -221,6 +221,23 @@ class TestRestApi(FunctionalTesting):
         )
 
     @browsing
+    def test_imagelistingblock_only_lists_images(self, browser):
+        intids = getUtility(IIntIds)
+        mediafolder = create(Builder('mediafolder'))
+        block = create(Builder('image listing block')
+                       .having(mediafolder=RelationValue(intids.getId(mediafolder)))
+                       .within(self.page)
+                       .titled('Image listing'))
+
+        create(Builder('file').within(mediafolder))
+        create(Builder('image').within(mediafolder))
+
+        browser.login().open(self.page.absolute_url() + '?include_items=1', headers=self.api_headers)
+        block_result = browser.json['slblocks'][block.UID()]
+        self.assertEqual(1, len(block_result['items']))
+        self.assertEqual('Image', block_result['items'][0]['@type'])
+
+    @browsing
     def test_make_sure_tree_is_not_included(self, browser):
         subpage = create(Builder('content page').within(self.page).titled('Subpage'))
         subsubpage = create(Builder('content page').within(subpage).titled('SubSubpage'))

@@ -201,7 +201,7 @@ class IVideoUrl(model.Schema):
 
 
 @provider(IFormFieldProvider)
-class IBlockSortOptions(model.Schema):
+class IImageBlockSortOptions(model.Schema):
     sort_on = schema.Choice(
         title=_('label_sort_on', default='Sort by'),
         required=True,
@@ -213,6 +213,37 @@ class IBlockSortOptions(model.Schema):
         required=True,
         default="ascending",
         vocabulary=sort_order_vocabulary)
+
+    directives.omitted('portal_types')
+    portal_types = schema.List(
+        title=_('label_portal_types', default='Types'),
+        required=True,
+        default=["Image"],
+        missing_value=["Image"],
+        value_type=schema.TextLine())
+
+
+@provider(IFormFieldProvider)
+class IFileBlockSortOptions(model.Schema):
+    sort_on = schema.Choice(
+        title=_('label_sort_on', default='Sort by'),
+        required=True,
+        default="sortable_title",
+        source=sort_index_vocabulary)
+
+    sort_order = schema.Choice(
+        title=_('label_sort_order', default='Sort order'),
+        required=True,
+        default="ascending",
+        vocabulary=sort_order_vocabulary)
+
+    directives.omitted('portal_types')
+    portal_types = schema.List(
+        title=_('label_portal_types', default='Types'),
+        required=True,
+        default=["File", "Image"],
+        missing_value=["File", "Image"],
+        value_type=schema.TextLine())
 
 
 @provider(IFormFieldProvider)

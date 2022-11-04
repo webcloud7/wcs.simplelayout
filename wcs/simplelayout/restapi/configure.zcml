@@ -9,7 +9,8 @@
 
   <adapter factory=".serializer.SimplelayoutSerializer" />
   <adapter factory=".serializer.LayoutFieldSerializer"/>
-  <adapter factory=".serializer.BlockSortOptionsSerializer"/>
+  <adapter factory=".serializer.ImageBlockSortOptionsSerializer"/>
+  <adapter factory=".serializer.FileBlockSortOptionsSerializer"/>
   <adapter factory=".serializer.NewsListingBlockSerializer"/>
   <adapter factory=".serializer.AllPurposeListingBlockSerializer"/>
   <adapter factory=".serializer.CustomViewFieldsSerializer"/>

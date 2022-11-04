@@ -18,7 +18,8 @@ from Products.CMFCore.utils import getToolByName
 from urllib import parse
 from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
 from wcs.simplelayout.contenttypes.behaviors import IBlockNewsOptions
-from wcs.simplelayout.contenttypes.behaviors import IBlockSortOptions
+from wcs.simplelayout.contenttypes.behaviors import IFileBlockSortOptions
+from wcs.simplelayout.contenttypes.behaviors import IImageBlockSortOptions
 from wcs.simplelayout.contenttypes.behaviors import IMediaFolderReference
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.utils import add_missing_blocks
@@ -216,8 +217,10 @@ class NewsListingBlockSerializer(SerializeToJson):
 
 
 @implementer(ISerializeToJson)
-@adapter(IBlockSortOptions, Interface)
-class BlockSortOptionsSerializer(SerializeToJson):
+@adapter(IFileBlockSortOptions, Interface)
+class FileBlockSortOptionsSerializer(SerializeToJson):
+
+    behavior = IFileBlockSortOptions
 
     def __call__(self, version=None, include_items=True):
         result = super().__call__(version=version)
@@ -225,12 +228,14 @@ class BlockSortOptionsSerializer(SerializeToJson):
         include_items = self.request.form.get("include_items", include_items)
         include_items = boolean_value(include_items)
         if include_items:
-            sort_on = IBlockSortOptions(self.context).sort_on
-            sort_order = IBlockSortOptions(self.context).sort_order
+            sort_on = self.behavior(self.context).sort_on
+            sort_order = self.behavior(self.context).sort_order
+            portal_types = self.behavior(self.context).portal_types
             query = {
                 'path': {'query': self._get_path(), 'depth': 1},
                 'sort_on': sort_on,
                 'sort_order': sort_order,
+                'portal_type': portal_types
             }
 
             original_b_size = self.request.form.get('b_size', None)
@@ -264,6 +269,13 @@ class BlockSortOptionsSerializer(SerializeToJson):
                 mediafolder_behaviour.mediafolder.to_object):
             return '/'.join(self.context.mediafolder.to_object.getPhysicalPath())
         return '/'.join(self.context.getPhysicalPath())
+
+
+@implementer(ISerializeToJson)
+@adapter(IImageBlockSortOptions, Interface)
+class ImageBlockSortOptionsSerializer(FileBlockSortOptionsSerializer):
+
+    behavior = IImageBlockSortOptions
 
 
 @adapter(IJSONField, ISimplelayout, Interface)
