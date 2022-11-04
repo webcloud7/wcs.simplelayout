@@ -1,4 +1,6 @@
 from copy import deepcopy
+from datetime import datetime
+from datetime import timedelta
 from ftw.builder import Builder
 from ftw.builder import create
 from ftw.testbrowser import browsing
@@ -201,6 +203,39 @@ class TestRestApi(FunctionalTesting):
         self.assertEqual(
             newslist[0]['@id'].replace(':80', ''),
             news_with_subject.absolute_url()
+        )
+
+    @browsing
+    def test_news_listing_block_filter_by_age(self, browser):
+        self.add_behavior('News', 'plone.categorization')
+        newsfolder = create(Builder('news folder'))
+        block = create(Builder('news listing block')
+                       .having(quantity=3)
+                       .within(newsfolder)
+                       .titled('News listing'))
+
+        old_news = create(Builder('news')
+                          .titled('Super old news')
+                          .having(news_date=datetime.now() - timedelta(days=100))
+                          .within(newsfolder))
+        new_news = create(Builder('news')
+                          .titled('News from today')
+                          .having(news_date=datetime.now())
+                          .within(newsfolder))
+
+        browser.login().open(block.absolute_url() + '?include_items=1', headers=self.api_headers)
+        newslist = browser.json['items']
+        self.assertEquals(2, len(newslist))
+
+        IBlockNewsOptions(block).maximum_age = 10
+        transaction.commit()
+
+        browser.open(block.absolute_url() + '?include_items=1', headers=self.api_headers)
+        newslist = browser.json['items']
+        self.assertEqual(1, len(newslist))
+        self.assertEqual(
+            newslist[0]['@id'].replace(':80', ''),
+            new_news.absolute_url()
         )
 
     @browsing

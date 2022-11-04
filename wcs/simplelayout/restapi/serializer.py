@@ -189,8 +189,7 @@ class NewsListingBlockSerializer(SerializeToJson):
             age = IBlockNewsOptions(self.context).maximum_age
             if age != 0:
                 date = datetimelike_to_iso(datetime.now() - timedelta(days=age))
-                query['Date.query'] = date
-                query['Date.range'] = 'min'
+                query['Date'] = {'query': date, 'range': 'min'}
 
             subjects = IBlockNewsOptions(self.context).subjects
             if len(subjects) != 0:
