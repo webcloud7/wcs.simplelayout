@@ -48,9 +48,15 @@
         />
 
     <plone:behavior
-        title="Simplelayout Block Sort options"
+        title="Simplelayout Block Sort options for Image types"
         description="Provides sort order and sort on options for a listing"
-        provides="wcs.simplelayout.contenttypes.behaviors.IBlockSortOptions"
+        provides="wcs.simplelayout.contenttypes.behaviors.IImageBlockSortOptions"
+        />
+
+    <plone:behavior
+        title="Simplelayout Block Sort options for file types"
+        description="Provides sort order and sort on options for a listing"
+        provides="wcs.simplelayout.contenttypes.behaviors.IFileBlockSortOptions"
         />
 
     <plone:behavior

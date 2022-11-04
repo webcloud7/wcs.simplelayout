@@ -22,7 +22,7 @@
   <element value="plone.namefromtitle"/>
   <element value="wcs.simplelayout.contenttypes.behaviors.IBlockMarker"/>
   <element value="wcs.simplelayout.contenttypes.behaviors.IBlockTitle"/>
-  <element value="wcs.simplelayout.contenttypes.behaviors.IBlockSortOptions"/>
+  <element value="wcs.simplelayout.contenttypes.behaviors.IFileBlockSortOptions"/>
   <element value="wcs.simplelayout.contenttypes.behaviors.IMediaFolderReference"/>
  </property>
  <property name="schema"></property>

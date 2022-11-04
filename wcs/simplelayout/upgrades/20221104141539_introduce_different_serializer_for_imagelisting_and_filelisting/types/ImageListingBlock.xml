@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object name="ImageListingBlock" meta_type="Dexterity FTI" i18n:domain="plone"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+ <property name="behaviors" purge="False">
+  <element value="wcs.simplelayout.contenttypes.behaviors.IImageBlockSortOptions"/>
+  <element value="wcs.simplelayout.contenttypes.behaviors.IBlockSortOptions" remove="True"/>
+ </property>
+
+</object>

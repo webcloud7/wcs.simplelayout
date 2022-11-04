@@ -84,6 +84,13 @@ class FileListingBlockBuilder(BlockBuilder):
 builder_registry.register('file listing block', FileListingBlockBuilder)
 
 
+class ImageListingBlockBuilder(BlockBuilder):
+    portal_type = 'ImageListingBlock'
+
+
+builder_registry.register('image listing block', ImageListingBlockBuilder)
+
+
 class AllPurposeBlockBuilder(BlockBuilder):
     portal_type = 'AllPurposeListingBlock'
 
