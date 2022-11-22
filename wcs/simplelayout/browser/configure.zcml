@@ -55,14 +55,14 @@
     <browser:page
         for="wcs.simplelayout.contenttypes.behaviors.IBlockMarker"
         name="edit"
-        class=".crud.EditForm"
+        class=".crud.EditView"
         permission="cmf.ModifyPortalContent"
         />
 
     <browser:page
         for="*"
         name="edit.json"
-        class=".crud.EditForm"
+        class=".crud.EditView"
         permission="cmf.ModifyPortalContent"
         />
 

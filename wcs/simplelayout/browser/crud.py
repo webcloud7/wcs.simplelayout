@@ -6,9 +6,11 @@ from plone.dexterity.browser.edit import DefaultEditForm
 from plone.dexterity.events import EditCancelledEvent
 from plone.dexterity.events import EditFinishedEvent
 from plone.dexterity.i18n import MessageFactory as DXMF
+from plone.dexterity.interfaces import IDexterityEditForm
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import addContentToContainer
 from plone.restapi.interfaces import ISerializeToJson
+from plone.z3cform import layout
 from Products.CMFCore.interfaces import ITypesTool
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from z3c.form import button
@@ -16,6 +18,7 @@ from zope.component import adapter
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.event import notify
+from zope.interface import classImplements
 from zope.interface import implementer
 from zope.interface import Interface
 from zope.location.interfaces import LocationError
@@ -108,6 +111,10 @@ class EditForm(DefaultEditForm):
             self.request.response.setHeader('X-Theme-Disabled', 'True')
             return json.dumps(api_view())
         return super().render()
+
+
+EditView = layout.wrap_form(EditForm)
+classImplements(EditView, IDexterityEditForm)
 
 
 _no_content_marker = object()
