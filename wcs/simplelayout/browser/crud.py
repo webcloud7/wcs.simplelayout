@@ -113,7 +113,15 @@ class EditForm(DefaultEditForm):
         return super().render()
 
 
-EditView = layout.wrap_form(EditForm)
+class SimplelayoutFormWrapper(layout.FormWrapper):
+
+    def render(self):
+        if self.form_instance._finished_edit:
+            return self.contents
+        return super().render()
+
+
+EditView = layout.wrap_form(EditForm, __wrapper_class=SimplelayoutFormWrapper)
 classImplements(EditView, IDexterityEditForm)
 
 
