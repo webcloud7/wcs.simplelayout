@@ -103,6 +103,39 @@ def expand_by_querystring(context, request, result):
         result.update(expandable_elements(context, request))
 
 
+def get_newslitisting_query(newslisting):
+    sort_order = 'descending'
+    sort_on = 'Date'
+
+    relations = IBlockNewsOptions(newslisting).filter_by_path
+    current_context = IBlockNewsOptions(newslisting).current_context
+    paths = ''
+    if current_context:
+        paths = '/'.join(newslisting.aq_parent.getPhysicalPath())
+    elif relations:
+        paths = ['/'.join(item.to_object.getPhysicalPath()) for item in relations if item.to_object]
+    else:
+        paths = '/'.join(api.portal.get().getPhysicalPath())
+
+    query = {
+        'path': paths,
+        'sort_on': sort_on,
+        'sort_order': sort_order,
+        'object_provides': 'wcs.simplelayout.contenttypes.behaviors.INews',
+    }
+
+    age = IBlockNewsOptions(newslisting).maximum_age
+    if age != 0:
+        date = datetimelike_to_iso(datetime.now() - timedelta(days=age))
+        query['Date'] = {'query': date, 'range': 'min'}
+
+    subjects = IBlockNewsOptions(newslisting).subjects
+    if len(subjects) != 0:
+        query['Subject'] = subjects
+
+    return query
+
+
 @implementer(ISerializeToJson)
 @adapter(ISimplelayout, Interface)
 class SimplelayoutSerializer(SerializeToJson):
@@ -166,35 +199,7 @@ class NewsListingBlockSerializer(SerializeToJson):
         include_items = self.request.form.get("include_items", include_items)
         include_items = boolean_value(include_items)
         if include_items:
-            sort_order = 'descending'
-            sort_on = 'Date'
-
-            relations = IBlockNewsOptions(self.context).filter_by_path
-            current_context = IBlockNewsOptions(self.context).current_context
-            paths = ''
-            if current_context:
-                paths = '/'.join(self.context.aq_parent.getPhysicalPath())
-            elif relations:
-                paths = ['/'.join(item.to_object.getPhysicalPath()) for item in relations if item.to_object]
-            else:
-                paths = '/'.join(api.portal.get().getPhysicalPath())
-
-            query = {
-                'path': paths,
-                'sort_on': sort_on,
-                'sort_order': sort_order,
-                'object_provides': 'wcs.simplelayout.contenttypes.behaviors.INews',
-            }
-
-            age = IBlockNewsOptions(self.context).maximum_age
-            if age != 0:
-                date = datetimelike_to_iso(datetime.now() - timedelta(days=age))
-                query['Date'] = {'query': date, 'range': 'min'}
-
-            subjects = IBlockNewsOptions(self.context).subjects
-            if len(subjects) != 0:
-                query['Subject'] = subjects
-
+            query = get_newslitisting_query(self.context)
             original_b_size = self.request.form.get('b_size', None)
             original_actual_url = self.request['ACTUAL_URL']
             if original_b_size is None:
