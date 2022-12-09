@@ -103,7 +103,7 @@ def expand_by_querystring(context, request, result):
         result.update(expandable_elements(context, request))
 
 
-def get_newslitisting_query(newslisting):
+def get_newslisting_query(newslisting):
     sort_order = 'descending'
     sort_on = 'Date'
 
@@ -199,7 +199,7 @@ class NewsListingBlockSerializer(SerializeToJson):
         include_items = self.request.form.get("include_items", include_items)
         include_items = boolean_value(include_items)
         if include_items:
-            query = get_newslitisting_query(self.context)
+            query = get_newslisting_query(self.context)
             original_b_size = self.request.form.get('b_size', None)
             original_actual_url = self.request['ACTUAL_URL']
             if original_b_size is None:
