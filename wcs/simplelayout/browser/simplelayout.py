@@ -1,4 +1,6 @@
 from plone import api
+from Products.CMFPlone.resources.webresource import PloneScriptResource
+from Products.CMFPlone.resources.webresource import PloneStyleResource
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from wcs.simplelayout import _
 from zope.i18n import translate
@@ -54,3 +56,28 @@ class SimplelayoutView(BrowserView):
             'Click here to create a new Media Folder': self._translate(_('label_create_mediafolder', default='Click here to create a new Media Folder')),
         }
         return json.dumps(messages)
+
+    def script_resource(self):
+        resource = PloneScriptResource(
+            context=self.context,
+            name="simplelayout",
+            depends="",
+            resource='++resource++simplelayout/js/dist/simplelayout.umd.js',
+            include=True,
+            unique=True,
+            integrity=True,
+        )
+        return resource.render(base_url=api.portal.get().absolute_url())
+
+    def style_resource(self):
+        resource = PloneStyleResource(
+            context=self.context,
+            name="simplelayout",
+            depends="",
+            resource='++resource++simplelayout/js/dist/style.css',
+            include=True,
+            media="all",
+            unique=True,
+            rel="stylesheet",
+        )
+        return resource.render(base_url=api.portal.get().absolute_url())
