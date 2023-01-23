@@ -13,7 +13,7 @@ class TestEditBlock(FunctionalTesting):
 
     @browsing
     def test_make_sure_form_wrapper_is_used(self, browser):
-        browser.login().visit(self.block, view='edit')
+        browser.login().visit(self.block, view='editblock')
 
         # This is only implicit possible by checking for example for the byline
         self.assertFalse(browser.css('#section-byline'),
@@ -21,7 +21,7 @@ class TestEditBlock(FunctionalTesting):
 
     @browsing
     def test_return_json_on_successfully_submit_form(self, browser):
-        browser.login().visit(self.block, view='edit')
+        browser.login().visit(self.block, view='editblock')
         browser.find_button_by_label('Save').click()
         self.assertEqual(self.block.absolute_url(),
                          browser.json['@id'].replace(':80', ''))

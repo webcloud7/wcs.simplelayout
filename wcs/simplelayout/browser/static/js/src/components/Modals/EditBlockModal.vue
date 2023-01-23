@@ -31,7 +31,7 @@ export default {
       };
       this.editBlockModal.hide();
 
-      const url = `${this.getBlockURL(position)}/edit`;
+      const url = `${this.getBlockURL(position)}/editblock`;
       this.$refs["modal"].openFormModal(url, position);
       this.editBlockModal.show();
     },

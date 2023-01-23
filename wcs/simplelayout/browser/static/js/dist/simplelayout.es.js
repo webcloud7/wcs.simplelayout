@@ -18888,7 +18888,7 @@ const _sfc_main$i = {
         blockIndex: parseInt(button.getAttribute("data-block"))
       };
       this.editBlockModal.hide();
-      const url = `${this.getBlockURL(position)}/edit`;
+      const url = `${this.getBlockURL(position)}/editblock`;
       this.$refs["modal"].openFormModal(url, position);
       this.editBlockModal.show();
     },

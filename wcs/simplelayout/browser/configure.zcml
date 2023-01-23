@@ -54,7 +54,7 @@
 
     <browser:page
         for="wcs.simplelayout.contenttypes.behaviors.IBlockMarker"
-        name="edit"
+        name="editblock"
         class=".crud.EditView"
         permission="cmf.ModifyPortalContent"
         />
