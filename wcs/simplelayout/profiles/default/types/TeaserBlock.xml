@@ -2,14 +2,16 @@
 <object name="TeaserBlock" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">TeaserBlock</property>
+ <property name="description" i18n:translate=""></property>
  <property name="icon_expr">string:file-earmark-richtext</property>
  <property name="factory">TeaserBlock</property>
- <property name="add_view_expr">string:${folder_url}/++add++TeaserBlock</property>
+ <property
+    name="add_view_expr">string:${folder_url}/++add++TeaserBlock</property>
  <property name="link_target"></property>
  <property name="immediate_view">view</property>
  <property name="global_allow">False</property>
  <property name="filter_content_types">True</property>
- <property name="allowed_content_types"></property>
+ <property name="allowed_content_types"/>
  <property name="allow_discussion">False</property>
  <property name="default_view">view</property>
  <property name="view_methods">
@@ -38,49 +40,61 @@
           &lt;title&gt;Bild 1&lt;/title&gt;
         &lt;/field&gt;
         &lt;field name=&quot;teaser_link_1&quot; type=&quot;z3c.relationfield.schema.RelationChoice&quot;&gt;
-          &lt;form:widget type=&quot;ftw.referencewidget.widget.ReferenceBrowserWidget&quot;&gt;
-          &lt;/form:widget&gt;
           &lt;description/&gt;
+          &lt;required&gt;False&lt;/required&gt;
           &lt;title&gt;Link 1&lt;/title&gt;
+          &lt;form:widget type=&quot;ftw.referencewidget.widget.ReferenceBrowserWidget&quot;/&gt;
+        &lt;/field&gt;
+        &lt;field name=&quot;teaser_link_external_1&quot; type=&quot;zope.schema.URI&quot; form:validator=&quot;wcs.backend.validators.TeaserLinkValidator&quot;&gt;
+          &lt;description/&gt;
+          &lt;required&gt;False&lt;/required&gt;
+          &lt;title&gt;Externer Link 1&lt;/title&gt;
         &lt;/field&gt;
       &lt;/fieldset&gt;
       &lt;fieldset name=&quot;teaser_2&quot; label=&quot;Teaser 2&quot;&gt;
         &lt;field name=&quot;teaser_title_2&quot; type=&quot;zope.schema.TextLine&quot;&gt;
           &lt;description/&gt;
-          &lt;title&gt;Titel 2&lt;/title&gt;
           &lt;required&gt;False&lt;/required&gt;
+          &lt;title&gt;Titel 2&lt;/title&gt;
         &lt;/field&gt;
         &lt;field name=&quot;teaser_image_2&quot; type=&quot;plone.namedfile.field.NamedBlobImage&quot;&gt;
           &lt;description/&gt;
-          &lt;title&gt;Bild 2&lt;/title&gt;
           &lt;required&gt;False&lt;/required&gt;
+          &lt;title&gt;Bild 2&lt;/title&gt;
         &lt;/field&gt;
         &lt;field name=&quot;teaser_link_2&quot; type=&quot;z3c.relationfield.schema.RelationChoice&quot;&gt;
-          &lt;form:widget type=&quot;ftw.referencewidget.widget.ReferenceBrowserWidget&quot;&gt;
-          &lt;/form:widget&gt;
           &lt;description/&gt;
-          &lt;title&gt;Link 2&lt;/title&gt;
           &lt;required&gt;False&lt;/required&gt;
+          &lt;title&gt;Link 2&lt;/title&gt;
+          &lt;form:widget type=&quot;ftw.referencewidget.widget.ReferenceBrowserWidget&quot;/&gt;
+        &lt;/field&gt;
+        &lt;field name=&quot;teaser_link_external_2&quot; type=&quot;zope.schema.URI&quot; form:validator=&quot;wcs.backend.validators.TeaserLinkValidator&quot;&gt;
+          &lt;description/&gt;
+          &lt;required&gt;False&lt;/required&gt;
+          &lt;title&gt;Externer Link 2&lt;/title&gt;
         &lt;/field&gt;
       &lt;/fieldset&gt;
       &lt;fieldset name=&quot;teaser_3&quot; label=&quot;Teaser 3&quot;&gt;
         &lt;field name=&quot;teaser_title_3&quot; type=&quot;zope.schema.TextLine&quot;&gt;
           &lt;description/&gt;
-          &lt;title&gt;Titel 3&lt;/title&gt;
           &lt;required&gt;False&lt;/required&gt;
+          &lt;title&gt;Titel 3&lt;/title&gt;
         &lt;/field&gt;
         &lt;field name=&quot;teaser_image_3&quot; type=&quot;plone.namedfile.field.NamedBlobImage&quot;&gt;
           &lt;description/&gt;
-          &lt;title&gt;Bild 3&lt;/title&gt;
           &lt;required&gt;False&lt;/required&gt;
+          &lt;title&gt;Bild 3&lt;/title&gt;
         &lt;/field&gt;
         &lt;field name=&quot;teaser_link_3&quot; type=&quot;z3c.relationfield.schema.RelationChoice&quot;&gt;
-          &lt;form:widget type=&quot;ftw.referencewidget.widget.ReferenceBrowserWidget&quot;&gt;
-          &lt;/form:widget&gt;
-          &lt;vocabulary&gt;ftw.referencewidget.sources.ReferenceObjSourceBinder&lt;/vocabulary&gt;
           &lt;description/&gt;
-          &lt;title&gt;Link 3&lt;/title&gt;
           &lt;required&gt;False&lt;/required&gt;
+          &lt;title&gt;Link 3&lt;/title&gt;
+          &lt;form:widget type=&quot;ftw.referencewidget.widget.ReferenceBrowserWidget&quot;/&gt;
+        &lt;/field&gt;
+        &lt;field name=&quot;teaser_link_external_3&quot; type=&quot;zope.schema.URI&quot; form:validator=&quot;wcs.backend.validators.TeaserLinkValidator&quot;&gt;
+          &lt;description/&gt;
+          &lt;required&gt;False&lt;/required&gt;
+          &lt;title&gt;Externer Link 3&lt;/title&gt;
         &lt;/field&gt;
       &lt;/fieldset&gt;
     &lt;/schema&gt;
@@ -92,12 +106,12 @@
  <alias from="sharing" to="@@sharing"/>
  <alias from="view" to="(selected layout)"/>
  <action title="View" action_id="view" category="object" condition_expr=""
-    icon_expr="" teaser_link_target="" url_expr="string:${object_url}"
+    icon_expr="" link_target="" url_expr="string:${object_url}"
     visible="True">
   <permission value="View"/>
  </action>
  <action title="Edit" action_id="edit" category="object" condition_expr=""
-    icon_expr="" teaser_link_target="" url_expr="string:${object_url}/edit"
+    icon_expr="" link_target="" url_expr="string:${object_url}/edit"
     visible="True">
   <permission value="Modify portal content"/>
  </action>
