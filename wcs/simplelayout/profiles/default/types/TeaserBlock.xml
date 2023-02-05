@@ -45,7 +45,7 @@
           &lt;title&gt;Link 1&lt;/title&gt;
           &lt;form:widget type=&quot;ftw.referencewidget.widget.ReferenceBrowserWidget&quot;/&gt;
         &lt;/field&gt;
-        &lt;field name=&quot;teaser_link_external_1&quot; type=&quot;zope.schema.URI&quot; form:validator=&quot;wcs.backend.validators.TeaserLinkValidator&quot;&gt;
+        &lt;field name=&quot;teaser_link_external_1&quot; type=&quot;zope.schema.URI&quot;&gt;
           &lt;description/&gt;
           &lt;required&gt;False&lt;/required&gt;
           &lt;title&gt;Externer Link 1&lt;/title&gt;
@@ -68,7 +68,7 @@
           &lt;title&gt;Link 2&lt;/title&gt;
           &lt;form:widget type=&quot;ftw.referencewidget.widget.ReferenceBrowserWidget&quot;/&gt;
         &lt;/field&gt;
-        &lt;field name=&quot;teaser_link_external_2&quot; type=&quot;zope.schema.URI&quot; form:validator=&quot;wcs.backend.validators.TeaserLinkValidator&quot;&gt;
+        &lt;field name=&quot;teaser_link_external_2&quot; type=&quot;zope.schema.URI&quot;&gt;
           &lt;description/&gt;
           &lt;required&gt;False&lt;/required&gt;
           &lt;title&gt;Externer Link 2&lt;/title&gt;
@@ -91,7 +91,7 @@
           &lt;title&gt;Link 3&lt;/title&gt;
           &lt;form:widget type=&quot;ftw.referencewidget.widget.ReferenceBrowserWidget&quot;/&gt;
         &lt;/field&gt;
-        &lt;field name=&quot;teaser_link_external_3&quot; type=&quot;zope.schema.URI&quot; form:validator=&quot;wcs.backend.validators.TeaserLinkValidator&quot;&gt;
+        &lt;field name=&quot;teaser_link_external_3&quot; type=&quot;zope.schema.URI&quot;&gt;
           &lt;description/&gt;
           &lt;required&gt;False&lt;/required&gt;
           &lt;title&gt;Externer Link 3&lt;/title&gt;
