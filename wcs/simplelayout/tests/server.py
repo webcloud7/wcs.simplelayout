@@ -1,14 +1,16 @@
+from xmlrpc.server import SimpleXMLRPCServer
 import argparse
 import logging
 import os
 import sys
 import time
-import signal
 
 
 HAS_DEBUG_MODE = False
 HAS_VERBOSE_CONSOLE = True
 ZSERVER_HOST = os.getenv("ZSERVER_HOST", "localhost")
+LISTENER_HOST = os.getenv("LISTENER_HOST", ZSERVER_HOST)
+LISTENER_PORT = int(os.getenv("LISTENER_PORT", 49999))
 
 
 def TIME():
@@ -36,17 +38,15 @@ def start(zope_layer_dotted_name):
 
     print(READY("Started Zope robot server"))
 
-    def wrapper_sigusr1(*args, **kwargs):
-        Zope2Server().zodb_setup(zope_layer_dotted_name)
-    signal.signal(signal.SIGUSR1, wrapper_sigusr1)
+    xmlrpc = SimpleXMLRPCServer((LISTENER_HOST, LISTENER_PORT), logRequests=False)
+    xmlrpc.allow_none = True
+    xmlrpc.register_function(zsl.zodb_setup, "zodb_setup")
+    xmlrpc.register_function(zsl.zodb_teardown, "zodb_teardown")
 
-    def wrapper_sigusr2(*args, **kwargs):
-        Zope2Server().zodb_teardown(zope_layer_dotted_name)
-    signal.signal(signal.SIGUSR2, wrapper_sigusr2)
-
+    print(f'XMLRPC server started: {LISTENER_HOST}:{LISTENER_PORT}')
     print_urls(zsl.zope_layer)
 
-    return zsl
+    return zsl, xmlrpc
 
 
 def print_urls(zope_layer):
@@ -93,14 +93,16 @@ def server():
     logging.basicConfig(level=loglevel)
 
     try:
-        zsl = start(args.layer)
+        zsl, xmlrpc = start(args.layer)
+        xmlrpc.serve_forever()
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
+        pass
+    finally:
+        print()
         print(WAIT("Stopping Zope robot server"))
-
         zsl.stop_zope_server()
-
         print(READY("Zope robot server stopped"))
 
 
@@ -166,6 +168,7 @@ class Zope2Server:
         self.zope_layer = None
 
     def zodb_setup(self, layer_dotted_name=None):
+        time.sleep(5)
         if layer_dotted_name:
             self.set_zope_layer(layer_dotted_name)
 
