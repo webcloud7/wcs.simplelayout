@@ -8,7 +8,7 @@ import time
 
 HAS_DEBUG_MODE = False
 HAS_VERBOSE_CONSOLE = True
-ZSERVER_HOST = os.getenv("ZSERVER_HOST", "localhost")
+ZSERVER_HOST = os.getenv("ZSERVER_HOST", "127.0.0.1")
 LISTENER_HOST = os.getenv("LISTENER_HOST", ZSERVER_HOST)
 LISTENER_PORT = int(os.getenv("LISTENER_PORT", 49999))
 
@@ -168,7 +168,6 @@ class Zope2Server:
         self.zope_layer = None
 
     def zodb_setup(self, layer_dotted_name=None):
-        time.sleep(5)
         if layer_dotted_name:
             self.set_zope_layer(layer_dotted_name)
 
