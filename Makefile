@@ -46,6 +46,8 @@ INSTANCE_FOLDER=instance
 
 PIP_PARAMS= --pre --use-deprecated legacy-resolver
 
+TEST_ENV_VARS=WSGI_SERVER_PORT=65035
+
 ##############################################################################
 # targets and prerequisites
 # target has to be one file, otherwise step gets executes for each file separate
@@ -125,7 +127,7 @@ endif
 
 # version ok?
 PYTHON_VERSION_MIN=3.9
-PYTHON_VERSION_OK=$(shell $(PYTHON) -c 'import sys; print(int(float("%d.%d"% sys.version_info[0:2]) >= float($(PYTHON_VERSION_MIN))))' )
+PYTHON_VERSION_OK=$(shell $(PYTHON) -c 'import sys; print((int(sys.version_info[0]), int(sys.version_info[1])) > tuple(map(int, "$(PYTHON_VERSION_MIN)".split("."))))')
 ifeq ($(PYTHON_VERSION_OK),0)
   $(error "Need python $(PYTHON_VERSION) >= $(PYTHON_VERSION_MIN)")
 endif
@@ -203,12 +205,12 @@ ${TESTRUNNER_SENTINEL}: ${PIP_SENTINEL}
 .PHONY: test
 test: ${TEST_PREREQUISITES} ${TESTRUNNER_SENTINEL} ## run tests
 	@echo "$(OK_COLOR)Run addon tests$(NO_COLOR)"
-	@${PYBIN}zope-testrunner --auto-color --auto-progress --test-path=${ADDONFOLDER}
+	@$(TEST_ENV_VARS) ${PYBIN}zope-testrunner --auto-color --auto-progress --test-path=${ADDONFOLDER}
 
 .PHONY: test-ignore-warnings
 test-ignore-warnings: ${TEST_PREREQUISITES} ${TESTRUNNER_SENTINEL}  ## run tests (hide warnins)
 	@echo "$(OK_COLOR)Run addon tests$(NO_COLOR)"
-	@PYTHONWARNINGS=ignore ${PYBIN}zope-testrunner --auto-color --auto-progress --test-path=${ADDONFOLDER}
+	@PYTHONWARNINGS=ignore @$(TEST_ENV_VARS) ${PYBIN}zope-testrunner --auto-color --auto-progress --test-path=${ADDONFOLDER}
 
 ##############################################################################
 # CODE FORMATTING

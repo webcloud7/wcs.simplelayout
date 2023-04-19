@@ -1,20 +1,67 @@
 version: 2.1
 
+orbs:
+  browser-tools: circleci/browser-tools@1.1.0
 
 workflows:
   tests:
     jobs:
-      - plone6py39
+      - build_backend
+      - test_backend:
+          requires:
+            - build_backend
+      - test_frontend:
+          requires:
+            - build_backend
 
 jobs:
-  plone6py39:
+  build_backend:
     resource_class: medium
     docker:
-      - image: webcloud7/plone-test:6.0.0b2
+      - image: webcloud7/plone-test:6.0.0.1-py311-node17
     environment:
       PIP_FIND_LINKS: /wheelhouse/
-      zope_i18n_compile_mo_files: "true"
     steps:
       - checkout
       - run: make install VENV_FOLDER=.
+      - persist_to_workspace:
+            root: .
+            paths:
+                - .
+
+  test_backend:
+    resource_class: medium
+    docker:
+      - image: webcloud7/plone-test:6.0.0.1-py311-node17
+    environment:
+      zope_i18n_compile_mo_files: "true"
+    steps:
+      - attach_workspace:
+            at: .
       - run: make test VENV_FOLDER=.
+
+  test_frontend:
+    resource_class: medium
+    docker:
+      - image: webcloud7/plone-test:6.0.0.1-py311-node17
+    environment:
+      zope_i18n_compile_mo_files: "true"
+      WSGI_SERVER_PORT: 65035
+    steps:
+      - attach_workspace:
+            at: .
+      - browser-tools/install-chrome
+      - run: npm install
+      - run:
+          command: ./bin/test-server wcs.simplelayout.testing.SIMPLELAYOUT_FRONTEND_TESTING
+          background: true
+      - run:
+          shell: /bin/sh
+          command: |
+            wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 10 http://localhost:${WSGI_SERVER_PORT}/plone/ok
+            :
+      - run: npm run test
+      - store_test_results:
+          path: /tmp/test-results
+      - store_artifacts:
+          path: /tmp/screenshots

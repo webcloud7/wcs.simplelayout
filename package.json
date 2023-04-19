@@ -16,13 +16,14 @@
     "dev": "vite build --watch --mode=development",
     "build": "vite build",
     "preview": "vite preview --port 5050",
-    "lint": "eslint ./wcs/simplelayout/browser/static/js/src --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+    "lint": "eslint ./wcs/simplelayout/browser/static/js/src --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "test": "testcafe 'chrome:headless' wcs/simplelayout/e2e -s path=/tmp/screenshots,takeOnFails=true -r xunit:/tmp/test-results/testcafe/results.xml --assertion-timeout 10000"
   },
   "dependencies": {
     "@patternslib/patternslib": "9.0.0-beta.1",
     "axios": "^0.27.2",
-    "qs": "^6.10.5",
     "pinia": "^2.0.0-rc.10",
+    "qs": "^6.10.5",
     "sass": "^1.51.0",
     "vue": "^3.2.33",
     "vue-axios": "3.4.1",
@@ -35,6 +36,9 @@
     "eslint": "^8.5.0",
     "eslint-plugin-vue": "^8.2.0",
     "prettier": "^2.5.1",
-    "vite": "^2.9.5"
+    "testcafe": "^2.4.0",
+    "testcafe-reporter-xunit": "^2.2.2",
+    "vite": "^2.9.5",
+    "xmlrpc": "^1.3.2"
   }
 }
