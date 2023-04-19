@@ -20,6 +20,7 @@ from zope.interface import Interface
 from zope.interface import Invalid
 from zope.interface import invariant
 from zope.interface import provider
+from plone.app.z3cform.widget import AjaxSelectFieldWidget
 import json
 
 
@@ -282,6 +283,10 @@ class IBlockNewsOptions(model.Schema):
                       default='The number of news entries to be '
                               'shown at most. Enter 0 for no limitation.'),
         default=5,
+    )
+
+    directives.widget(
+        "subjects", AjaxSelectFieldWidget, vocabulary="plone.app.vocabularies.Keywords"
     )
 
     subjects = schema.List(
