@@ -16,7 +16,6 @@ class FunctionalTesting(TestCase):
     def api_headers(self):
         return deepcopy({
             'Accept': 'application/json',
-            'Content-Type': 'application/json',
         })
 
     def setUp(self):
