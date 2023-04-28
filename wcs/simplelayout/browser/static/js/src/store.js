@@ -106,7 +106,10 @@ export const useSimplelayoutStore = defineStore({
     async modifyLayouts(data) {
       this.loading = true;
       try {
-        const response = await this.axios.patch(this.baseApiURL, data, {
+        // Zope 5.8.1 (Plone => 6.0.3) does not support PATCH + querystring anymore. Thus we send a additional request.
+        // headers: {Prefer: "return=representation"} only solves half the problem
+        await this.axios.patch(this.baseApiURL, data);
+        const response = await this.axios.get(this.baseApiURL, {
           params: this.params,
         });
         this.blocks = response.data.slblocks;

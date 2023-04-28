@@ -1,6 +1,6 @@
 <template>
   <div
-    class="d-flex justify-content-end align-items-start sl-header-wrapper flex-wrap"
+    class="d-flex justify-content-end align-items-start sl-header-wrapper flex-wrap flex-grow-1"
   >
     <div class="sl-title-wrapper me-auto">
       <slot name="title">

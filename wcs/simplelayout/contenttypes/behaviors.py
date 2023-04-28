@@ -371,3 +371,17 @@ class ILink(model.Schema):
             raise Invalid(_(
                 u"It's not possible to have an internal_link and an "
                 u"external_link together"))
+
+
+@provider(IFormFieldProvider)
+class ICollapsableBlock(model.Schema):
+    """Add collapsable field."""
+
+    directives.order_after(collapsable='IBlockTitle.show_title')
+    collapsable = schema.Bool(
+        title=_('label_collapsable', default='Collapsable'),
+        description=_('description_collapsable',
+                      default='Make block collapsable, for example an FAQ'),
+        required=False,
+        default=False,
+    )
