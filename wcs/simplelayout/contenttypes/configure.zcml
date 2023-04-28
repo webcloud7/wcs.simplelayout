@@ -79,7 +79,7 @@
 
     <plone:behavior
         title="Make Block collapable"
-        description="Makes a block collapable"
+        description="Makes a block collapsable"
         provides=".behaviors.ICollapsableBlock"
         />
 
