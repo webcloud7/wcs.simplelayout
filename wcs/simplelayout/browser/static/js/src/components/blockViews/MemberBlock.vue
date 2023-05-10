@@ -21,28 +21,96 @@
             </figcaption>
           </figure>
         </div>
-        <div class="sl-card-text">
-          <p v-if="block.organization">
-            {{ $i18n("Organization") }}: {{ block.organization }}
-          </p>
-          <p v-if="block.departement">
-            {{ $i18n("Departement") }}: {{ block.departement }}
-          </p>
-          <p v-if="block.function">
-            {{ $i18n("Function") }}: {{ block.function }}
-          </p>
-          <p v-if="block.email">{{ $i18n("E-Mail") }}: {{ block.email }}</p>
-          <p v-if="block.phone_office">
-            {{ $i18n("Office") }}: {{ block.phone_office }}
-          </p>
-          <p v-if="block.address || block.postal_code || block.city">
-            <b>{{ $i18n("Address") }}:</b><br />
-            <template v-if="block.address"> {{ block.address }}<br /></template>
-            <template v-if="block.postal_code || block.city">
-              {{ block.postal_code }} {{ block.city }}<br
-            /></template>
-            <template v-if="block.country">{{ block.country }}</template>
-          </p>
+        <div class="sl-card-text row">
+          <div class="col-12 col-xl-8">
+            <div class="row">
+              <div class="col-5" v-if="block.organization">
+                {{ $i18n("Organization") }}
+              </div>
+              <div class="col-7">{{ block.organization }}</div>
+            </div>
+            <div class="row">
+              <div class="col-5" v-if="block.departement">
+                {{ $i18n("Departement") }}
+              </div>
+              <div class="col-7">{{ block.departement }}</div>
+            </div>
+            <div class="row">
+              <div class="col-5" v-if="block.function">
+                {{ $i18n("Function") }}
+              </div>
+              <div class="col-7">{{ block.function }}</div>
+            </div>
+            <div class="row">
+              <div class="col-5" v-if="block.email">
+                {{ $i18n("E-Mail") }}
+              </div>
+              <div class="col-7">
+                <div class="text-truncate">
+                  <a :href="`mailto:${block.email}`">{{ block.email }}</a>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-5" v-if="block.www">
+                {{ $i18n("Website") }}
+              </div>
+              <div class="col-7">
+                <div class="text-truncate">
+                  <a :href="`${block.www}`" target="_blank">{{ block.www }}</a>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-5" v-if="block.phone_office">
+                {{ $i18n("Office") }}
+              </div>
+              <div class="col-7">{{ block.phone_office }}</div>
+            </div>
+            <div class="row">
+              <div class="col-5" v-if="block.address">
+                {{ $i18n("Address") }}
+              </div>
+              <div class="col-7">
+                <template v-if="block.address">
+                  {{ block.address }}<br
+                /></template>
+                <template v-if="block.postal_code || block.city">
+                  {{ block.postal_code }} {{ block.city }}<br
+                /></template>
+                <template v-if="block.country">{{ block.country }}</template>
+              </div>
+            </div>
+          </div>
+          <div v-if="getOpeningHours" class="col-12 col-xl-4">
+            {{ $i18n("Opening hours") }}:
+            <ul class="list-group list-group-flush">
+              <li
+                v-for="(entry, index) in getOpeningHours"
+                :key="index"
+                class="list-group-item"
+              >
+                <span v-if="entry.dayOfWeek">
+                  {{
+                    entry.dayOfWeek
+                      .map((day) => getReadableWeekdays(day))
+                      .join(", ")
+                  }}:
+                </span>
+                <span v-if="entry.opens == '00:00' && entry.closes == '00:00'">
+                  {{ $i18n("Closed") }}
+                </span>
+                <span v-if="entry.opens != '00:00' || entry.closes != '00:00'">
+                  <span class="opens">{{ entry.opens }}</span> -
+                  <span class="closes">{{ entry.closes }}</span> </span
+                ><span v-if="entry.validFrom || entry.validThrough">
+                  ( {{ $i18n("Validity") }}
+                  <span class="validFrom">{{ entry.validFrom }}</span> -
+                  <span class="validThrough">{{ entry.validThrough }}</span> )
+                </span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </template>
@@ -74,6 +142,31 @@ export default {
     block: {
       type: Object,
       required: true,
+    },
+  },
+  computed: {
+    getOpeningHours() {
+      if (
+        this.block.show_opening_hours &&
+        this.block.structured_opening_hours.openingHoursSpecification
+      ) {
+        return this.block.structured_opening_hours.openingHoursSpecification;
+      }
+      return false;
+    },
+  },
+  methods: {
+    getReadableWeekdays(day) {
+      const weekdays = {
+        Monday: this.$i18n("Mo"),
+        Tuesday: this.$i18n("Tu"),
+        Wednesday: this.$i18n("We"),
+        Thursday: this.$i18n("Th"),
+        Friday: this.$i18n("Fr"),
+        Saturday: this.$i18n("Sa"),
+        Sunday: this.$i18n("Su"),
+      };
+      return weekdays[day];
     },
   },
 };
