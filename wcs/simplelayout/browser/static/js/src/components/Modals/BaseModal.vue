@@ -165,9 +165,6 @@ export default {
 
       body.innerHTML = doc.getElementById("content").innerHTML;
       registry.scan(body);
-      if (window.initReferenceWidget) {
-        window.initReferenceWidget();
-      }
       executeScriptElements(body);
 
       // hack for oderselect_input.js
