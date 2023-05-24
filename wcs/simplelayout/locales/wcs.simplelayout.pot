@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-04-28 21:11+0000\n"
+"POT-Creation-Date: 2023-05-24 12:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -182,6 +182,11 @@ msgstr ""
 msgid "label_ascending"
 msgstr ""
 
+#. Default: "Closed"
+#: ./wcs/simplelayout/browser/simplelayout.py:68
+msgid "label_closed"
+msgstr ""
+
 #. Default: "Collapsable"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:382
 msgid "label_collapsable"
@@ -230,6 +235,11 @@ msgstr ""
 #. Default: "4-column row (25%)"
 #: ./wcs/simplelayout/browser/simplelayout.py:42
 msgid "label_four_col"
+msgstr ""
+
+#. Default: "Fr"
+#: ./wcs/simplelayout/browser/simplelayout.py:65
+msgid "label_friday_short"
 msgstr ""
 
 #. Default: "Function"
@@ -287,14 +297,34 @@ msgstr ""
 msgid "label_mediafolder"
 msgstr ""
 
+#. Default: "Mo"
+#: ./wcs/simplelayout/browser/simplelayout.py:61
+msgid "label_monday_short"
+msgstr ""
+
 #. Default: "No referenced content found"
 #: ./wcs/simplelayout/browser/simplelayout.py:50
 msgid "label_no_ref_content"
 msgstr ""
 
+#. Default: "Opening hours"
+#: ./wcs/simplelayout/browser/simplelayout.py:60
+msgid "label_opening_hours"
+msgstr ""
+
+#. Default: "Organisation"
+#: ./wcs/simplelayout/browser/simplelayout.py:57
+msgid "label_organisation"
+msgstr ""
+
 #. Default: "Organization"
 #: ./wcs/simplelayout/browser/simplelayout.py:46
 msgid "label_organization"
+msgstr ""
+
+#. Default: "Office"
+#: ./wcs/simplelayout/browser/simplelayout.py:59
+msgid "label_phone_office"
 msgstr ""
 
 #. Default: "Types"
@@ -317,6 +347,11 @@ msgstr ""
 msgid "label_remove_col"
 msgstr ""
 
+#. Default: "Sa"
+#: ./wcs/simplelayout/browser/simplelayout.py:66
+msgid "label_saturday_short"
+msgstr ""
+
 #. Default: "Show title"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:142
 msgid "label_show_title"
@@ -332,6 +367,11 @@ msgstr ""
 msgid "label_sort_order"
 msgstr ""
 
+#. Default: "Su"
+#: ./wcs/simplelayout/browser/simplelayout.py:67
+msgid "label_sunday_short"
+msgstr ""
+
 #. Default: "Text"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:153
 msgid "label_text"
@@ -342,9 +382,19 @@ msgstr ""
 msgid "label_three_col"
 msgstr ""
 
+#. Default: "Th"
+#: ./wcs/simplelayout/browser/simplelayout.py:64
+msgid "label_thursday_short"
+msgstr ""
+
 #. Default: "Title"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:138
 msgid "label_title"
+msgstr ""
+
+#. Default: "Tu"
+#: ./wcs/simplelayout/browser/simplelayout.py:62
+msgid "label_tuesday_short"
 msgstr ""
 
 #. Default: "2-column row (50%)"
@@ -357,6 +407,11 @@ msgstr ""
 msgid "label_upload"
 msgstr ""
 
+#. Default: "Validity"
+#: ./wcs/simplelayout/browser/simplelayout.py:69
+msgid "label_validity"
+msgstr ""
+
 #. Default: "Youtube, or Vimeo URL"
 #: ./wcs/simplelayout/contenttypes/behaviors.py:184
 msgid "label_video_url"
@@ -365,6 +420,16 @@ msgstr ""
 #. Default: "View"
 #: ./wcs/simplelayout/browser/simplelayout.py:54
 msgid "label_view"
+msgstr ""
+
+#. Default: "Website"
+#: ./wcs/simplelayout/browser/simplelayout.py:58
+msgid "label_website"
+msgstr ""
+
+#. Default: "We"
+#: ./wcs/simplelayout/browser/simplelayout.py:63
+msgid "label_wednesday_short"
 msgstr ""
 
 #. Default: "Width"

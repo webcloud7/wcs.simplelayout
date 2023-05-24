@@ -26686,7 +26686,7 @@ const _hoisted_7$1 = {
   class: "figure-caption mt-1"
 };
 const _hoisted_8$1 = { class: "sl-card-text row" };
-const _hoisted_9$1 = { class: "col-12 col-xl-8" };
+const _hoisted_9$1 = { class: "col-12 col-xl-8 mt-3 memberblock-info" };
 const _hoisted_10$1 = { class: "row" };
 const _hoisted_11$1 = {
   key: 0,
@@ -26737,7 +26737,7 @@ const _hoisted_35 = /* @__PURE__ */ createBaseVNode("br", null, null, -1);
 const _hoisted_36 = /* @__PURE__ */ createBaseVNode("br", null, null, -1);
 const _hoisted_37 = {
   key: 0,
-  class: "col-12 col-xl-4"
+  class: "col-12 col-xl-4 mt-3 memberblock-openinghours"
 };
 const _hoisted_38 = { class: "list-group list-group-flush" };
 const _hoisted_39 = { key: 0 };

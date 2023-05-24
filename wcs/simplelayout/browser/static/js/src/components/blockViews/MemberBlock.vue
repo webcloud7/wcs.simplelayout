@@ -22,7 +22,7 @@
           </figure>
         </div>
         <div class="sl-card-text row">
-          <div class="col-12 col-xl-8">
+          <div class="col-12 col-xl-8 mt-3 memberblock-info">
             <div class="row">
               <div class="col-5" v-if="block.organization">
                 {{ $i18n("Organization") }}
@@ -82,7 +82,7 @@
               </div>
             </div>
           </div>
-          <div v-if="getOpeningHours" class="col-12 col-xl-4">
+          <div v-if="getOpeningHours" class="col-12 col-xl-4 mt-3 memberblock-openinghours">
             {{ $i18n("Opening hours") }}:
             <ul class="list-group list-group-flush">
               <li
@@ -176,4 +176,11 @@ export default {
   padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x) 0
     var(--bs-card-spacer-x);
 }
+
+.memberblock-info,
+.memberblock-openinghours {
+  flex-basis: 300px;
+  flex-grow: 1;
+}
+
 </style>
