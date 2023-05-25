@@ -126,6 +126,7 @@ export default {
 .sl-card-text {
   flex-basis: 300px;
   flex-grow: 999;
+  max-width: 100%;
 }
 .sl-collapsable-button {
   margin-left: calc(var(--bs-card-spacer-x) * -1);

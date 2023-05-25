@@ -21,7 +21,7 @@
             </figcaption>
           </figure>
         </div>
-        <div class="sl-card-text row">
+        <div class="sl-card-text row g-0">
           <div class="col-12 col-xl-8 mt-3 memberblock-info">
             <div class="row">
               <div class="col-5" v-if="block.organization">
