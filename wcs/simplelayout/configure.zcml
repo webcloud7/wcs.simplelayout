@@ -42,4 +42,9 @@
              zope.lifecycleevent.interfaces.IObjectRemovedEvent"
         handler=".subscribers.update_page_state_on_block_remove"
         />
+
+    <adapter factory=".indexer.SimplelayoutSearchableText"
+                name="ISimplelayout"
+                />
+
 </configure>
