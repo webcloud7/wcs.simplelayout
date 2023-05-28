@@ -39,6 +39,7 @@
   <element value="wcs.simplelayout.contenttypes.behaviors.ISimplelayout"/>
   <element value="plone.excludefromnavigation"/>
   <element value="plone.publication"/>
+  <element value="plone.textindexer" />
  </property>
  <property name="schema"></property>
  <property
