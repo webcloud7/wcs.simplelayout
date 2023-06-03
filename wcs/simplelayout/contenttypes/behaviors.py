@@ -328,13 +328,14 @@ class IMediaFolderReference(model.Schema):
     directives.widget('mediafolder',
                       ReferenceBrowserWidget,
                       allow_nonsearched_types=True,
-                      start='parent',
-                      override=True,
-                      selectable=['MediaFolder', ])
+                      start='parent')
     mediafolder = RelationChoice(
         title=_('label_mediafolder', default='Mediafolder reference'),
         required=False,
-        source=ReferenceObjSourceBinder()
+        source=ReferenceObjSourceBinder(
+            override=True,
+            selectable=['MediaFolder', ]
+        )
     )
 
 
