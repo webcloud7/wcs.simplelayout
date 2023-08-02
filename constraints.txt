@@ -1,2 +1,2 @@
--c https://dist.plone.org/release/6.0.3/constraints.txt
+-c https://dist.plone.org/release/6.0.5/constraints.txt
 libvcs==0.11.1
