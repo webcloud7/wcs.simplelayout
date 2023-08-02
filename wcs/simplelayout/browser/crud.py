@@ -71,6 +71,7 @@ class AddForm(DefaultAddForm):
             api_view = getMultiAdapter((self.obj, self.request), ISerializeToJson)
             self.request.response.setHeader('Content-Type', 'application/json')
             self.request.response.setHeader('X-Theme-Disabled', 'True')
+            self.request.set('BODY', '')
             return json.dumps(api_view())
         return super(AddForm, self).render()
 
@@ -109,6 +110,7 @@ class EditForm(DefaultEditForm):
             api_view = getMultiAdapter((self.context, self.request), ISerializeToJson)
             self.request.response.setHeader('Content-Type', 'application/json')
             self.request.response.setHeader('X-Theme-Disabled', 'True')
+            self.request.set('BODY', '')
             return json.dumps(api_view())
         return super().render()
 
