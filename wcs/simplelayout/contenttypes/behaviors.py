@@ -340,6 +340,27 @@ class IMediaFolderReference(model.Schema):
 
 
 @provider(IFormFieldProvider)
+class IFilesReference(model.Schema):
+    directives.read_permission(files='wcs.simplelayout.restrictedRead')
+    directives.widget('files',
+                      ReferenceBrowserWidget,
+                      allow_nonsearched_types=True,
+                      start='parent')
+    files = RelationList(
+        title=_('label_individual_files', default='Individual files for File/Image listing block'),
+        description=_('text_individual_files', default='You can mix and match invididual files and files from a mediafolder reference.'),
+        required=False,
+        value_type=RelationChoice(
+            title=u"Relation-List",
+            source=ReferenceObjSourceBinder(
+                override=True,
+                selectable=['File', 'Image']
+            ),
+        ),
+    )
+
+
+@provider(IFormFieldProvider)
 class ILink(model.Schema):
     """Add internal and external link field."""
 

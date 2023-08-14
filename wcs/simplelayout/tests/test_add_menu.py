@@ -10,11 +10,11 @@ class TestSampleTypes(FunctionalTesting):
     def test_blocks_not_in_add_menu(self, browser):
         page = create(Builder('content page').titled('A Page'))
         browser.login().visit(page)
-        self.assertEquals(['ContentPage', 'Media Folder', 'News Folder'],
-                          factoriesmenu.addable_types())
+        self.assertEqual(['ContentPage', 'Media Folder', 'News Folder'],
+                         factoriesmenu.addable_types())
 
         newsfolder = create(Builder('news folder').titled('A News Folder'))
 
         browser.login().visit(newsfolder)
-        self.assertEquals(['Media Folder', 'News'],
-                          factoriesmenu.addable_types())
+        self.assertEqual(['Media Folder', 'News'],
+                         factoriesmenu.addable_types())
