@@ -19,6 +19,7 @@ from urllib import parse
 from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
 from wcs.simplelayout.contenttypes.behaviors import IBlockNewsOptions
 from wcs.simplelayout.contenttypes.behaviors import IFileBlockSortOptions
+from wcs.simplelayout.contenttypes.behaviors import IFilesReference
 from wcs.simplelayout.contenttypes.behaviors import IImageBlockSortOptions
 from wcs.simplelayout.contenttypes.behaviors import IMediaFolderReference
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
@@ -240,12 +241,11 @@ class FileBlockSortOptionsSerializer(SerializeToJson):
             sort_order = self.behavior(self.context).sort_order
             portal_types = self.behavior(self.context).portal_types
             query = {
-                'path': {'query': self._get_path(), 'depth': 1},
+                'path': {'query': self._get_paths()},
                 'sort_on': sort_on,
                 'sort_order': sort_order,
                 'portal_type': portal_types
             }
-
             original_b_size = self.request.form.get('b_size', None)
             original_actual_url = self.request['ACTUAL_URL']
             if original_b_size is None:
@@ -270,13 +270,29 @@ class FileBlockSortOptionsSerializer(SerializeToJson):
 
         return result
 
-    def _get_path(self):
+    def _get_paths(self):
+        paths = []
         mediafolder_behaviour = IMediaFolderReference(self.context, None)
         if (mediafolder_behaviour and
                 mediafolder_behaviour.mediafolder and
                 mediafolder_behaviour.mediafolder.to_object):
-            return '/'.join(self.context.mediafolder.to_object.getPhysicalPath())
-        return '/'.join(self.context.getPhysicalPath())
+            paths.append(
+                '/'.join(self.context.mediafolder.to_object.getPhysicalPath())
+            )
+        else:
+            paths.append(
+                ('/'.join(self.context.getPhysicalPath()), 1)
+            )
+
+        files_behaviour = IFilesReference(self.context, None)
+        if files_behaviour and files_behaviour.files:
+            for file_ in files_behaviour.files:
+                if file_.to_object:
+                    paths.append(
+                        '/'.join(file_.to_object.getPhysicalPath())
+                    )
+
+        return paths
 
 
 @implementer(ISerializeToJson)

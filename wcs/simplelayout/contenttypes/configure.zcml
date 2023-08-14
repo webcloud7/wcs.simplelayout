@@ -72,6 +72,12 @@
         />
 
     <plone:behavior
+        title="Files reference field for ListingBlocks"
+        description="Extends the content with a reference field to a media folder"
+        provides=".behaviors.IFilesReference"
+        />
+
+    <plone:behavior
         title="Link fields"
         description="Extends the content with a internal and external link field"
         provides=".behaviors.ILink"

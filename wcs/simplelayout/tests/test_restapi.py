@@ -239,6 +239,37 @@ class TestRestApi(FunctionalTesting):
         )
 
     @browsing
+    def test_listingblock_can_include_individual_files(self, browser):
+        self.add_behavior('FileListingBlock', 'wcs.simplelayout.contenttypes.behaviors.IFilesReference')
+        intids = getUtility(IIntIds)
+        mediafolder = create(Builder('mediafolder'))
+
+        mediafolder2 = create(Builder('mediafolder'))
+        alternative_file1 = create(Builder('file').within(mediafolder2))
+        alternative_file2 = create(Builder('file').within(mediafolder2))
+
+        block = create(Builder('file listing block')
+                       .having(mediafolder=RelationValue(intids.getId(mediafolder)),
+                               files=[RelationValue(intids.getId(alternative_file1))])
+                       .within(self.page)
+                       .titled('File listing'))
+
+        file1 = create(Builder('file').within(mediafolder))
+        file2 = create(Builder('file').within(mediafolder))
+
+        browser.login().open(self.page.absolute_url() + '?include_items=1', headers=self.api_headers)
+        block_result = browser.json['slblocks'][block.UID()]
+
+        self.assertEqual(3, len(block_result['items']))
+
+        paths = tuple(map(lambda item: item['@id'].replace(':80', ''), block_result['items']))
+        self.assertIn(file1.absolute_url(), paths)
+        self.assertIn(file2.absolute_url(), paths)
+
+        self.assertIn(alternative_file1.absolute_url(), paths)
+        self.assertNotIn(alternative_file2.absolute_url(), paths)
+
+    @browsing
     def test_hypermedia_batch_urls_are_correct_on_file_listing_block(self, browser):
         intids = getUtility(IIntIds)
         mediafolder = create(Builder('mediafolder'))

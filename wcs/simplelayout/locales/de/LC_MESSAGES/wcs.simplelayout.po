@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-05-24 12:14+0000\n"
+"POT-Creation-Date: 2023-08-14 11:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr "Text für Blöcke, welcher nur HTML erlaubt."
 msgid "Default Block title with (Show title option)"
 msgstr "Titel für Blöcke, inkl. 'Title anzeigen Option'"
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:78
+#: ./wcs/simplelayout/contenttypes/configure.zcml:84
 msgid "Extends the content with a internal and external link field"
 msgstr "Erweitert den Inhalt mit Felder für interne und externe Links"
 
@@ -34,11 +34,15 @@ msgstr "Erweitert den Inhalt mit Felder für interne und externe Links"
 msgid "Extends the content with a reference field to a media folder"
 msgstr "Der Inhalt erhält dadruch ein neues Feld für die Verknüpfung mit Medien Ordner"
 
+#: ./wcs/simplelayout/contenttypes/configure.zcml:78
+msgid "Files reference field for ListingBlocks"
+msgstr ""
+
 #: ./wcs/simplelayout/contenttypes/behaviors.py:162
 msgid "Image"
 msgstr "Bild"
 
-#: ./wcs/simplelayout/contenttypes/behaviors.py:371
+#: ./wcs/simplelayout/contenttypes/behaviors.py:393
 msgid "It's not possible to have an internal_link and an external_link together"
 msgstr "Es ist nicht möglich einen interne Links und einen externen Link gleichzeitig zu hinterlegen."
 
@@ -46,15 +50,15 @@ msgstr "Es ist nicht möglich einen interne Links und einen externen Link gleich
 msgid "Layout"
 msgstr "Layout"
 
-#: ./wcs/simplelayout/contenttypes/behaviors.py:347
+#: ./wcs/simplelayout/contenttypes/behaviors.py:369
 msgid "Link"
 msgstr "Link"
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:78
+#: ./wcs/simplelayout/contenttypes/configure.zcml:84
 msgid "Link fields"
 msgstr "Link Felder"
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:84
+#: ./wcs/simplelayout/contenttypes/configure.zcml:90
 msgid "Make Block collapable"
 msgstr ""
 
@@ -62,7 +66,7 @@ msgstr ""
 msgid "Make a content a News Type"
 msgstr "Markiert den Inhlatstyp als News. Dieser erscheint dadurch in News Auflistungen"
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:84
+#: ./wcs/simplelayout/contenttypes/configure.zcml:90
 msgid "Makes a block collapsable"
 msgstr ""
 
@@ -143,7 +147,7 @@ msgid "Youtube format: http(s)://youtu.be/VIDEO_ID (add start parameter to let t
 msgstr ""
 
 #. Default: "Make block collapsable, for example an FAQ"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:383
+#: ./wcs/simplelayout/contenttypes/behaviors.py:405
 msgid "description_collapsable"
 msgstr "Dies macht einen Block aufklappbar, zum Beispiel für FAQ's, oder zum Platz sparen."
 
@@ -153,7 +157,7 @@ msgid "description_image_alt_text"
 msgstr "Alternative-Text für das Bild (Zugänglichkeit)"
 
 #. Default: "Use the link section to redirect to another content or website."
-#: ./wcs/simplelayout/contenttypes/behaviors.py:349
+#: ./wcs/simplelayout/contenttypes/behaviors.py:371
 msgid "description_link_fieldset"
 msgstr "Verwenden Sie diesen Bereich um auf einen anderen Inhalt, oder Website zu verweisen."
 
@@ -188,7 +192,7 @@ msgid "label_closed"
 msgstr "Geschlossen"
 
 #. Default: "Collapsable"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:382
+#: ./wcs/simplelayout/contenttypes/behaviors.py:404
 msgid "label_collapsable"
 msgstr "Aufklappbar?"
 
@@ -228,7 +232,7 @@ msgid "label_email"
 msgstr "E-Mail"
 
 #. Default: "External URL"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:357
+#: ./wcs/simplelayout/contenttypes/behaviors.py:379
 msgid "label_external_link"
 msgstr "Externe URL"
 
@@ -277,13 +281,18 @@ msgstr "Alternative-Text"
 msgid "label_image_caption"
 msgstr "Bild Legende"
 
+#. Default: "Individual files for File/Image listing block"
+#: ./wcs/simplelayout/contenttypes/behaviors.py:350
+msgid "label_individual_files"
+msgstr "Individuelle Dateien für Datei/Bild Auflistung"
+
 #. Default: "Information"
 #: ./wcs/simplelayout/browser/simplelayout.py:36
 msgid "label_information"
 msgstr "Informationen"
 
 #. Default: "Internal link"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:364
+#: ./wcs/simplelayout/contenttypes/behaviors.py:386
 msgid "label_internal_link"
 msgstr "Interner Verweis"
 
@@ -293,7 +302,7 @@ msgid "label_link_target"
 msgstr "Dieser Link zeigt auf einen internen, oder externen Bereich/Website"
 
 #. Default: "Mediafolder reference"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:335
+#: ./wcs/simplelayout/contenttypes/behaviors.py:333
 msgid "label_mediafolder"
 msgstr "Media Order Verknüpfung"
 
@@ -501,6 +510,11 @@ msgstr "Nur News mit den auswgewählten Stichwörter werden angezeigt."
 #: ./wcs/simplelayout/contenttypes/behaviors.py:293
 msgid "news_listing_config_subjects_label"
 msgstr "Stichwort filter"
+
+#. Default: "You can mix and match invididual files and files from a mediafolder reference."
+#: ./wcs/simplelayout/contenttypes/behaviors.py:351
+msgid "text_individual_files"
+msgstr "Es können einzelne Dateien und Dateien aus einem Medienordner gemischt werden."
 
 #: ./wcs/simplelayout/configure.zcml:25
 msgid "wcs.simplelayout base profile"
