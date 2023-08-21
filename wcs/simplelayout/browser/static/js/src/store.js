@@ -22,6 +22,7 @@ export const useSimplelayoutStore = defineStore({
     canEditColumns: false,
     canAddBlocks: false,
     contentTypeTitles: {},
+    customTemplates: { FileListingBlock: {template: "<div>{{ block['@id'] }}</div>", replace: false} },
     i18n: {},
     errors: [],
   }),

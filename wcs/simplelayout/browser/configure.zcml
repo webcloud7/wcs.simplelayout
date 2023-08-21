@@ -5,6 +5,8 @@
     xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="wcs.simplelayout">
 
+    <include package=".dexterity" />
+
     <browser:resourceDirectory
         name="simplelayout"
         directory="static"

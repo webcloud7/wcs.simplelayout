@@ -1,0 +1,13 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="wcs.simplelayout">
+
+  <browser:page
+      name="block_template"
+      for="plone.app.dexterity.interfaces.ITypeSchemaContext"
+      class=".block_template.BlockTemplatePage"
+      permission="plone.schemaeditor.ManageSchemata" />
+
+
+</configure>
