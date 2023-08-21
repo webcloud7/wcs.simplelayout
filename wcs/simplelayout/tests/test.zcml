@@ -1,0 +1,18 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="wcs.simplelayout">
+
+
+    <!-- Register dexterity-types control panel again with a browser layer. because it does
+    get registered by the restapi as well with the same name, which leads to conflicts -->
+    <browser:page
+        name="dexterity-types"
+        for="plone.base.interfaces.IPloneSiteRoot"
+        class="plone.app.dexterity.browser.types.TypesContext"
+        allowed_interface="OFS.interfaces.IItem"
+        permission="plone.schemaeditor.ManageSchemata"
+        layer="wcs.simplelayout.interfaces.ISimplelayoutLayer"
+        />
+
+</configure>

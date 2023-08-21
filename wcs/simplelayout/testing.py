@@ -10,6 +10,7 @@ from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
+from plone.testing.zope import installProduct
 from plone.testing.zope import WSGI_SERVER_FIXTURE
 from zope.configuration import xmlconfig
 import plone.restapi
@@ -27,6 +28,10 @@ class SimplelayoutLayer(PloneSandboxLayer):
             '  <autoIncludePluginsOverrides target="plone" />'
             '</configure>',
             context=configurationContext)
+
+        installProduct(app, 'wcs.simplelayout')
+
+        self.loadZCML("test.zcml", package=wcs.simplelayout.tests)
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'wcs.simplelayout:default')

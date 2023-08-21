@@ -9,5 +9,4 @@
       class=".block_template.BlockTemplatePage"
       permission="plone.schemaeditor.ManageSchemata" />
 
-
 </configure>
