@@ -1,8 +1,11 @@
 from plone import api
+from plone.registry.interfaces import IRegistry
 from Products.CMFPlone.resources.webresource import PloneScriptResource
 from Products.CMFPlone.resources.webresource import PloneStyleResource
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from wcs.simplelayout import _
+from wcs.simplelayout.utils import get_block_types
+from zope.component import getUtility
 from zope.i18n import translate
 from zope.publisher.browser import BrowserView
 import json
@@ -69,6 +72,20 @@ class SimplelayoutView(BrowserView):
             'Validity': self._translate(_('label_validity', default='Validity')),
         }
         return json.dumps(messages)
+
+    def custom_templates(self):
+        templates = {}
+        prefix = 'wcs.backend.block_template'
+        registry = getUtility(IRegistry)
+        for fti in get_block_types():
+            template_record_name = f'{prefix}.{fti.id}.template'
+            replace_record_name = f'{prefix}.{fti.id}.replace'
+            if template_record_name in registry:
+                templates[fti.id] = {
+                    'template': registry[template_record_name],
+                    'replace': registry.get(replace_record_name, False)
+                }
+        return json.dumps(templates)
 
     def script_resource(self):
         resource = PloneScriptResource(

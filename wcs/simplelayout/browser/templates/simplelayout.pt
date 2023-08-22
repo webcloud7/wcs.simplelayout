@@ -10,7 +10,8 @@
                              data-i18n view/i18n;
                              data-can-modify view/can_modify;
                              data-can-addblocks view/can_add_blocks;
-                             data-can-edit-columns view/can_edit_columns"
+                             data-can-edit-columns view/can_edit_columns;
+                             data-custom-templates view/custom_templates"
                              id="app" class="simplelayout-app"></div>
         <tal:script replace="structure view/script_resource" />
     </div>

@@ -23,37 +23,50 @@
     >
       <div class="card-body" v-if="Object.keys(block).length !== 0">
         <div class="card-text">
-          <slot name="body">
-            <div class="d-flex flex-wrap flex-row-reverse gap-3">
-              <div class="sl-card-image" v-if="block.image">
-                <figure class="d-table m-0 text-center">
-                  <img
-                    v-if="block.image.scales.great"
-                    class="figure-img m-0"
-                    :src="block.image.scales.great.download"
-                    :alt="block.image_alt_text"
-                  />
-                  <img
-                    v-else
-                    class="figure-img m-0"
-                    :src="block.image.download"
-                    :alt="block.image_alt_text"
-                  />
-                  <figcaption
-                    v-if="block.image_caption"
-                    class="figure-caption mt-1"
-                  >
-                    {{ block.image_caption }}
-                  </figcaption>
-                </figure>
+          <template v-if="hasCustomTemplate && replaceCustomTemplate">
+            <RenderCustomTemplate
+              :customTemplate="sl.customTemplates[block['@type']].template"
+              :block="block"
+            />
+          </template>
+          <template v-else>
+            <slot name="body">
+              <div class="d-flex flex-wrap flex-row-reverse gap-3">
+                <div class="sl-card-image" v-if="block.image">
+                  <figure class="d-table m-0 text-center">
+                    <img
+                      v-if="block.image.scales.great"
+                      class="figure-img m-0"
+                      :src="block.image.scales.great.download"
+                      :alt="block.image_alt_text"
+                    />
+                    <img
+                      v-else
+                      class="figure-img m-0"
+                      :src="block.image.download"
+                      :alt="block.image_alt_text"
+                    />
+                    <figcaption
+                      v-if="block.image_caption"
+                      class="figure-caption mt-1"
+                    >
+                      {{ block.image_caption }}
+                    </figcaption>
+                  </figure>
+                </div>
+                <div
+                  class="sl-card-text"
+                  v-if="block.text"
+                  v-html="block.text.data"
+                />
               </div>
-              <div
-                class="sl-card-text"
-                v-if="block.text"
-                v-html="block.text.data"
-              />
-            </div>
-          </slot>
+            </slot>
+            <RenderCustomTemplate
+              v-if="hasCustomTemplate && !replaceCustomTemplate"
+              :customTemplate="sl.customTemplates[block['@type']].template"
+              :block="block"
+            />
+          </template>
         </div>
       </div>
     </div>
@@ -62,10 +75,13 @@
 </template>
 <script>
 import BlockControls from "@/components/Controls/BlockControls.vue";
+import RenderCustomTemplate from "@/components/standard/RenderCustomTemplate.vue";
 import { useSimplelayoutStore } from "@/store.js";
+
 export default {
   components: {
     BlockControls,
+    RenderCustomTemplate,
   },
   props: {
     actions: {
@@ -107,6 +123,16 @@ export default {
     });
   },
   computed: {
+    hasCustomTemplate() {
+      const type = this.block["@type"];
+      return type in this.sl.customTemplates;
+    },
+    replaceCustomTemplate() {
+      return (
+        this.hasCustomTemplate &&
+        this.sl.customTemplates[this.block["@type"]].replace
+      );
+    },
     rowsLength() {
       return this.sl.layouts.items[this.rowIndex].items.length;
     },

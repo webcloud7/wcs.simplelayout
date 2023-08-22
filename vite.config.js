@@ -33,6 +33,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      vue: "vue/dist/vue.esm-bundler.js",
       "@": fileURLToPath(
         new URL("./wcs/simplelayout/browser/static/js/src", import.meta.url)
       ),

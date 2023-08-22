@@ -22,6 +22,7 @@ export const useSimplelayoutStore = defineStore({
     canEditColumns: false,
     canAddBlocks: false,
     contentTypeTitles: {},
+    customTemplates: {},
     i18n: {},
     errors: [],
   }),
@@ -40,6 +41,9 @@ export const useSimplelayoutStore = defineStore({
     },
     setI18nMessages(messages) {
       this.i18n = JSON.parse(messages);
+    },
+    setCustomTemplates(data) {
+      this.customTemplates = JSON.parse(data);
     },
     getTranslation(message) {
       if (message in this.i18n) {

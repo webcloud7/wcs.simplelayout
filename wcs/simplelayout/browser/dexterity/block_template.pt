@@ -1,0 +1,9 @@
+<tal:form xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          metal:use-macro="context/@@ploneform-macros/titlelessform"
+          i18n:domain="plone">
+  <tal:fields metal:fill-slot="fields">
+      <tal:field tal:replace="structure view/widgets/replace/@@ploneform-render-widget" />
+    <tal:field tal:replace="structure view/widgets/template/@@ploneform-render-widget" />
+
+  </tal:fields>
+</tal:form>
