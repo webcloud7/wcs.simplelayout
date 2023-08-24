@@ -2,6 +2,7 @@ from ftw.referencewidget.sources import ReferenceObjSourceBinder
 from ftw.referencewidget.widget import ReferenceBrowserWidget
 from plone.app.dexterity.textindexer.directives import searchable
 from plone.app.textfield import RichText
+from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.autoform import directives
 from plone.autoform.interfaces import IFormFieldProvider
 from plone.namedfile.field import NamedBlobImage
@@ -12,15 +13,15 @@ from wcs.simplelayout import _
 from wcs.simplelayout.contenttypes import utils
 from wcs.simplelayout.contenttypes.vocabs import sort_index_vocabulary
 from wcs.simplelayout.contenttypes.vocabs import sort_order_vocabulary
-from z3c.relationfield import RelationList
 from z3c.relationfield import RelationChoice
+from z3c.relationfield import RelationList
 from z3c.relationfield.schema import Relation
 from zope import schema
 from zope.interface import Interface
 from zope.interface import Invalid
 from zope.interface import invariant
 from zope.interface import provider
-from plone.app.z3cform.widget import AjaxSelectFieldWidget
+from zope.schema.interfaces import InvalidURI
 import json
 
 
@@ -360,6 +361,18 @@ class IFilesReference(model.Schema):
     )
 
 
+def valid_url(value):
+    """Check for valid url, but don't break on umlauts
+    """
+    uri_field = schema.URI()
+
+    try:
+        return uri_field._validate(value) is None
+    except InvalidURI:
+        raise Invalid(_(u"Please enter a valid URL."))
+    return False
+
+
 @provider(IFormFieldProvider)
 class ILink(model.Schema):
     """Add internal and external link field."""
@@ -375,8 +388,9 @@ class ILink(model.Schema):
         )
     )
 
-    external_link = schema.URI(
+    external_link = schema.TextLine(
         title=_('label_external_link', default='External URL'),
+        constraint=valid_url,
         required=False)
 
     directives.widget('internal_link',
