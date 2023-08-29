@@ -30378,11 +30378,24 @@ const _sfc_main$6 = {
     image: {
       type: Object,
       required: true
+    },
+    block: {
+      type: Object,
+      required: true
     }
   },
   setup() {
     const sl = useSimplelayoutStore();
     return { sl };
+  },
+  computed: {
+    defaultScale() {
+      if (this.block.default_scale && this.block.default_scale.token in this.image.image.scales) {
+        return this.block.default_scale.token;
+      } else {
+        return "preview";
+      }
+    }
   }
 };
 const _hoisted_1$6 = { class: "d-table m-0 text-center" };
@@ -30395,9 +30408,9 @@ const _hoisted_5$5 = {
 };
 function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("figure", _hoisted_1$6, [
-    $props.image.image && $props.image.image.scales && $props.image.image.scales.preview ? (openBlock(), createElementBlock("img", {
+    $props.image.image && $props.image.image.scales && $props.image.image.scales[$options.defaultScale] ? (openBlock(), createElementBlock("img", {
       key: 0,
-      src: $props.image.image.scales.preview.download
+      src: $props.image.image.scales[$options.defaultScale].download
     }, null, 8, _hoisted_2$6)) : $props.image.file ? (openBlock(), createElementBlock("img", {
       key: 1,
       src: `${$setup.sl.baseURL}/@@iconresolver/mimetype-${$props.image.file["content-type"]}`
@@ -30568,11 +30581,15 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
                 key: 0,
                 href: $options.getLink(image)
               }, [
-                createVNode(_component_ImageListingImage, { image }, null, 8, ["image"])
+                createVNode(_component_ImageListingImage, {
+                  image,
+                  block: $props.block
+                }, null, 8, ["image", "block"])
               ], 8, _hoisted_2$5)) : (openBlock(), createBlock(_component_ImageListingImage, {
                 key: 1,
-                image
-              }, null, 8, ["image"]))
+                image,
+                block: $props.block
+              }, null, 8, ["image", "block"]))
             ])
           ]);
         }), 128))

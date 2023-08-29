@@ -1,8 +1,10 @@
 <template>
   <figure class="d-table m-0 text-center">
     <img
-      :src="image.image.scales.preview.download"
-      v-if="image.image && image.image.scales && image.image.scales.preview"
+      :src="image.image.scales[defaultScale].download"
+      v-if="
+        image.image && image.image.scales && image.image.scales[defaultScale]
+      "
     />
     <template v-else-if="image.file">
       <img
@@ -25,10 +27,26 @@ export default {
       type: Object,
       required: true,
     },
+    block: {
+      type: Object,
+      required: true,
+    },
   },
   setup() {
     const sl = useSimplelayoutStore();
     return { sl };
+  },
+  computed: {
+    defaultScale() {
+      if (
+        this.block.default_scale &&
+        this.block.default_scale.token in this.image.image.scales
+      ) {
+        return this.block.default_scale.token;
+      } else {
+        return "preview";
+      }
+    },
   },
 };
 </script>
