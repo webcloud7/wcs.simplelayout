@@ -49,6 +49,7 @@ setup(
         'Plone',
         'plone.autoinclude',
         'plone.restapi',
+        'plone.app.imagecropping',
         'setuptools',
     ],
     extras_require=dict(
