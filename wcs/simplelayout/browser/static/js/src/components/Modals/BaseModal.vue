@@ -151,6 +151,31 @@ export default {
         this.modalLoading = false;
       }
     },
+
+    scanPatterns(body) {
+      // There are several issues re-scaning the patterns in a bootstrap modal. Especially with the old select2 3.5.4
+
+      // Init select2 pattern manually, since registry.scan does not work
+      // There seems to be an issue with the select2 jquery plugin
+      [...body.querySelectorAll(".pat-select2")].forEach((element) => {
+        registry.patterns.select2.init(element);
+      });
+
+      [...body.querySelectorAll(".pat-relateditems")].forEach((element) => {
+        registry.patterns.relateditems.init(element);
+      });
+
+      const select2Pattern = registry.patterns.select2;
+      const relateditemsPattern = registry.patterns.relateditems;
+      delete registry.patterns["select2"];
+      delete registry.patterns["relateditems"];
+
+      registry.scan(body);
+
+      registry.patterns["select2"] = select2Pattern;
+      registry.patterns["relateditems"] = relateditemsPattern;
+    },
+
     replaceModalContent(response) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(response.data, "text/html");
@@ -164,7 +189,7 @@ export default {
       }
 
       body.innerHTML = doc.getElementById("content").innerHTML;
-      registry.scan(body);
+      this.scanPatterns(body);
       executeScriptElements(body);
 
       // hack for oderselect_input.js
