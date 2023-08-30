@@ -4,16 +4,11 @@
 <script>
 import BaseModal from "@/components/Modals/BaseModal.vue";
 import { useSimplelayoutStore } from "@/store.js";
+
 export default {
   name: "edit-image-modal",
   components: {
     BaseModal,
-  },
-  props: {
-    block: {
-      type: Object,
-      required: true,
-    },
   },
   setup() {
     const sl = useSimplelayoutStore();
@@ -30,25 +25,27 @@ export default {
   methods: {
     async openEditImageModal(event) {
       const button = event.currentTarget;
+      const position = {
+        rowIndex: parseInt(button.getAttribute("data-row")),
+        columnIndex: parseInt(button.getAttribute("data-col")),
+        blockIndex: parseInt(button.getAttribute("data-block")),
+      };
+
       const imageURL = button.getAttribute("data-url");
       this.editImageModal.hide();
 
       const url = `${imageURL}/edit.json`;
-      this.$refs["modal"].openFormModal(url, null);
+      this.$refs["modal"].openFormModal(url, position);
       this.editImageModal.show();
     },
 
-    getBlockURL(position) {
+    storeAction(position, data) {
       const uid =
         this.sl.layouts.items[position.rowIndex].items[position.columnIndex]
           .items[position.blockIndex];
-      return this.sl.blocks[uid]["@id"];
-    },
-    storeAction() {
-      const newBlock = JSON.parse(JSON.stringify(this.block));
-      // Set new modification date to trigger an update of the block
-      newBlock.modified = new Date().toString();
-      this.sl.modifyBlock(newBlock);
+      const block = this.sl.blocks[uid];
+      block.modified = new Date().toString();
+      this.sl.modifyBlock(data);
     },
   },
 };

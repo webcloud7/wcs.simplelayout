@@ -14,17 +14,19 @@
                 <ImageListingImage :image="image" :block="block" />
               </template>
 
-<!--               <div class="actions position-absolute sl-img-actions me-4 mt-2">
+              <div class="actions position-absolute sl-img-actions me-4 mt-2">
                 <button
                   v-if="canEditImage(image)"
                   class="btn btn-light"
                   @click="openImageEditModal"
                   :data-url="image['@id']"
+                  :data-row="rowIndex"
+                  :data-col="columnIndex"
+                  :data-block="blockIndex"
                 >
                   Edit
                 </button>
               </div>
- -->
             </div>
           </div>
         </template>
@@ -44,7 +46,7 @@
         </div>
       </div>
 
-      <EditImageModal :block="block" ref="edit-image-modal" />
+      <EditImageModal ref="edit-image-modal" />
     </template>
     <template #footer>
       <div class="card-footer">
