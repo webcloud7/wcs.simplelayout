@@ -21,6 +21,7 @@ class SimplelayoutLayer(PloneSandboxLayer):
 
     defaultBases = (PLONE_FIXTURE, BUILDER_LAYER)
     def setUpZope(self, app, configurationContext):
+        super().setUpZope(app, configurationContext)
         xmlconfig.string(
             '<configure xmlns="http://namespaces.zope.org/zope">'
             '  <include package="plone.autoinclude" file="meta.zcml" />'
@@ -34,6 +35,7 @@ class SimplelayoutLayer(PloneSandboxLayer):
         self.loadZCML("test.zcml", package=wcs.simplelayout.tests)
 
     def setUpPloneSite(self, portal):
+        super().setUpPloneSite(portal)
         applyProfile(portal, 'wcs.simplelayout:default')
         applyProfile(portal, 'plone.restapi:default')
 

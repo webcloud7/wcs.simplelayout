@@ -30,7 +30,7 @@ setup(
         "Framework :: Plone",
         "Framework :: Plone :: 6",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.11",
         "Operating System :: OS Independent",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
     ],
@@ -59,7 +59,7 @@ setup(
     entry_points="""
     [console_scripts]
     test-server = wcs.simplelayout.tests.server:server [test]
-    [z3c.autoinclude.plugin]
+    [plone.autoinclude.plugin]
     target = plone
     """,
 )
