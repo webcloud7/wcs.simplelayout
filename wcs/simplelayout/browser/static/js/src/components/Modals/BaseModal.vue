@@ -81,6 +81,10 @@ export default {
   mounted() {
     const modal = this.$refs["sl-base-modal"];
     this.modal = new window.bootstrap.Modal(modal, this.modalOptions);
+
+    this.modal._element.addEventListener("shown.bs.modal", () => {
+      this.scanPatterns();
+    });
   },
   methods: {
     async openModal(url, position) {
@@ -152,11 +156,12 @@ export default {
       }
     },
 
-    scanPatterns(body) {
+    scanPatterns() {
       // There are several issues re-scaning the patterns in a bootstrap modal. Especially with the old select2 3.5.4
 
       // Init select2 pattern manually, since registry.scan does not work
       // There seems to be an issue with the select2 jquery plugin
+      const body = this.modal._element.querySelector(".modal-body");
       [...body.querySelectorAll(".pat-select2")].forEach((element) => {
         registry.patterns.select2.init(element);
       });
@@ -189,7 +194,11 @@ export default {
       }
 
       body.innerHTML = doc.getElementById("content").innerHTML;
-      this.scanPatterns(body);
+
+      if (this.modal._isShown) {
+        this.scanPatterns();
+      }
+
       executeScriptElements(body);
 
       // hack for oderselect_input.js
@@ -266,6 +275,9 @@ export default {
 <style lang="scss">
 .sl-base-modal {
   z-index: 1051 !important;
+  .modal-body {
+    height: 70vh;
+  }
 }
 
 .modal-spinner {

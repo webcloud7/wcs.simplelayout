@@ -23,7 +23,7 @@ export default {
     this.editImageModal = this.$refs["modal"].modal;
   },
   methods: {
-    async openEditImageModal(event) {
+    async openEditImageModal(event, endpoint) {
       const button = event.currentTarget;
       const position = {
         rowIndex: parseInt(button.getAttribute("data-row")),
@@ -32,11 +32,8 @@ export default {
       };
 
       const imageURL = button.getAttribute("data-url");
-      this.editImageModal.hide();
-
-      const url = `${imageURL}/edit.json`;
-      this.$refs["modal"].openFormModal(url, position);
-      this.editImageModal.show();
+      const url = `${imageURL}/${endpoint}`;
+      await this.$refs["modal"].openFormModal(url, position);
     },
 
     storeAction(position, data) {

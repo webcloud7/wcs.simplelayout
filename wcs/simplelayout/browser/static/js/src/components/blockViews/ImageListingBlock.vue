@@ -14,17 +14,30 @@
                 <ImageListingImage :image="image" :block="block" />
               </template>
 
-              <div class="actions position-absolute sl-img-actions me-4 mt-2">
+              <div
+                class="btn-group actions position-absolute sl-img-actions me-4 mt-2"
+              >
+                <button
+                  v-if="canCropImage(image)"
+                  class="btn btn-success bi bi-crop"
+                  @click="openImageCroppingModal"
+                  :data-url="image['@id']"
+                  :data-row="rowIndex"
+                  :data-col="columnIndex"
+                  :data-block="blockIndex"
+                >
+                  <span class="visually-hidden">Crop</span>
+                </button>
                 <button
                   v-if="canEditImage(image)"
-                  class="btn btn-light"
+                  class="btn btn-success bi bi-pencil-square"
                   @click="openImageEditModal"
                   :data-url="image['@id']"
                   :data-row="rowIndex"
                   :data-col="columnIndex"
                   :data-block="blockIndex"
                 >
-                  Edit
+                  <span class="visually-hidden">Edit</span>
                 </button>
               </div>
             </div>
@@ -160,7 +173,10 @@ export default {
       this.fetchData(url);
     },
     openImageEditModal() {
-      this.$refs["edit-image-modal"].openEditImageModal(event);
+      this.$refs["edit-image-modal"].openEditImageModal(event, "edit.json");
+    },
+    openImageCroppingModal() {
+      this.$refs["edit-image-modal"].openEditImageModal(event, "@@croppingeditor");
     },
     canEditImage(image) {
       const actionIds = image["@components"]["actions"]["object"].map(
@@ -168,6 +184,13 @@ export default {
       );
       const editable = actionIds.indexOf("edit") != -1;
       return editable;
+    },
+    canCropImage(image) {
+      const actionIds = image["@components"]["actions"]["object"].map(
+        (item) => item.id
+      );
+      const croppable = actionIds.indexOf("cropping") != -1;
+      return croppable;
     },
     getLink(image) {
       if (image.internal_link) {

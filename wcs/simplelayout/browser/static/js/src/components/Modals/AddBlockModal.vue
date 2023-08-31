@@ -16,10 +16,23 @@ export default {
   data() {
     return {
       addableBlocksModal: null,
+      link: null,
+      position: null,
     };
   },
   mounted() {
     this.addableBlocksModal = this.$refs["modal"].modal;
+
+    this.addableBlocksModal._element.addEventListener("hidden.bs.modal", () => {
+      if (this.link && this.position) {
+        this.$refs["modal"].openFormModal(
+          this.link.getAttribute("href"),
+          this.position
+        );
+        this.link = null;
+        this.position = null;
+      }
+    });
   },
   methods: {
     async openAddableBlocksModal(event) {
@@ -41,7 +54,9 @@ export default {
         link.addEventListener("click", (event) => {
           event.preventDefault();
           event.stopPropagation();
-          this.$refs["modal"].openFormModal(link.getAttribute("href"), position);
+          this.link = link;
+          this.position = position;
+          this.addableBlocksModal.hide();
         });
       });
       this.addableBlocksModal.show();
