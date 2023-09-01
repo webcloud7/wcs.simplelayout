@@ -23,14 +23,16 @@
         </div>
         <div :class="`modal-body ${getLoadingClass}`"><slot name="body" /></div>
         <div class="modal-footer sl-base-modal-footer">
-          <button
-            id="form-buttons-cancel"
-            name="form.buttons.cancel"
-            class="btn btn-secondary standalone"
-            value="Cancel"
-          >
-            Close
-          </button>
+          <slot name="footer">
+            <button
+              id="form-buttons-cancel"
+              name="form.buttons.cancel"
+              class="btn btn-secondary standalone"
+              :value="$i18n('Close')"
+            >
+              {{ $i18n("Close") }}
+            </button>
+          </slot>
         </div>
       </div>
     </div>
@@ -50,6 +52,11 @@ export default {
       default: () => true,
     },
     storeAction: {
+      type: Function,
+      required: false,
+      default: () => () => null,
+    },
+    customCancelAction: {
       type: Function,
       required: false,
       default: () => () => null,
@@ -243,6 +250,9 @@ export default {
     handleCancel(event) {
       event.preventDefault();
       event.stopPropagation();
+      if (this.customCancelAction) {
+        this.customCancelAction();
+      }
       this.cleanBody();
       this.modal.hide();
     },

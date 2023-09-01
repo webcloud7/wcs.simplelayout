@@ -1,5 +1,9 @@
 <template>
-  <BaseModal :storeAction="storeAction" ref="modal" />
+  <BaseModal
+    :storeAction="storeAction"
+    :customCancelAction="customAction"
+    ref="modal"
+  />
 </template>
 <script>
 import BaseModal from "@/components/Modals/BaseModal.vue";
@@ -17,6 +21,7 @@ export default {
   data() {
     return {
       editImageModal: null,
+      position: null,
     };
   },
   mounted() {
@@ -25,7 +30,7 @@ export default {
   methods: {
     async openEditImageModal(event, endpoint) {
       const button = event.currentTarget;
-      const position = {
+      this.position = {
         rowIndex: parseInt(button.getAttribute("data-row")),
         columnIndex: parseInt(button.getAttribute("data-col")),
         blockIndex: parseInt(button.getAttribute("data-block")),
@@ -33,16 +38,19 @@ export default {
 
       const imageURL = button.getAttribute("data-url");
       const url = `${imageURL}/${endpoint}`;
-      await this.$refs["modal"].openFormModal(url, position);
+      await this.$refs["modal"].openFormModal(url, this.position);
     },
 
-    storeAction(position, data) {
+    storeAction(position) {
       const uid =
         this.sl.layouts.items[position.rowIndex].items[position.columnIndex]
           .items[position.blockIndex];
       const block = this.sl.blocks[uid];
       block.modified = new Date().toString();
-      this.sl.modifyBlock(data);
+      this.sl.modifyBlock(block);
+    },
+    customAction() {
+      this.storeAction(this.position);
     },
   },
 };

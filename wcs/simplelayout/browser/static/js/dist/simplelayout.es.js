@@ -15048,7 +15048,7 @@ const _hoisted_9$6 = {
   key: 0,
   class: "sl-card-image"
 };
-const _hoisted_10$5 = { class: "d-table m-0 text-center" };
+const _hoisted_10$6 = { class: "d-table m-0 text-center" };
 const _hoisted_11$4 = ["src", "alt"];
 const _hoisted_12$4 = ["src", "alt"];
 const _hoisted_13$3 = {
@@ -15091,7 +15091,7 @@ function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
             renderSlot(_ctx.$slots, "body", {}, () => [
               createBaseVNode("div", _hoisted_8$6, [
                 $props.block.image ? (openBlock(), createElementBlock("div", _hoisted_9$6, [
-                  createBaseVNode("figure", _hoisted_10$5, [
+                  createBaseVNode("figure", _hoisted_10$6, [
                     $props.block.image.scales.great ? (openBlock(), createElementBlock("img", {
                       key: 0,
                       class: "figure-img m-0",
@@ -25546,6 +25546,11 @@ const _sfc_main$k = {
       required: false,
       default: () => () => null
     },
+    customCancelAction: {
+      type: Function,
+      required: false,
+      default: () => () => null
+    },
     modalOptions: {
       type: Object,
       required: false,
@@ -25706,6 +25711,9 @@ const _sfc_main$k = {
     handleCancel(event2) {
       event2.preventDefault();
       event2.stopPropagation();
+      if (this.customCancelAction) {
+        this.customCancelAction();
+      }
       this.cleanBody();
       this.modal.hide();
     },
@@ -25761,14 +25769,8 @@ const _hoisted_7$6 = /* @__PURE__ */ createBaseVNode("div", {
 const _hoisted_8$5 = [
   _hoisted_7$6
 ];
-const _hoisted_9$5 = /* @__PURE__ */ createBaseVNode("div", { class: "modal-footer sl-base-modal-footer" }, [
-  /* @__PURE__ */ createBaseVNode("button", {
-    id: "form-buttons-cancel",
-    name: "form.buttons.cancel",
-    class: "btn btn-secondary standalone",
-    value: "Cancel"
-  }, " Close ")
-], -1);
+const _hoisted_9$5 = { class: "modal-footer sl-base-modal-footer" };
+const _hoisted_10$5 = ["value"];
 function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", _hoisted_1$e, [
     createBaseVNode("div", _hoisted_2$d, [
@@ -25784,7 +25786,16 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
         }, [
           renderSlot(_ctx.$slots, "body")
         ], 2),
-        _hoisted_9$5
+        createBaseVNode("div", _hoisted_9$5, [
+          renderSlot(_ctx.$slots, "footer", {}, () => [
+            createBaseVNode("button", {
+              id: "form-buttons-cancel",
+              name: "form.buttons.cancel",
+              class: "btn btn-secondary standalone",
+              value: _ctx.$i18n("Close")
+            }, toDisplayString(_ctx.$i18n("Close")), 9, _hoisted_10$5)
+          ])
+        ])
       ])
     ])
   ], 512);
@@ -33309,7 +33320,8 @@ const _sfc_main$7 = {
   },
   data() {
     return {
-      editImageModal: null
+      editImageModal: null,
+      position: null
     };
   },
   mounted() {
@@ -33318,20 +33330,23 @@ const _sfc_main$7 = {
   methods: {
     async openEditImageModal(event2, endpoint) {
       const button = event2.currentTarget;
-      const position = {
+      this.position = {
         rowIndex: parseInt(button.getAttribute("data-row")),
         columnIndex: parseInt(button.getAttribute("data-col")),
         blockIndex: parseInt(button.getAttribute("data-block"))
       };
       const imageURL = button.getAttribute("data-url");
       const url = `${imageURL}/${endpoint}`;
-      await this.$refs["modal"].openFormModal(url, position);
+      await this.$refs["modal"].openFormModal(url, this.position);
     },
-    storeAction(position, data2) {
+    storeAction(position) {
       const uid2 = this.sl.layouts.items[position.rowIndex].items[position.columnIndex].items[position.blockIndex];
       const block = this.sl.blocks[uid2];
       block.modified = new Date().toString();
-      this.sl.modifyBlock(data2);
+      this.sl.modifyBlock(block);
+    },
+    customAction() {
+      this.storeAction(this.position);
     }
   }
 };
@@ -33339,8 +33354,9 @@ function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     storeAction: $options.storeAction,
+    customCancelAction: $options.customAction,
     ref: "modal"
-  }, null, 8, ["storeAction"]);
+  }, null, 8, ["storeAction", "customCancelAction"]);
 }
 var EditImageModal = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7], ["__file", "/Users/maethu/webcloud7/wcs.simplelayout/wcs/simplelayout/browser/static/js/src/components/Modals/EditImageModal.vue"]]);
 const _sfc_main$6 = {
