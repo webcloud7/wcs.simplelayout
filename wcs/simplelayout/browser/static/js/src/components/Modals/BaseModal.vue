@@ -91,6 +91,7 @@ export default {
 
     this.modal._element.addEventListener("shown.bs.modal", () => {
       this.scanPatterns();
+      this.registerAdditionalEvents();
     });
   },
   methods: {
@@ -188,6 +189,14 @@ export default {
       registry.patterns["relateditems"] = relateditemsPattern;
     },
 
+    registerAdditionalEvents() {
+      const body = this.modal._element.querySelector(".modal-body");
+      jQuery("img.main-image", body).on("CROPPERPATTERN.VISIBLE", (event) => {
+        const instance =event.target.parentElement["pattern-image-cropper"];
+        instance.notify_visible();
+      });
+    },
+
     replaceModalContent(response) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(response.data, "text/html");
@@ -201,11 +210,6 @@ export default {
       }
 
       body.innerHTML = doc.getElementById("content").innerHTML;
-
-      if (this.modal._isShown) {
-        this.scanPatterns();
-      }
-
       executeScriptElements(body);
 
       // hack for oderselect_input.js
