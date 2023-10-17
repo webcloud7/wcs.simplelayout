@@ -69,6 +69,7 @@ class SimplelayoutView(BrowserView):
             'Sa': self._translate(_('label_saturday_short', default='Sa')),
             'Su': self._translate(_('label_sunday_short', default='Su')),
             'Closed': self._translate(_('label_closed', default='Closed')),
+            'Close': self._translate(_('label_close', default='Close')),
             'Validity': self._translate(_('label_validity', default='Validity')),
         }
         return json.dumps(messages)

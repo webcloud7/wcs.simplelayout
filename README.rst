@@ -78,3 +78,23 @@ Compile and Minify for Production
 ::sh
 
     npm run build
+
+
+E2E Tests
+---------
+
+First run the test-server:
+
+::sh
+
+    WSGI_SERVER_PORT=65035 ./bin/test-server wcs.simplelayout.testing.SIMPLELAYOUT_FRONTEND_TESTING
+
+
+Then run tests:
+
+::sh
+
+    npm run test:e2e
+
+E2E tests are written using TestCafe Studio. The port 65035 is currently hard coded in frontend tests
+

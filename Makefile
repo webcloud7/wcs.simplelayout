@@ -108,7 +108,7 @@ ${SENTINEL}:
 PYTHON?=python3
 VENV?=on
 ifeq ("${VENV}", "on")
-	VENV_FOLDER?=./venv
+	VENV_FOLDER?=.
 	PYBIN=${VENV_FOLDER}/bin/
 else
 	VENV_FOLDER?=
@@ -288,7 +288,7 @@ run: ${RUN_PREREQUISITES} ## run/start Plone
 clean-venv: ## remove Python virtual environment
 ifeq ("${VENV}", "on")
 	@echo "$(OK_COLOR)Remove Virtualenv.$(NO_COLOR)"
-	rm -rf ${VENV_FOLDER} ${SENTINELFOLDER}/pip*.sentinel ${VENV_SENTINEL}
+	rm -rf ${VENV_FOLDER}/bin ${VENV_FOLDER}/include ${VENV_FOLDER}/lib ${SENTINELFOLDER}/pip*.sentinel ${VENV_SENTINEL}
 else:
 	@echo "$(OK_WARN)No self-created Python virtualenv at '${VENV_FOLDER}'! Nothing to do.$(NO_COLOR)"
 endif
@@ -314,13 +314,8 @@ clean-instance:  ## remove instance configuration (keeps data)
 clean:  clean-venv clean-pyc clean-make clean-instance   ## clean all (except local database and pip installed packages)
 
 ##############################################################################
-# DOCKER/CONTAINER
+# TRANSLATIONS
 
-# this needs a Dockerfile, which is not provided by plone-kickstarter
-.PHONY: build-image
-build-image:  ## Build Docker Image
-ifneq ("$(wildcard Dockerfile)", "")
-	@docker build . -t $(IMAGE_NAME) -f Dockerfile
-else
-	@echo "$(ERROR_COLOR)A 'Dockerfile' is required to build an image.$(NO_COLOR)"
-endif
+.PHONY: i18n
+i18n: ## Update translations
+	@echo $(shell ./i18n.sh)

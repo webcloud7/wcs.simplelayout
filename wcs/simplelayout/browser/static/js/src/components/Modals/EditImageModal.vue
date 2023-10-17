@@ -1,19 +1,18 @@
 <template>
-  <BaseModal :storeAction="storeAction" ref="modal" />
+  <BaseModal
+    :storeAction="storeAction"
+    :customCancelAction="customAction"
+    ref="modal"
+  />
 </template>
 <script>
 import BaseModal from "@/components/Modals/BaseModal.vue";
 import { useSimplelayoutStore } from "@/store.js";
+
 export default {
   name: "edit-image-modal",
   components: {
     BaseModal,
-  },
-  props: {
-    block: {
-      type: Object,
-      required: true,
-    },
   },
   setup() {
     const sl = useSimplelayoutStore();
@@ -22,33 +21,36 @@ export default {
   data() {
     return {
       editImageModal: null,
+      position: null,
     };
   },
   mounted() {
     this.editImageModal = this.$refs["modal"].modal;
   },
   methods: {
-    async openEditImageModal(event) {
+    async openEditImageModal(event, endpoint) {
       const button = event.currentTarget;
-      const imageURL = button.getAttribute("data-url");
-      this.editImageModal.hide();
+      this.position = {
+        rowIndex: parseInt(button.getAttribute("data-row")),
+        columnIndex: parseInt(button.getAttribute("data-col")),
+        blockIndex: parseInt(button.getAttribute("data-block")),
+      };
 
-      const url = `${imageURL}/edit.json`;
-      this.$refs["modal"].openFormModal(url, null);
-      this.editImageModal.show();
+      const imageURL = button.getAttribute("data-url");
+      const url = `${imageURL}/${endpoint}`;
+      await this.$refs["modal"].openFormModal(url, this.position);
     },
 
-    getBlockURL(position) {
+    storeAction(position) {
       const uid =
         this.sl.layouts.items[position.rowIndex].items[position.columnIndex]
           .items[position.blockIndex];
-      return this.sl.blocks[uid]["@id"];
+      const block = this.sl.blocks[uid];
+      block.modified = new Date().toString();
+      this.sl.modifyBlock(block);
     },
-    storeAction() {
-      const newBlock = JSON.parse(JSON.stringify(this.block));
-      // Set new modification date to trigger an update of the block
-      newBlock.modified = new Date().toString();
-      this.sl.modifyBlock(newBlock);
+    customAction() {
+      this.storeAction(this.position);
     },
   },
 };
