@@ -91,7 +91,7 @@ export default {
 
     this.modal._element.addEventListener("shown.bs.modal", () => {
       this.scanPatterns();
-      this.registerAdditionalEvents();
+      this.modifyCropping();
     });
   },
   methods: {
@@ -189,12 +189,38 @@ export default {
       registry.patterns["relateditems"] = relateditemsPattern;
     },
 
-    registerAdditionalEvents() {
-      const body = this.modal._element.querySelector(".modal-body");
-      jQuery("img.main-image", body).on("CROPPERPATTERN.VISIBLE", (event) => {
-        const instance =event.target.parentElement["pattern-image-cropper"];
+    modifyCropping() {
+      // notify_visible triggers a cropperjs resize and sets new bounderies
+      // We have to do this first, since the size of the canvas is wrong after loading in a modal
+      // Then we add new bounderies (limits) and trigger notify_visible again.
+      const addLimits = (event) => {
+        const instance = event.target.parentElement["pattern-image-cropper"];
         instance.notify_visible();
-      });
+
+        const targetWidth = instance.options.target_width;
+        const targetHeight = instance.options.target_height;
+        const relativeWidth =
+          (instance.cropper.canvasData.width /
+            instance.cropper.canvasData.naturalWidth) *
+          targetWidth;
+        const relativeHeight =
+          (instance.cropper.canvasData.height /
+            instance.cropper.canvasData.naturalHeight) *
+          targetHeight;
+
+        if (instance.options.target_width >= instance.options.target_height) {
+          instance.cropper.options.minCropBoxWidth = relativeWidth;
+        } else {
+          instance.cropper.options.minCropBoxHeight = relativeHeight;
+        }
+        instance.notify_visible();
+      };
+
+      const body = this.modal._element.querySelector(".modal-body");
+      body.querySelector("img.main-image").addEventListener("ready", addLimits);
+      window
+        .jQuery("img.main-image", body)
+        .on("CROPPERPATTERN.VISIBLE", addLimits);
     },
 
     replaceModalContent(response) {
