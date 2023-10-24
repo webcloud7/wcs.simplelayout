@@ -192,7 +192,7 @@ class TestRestApi(FunctionalTesting):
 
         browser.login().open(block.absolute_url() + '?include_items=1', headers=self.api_headers)
         newslist = browser.json['items']
-        self.assertEquals(2, len(newslist))
+        self.assertEqual(2, len(newslist))
 
         IBlockNewsOptions(block).subjects = ['test1']
         transaction.commit()
@@ -225,7 +225,7 @@ class TestRestApi(FunctionalTesting):
 
         browser.login().open(block.absolute_url() + '?include_items=1', headers=self.api_headers)
         newslist = browser.json['items']
-        self.assertEquals(2, len(newslist))
+        self.assertEqual(2, len(newslist))
 
         IBlockNewsOptions(block).maximum_age = 10
         transaction.commit()
