@@ -1,10 +1,14 @@
 from ftw.referencewidget.sources import ReferenceObjSourceBinder
 from ftw.referencewidget.widget import ReferenceBrowserWidget
+from plone.app.contenttypes.behaviors.collection import Collection
+from plone.app.contenttypes.behaviors.collection import ICollection
+from plone.app.contenttypes.behaviors.collection import ISyndicatableCollection
 from plone.app.dexterity.textindexer.directives import searchable
 from plone.app.textfield import RichText
 from plone.app.z3cform.widget import AjaxSelectFieldWidget
 from plone.autoform import directives
 from plone.autoform.interfaces import IFormFieldProvider
+from plone.base.interfaces.syndication import ISyndicatable
 from plone.namedfile.field import NamedBlobImage
 from plone.schema import JSONField
 from plone.supermodel import model
@@ -17,6 +21,8 @@ from z3c.relationfield import RelationChoice
 from z3c.relationfield import RelationList
 from z3c.relationfield.schema import Relation
 from zope import schema
+from zope.component import adapter
+from zope.interface import implementer
 from zope.interface import Interface
 from zope.interface import Invalid
 from zope.interface import invariant
@@ -203,7 +209,7 @@ class IVideoUrl(model.Schema):
 
 
 @provider(IFormFieldProvider)
-class IImageBlockSortOptions(model.Schema):
+class IImageBlockSortOptions(model.Schema, IBlockMarker):
     sort_on = schema.Choice(
         title=_('label_sort_on', default='Sort by'),
         required=True,
@@ -226,7 +232,7 @@ class IImageBlockSortOptions(model.Schema):
 
 
 @provider(IFormFieldProvider)
-class IFileBlockSortOptions(model.Schema):
+class IFileBlockSortOptions(model.Schema, IBlockMarker):
     sort_on = schema.Choice(
         title=_('label_sort_on', default='Sort by'),
         required=True,
@@ -249,7 +255,7 @@ class IFileBlockSortOptions(model.Schema):
 
 
 @provider(IFormFieldProvider)
-class IBlockNewsOptions(model.Schema):
+class IBlockNewsOptions(model.Schema, IBlockMarker):
 
     current_context = schema.Bool(
         title=_('news_listing_config_filter_current_context_label',
@@ -421,3 +427,18 @@ class ICollapsableBlock(model.Schema):
         required=False,
         default=False,
     )
+
+
+class IBlockSyndicatableCollection(ISyndicatableCollection, IBlockMarker):
+    pass
+
+
+@provider(IFormFieldProvider, ISyndicatable)
+class IBlockCollection(ICollection):
+    pass
+
+
+@implementer(IBlockCollection)
+@adapter(IBlockMarker)
+class BlockCollection(Collection):
+    pass
