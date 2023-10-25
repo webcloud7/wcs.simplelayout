@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime
 from datetime import timedelta
 from plone import api
@@ -72,9 +73,29 @@ def get_blocks(context, for_cache=False):
     return blocks
 
 
+def get_portal_url():
+    return api.portal.get().absolute_url()
+
+
+def transform_urls(slblocks):
+    """Replaces the portal URL from the cached block representation with the
+    portal url used in this request"""
+    if not slblocks:
+        return slblocks
+
+    transformed = {}
+    current_portal_url = get_portal_url()
+    for uid, values in slblocks.items():
+        portal_url = values.get('@portal_url')
+        transformed[uid] = json.loads(
+            json.dumps(values).replace(portal_url, current_portal_url)
+        )
+    return transformed
+
+
 def insert_simplelayout_blocks(context, result, include_items):
     """
-    Enriches the default result for simpelayout pages with sblocks.
+    Enriches the default result for simpelayout pages with slblocks.
 
     {
         "uuid1": {
@@ -105,11 +126,11 @@ def insert_simplelayout_blocks(context, result, include_items):
         return
 
     if api.user.is_anonymous():
-        result['slblocks'] = ISimplelayout(context).slblocks_cache    
-        return
-
-    blocks = get_blocks(context)
-    result['slblocks'] = {block['UID']: block for block in blocks}
+        slblocks = ISimplelayout(context).slblocks_cache
+        result['slblocks'] = transform_urls(slblocks)
+    else:
+        blocks = get_blocks(context)
+        result['slblocks'] = {block['UID']: block for block in blocks}
 
 
 def expand_by_querystring(context, request, result):

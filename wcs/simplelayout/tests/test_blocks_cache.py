@@ -1,9 +1,11 @@
 from ftw.builder import Builder
 from ftw.builder import create
 from ftw.testbrowser import browsing
+from plone import api
+from unittest.mock import patch
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
-from wcs.simplelayout.tests import FunctionalTesting
 from wcs.simplelayout.restapi.serializer import get_blocks
+from wcs.simplelayout.tests import FunctionalTesting
 from z3c.relationfield.relation import RelationValue
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
@@ -229,7 +231,11 @@ class TestBlocksCache(FunctionalTesting):
         blocks = get_blocks(self.page, for_cache=True)
         result = {block['UID']: block for block in blocks}
 
-        self.assertEqual(result, browser.json['slblocks'])
+        fixed_urls = json.loads(
+            json.dumps(
+                browser.json['slblocks']).replace('nohost:80', 'nohost')
+        )
+        self.assertEqual(result, fixed_urls)
         self.assertNotIn('slblocks_cache', browser.json)
         self.assertNotIn('@components', browser.json['slblocks'][self.block1.UID()])
         self.assertIn('@portal_url', browser.json['slblocks'][self.block1.UID()])
@@ -244,5 +250,20 @@ class TestBlocksCache(FunctionalTesting):
         fixed_urls = json.loads(
             json.dumps(
                 browser.json['slblocks']).replace('nohost:80', 'nohost')
-            )
+        )
         self.assertDictEqual(result_loggedin, fixed_urls)
+
+    @browsing
+    def test_transform_urls(self, browser):
+        with patch('wcs.simplelayout.restapi.serializer.get_portal_url',
+                   lambda *args: 'https://newdomain.com'):
+            browser.visit(self.page, headers=self.api_headers)
+            self.assertEqual(
+                'https://newdomain.com/test-page/block-1',
+                browser.json['slblocks'][self.block1.UID()]['@id']
+            )
+            self.assertEqual(
+                'https://newdomain.com/test-page/block-2',
+                browser.json['slblocks'][self.block2.UID()]['@id']
+            )
+            pass
