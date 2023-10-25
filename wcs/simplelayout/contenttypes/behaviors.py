@@ -115,13 +115,23 @@ class IBlockMarker(Interface):
 @provider(IFormFieldProvider)
 class ISimplelayout(model.Schema):
 
-    model.fieldset("layout", label=_("Layout"), fields=["slblocks_layout"])
+    model.fieldset("layout", label=_("Layout"), fields=["slblocks_layout", "slblocks_cache"])
     directives.omitted('slblocks_layout')
     slblocks_layout = JSONField(
         title="Blocks Layout",
         description="The JSON representation of the object blocks layout. Must be a JSON array.",  # noqa
         schema=LAYOUT_SCHEMA,
         defaultFactory=lambda: {"items": []},
+        required=False,
+    )
+
+    directives.read_permission(slblocks_cache='wcs.simplelayout.restrictedRead')
+    directives.omitted('slblocks_cache')
+    slblocks_cache = JSONField(
+        title="Blocks",
+        description="The JSON representation of the blocks itself. Must be a JSON array.",  # noqa
+        schema=BLOCKS_SCHEMA,
+        defaultFactory=lambda: {},
         required=False,
     )
 

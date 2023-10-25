@@ -1,5 +1,6 @@
 from ftw.builder import Builder
 from ftw.builder import create
+from ftw.testbrowser import browsing
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.tests import FunctionalTesting
 from wcs.simplelayout.restapi.serializer import get_blocks
@@ -138,7 +139,9 @@ class TestBlocksCache(FunctionalTesting):
     def test_allpurposelisingblock_never_include_items_in_cache(self):
         listing = create(Builder('all purpose listing block')
                          .titled('Listing')
-                         .having(query=[{'i': 'portal_type', 'o': 'plone.app.querystring.operation.selection.any', 'v': ['ContentPage']}])
+                         .having(query=[{'i': 'portal_type',
+                                         'o': 'plone.app.querystring.operation.selection.any',
+                                         'v': ['ContentPage']}])
                          .within(self.page))
         blocks = get_blocks(self.page, for_cache=True)
         result = {block['UID']: block for block in blocks}
@@ -151,3 +154,68 @@ class TestBlocksCache(FunctionalTesting):
 
         self.assertIn('items', regular_result[listing.UID()])
         self.assertEqual(1, len(regular_result[listing.UID()]['items']))
+
+    def test_block_info_is_cached_on_page(self):
+        page = create(Builder('content page').titled('Test page'))
+        self.assertIsNone(ISimplelayout(page).slblocks_cache)
+
+        create(Builder('block').titled('Block').within(page))
+        blocks = get_blocks(page, for_cache=True)
+        result = {block['UID']: block for block in blocks}
+        self.assertDictEqual(result, ISimplelayout(page).slblocks_cache)
+
+    def test_cache_updates_upon_block_removal(self):
+        blocks = get_blocks(self.page, for_cache=True)
+        result = {block['UID']: block for block in blocks}
+        self.assertDictEqual(result, ISimplelayout(self.page).slblocks_cache)
+
+        block1_uid = self.block1.UID()
+
+        self.assertIn(block1_uid, ISimplelayout(self.page).slblocks_cache)
+        self.page.manage_delObjects([self.block1.id])
+        self.assertNotIn(block1_uid, ISimplelayout(self.page).slblocks_cache)
+
+        blocks = get_blocks(self.page, for_cache=True)
+        result = {block['UID']: block for block in blocks}
+        self.assertDictEqual(result, ISimplelayout(self.page).slblocks_cache)
+
+    @browsing
+    def test_cache_updates_upon_block_edit(self, browser):
+        browser.login().visit(self.block1, view='editblock')
+        browser.fill(
+            {'Title': 'New title', }
+        )
+        browser.find_button_by_label('Save').click()
+        self.assertEqual(
+            'New title',
+            ISimplelayout(self.page).slblocks_cache[self.block1.UID()]['title']
+        )
+
+    def test_cache_updates_upon_block_copy(self):
+        page2 = create(Builder('content page').titled('Test page 2'))
+        clipboard = self.page.manage_copyObjects([self.block1.id])
+        page2.manage_pasteObjects(clipboard)
+
+        blocks_page1 = get_blocks(self.page, for_cache=True)
+        result_page1 = {block['UID']: block for block in blocks_page1}
+        self.assertDictEqual(result_page1, ISimplelayout(self.page).slblocks_cache)
+
+        blocks_page2 = get_blocks(page2, for_cache=True)
+        result_page2 = {block['UID']: block for block in blocks_page2}
+        self.assertEqual(1, len(ISimplelayout(page2).slblocks_cache))
+        self.assertDictEqual(result_page2, ISimplelayout(page2).slblocks_cache)
+
+    def test_cache_updates_upon_block_move(self):
+        page2 = create(Builder('content page').titled('Test page 2'))
+        clipboard = self.page.manage_cutObjects([self.block1.id])
+        page2.manage_pasteObjects(clipboard)
+
+        blocks_page1 = get_blocks(self.page, for_cache=True)
+        result_page1 = {block['UID']: block for block in blocks_page1}
+        self.assertEqual(1, len(ISimplelayout(self.page).slblocks_cache))
+        self.assertDictEqual(result_page1, ISimplelayout(self.page).slblocks_cache)
+
+        blocks_page2 = get_blocks(page2, for_cache=True)
+        result_page2 = {block['UID']: block for block in blocks_page2}
+        self.assertEqual(1, len(ISimplelayout(page2).slblocks_cache))
+        self.assertDictEqual(result_page2, ISimplelayout(page2).slblocks_cache)
