@@ -104,6 +104,10 @@ def insert_simplelayout_blocks(context, result, include_items):
         result['slblocks'] = {}
         return
 
+    if api.user.is_anonymous():
+        result['slblocks'] = ISimplelayout(context).slblocks_cache    
+        return
+
     blocks = get_blocks(context)
     result['slblocks'] = {block['UID']: block for block in blocks}
 
@@ -387,12 +391,6 @@ class LayoutFieldSerializer(DefaultFieldSerializer):
             add_missing_blocks(self.context, value)
             return json_compatible(value)
         return super().__call__()
-
-
-@adapter(IJSONField, ISimplelayout, Interface)
-@implementer(IFieldSerializer)
-class BlocksFieldSerializer(DefaultFieldSerializer):
-    pass
 
 
 @implementer(ISerializeToJson)

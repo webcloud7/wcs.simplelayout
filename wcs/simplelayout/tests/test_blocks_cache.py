@@ -7,6 +7,7 @@ from wcs.simplelayout.restapi.serializer import get_blocks
 from z3c.relationfield.relation import RelationValue
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
+import json
 import transaction
 
 
@@ -219,3 +220,29 @@ class TestBlocksCache(FunctionalTesting):
         result_page2 = {block['UID']: block for block in blocks_page2}
         self.assertEqual(1, len(ISimplelayout(page2).slblocks_cache))
         self.assertDictEqual(result_page2, ISimplelayout(page2).slblocks_cache)
+
+    @browsing
+    def test_anonymous_user_get_cached_result(self, browser):
+        self.page.manage_permission('View', roles=['Anonymous'], acquire=False)
+        browser.visit(self.page, headers=self.api_headers)
+
+        blocks = get_blocks(self.page, for_cache=True)
+        result = {block['UID']: block for block in blocks}
+
+        self.assertEqual(result, browser.json['slblocks'])
+        self.assertNotIn('slblocks_cache', browser.json)
+        self.assertNotIn('@components', browser.json['slblocks'][self.block1.UID()])
+        self.assertIn('@portal_url', browser.json['slblocks'][self.block1.UID()])
+
+        browser.login().visit(self.page, headers=self.api_headers)
+        self.assertIn('slblocks_cache', browser.json)
+
+        blocks_loggedin = get_blocks(self.page, for_cache=False)
+        result_loggedin = {block['UID']: block for block in blocks_loggedin}
+
+        self.assertIn('@components', browser.json['slblocks'][self.block1.UID()])
+        fixed_urls = json.loads(
+            json.dumps(
+                browser.json['slblocks']).replace('nohost:80', 'nohost')
+            )
+        self.assertDictEqual(result_loggedin, fixed_urls)
