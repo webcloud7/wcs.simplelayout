@@ -125,7 +125,10 @@ def insert_simplelayout_blocks(context, result, include_items):
         return
 
     slblocks = ISimplelayout(context).slblocks_cache
-    if api.user.is_anonymous() and slblocks:
+    cache_enabled = api.portal.get_registry_record(
+        'wcs.simplelayout.api.enable_slblocks_cache', default=False
+    )
+    if api.user.is_anonymous() and slblocks and cache_enabled:
         result['slblocks'] = transform_urls(slblocks)
     else:
         blocks = get_blocks(context)
