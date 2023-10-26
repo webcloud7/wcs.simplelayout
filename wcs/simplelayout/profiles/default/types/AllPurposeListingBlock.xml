@@ -22,7 +22,7 @@
   <element value="plone.namefromtitle"/>
   <element value="wcs.simplelayout.contenttypes.behaviors.IBlockMarker"/>
   <element value="wcs.simplelayout.contenttypes.behaviors.IBlockTitle"/>
-  <element value="plone.collection" />
+  <element value="block.collection" />
  </property>
  <property name="schema"></property>
  <property

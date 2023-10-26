@@ -8,6 +8,7 @@
 
 
   <adapter factory=".serializer.SimplelayoutSerializer" />
+  <adapter factory=".serializer.DefaultBlockSerializer" />
   <adapter factory=".serializer.LayoutFieldSerializer"/>
   <adapter factory=".serializer.ImageBlockSortOptionsSerializer"/>
   <adapter factory=".serializer.FileBlockSortOptionsSerializer"/>

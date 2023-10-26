@@ -2,7 +2,15 @@ from Acquisition import aq_inner
 from Acquisition import aq_parent
 from plone.uuid.interfaces import IUUID
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
+from wcs.simplelayout.restapi.serializer import get_blocks
+from z3c.form.interfaces import IDataManager
+from z3c.form.interfaces import IManagerValidator
+from zope.component import queryMultiAdapter
 import json
+import logging
+
+
+LOG = logging.getLogger(__name__)
 
 
 def update_page_state_on_copy_paste_block(block, event):
@@ -53,3 +61,27 @@ def update_page_state_on_block_remove(block, event):
         .replace(f'"{block_uid}", ', '') \
         .replace(f'"{block_uid}"', '')
     ISimplelayout(parent).slblocks_layout = json.loads(new_page_layout)
+
+
+def cache_blocks(block, event):
+    parents = [block.aq_parent]
+
+    if getattr(event, 'oldParent', None) is not None:
+        parents.append(event.oldParent)
+
+    for parent in parents:
+        if not ISimplelayout.providedBy(parent):
+            continue
+
+        blocks = get_blocks(parent, for_cache=True)
+        result = {block['UID']: block for block in blocks}
+
+        validator = queryMultiAdapter(
+            (parent, parent.REQUEST, None, ISimplelayout, None), IManagerValidator
+        )
+
+        if validator.validate(result):
+            raise Exception('Validation error')
+
+        dm = queryMultiAdapter((parent, ISimplelayout.get('slblocks_cache')), IDataManager)
+        dm.set(result)

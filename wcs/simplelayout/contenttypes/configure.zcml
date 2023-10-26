@@ -94,4 +94,14 @@
             zope.lifecycleevent.IObjectAddedEvent"
         handler=".fix_set_relations.add_behavior_relations"
         />
+
+  <plone:behavior
+      name="block.collection"
+      title="Collection behavior for blocks"
+      description="Adds collection behavior for blocks"
+      factory=".behaviors.BlockCollection"
+      provides=".behaviors.IBlockCollection"
+      for="wcs.simplelayout.contenttypes.behaviors.IBlockMarker"
+      marker=".behaviors.IBlockSyndicatableCollection"
+      />
 </configure>

@@ -43,6 +43,19 @@
         handler=".subscribers.update_page_state_on_block_remove"
         />
 
+    <!-- START - Cache blocks on page -->
+    <subscriber
+        for="wcs.simplelayout.contenttypes.behaviors.IBlockMarker
+             zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+        handler=".subscribers.cache_blocks"
+        />
+    <subscriber
+        for="wcs.simplelayout.contenttypes.behaviors.IBlockMarker
+             zope.lifecycleevent.interfaces.IObjectMovedEvent"
+        handler=".subscribers.cache_blocks"
+        />
+    <!-- END - Cache blocks on page -->
+
     <adapter factory=".indexer.SimplelayoutSearchableText"
                 name="ISimplelayout"
                 />
