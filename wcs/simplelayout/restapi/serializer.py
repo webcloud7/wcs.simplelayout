@@ -1,4 +1,3 @@
-from copy import deepcopy
 from datetime import datetime
 from datetime import timedelta
 from plone import api
