@@ -266,4 +266,19 @@ class TestBlocksCache(FunctionalTesting):
                 'https://newdomain.com/test-page/block-2',
                 browser.json['slblocks'][self.block2.UID()]['@id']
             )
-            pass
+
+    @browsing
+    def test_fallabck_to_non_cached_slblocks(self, browser):
+        ISimplelayout(self.page).slblocks_cache = {}
+        transaction.commit()
+        browser.visit(self.page, headers=self.api_headers)
+
+        blocks = get_blocks(self.page, for_cache=False)
+        result = {block['UID']: block for block in blocks}
+
+        fixed_urls = json.loads(
+            json.dumps(
+                browser.json['slblocks']).replace('nohost:80', 'nohost')
+        )
+
+        self.assertDictEqual(result, fixed_urls)

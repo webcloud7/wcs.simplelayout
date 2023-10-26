@@ -125,8 +125,8 @@ def insert_simplelayout_blocks(context, result, include_items):
         result['slblocks'] = {}
         return
 
-    if api.user.is_anonymous():
-        slblocks = ISimplelayout(context).slblocks_cache
+    slblocks = ISimplelayout(context).slblocks_cache
+    if api.user.is_anonymous() and slblocks:
         result['slblocks'] = transform_urls(slblocks)
     else:
         blocks = get_blocks(context)
