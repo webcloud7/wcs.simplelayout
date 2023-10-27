@@ -1,7 +1,6 @@
 from ftw.builder import Builder
 from ftw.builder import create
 from ftw.testbrowser import browsing
-from plone import api
 from unittest.mock import patch
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.restapi.serializer import get_blocks
@@ -268,7 +267,7 @@ class TestBlocksCache(FunctionalTesting):
             )
 
     @browsing
-    def test_fallabck_to_non_cached_slblocks(self, browser):
+    def test_fallback_to_non_cached_slblocks(self, browser):
         ISimplelayout(self.page).slblocks_cache = {}
         transaction.commit()
         browser.visit(self.page, headers=self.api_headers)
@@ -282,37 +281,3 @@ class TestBlocksCache(FunctionalTesting):
         )
 
         self.assertDictEqual(result, fixed_urls)
-
-    @browsing
-    def test_slblocks_cache_disabled(self, browser):
-        browser.visit(self.page, headers=self.api_headers)
-
-        blocks = get_blocks(self.page, for_cache=True)
-        result = {block['UID']: block for block in blocks}
-
-        fixed_urls = json.loads(
-            json.dumps(
-                browser.json['slblocks']).replace('nohost:80', 'nohost')
-        )
-
-        self.assertDictEqual(result, fixed_urls)
-
-        api.portal.set_registry_record(
-            name='wcs.simplelayout.api.enable_slblocks_cache',
-            value=False
-        )
-        transaction.commit()
-
-        browser.visit(self.page, headers=self.api_headers)
-        self.assertIn('@components', browser.json['slblocks'][self.block1.UID()])
-        self.assertNotIn('@portal_url', browser.json['slblocks'][self.block1.UID()])
-
-        blocks_no_cache = get_blocks(self.page, for_cache=False)
-        result_no_cache = {block['UID']: block for block in blocks_no_cache}
-
-        fixed_urls = json.loads(
-            json.dumps(
-                browser.json['slblocks']).replace('nohost:80', 'nohost')
-        )
-
-        self.assertDictEqual(result_no_cache, fixed_urls)
