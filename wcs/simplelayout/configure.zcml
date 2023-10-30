@@ -39,7 +39,7 @@
 
     <subscriber
         for="wcs.simplelayout.contenttypes.behaviors.IBlockMarker
-             zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+             zope.lifecycleevent.interfaces.IObjectMovedEvent"
         handler=".subscribers.update_page_state_on_block_remove"
         />
 

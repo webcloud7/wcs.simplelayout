@@ -42,19 +42,28 @@ def update_page_state_on_copy_paste_block(block, event):
 
 def update_page_state_on_block_remove(block, event):
 
+    # This is registered as move event, which triggers add and remove.
+    # We only want to trigger this upon removal.
+
+    if event.__class__.__name__ == 'ObjectAddedEvent':
+        return
+
     if event.newParent is None:
         # Be sure it's not cut/paste
-        block_uid = IUUID(block)
         parent = aq_parent(aq_inner(block))
 
         # Do nothing if the event wasn't fired by the block's parent.
         # This happens when an ancestor is deleted, e.g. the Plone site itself.
         if parent is not event.oldParent:
             return
+    else:
+        # Assume block has been moved
+        parent = event.oldParent
 
     if not ISimplelayout(parent, None):
         return
 
+    block_uid = IUUID(block)
     page_layout = ISimplelayout(parent).slblocks_layout
     new_page_layout = json.dumps(page_layout) \
         .replace(f', "{block_uid}"', '') \
