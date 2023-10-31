@@ -30,6 +30,7 @@ from wcs.simplelayout.contenttypes.behaviors import IImageBlockSortOptions
 from wcs.simplelayout.contenttypes.behaviors import IMediaFolderReference
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.utils import add_missing_blocks
+from wcs.simplelayout.utils import list_blocks_from_page
 from zope.component import adapter
 from zope.component import getMultiAdapter
 from zope.component import queryMultiAdapter
@@ -46,25 +47,8 @@ LOG = logging.getLogger(__name__)
 
 
 def get_blocks(context, for_cache=False):
-    query = {
-        'path': {'depth': 1, 'query': '/'.join(context.getPhysicalPath())},
-        'object_provides': IBlockMarker.__identifier__,
-    }
-    catalog = api.portal.get_tool('portal_catalog')
-    brains = catalog(**query)
-
     blocks = []
-    for item in brains:
-        try:
-            obj = item.getObject()
-        except KeyError:
-            LOG.warning(
-                "Brain getObject error: {} doesn't exist anymore".format(
-                    item.getPath()
-                )
-            )
-            continue
-
+    for obj in list_blocks_from_page(context):
         block_data = getMultiAdapter((obj, context.REQUEST), ISerializeToJson)(
             include_items=False, for_cache=for_cache,
         )
