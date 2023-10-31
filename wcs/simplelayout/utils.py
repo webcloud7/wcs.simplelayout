@@ -4,6 +4,7 @@ from plone.dexterity.interfaces import IDexterityFTI
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
 from zope.component import getUtility
+from AccessControl.SecurityManagement import getSecurityManager
 import logging
 
 
@@ -38,18 +39,19 @@ def normalize_portal_type(portal_type):
     return normalizer.normalize(portal_type)
 
 
+def list_blocks_from_page(page):
+    for item in page.objectValues():
+        is_block = IBlockMarker.providedBy(item)
+        if is_block and getSecurityManager().checkPermission('View', item):
+            yield item
+
+
 def add_missing_blocks(obj, state):
     """
     This function adds missing blocks from the page to the page state.
     """
     backup = deepcopy(ROW_TEMPLATE)
-
-    query = {
-        'path': {'depth': 1, 'query': '/'.join(obj.getPhysicalPath())},
-        'object_provides': IBlockMarker.__identifier__,
-    }
-    catalog = api.portal.get_tool('portal_catalog')
-    uids = [item.UID for item in catalog(**query)]
+    uids = [item.UID() for item in list_blocks_from_page(obj)]
 
     for uid in uids:
         if uid not in str(state):
