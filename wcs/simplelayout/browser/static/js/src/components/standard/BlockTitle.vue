@@ -34,7 +34,9 @@
         </svg>
         {{ block.title }}
         <template v-if="!block.show_title">
-          <span class="h6 text-black text-opacity-50">$i18n("(hidden title)")</span>
+          <span class="h6 text-black text-opacity-50">{{
+            $i18n("(hidden title)")
+          }}</span>
         </template>
       </div>
     </h4>
