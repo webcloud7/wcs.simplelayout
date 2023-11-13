@@ -40,6 +40,7 @@ from zope.schema import getFields
 from zope.schema.interfaces import IList
 import json
 import logging
+import os
 
 
 BLOCKS_SCHEMA = json.dumps({"type": "object", "properties": {}})
@@ -109,7 +110,8 @@ def insert_simplelayout_blocks(context, result, include_items):
         return
 
     slblocks = ISimplelayout(context).slblocks_cache
-    if api.user.is_anonymous() and slblocks:
+    is_enabled = os.environ.get('SIMPLELAYOUT_DISABLE_BLOCK_CACHE', None) != '1'
+    if api.user.is_anonymous() and slblocks and is_enabled:
         result['slblocks'] = transform_urls(slblocks)
     else:
         blocks = get_blocks(context)

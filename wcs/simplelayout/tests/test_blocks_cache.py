@@ -5,6 +5,7 @@ from unittest.mock import patch
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.restapi.serializer import get_blocks
 from wcs.simplelayout.tests import FunctionalTesting
+from wcs.simplelayout.utils import disable_block_cache
 from z3c.relationfield.relation import RelationValue
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
@@ -281,3 +282,14 @@ class TestBlocksCache(FunctionalTesting):
         )
 
         self.assertDictEqual(result, fixed_urls)
+
+    @browsing
+    def test_test_disable_cache_with_env_var(self, browser):
+        browser.visit(self.page, headers=self.api_headers)
+        self.assertNotIn('@components', browser.json['slblocks'][self.block1.UID()])
+        self.assertIn('@portal_url', browser.json['slblocks'][self.block1.UID()])
+
+        with disable_block_cache():
+            browser.visit(self.page, headers=self.api_headers)
+            self.assertIn('@components', browser.json['slblocks'][self.block1.UID()])
+            self.assertNotIn('@portal_url', browser.json['slblocks'][self.block1.UID()])
