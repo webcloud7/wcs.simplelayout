@@ -1,11 +1,13 @@
+from AccessControl.SecurityManagement import getSecurityManager
+from contextlib import contextmanager
 from copy import deepcopy
 from plone import api
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
 from zope.component import getUtility
-from AccessControl.SecurityManagement import getSecurityManager
 import logging
+import os
 
 
 LOG = logging.getLogger('simplelayout')
@@ -60,3 +62,10 @@ def add_missing_blocks(obj, state):
         state['items'].append(backup)
         LOG.info(f'Amended {len(backup["items"][0]["items"])} blocks '
                  f'on {obj.absolute_url()}')
+
+
+@contextmanager
+def disable_block_cache():
+    os.environ['SIMPLELAYOUT_DISABLE_BLOCK_CACHE'] = '1'
+    yield
+    del os.environ['SIMPLELAYOUT_DISABLE_BLOCK_CACHE']

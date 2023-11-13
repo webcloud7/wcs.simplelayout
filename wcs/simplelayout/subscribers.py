@@ -8,6 +8,7 @@ from z3c.form.interfaces import IManagerValidator
 from zope.component import queryMultiAdapter
 import json
 import logging
+import os
 
 
 LOG = logging.getLogger(__name__)
@@ -73,6 +74,9 @@ def update_page_state_on_block_remove(block, event):
 
 
 def cache_blocks(block, event):
+    if os.environ.get('SIMPLELAYOUT_DISABLE_BLOCK_CACHE', None) == '1':
+        return
+
     parents = [block.aq_parent]
 
     if getattr(event, 'oldParent', None) is not None:
