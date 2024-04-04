@@ -2,6 +2,7 @@ from AccessControl.SecurityManagement import getSecurityManager
 from contextlib import contextmanager
 from copy import deepcopy
 from plone import api
+from plone.api.exc import CannotGetPortalError
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
@@ -26,7 +27,10 @@ ROW_TEMPLATE = {
 
 
 def get_block_types():
-    types_tool = api.portal.get_tool('portal_types')
+    try:
+        types_tool = api.portal.get_tool('portal_types')
+    except CannotGetPortalError:
+        return ()
 
     dexterity_ftis = filter(
         IDexterityFTI.providedBy, types_tool.objectValues())
