@@ -77,6 +77,10 @@ def cache_blocks(block, event):
     if os.environ.get('SIMPLELAYOUT_DISABLE_BLOCK_CACHE', None) == '1':
         return
 
+    if not hasattr(block, 'aq_parent'):
+        # Parent already got deleted
+        return
+
     parents = [block.aq_parent]
 
     if getattr(event, 'oldParent', None) is not None:
