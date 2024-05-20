@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-08-14 11:43+0000\n"
+"POT-Creation-Date: 2024-05-20 19:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,511 +12,580 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
 "Preferred-Encodings: utf-8 latin1\n"
+"Domain: wcs.simplelayout\n"
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:42
+#: wcs/simplelayout/contenttypes/configure.zcml:106
+msgid "Adds collection behavior for blocks"
+msgstr ""
+
+#: wcs/simplelayout/__init__.py:16
+msgid "Behaviors"
+msgstr ""
+
+#: wcs/simplelayout/__init__.py:17
+#: wcs/simplelayout/browser/dexterity/block_template.py:77
+msgid "Block Template"
+msgstr ""
+
+#: wcs/simplelayout/browser/dexterity/block_template.py:79
+msgid "Block representation updated."
+msgstr ""
+
+#: wcs/simplelayout/browser/dexterity/block_template.py:78
+msgid "Change the visual representation of a Block"
+msgstr ""
+
+#: wcs/simplelayout/contenttypes/configure.zcml:106
+msgid "Collection behavior for blocks"
+msgstr ""
+
+#: wcs/simplelayout/contenttypes/configure.zcml:42
 msgid "Default Block image, with captions and Alt-Text field (accessibility)"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:36
+#: wcs/simplelayout/contenttypes/configure.zcml:36
 msgid "Default Block text, which only allows restricted HTML as content"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:30
+#: wcs/simplelayout/contenttypes/configure.zcml:30
 msgid "Default Block title with (Show title option)"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:84
+#: wcs/simplelayout/contenttypes/configure.zcml:84
 msgid "Extends the content with a internal and external link field"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:72
+#: wcs/simplelayout/contenttypes/configure.zcml:72
 msgid "Extends the content with a reference field to a media folder"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:78
+#: wcs/simplelayout/__init__.py:15
+msgid "Fields"
+msgstr ""
+
+#: wcs/simplelayout/contenttypes/configure.zcml:78
 msgid "Files reference field for ListingBlocks"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/behaviors.py:162
+#: wcs/simplelayout/browser/dexterity/block_template.py:22
+msgid "If false (unchecked), the code will be appended to the existing block representation."
+msgstr ""
+
+#: wcs/simplelayout/contenttypes/behaviors.py:179
 msgid "Image"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/behaviors.py:393
+#: wcs/simplelayout/contenttypes/behaviors.py:423
 msgid "It's not possible to have an internal_link and an external_link together"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/behaviors.py:111
+#: wcs/simplelayout/contenttypes/behaviors.py:118
 msgid "Layout"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/behaviors.py:369
+#: wcs/simplelayout/contenttypes/behaviors.py:398
 msgid "Link"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:84
+#: wcs/simplelayout/contenttypes/configure.zcml:84
 msgid "Link fields"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:90
+#: wcs/simplelayout/contenttypes/configure.zcml:90
 msgid "Make Block collapable"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:18
+#: wcs/simplelayout/contenttypes/configure.zcml:18
 msgid "Make a content a News Type"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:90
+#: wcs/simplelayout/contenttypes/configure.zcml:90
 msgid "Makes a block collapsable"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:24
+#: wcs/simplelayout/contenttypes/configure.zcml:24
 msgid "Makes this content a Simplelayout Block"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:12
+#: wcs/simplelayout/contenttypes/configure.zcml:12
 msgid "Makes this content a Simplelayout ConentPage"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:18
+#: wcs/simplelayout/contenttypes/configure.zcml:18
 msgid "Marks content as news for listings and provides a news date field."
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:72
+#: wcs/simplelayout/contenttypes/configure.zcml:72
 msgid "MediaFolder reference field"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:48
+#: wcs/simplelayout/browser/dexterity/block_template.py:80
+msgid "No changes were made."
+msgstr ""
+
+#: wcs/simplelayout/__init__.py:14
+msgid "Overview"
+msgstr ""
+
+#: wcs/simplelayout/contenttypes/behaviors.py:388
+msgid "Please enter a valid URL."
+msgstr ""
+
+#: wcs/simplelayout/contenttypes/configure.zcml:48
 msgid "Provides a video url field, which supports youtube and vimeo urls."
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:66
+#: wcs/simplelayout/contenttypes/configure.zcml:66
 msgid "Provides options to find and filter news content"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:54
+#: wcs/simplelayout/contenttypes/configure.zcml:54
 msgid "Provides sort order and sort on options for a listing"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:24
+#: wcs/simplelayout/browser/dexterity/block_template.py:21
+msgid "Replace block representation"
+msgstr ""
+
+#: wcs/simplelayout/browser/dexterity/block_template.py:82
+msgid "Save"
+msgstr ""
+
+#: wcs/simplelayout/contenttypes/configure.zcml:24
 msgid "Simplelayout Block"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:42
+#: wcs/simplelayout/contenttypes/configure.zcml:42
 msgid "Simplelayout Block Image"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:66
+#: wcs/simplelayout/contenttypes/configure.zcml:66
 msgid "Simplelayout Block News options"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:54
+#: wcs/simplelayout/contenttypes/configure.zcml:54
 msgid "Simplelayout Block Sort options for Image types"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:60
+#: wcs/simplelayout/contenttypes/configure.zcml:60
 msgid "Simplelayout Block Sort options for file types"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:36
+#: wcs/simplelayout/contenttypes/configure.zcml:36
 msgid "Simplelayout Block Text"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:30
+#: wcs/simplelayout/contenttypes/configure.zcml:30
 msgid "Simplelayout Block Title"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:48
+#: wcs/simplelayout/contenttypes/configure.zcml:48
 msgid "Simplelayout Block Video URL"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/configure.zcml:12
+#: wcs/simplelayout/contenttypes/configure.zcml:12
 msgid "Simplelayout Content Page"
 msgstr ""
 
-#: ./wcs/simplelayout/browser/configure.zcml:93
+#: wcs/simplelayout/browser/configure.zcml:95
 msgid "The 'add' menu - allows the user to add new content items in the context"
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/behaviors.py:201
+#: wcs/simplelayout/contenttypes/behaviors.py:218
 msgid "This is no a valid youtube, or vimeo url."
 msgstr ""
 
-#: ./wcs/simplelayout/contenttypes/behaviors.py:185
+#: wcs/simplelayout/browser/dexterity/block_template.py:28
+msgid "VueJS Template Code"
+msgstr ""
+
+#: wcs/simplelayout/contenttypes/behaviors.py:202
 msgid "Youtube format: http(s)://youtu.be/VIDEO_ID (add start parameter to let the vide start at a specific position)<br/>Youtube (no-cookie) format: https://www.youtube-nocookie.com/embed/VIDEO_ID<br/>Vimeo format: http(s)://vimeo.com/(channels/groups)/VIDEO_ID"
 msgstr ""
 
 #. Default: "Make block collapsable, for example an FAQ"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:405
+#: wcs/simplelayout/contenttypes/behaviors.py:435
 msgid "description_collapsable"
 msgstr ""
 
 #. Default: "Enter an alternative text for the image"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:173
+#: wcs/simplelayout/contenttypes/behaviors.py:190
 msgid "description_image_alt_text"
 msgstr ""
 
 #. Default: "Use the link section to redirect to another content or website."
-#: ./wcs/simplelayout/contenttypes/behaviors.py:371
+#: wcs/simplelayout/contenttypes/behaviors.py:400
 msgid "description_link_fieldset"
 msgstr ""
 
 #. Default: "Actions"
-#: ./wcs/simplelayout/browser/simplelayout.py:31
+#: wcs/simplelayout/browser/simplelayout.py:38
 msgid "label_actions"
 msgstr ""
 
 #. Default: "Add"
-#: ./wcs/simplelayout/browser/simplelayout.py:32
+#: wcs/simplelayout/browser/simplelayout.py:39
 msgid "label_add"
 msgstr ""
 
 #. Default: "Addable Blocks"
-#: ./wcs/simplelayout/browser/templates/addable-blocks-overlay.pt:8
+#: wcs/simplelayout/browser/templates/addable-blocks-overlay.pt:8
 msgid "label_addable_blocks"
 msgstr ""
 
 #. Default: "Address"
-#: ./wcs/simplelayout/browser/simplelayout.py:48
+#: wcs/simplelayout/browser/simplelayout.py:55
 msgid "label_address"
 msgstr ""
 
 #. Default: "Ascending"
-#: ./wcs/simplelayout/contenttypes/vocabs.py:29
+#: wcs/simplelayout/contenttypes/vocabs.py:29
 msgid "label_ascending"
 msgstr ""
 
 #. Default: "Closed"
-#: ./wcs/simplelayout/browser/simplelayout.py:68
+#: wcs/simplelayout/browser/simplelayout.py:75
 msgid "label_closed"
 msgstr ""
 
 #. Default: "Collapsable"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:404
+#: wcs/simplelayout/contenttypes/behaviors.py:434
 msgid "label_collapsable"
 msgstr ""
 
 #. Default: "Contents (Listing)"
-#: ./wcs/simplelayout/browser/simplelayout.py:37
+#: wcs/simplelayout/browser/simplelayout.py:44
 msgid "label_contents"
 msgstr ""
 
 #. Default: "Click here to create a new Media Folder"
-#: ./wcs/simplelayout/browser/simplelayout.py:56
+#: wcs/simplelayout/browser/simplelayout.py:63
 msgid "label_create_mediafolder"
 msgstr ""
 
 #. Default: "Delete"
-#: ./wcs/simplelayout/browser/simplelayout.py:34
+#: wcs/simplelayout/browser/simplelayout.py:41
 msgid "label_delete"
 msgstr ""
 
 #. Default: "Departement"
-#: ./wcs/simplelayout/browser/simplelayout.py:45
+#: wcs/simplelayout/browser/simplelayout.py:52
 msgid "label_department"
 msgstr ""
 
 #. Default: "Descending"
-#: ./wcs/simplelayout/contenttypes/vocabs.py:31
+#: wcs/simplelayout/contenttypes/vocabs.py:31
 msgid "label_descending"
 msgstr ""
 
 #. Default: "Edit"
-#: ./wcs/simplelayout/browser/simplelayout.py:33
+#: wcs/simplelayout/browser/simplelayout.py:40
 msgid "label_edit"
 msgstr ""
 
+#. Default: "Effective date"
+#: wcs/simplelayout/browser/simplelayout.py:77
+msgid "label_effective_date"
+msgstr ""
+
 #. Default: "E-Mail"
-#: ./wcs/simplelayout/browser/simplelayout.py:44
+#: wcs/simplelayout/browser/simplelayout.py:51
 msgid "label_email"
 msgstr ""
 
+#. Default: "Expiration date"
+#: wcs/simplelayout/browser/simplelayout.py:78
+msgid "label_expiration_date"
+msgstr ""
+
 #. Default: "External URL"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:379
+#: wcs/simplelayout/contenttypes/behaviors.py:408
 msgid "label_external_link"
 msgstr ""
 
 #. Default: "4-column row (25%)"
-#: ./wcs/simplelayout/browser/simplelayout.py:42
+#: wcs/simplelayout/browser/simplelayout.py:49
 msgid "label_four_col"
 msgstr ""
 
 #. Default: "Fr"
-#: ./wcs/simplelayout/browser/simplelayout.py:65
+#: wcs/simplelayout/browser/simplelayout.py:72
 msgid "label_friday_short"
 msgstr ""
 
 #. Default: "Function"
-#: ./wcs/simplelayout/browser/simplelayout.py:47
+#: wcs/simplelayout/browser/simplelayout.py:54
 msgid "label_function"
 msgstr ""
 
 #. Default: "Go the the referenced Media Folder"
-#: ./wcs/simplelayout/browser/simplelayout.py:55
+#: wcs/simplelayout/browser/simplelayout.py:62
 msgid "label_go_to_mediafolder"
 msgstr ""
 
 #. Default: "Go to content"
-#: ./wcs/simplelayout/browser/simplelayout.py:52
+#: wcs/simplelayout/browser/simplelayout.py:59
 msgid "label_got_to"
 msgstr ""
 
 #. Default: "(hidden title)"
-#: ./wcs/simplelayout/browser/simplelayout.py:53
+#: wcs/simplelayout/browser/simplelayout.py:60
 msgid "label_hidden_title"
 msgstr ""
 
 #. Default: "Image"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:167
+#: wcs/simplelayout/contenttypes/behaviors.py:184
 msgid "label_image"
 msgstr ""
 
 #. Default: "Image alternative text"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:171
+#: wcs/simplelayout/contenttypes/behaviors.py:188
 msgid "label_image_alt_text"
 msgstr ""
 
 #. Default: "Image caption"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:177
+#: wcs/simplelayout/contenttypes/behaviors.py:194
 msgid "label_image_caption"
 msgstr ""
 
 #. Default: "Individual files for File/Image listing block"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:350
+#: wcs/simplelayout/contenttypes/behaviors.py:367
 msgid "label_individual_files"
 msgstr ""
 
 #. Default: "Information"
-#: ./wcs/simplelayout/browser/simplelayout.py:36
+#: wcs/simplelayout/browser/simplelayout.py:43
 msgid "label_information"
 msgstr ""
 
 #. Default: "Internal link"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:386
+#: wcs/simplelayout/contenttypes/behaviors.py:416
 msgid "label_internal_link"
 msgstr ""
 
 #. Default: "Links to a internal or external target"
-#: ./wcs/simplelayout/browser/simplelayout.py:51
+#: wcs/simplelayout/browser/simplelayout.py:58
 msgid "label_link_target"
 msgstr ""
 
 #. Default: "Mediafolder reference"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:333
+#: wcs/simplelayout/contenttypes/behaviors.py:350
 msgid "label_mediafolder"
 msgstr ""
 
 #. Default: "Mo"
-#: ./wcs/simplelayout/browser/simplelayout.py:61
+#: wcs/simplelayout/browser/simplelayout.py:68
 msgid "label_monday_short"
 msgstr ""
 
 #. Default: "No referenced content found"
-#: ./wcs/simplelayout/browser/simplelayout.py:50
+#: wcs/simplelayout/browser/simplelayout.py:57
 msgid "label_no_ref_content"
 msgstr ""
 
 #. Default: "Opening hours"
-#: ./wcs/simplelayout/browser/simplelayout.py:60
+#: wcs/simplelayout/browser/simplelayout.py:67
 msgid "label_opening_hours"
 msgstr ""
 
 #. Default: "Organisation"
-#: ./wcs/simplelayout/browser/simplelayout.py:57
+#: wcs/simplelayout/browser/simplelayout.py:64
 msgid "label_organisation"
 msgstr ""
 
 #. Default: "Organization"
-#: ./wcs/simplelayout/browser/simplelayout.py:46
+#: wcs/simplelayout/browser/simplelayout.py:53
 msgid "label_organization"
 msgstr ""
 
 #. Default: "Office"
-#: ./wcs/simplelayout/browser/simplelayout.py:59
+#: wcs/simplelayout/browser/simplelayout.py:66
 msgid "label_phone_office"
 msgstr ""
 
 #. Default: "Types"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:220
+#: wcs/simplelayout/contenttypes/behaviors.py:237
 msgid "label_portal_types"
 msgstr ""
 
 #. Default: "Referenced content"
-#: ./wcs/simplelayout/browser/simplelayout.py:49
+#: wcs/simplelayout/browser/simplelayout.py:56
 msgid "label_ref_content"
 msgstr ""
 
 #. Default: "Remove"
-#: ./wcs/simplelayout/browser/simplelayout.py:38
+#: wcs/simplelayout/browser/simplelayout.py:45
 msgid "label_remove"
 msgstr ""
 
 #. Default: "Remove column"
-#: ./wcs/simplelayout/browser/simplelayout.py:39
+#: wcs/simplelayout/browser/simplelayout.py:46
 msgid "label_remove_col"
 msgstr ""
 
 #. Default: "Sa"
-#: ./wcs/simplelayout/browser/simplelayout.py:66
+#: wcs/simplelayout/browser/simplelayout.py:73
 msgid "label_saturday_short"
 msgstr ""
 
 #. Default: "Show title"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:142
+#: wcs/simplelayout/contenttypes/behaviors.py:159
 msgid "label_show_title"
 msgstr ""
 
 #. Default: "Sort by"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:207
+#: wcs/simplelayout/contenttypes/behaviors.py:224
 msgid "label_sort_on"
 msgstr ""
 
 #. Default: "Sort order"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:213
+#: wcs/simplelayout/contenttypes/behaviors.py:230
 msgid "label_sort_order"
 msgstr ""
 
 #. Default: "Su"
-#: ./wcs/simplelayout/browser/simplelayout.py:67
+#: wcs/simplelayout/browser/simplelayout.py:74
 msgid "label_sunday_short"
 msgstr ""
 
 #. Default: "Text"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:153
+#: wcs/simplelayout/contenttypes/behaviors.py:170
 msgid "label_text"
 msgstr ""
 
 #. Default: "3-column row (33%)"
-#: ./wcs/simplelayout/browser/simplelayout.py:41
+#: wcs/simplelayout/browser/simplelayout.py:48
 msgid "label_three_col"
 msgstr ""
 
 #. Default: "Th"
-#: ./wcs/simplelayout/browser/simplelayout.py:64
+#: wcs/simplelayout/browser/simplelayout.py:71
 msgid "label_thursday_short"
 msgstr ""
 
 #. Default: "Title"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:138
+#: wcs/simplelayout/contenttypes/behaviors.py:155
 msgid "label_title"
 msgstr ""
 
 #. Default: "Tu"
-#: ./wcs/simplelayout/browser/simplelayout.py:62
+#: wcs/simplelayout/browser/simplelayout.py:69
 msgid "label_tuesday_short"
 msgstr ""
 
 #. Default: "2-column row (50%)"
-#: ./wcs/simplelayout/browser/simplelayout.py:40
+#: wcs/simplelayout/browser/simplelayout.py:47
 msgid "label_two_col"
 msgstr ""
 
 #. Default: "Upload"
-#: ./wcs/simplelayout/browser/simplelayout.py:35
+#: wcs/simplelayout/browser/simplelayout.py:42
 msgid "label_upload"
 msgstr ""
 
 #. Default: "Validity"
-#: ./wcs/simplelayout/browser/simplelayout.py:69
+#: wcs/simplelayout/browser/simplelayout.py:76
 msgid "label_validity"
 msgstr ""
 
 #. Default: "Youtube, or Vimeo URL"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:184
+#: wcs/simplelayout/contenttypes/behaviors.py:201
 msgid "label_video_url"
 msgstr ""
 
 #. Default: "View"
-#: ./wcs/simplelayout/browser/simplelayout.py:54
+#: wcs/simplelayout/browser/simplelayout.py:61
 msgid "label_view"
 msgstr ""
 
 #. Default: "Website"
-#: ./wcs/simplelayout/browser/simplelayout.py:58
+#: wcs/simplelayout/browser/simplelayout.py:65
 msgid "label_website"
 msgstr ""
 
 #. Default: "We"
-#: ./wcs/simplelayout/browser/simplelayout.py:63
+#: wcs/simplelayout/browser/simplelayout.py:70
 msgid "label_wednesday_short"
 msgstr ""
 
 #. Default: "Width"
-#: ./wcs/simplelayout/browser/simplelayout.py:43
+#: wcs/simplelayout/browser/simplelayout.py:50
 msgid "label_width"
 msgstr ""
 
 #. Default: "News will be sorted by this date"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:127
+#: wcs/simplelayout/contenttypes/behaviors.py:144
 msgid "news_date_description"
 msgstr ""
 
 #. Default: "Date"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:126
+#: wcs/simplelayout/contenttypes/behaviors.py:143
 msgid "news_date_label"
 msgstr ""
 
 #. Default: "You can not filter by path and current context at the same time."
-#: ./wcs/simplelayout/contenttypes/behaviors.py:318
+#: wcs/simplelayout/contenttypes/behaviors.py:335
 msgid "news_listing_config_current_context_and_path_error"
 msgstr ""
 
 #. Default: "Only show news items from the current context."
-#: ./wcs/simplelayout/contenttypes/behaviors.py:256
+#: wcs/simplelayout/contenttypes/behaviors.py:273
 msgid "news_listing_config_filter_current_context_description"
 msgstr ""
 
 #. Default: "Limit to current context"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:254
+#: wcs/simplelayout/contenttypes/behaviors.py:271
 msgid "news_listing_config_filter_current_context_label"
 msgstr ""
 
 #. Default: "Only show news items from a specific path. If there is no path, news from the current area will be shown"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:272
+#: wcs/simplelayout/contenttypes/behaviors.py:289
 msgid "news_listing_config_filter_path_description"
 msgstr ""
 
 #. Default: "Limit to path"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:270
+#: wcs/simplelayout/contenttypes/behaviors.py:287
 msgid "news_listing_config_filter_path_label"
 msgstr ""
 
 #. Default: "Only news younger than this value will be rendered. Enter 0 for no limitation."
-#: ./wcs/simplelayout/contenttypes/behaviors.py:306
+#: wcs/simplelayout/contenttypes/behaviors.py:323
 msgid "news_listing_config_maximum_age_description"
 msgstr ""
 
 #. Default: "Maximum age (days)"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:304
+#: wcs/simplelayout/contenttypes/behaviors.py:321
 msgid "news_listing_config_maximum_age_label"
 msgstr ""
 
 #. Default: "The number of news entries to be shown at most. Enter 0 for no limitation."
-#: ./wcs/simplelayout/contenttypes/behaviors.py:282
+#: wcs/simplelayout/contenttypes/behaviors.py:299
 msgid "news_listing_config_quantity_description"
 msgstr ""
 
 #. Default: "Quantity"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:281
+#: wcs/simplelayout/contenttypes/behaviors.py:298
 msgid "news_listing_config_quantity_label"
 msgstr ""
 
 #. Default: "Only news with the selected subjects will be shown."
-#: ./wcs/simplelayout/contenttypes/behaviors.py:295
+#: wcs/simplelayout/contenttypes/behaviors.py:312
 msgid "news_listing_config_subjects_description"
 msgstr ""
 
 #. Default: "Filter by subject"
-#: ./wcs/simplelayout/contenttypes/behaviors.py:293
+#: wcs/simplelayout/contenttypes/behaviors.py:310
 msgid "news_listing_config_subjects_label"
 msgstr ""
 
 #. Default: "You can mix and match invididual files and files from a mediafolder reference."
-#: ./wcs/simplelayout/contenttypes/behaviors.py:351
+#: wcs/simplelayout/contenttypes/behaviors.py:368
 msgid "text_individual_files"
 msgstr ""
 
-#: ./wcs/simplelayout/configure.zcml:25
+#: wcs/simplelayout/configure.zcml:25
 msgid "wcs.simplelayout base profile"
 msgstr ""
-

@@ -7,6 +7,7 @@
     <div metal:fill-slot="content-core">
         <tal:script replace="structure view/style_resource" />
         <div tal:attributes="data-token context/@@authenticator/token;
+                            data-lang python:view.get_language();
                              data-i18n view/i18n;
                              data-can-modify view/can_modify;
                              data-can-addblocks view/can_add_blocks;

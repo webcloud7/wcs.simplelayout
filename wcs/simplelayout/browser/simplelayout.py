@@ -29,6 +29,10 @@ class SimplelayoutView(BrowserView):
     def can_add_blocks(self):
         return api.user.has_permission('wcs.simplelayout: Add Block', obj=self.context)
 
+    def get_language(self):
+        plt = api.portal.get_tool('portal_languages')
+        return plt.getPreferredLanguage(self.request)
+
     def i18n(self):
         messages = {
             'Actions': self._translate(_('label_actions', default='Actions')),
@@ -70,6 +74,8 @@ class SimplelayoutView(BrowserView):
             'Su': self._translate(_('label_sunday_short', default='Su')),
             'Closed': self._translate(_('label_closed', default='Closed')),
             'Validity': self._translate(_('label_validity', default='Validity')),
+            'Effective date': self._translate(_('label_effective_date', default='Effective date')),
+            'Expiration date': self._translate(_('label_expiration_date', default='Expiration date')),
         }
         return json.dumps(messages)
 

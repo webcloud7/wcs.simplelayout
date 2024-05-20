@@ -5,6 +5,8 @@ import VueAxios from "vue-axios";
 import { createPinia } from "pinia";
 import BlockViews from "./plugins/BlockViews.js";
 import i18n from "./plugins/i18n.js";
+import moment from "moment";
+import "moment/dist/locale/de";
 
 const app = createApp(App);
 app.use(VueAxios, {
@@ -19,4 +21,9 @@ pinia.use(({ store }) => {
 app.use(pinia);
 app.use(BlockViews);
 app.use(i18n);
-app.mount("#app");
+
+const element = document.querySelector(".simplelayout-app");
+const language = element.getAttribute("data-lang");
+moment.locale(language);
+
+app.mount(element);

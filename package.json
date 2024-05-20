@@ -22,6 +22,7 @@
   "dependencies": {
     "@patternslib/patternslib": "9.0.0-beta.1",
     "axios": "^0.27.2",
+    "moment": "^2.30.1",
     "pinia": "^2.0.0-rc.10",
     "qs": "^6.10.5",
     "sass": "^1.51.0",
