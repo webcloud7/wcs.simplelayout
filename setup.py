@@ -17,6 +17,7 @@ tests_require = [
     'ftw.builder',
     'ftw.testbrowser',
     'zope.testrunner',
+    'i18ndude',
 ]
 
 setup(
