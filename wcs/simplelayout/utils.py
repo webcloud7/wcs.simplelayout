@@ -1,6 +1,7 @@
 from AccessControl.SecurityManagement import getSecurityManager
 from contextlib import contextmanager
 from copy import deepcopy
+from DateTime import DateTime
 from plone import api
 from plone.api.exc import CannotGetPortalError
 from plone.app.dexterity.behaviors.metadata import IPublication
@@ -63,10 +64,43 @@ def any_block_has_dates(page):
     return False
 
 
+def can_access_inactive_blocks(obj):
+    def _get_dx_publication_dates(obj):
+        publication = IPublication(obj, None)
+        if not publication:  # IPublication is not supported
+            return None, None
+
+        effective = publication.effective
+        expiration = publication.expires
+
+        # convert from datetime to DateTime as used by archetypes
+        return DateTime(effective) if effective else None, \
+            DateTime(expiration) if expiration else None
+
+    effective_date, expiration_date = _get_dx_publication_dates(obj)
+
+    if not effective_date and not expiration_date:
+        return True
+
+    now = DateTime()
+
+    if not api.user.has_permission('Access inactive portal content') and expiration_date:
+        if now > expiration_date:
+            return False
+
+    if not api.user.has_permission('Access inactive portal content') and effective_date:
+        if now < effective_date:
+            return False
+
+    return True
+
+
 def list_blocks_from_page(page):
     for item in page.objectValues():
         is_block = IBlockMarker.providedBy(item)
-        if is_block and getSecurityManager().checkPermission('View', item):
+        can_access = getSecurityManager().checkPermission('View', item)
+        filter_inactive = can_access_inactive_blocks(item)
+        if is_block and can_access and filter_inactive:
             yield item
 
 
