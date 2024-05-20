@@ -3,6 +3,7 @@ from contextlib import contextmanager
 from copy import deepcopy
 from plone import api
 from plone.api.exc import CannotGetPortalError
+from plone.app.dexterity.behaviors.metadata import IPublication
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
@@ -43,6 +44,14 @@ def get_block_types():
 def normalize_portal_type(portal_type):
     normalizer = getUtility(IIDNormalizer)
     return normalizer.normalize(portal_type)
+
+
+def block_has_dates(obj):
+    if IPublication(obj, None):
+        effective = IPublication(obj).effective
+        expires = IPublication(obj).expires
+        return bool(effective), bool(expires)
+    return False
 
 
 def list_blocks_from_page(page):
