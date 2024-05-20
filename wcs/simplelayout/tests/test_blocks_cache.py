@@ -1,6 +1,9 @@
+from datetime import datetime
+from datetime import timedelta
 from ftw.builder import Builder
 from ftw.builder import create
 from ftw.testbrowser import browsing
+from plone.app.dexterity.behaviors.metadata import IPublication
 from unittest.mock import patch
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.restapi.serializer import get_blocks
@@ -8,7 +11,9 @@ from wcs.simplelayout.tests import FunctionalTesting
 from wcs.simplelayout.utils import disable_block_cache
 from z3c.relationfield.relation import RelationValue
 from zope.component import getUtility
+from zope.event import notify
 from zope.intid.interfaces import IIntIds
+from zope.lifecycleevent import ObjectModifiedEvent
 import json
 import transaction
 
@@ -293,3 +298,30 @@ class TestBlocksCache(FunctionalTesting):
             browser.visit(self.page, headers=self.api_headers)
             self.assertIn('@components', browser.json['slblocks'][self.block1.UID()])
             self.assertNotIn('@portal_url', browser.json['slblocks'][self.block1.UID()])
+
+    @browsing
+    def test_dont_cache_if_block_has_dates(self, browser):
+
+        browser.visit(self.page, headers=self.api_headers)
+
+        self.assertEqual(2, len(ISimplelayout(self.page).slblocks_cache))
+        self.assertIn(self.block1.UID(), browser.json['slblocks'])
+        self.assertIn(self.block2.UID(), browser.json['slblocks'])
+
+        self.add_behavior('Block', 'plone.publication')
+        block3 = create(Builder('block')
+                        .titled('Block 3')
+                        .within(self.page)
+                        )
+
+        browser.visit(self.page, headers=self.api_headers)
+        self.assertIn(block3.UID(), browser.json['slblocks'])
+        self.assertEqual(3, len(ISimplelayout(self.page).slblocks_cache))
+
+        IPublication(block3).effective = datetime.now() + timedelta(days=1)
+        notify(ObjectModifiedEvent(block3))
+        transaction.commit()
+
+        browser.visit(self.page, headers=self.api_headers)
+        self.assertNotIn(block3.UID(), browser.json['slblocks'])
+        self.assertEqual(0, len(ISimplelayout(self.page).slblocks_cache))

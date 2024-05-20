@@ -54,6 +54,15 @@ def block_has_dates(obj):
     return False
 
 
+def any_block_has_dates(page):
+    for item in page.objectValues():
+        is_block = IBlockMarker.providedBy(item)
+        can_access = getSecurityManager().checkPermission('View', item)
+        if is_block and can_access and block_has_dates(item):
+            return True
+    return False
+
+
 def list_blocks_from_page(page):
     for item in page.objectValues():
         is_block = IBlockMarker.providedBy(item)

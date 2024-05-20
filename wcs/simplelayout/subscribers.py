@@ -3,6 +3,7 @@ from Acquisition import aq_parent
 from plone.uuid.interfaces import IUUID
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.restapi.serializer import get_blocks
+from wcs.simplelayout.utils import any_block_has_dates
 from z3c.form.interfaces import IDataManager
 from z3c.form.interfaces import IManagerValidator
 from zope.component import queryMultiAdapter
@@ -90,6 +91,12 @@ def cache_blocks(block, event):
         if not ISimplelayout.providedBy(parent):
             continue
 
+        dm = queryMultiAdapter((parent, ISimplelayout.get('slblocks_cache')), IDataManager)
+
+        if any_block_has_dates(parent):
+            dm.set({})
+            return
+
         blocks = get_blocks(parent, for_cache=True)
         result = {block['UID']: block for block in blocks}
 
@@ -100,5 +107,4 @@ def cache_blocks(block, event):
         if validator.validate(result):
             raise Exception('Validation error')
 
-        dm = queryMultiAdapter((parent, ISimplelayout.get('slblocks_cache')), IDataManager)
         dm.set(result)
