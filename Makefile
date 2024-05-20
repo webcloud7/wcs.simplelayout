@@ -108,7 +108,7 @@ ${SENTINEL}:
 PYTHON?=python3
 VENV?=on
 ifeq ("${VENV}", "on")
-	VENV_FOLDER?=./venv
+	VENV_FOLDER?=.
 	PYBIN=${VENV_FOLDER}/bin/
 else
 	VENV_FOLDER?=
@@ -181,7 +181,7 @@ ${INSTALL_TARGET}: ${PREPARE_TARGET}
 COOKIECUTTER_SENTINEL=${SENTINELFOLDER}pip-cookiecutter.sentinel
 ${COOKIECUTTER_SENTINEL}:
 	@echo "$(OK_COLOR)Install cookiecutter$(NO_COLOR)"
-	@${PYBIN}pip install git+https://github.com/cookiecutter/cookiecutter.git#egg=cookiecutter
+	@${PYBIN}pip install cookiecutter==2.5.0
 	@touch ${COOKIECUTTER_SENTINEL}
 
 ${INSTANCE_YAML}:
@@ -288,7 +288,7 @@ run: ${RUN_PREREQUISITES} ## run/start Plone
 clean-venv: ## remove Python virtual environment
 ifeq ("${VENV}", "on")
 	@echo "$(OK_COLOR)Remove Virtualenv.$(NO_COLOR)"
-	rm -rf ${VENV_FOLDER} ${SENTINELFOLDER}/pip*.sentinel ${VENV_SENTINEL}
+	rm -rf ${VENV_FOLDER}/bin ${VENV_FOLDER}/include ${VENV_FOLDER}/lib ${SENTINELFOLDER}/pip*.sentinel ${VENV_SENTINEL}
 else:
 	@echo "$(OK_WARN)No self-created Python virtualenv at '${VENV_FOLDER}'! Nothing to do.$(NO_COLOR)"
 endif
@@ -324,3 +324,8 @@ ifneq ("$(wildcard Dockerfile)", "")
 else
 	@echo "$(ERROR_COLOR)A 'Dockerfile' is required to build an image.$(NO_COLOR)"
 endif
+
+.PHONY: i18n
+i18n: ## Update translations
+	${VENV_FOLDER}/bin/pip install i18ndude
+	@echo $(shell ./i18n.sh)

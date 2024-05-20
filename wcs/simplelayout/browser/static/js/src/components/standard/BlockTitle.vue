@@ -47,6 +47,8 @@
 </template>
 <script>
 import { useSimplelayoutStore } from "@/store.js";
+import moment from "moment";
+
 export default {
   props: {
     block: {
@@ -75,6 +77,21 @@ export default {
 
       if (this.block.block_template) {
         infos.push(`${this.$i18n("View")}: ${this.block.block_template.title}`);
+      }
+
+      if (this.block.effective) {
+        infos.push(
+          `${this.$i18n("Effective date")}: ${moment(
+            this.block.effective
+          ).format("LLL")}`
+        );
+      }
+      if (this.block.expires) {
+        infos.push(
+          `${this.$i18n("Expiration date")}: ${moment(
+            this.block.expires
+          ).format("LLL")}`
+        );
       }
       return infos.join(" | ");
     },

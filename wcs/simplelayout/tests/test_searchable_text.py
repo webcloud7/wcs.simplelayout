@@ -1,3 +1,4 @@
+from datetime import datetime
 from ftw.builder import Builder
 from ftw.builder import create
 from plone.app.textfield.value import RichTextValue
@@ -57,3 +58,14 @@ class TestSearchableTextIndexer(FunctionalTesting):
 
         result = self.search_for('asdf')
         self.assertEqual(2, len(result), 'Expect 2 brains.')
+
+    def test_blocks_with_dates_are_not_in_page(self):
+        self.add_behavior('Block', 'plone.publication')
+        create(Builder('block')
+               .titled(u'TextBlock')
+               .within(self.contentpage)
+               .having(effective=datetime.now(),
+                       text=RichTextValue(u'date')))
+
+        result = self.search_for('date')
+        self.assertEqual(0, len(result), 'Expect 0 results.')

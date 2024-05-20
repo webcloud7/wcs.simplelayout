@@ -17,11 +17,12 @@
     "build": "vite build",
     "preview": "vite preview --port 5050",
     "lint": "eslint ./wcs/simplelayout/browser/static/js/src --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "test": "testcafe 'chrome:headless' wcs/simplelayout/e2e -e -s path=/tmp/screenshots,takeOnFails=true -r xunit:/tmp/test-results/testcafe/results.xml --assertion-timeout 10000"
+    "test": "testcafe 'chrome --headless=new' wcs/simplelayout/e2e -e -s path=/tmp/screenshots,takeOnFails=true -r xunit:/tmp/test-results/testcafe/results.xml --assertion-timeout 10000"
   },
   "dependencies": {
     "@patternslib/patternslib": "9.0.0-beta.1",
     "axios": "^0.27.2",
+    "moment": "^2.30.1",
     "pinia": "^2.0.0-rc.10",
     "qs": "^6.10.5",
     "sass": "^1.51.0",
