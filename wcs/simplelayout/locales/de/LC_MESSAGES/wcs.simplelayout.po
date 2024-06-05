@@ -244,7 +244,7 @@ msgstr "Adresse"
 #. Default: "Ascending"
 #: wcs/simplelayout/contenttypes/vocabs.py:29
 msgid "label_ascending"
-msgstr "Abwerts"
+msgstr "Aufwärts"
 
 #. Default: "Closed"
 #: wcs/simplelayout/browser/simplelayout.py:75
@@ -279,7 +279,7 @@ msgstr "Departement"
 #. Default: "Descending"
 #: wcs/simplelayout/contenttypes/vocabs.py:31
 msgid "label_descending"
-msgstr "Abwerts"
+msgstr "Abwärts"
 
 #. Default: "Edit"
 #: wcs/simplelayout/browser/simplelayout.py:40
