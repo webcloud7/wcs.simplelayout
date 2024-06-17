@@ -410,8 +410,9 @@ class ILink(model.Schema):
     directives.widget('internal_link',
                       ReferenceBrowserWidget,
                       allow_nonsearched_types=True)
-    internal_link = Relation(
+    internal_link = RelationChoice(
         title=_('label_internal_link', default='Internal link'),
+        source=ReferenceObjSourceBinder(),
         required=False,
     )
 
