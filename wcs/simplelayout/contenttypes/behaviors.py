@@ -237,7 +237,6 @@ class IImageBlockSortOptions(model.Schema, IBlockMarker):
         title=_('label_portal_types', default='Types'),
         required=True,
         default=["Image"],
-        missing_value=["Image"],
         value_type=schema.TextLine())
 
 
@@ -260,7 +259,6 @@ class IFileBlockSortOptions(model.Schema, IBlockMarker):
         title=_('label_portal_types', default='Types'),
         required=True,
         default=["File", "Image"],
-        missing_value=["File", "Image"],
         value_type=schema.TextLine())
 
 
