@@ -17,4 +17,14 @@
   <adapter factory=".serializer.CustomViewFieldsSerializer"/>
 
   <adapter factory=".deserializer.LayoutFieldDeserializer"/>
+
+  <plone:service
+      method="POST"
+      factory=".mediafolder.CreateAndLinkMediaFolderEndpoint"
+      for="wcs.simplelayout.contenttypes.behaviors.IMediaFolderReference"
+      permission="cmf.ModifyPortalContent"
+      name="@create-link-mediafolder"
+      />
+
 </configure>
+ 
