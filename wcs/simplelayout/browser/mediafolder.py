@@ -3,7 +3,6 @@ from Acquisition import aq_inner
 from operator import attrgetter
 from plone import api
 from plone.app.layout.viewlets.common import ViewletBase
-from plone.protect import CheckAuthenticator
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from wcs.simplelayout.contenttypes.fix_set_relations import add_behavior_relations
 from z3c.relationfield import RelationValue
@@ -25,12 +24,8 @@ class MediaFolderView(BrowserView):
             return self.request.RESPONSE.redirect(base_url + '/@@folder_contents')
 
 
-class CreateAndLinkMediaFolder(BrowserView):
-
-    @postonly
-    def __call__(self, REQUEST):
-        CheckAuthenticator(self.request)
-
+class CreateMediaFolderMixin:
+    def create_mediafolder(self):
         context = self.context.aq_parent
 
         mediafolder = api.content.create(
@@ -42,7 +37,14 @@ class CreateAndLinkMediaFolder(BrowserView):
         relation = RelationValue(intids.getId(mediafolder))
         self.context.mediafolder = relation
         add_behavior_relations(self.context, None)
+        return mediafolder 
 
+
+class CreateAndLinkMediaFolder(BrowserView, CreateMediaFolderMixin):
+
+    @postonly
+    def __call__(self, REQUEST):
+        mediafolder = self.create_mediafolder()
         url = mediafolder.absolute_url() + '/folder_contents'
         return self.request.RESPONSE.redirect(url)
 
