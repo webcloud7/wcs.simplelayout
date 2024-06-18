@@ -11,16 +11,6 @@ There will be no compremize regarding usability for content authors.
 Installation
 ============
 
-Option 1 - Using buildout
-
-::
-
-    $ ./bootstrap.sh development.cfg
-    $ ./bin/instance fg
-
-
-Option 2 - Using Makefile
-
 ::
 
     $ make install
@@ -35,15 +25,6 @@ But it's faster and more convenient to setup a docker test image
 Test
 ====
 
-
-Option 1 - Using buildout
-
-::
-    
-    $ ./bin/test
-
-
-Option 2 - Using Makefile
 
 ::
 
@@ -78,3 +59,24 @@ Compile and Minify for Production
 ::sh
 
     npm run build
+
+
+
+Run E2E tests
+-------------
+
+::sh
+
+    WSGI_SERVER_PORT=65035 ./bin/test-server wcs.simplelayout.testing.SIMPLELAYOUT_FRONTEND_TESTING
+
+AND
+
+::sh
+    
+    npm run test
+
+OR
+
+Use TestCafe Studio
+
+
