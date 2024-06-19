@@ -13,6 +13,7 @@ from plone.restapi.interfaces import ISerializeToJsonSummary
 from plone.restapi.serializer.converters import datetimelike_to_iso
 from plone.restapi.serializer.converters import json_compatible
 from plone.restapi.serializer.dxcontent import SerializeToJson
+from plone.restapi.serializer.dxcontent import SerializeFolderToJson
 from plone.restapi.serializer.dxfields import CollectionFieldSerializer
 from plone.restapi.serializer.dxfields import DefaultFieldSerializer
 from plone.restapi.serializer.expansion import expandable_elements
@@ -214,7 +215,7 @@ class SimplelayoutSerializer(SerializeToJson):
 
 @implementer(ISerializeToJson)
 @adapter(IBlockMarker, Interface)
-class DefaultBlockSerializer(SerializeToJson):
+class DefaultBlockSerializer(SerializeFolderToJson):
     """Serializer, which uses the restapi default serializer (slow) but can also
     return minimal set of data for caching purposes.
     """
