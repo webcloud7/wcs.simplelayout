@@ -51,7 +51,7 @@ def block_has_dates(obj):
     if IPublication(obj, None):
         effective = IPublication(obj).effective
         expires = IPublication(obj).expires
-        return bool(effective), bool(expires)
+        return bool(effective) or bool(expires)
     return False
 
 

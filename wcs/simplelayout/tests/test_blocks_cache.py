@@ -309,6 +309,8 @@ class TestBlocksCache(FunctionalTesting):
         self.assertIn(self.block2.UID(), browser.json['slblocks'])
 
         self.add_behavior('Block', 'plone.publication')
+        transaction.commit()
+
         block3 = create(Builder('block')
                         .titled('Block 3')
                         .within(self.page)
