@@ -6,6 +6,7 @@ from wcs.simplelayout.restapi.serializer import get_blocks
 from wcs.simplelayout.utils import any_block_has_dates
 from z3c.form.interfaces import IDataManager
 from z3c.form.interfaces import IManagerValidator
+from zope.annotation.interfaces import IAnnotations
 from zope.component import queryMultiAdapter
 import json
 import logging
@@ -90,6 +91,10 @@ def cache_blocks(block, event):
     for parent in parents:
         if not ISimplelayout.providedBy(parent):
             continue
+
+        annotations = IAnnotations(parent)
+        if 'wcs.backend.trash.info' in annotations:
+            return
 
         dm = queryMultiAdapter((parent, ISimplelayout.get('slblocks_cache')), IDataManager)
 

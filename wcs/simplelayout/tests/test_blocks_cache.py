@@ -10,6 +10,7 @@ from wcs.simplelayout.restapi.serializer import get_blocks
 from wcs.simplelayout.tests import FunctionalTesting
 from wcs.simplelayout.utils import disable_block_cache
 from z3c.relationfield.relation import RelationValue
+from zope.annotation.interfaces import IAnnotations
 from zope.component import getUtility
 from zope.event import notify
 from zope.intid.interfaces import IIntIds
@@ -327,3 +328,26 @@ class TestBlocksCache(FunctionalTesting):
         browser.visit(self.page, headers=self.api_headers)
         self.assertNotIn(block3.UID(), browser.json['slblocks'])
         self.assertEqual(0, len(ISimplelayout(self.page).slblocks_cache))
+
+    @browsing
+    def test_dont_update_cache_if_parent_has_trash_annotation(self, browser):
+        KEY = 'wcs.backend.trash.info'
+        annotations = IAnnotations(self.page)
+        annotations[KEY] = 'Something'
+
+        block3 = create(Builder('block')
+                        .titled('Block 3')
+                        .within(self.page)
+                        )
+
+        self.assertNotIn(block3.UID(), ISimplelayout(self.page).slblocks_cache)
+
+        del annotations[KEY]
+
+        block4 = create(Builder('block')
+                        .titled('Block 4')
+                        .within(self.page)
+                        )
+
+        self.assertIn(block3.UID(), ISimplelayout(self.page).slblocks_cache)
+        self.assertIn(block4.UID(), ISimplelayout(self.page).slblocks_cache)
