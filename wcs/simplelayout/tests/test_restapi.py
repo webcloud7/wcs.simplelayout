@@ -12,6 +12,7 @@ from z3c.relationfield.relation import RelationValue
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 from zope.schema.interfaces import IVocabularyFactory
+from plone.app.textfield.value import RichTextValue
 import json
 import transaction
 
@@ -25,7 +26,11 @@ class TestRestApi(FunctionalTesting):
 
     def _setup_blocks_with_layout(self):
         block1 = create(Builder('block').titled('Block 1').within(self.page))
-        block2 = create(Builder('block').titled('Block 2').within(self.page))
+        block2 = create(Builder('block').titled('Block 2')
+                        .within(self.page)
+                        .having(text=RichTextValue('Some text')
+                                )
+                        )
 
         layout = {
             'items': [
@@ -47,6 +52,7 @@ class TestRestApi(FunctionalTesting):
             ]
         }
         ISimplelayout(self.page).slblocks_layout = layout
+        transaction.commit()
         return layout, block1, block2
 
     @browsing
@@ -403,3 +409,107 @@ class TestRestApi(FunctionalTesting):
         self.assertNotIn(block1.absolute_url(), items_urls)
         self.assertNotIn(block2.absolute_url(), items_urls)
         self.assertIn(subpage.absolute_url(), items_urls)
+
+    @browsing
+    def test_layout_properties_multiple_blocks_multiple_column(self, browser):
+        layout, block1, block2 = self._setup_blocks_with_layout()
+
+        browser.login().visit(self.page, headers=self.api_headers)
+        self.assertDictEqual(
+            {
+                'columns': 2,
+                'single_column': False,
+                'css_classes': ['columns-2'],
+            },
+            browser.json['slblocks_layout']['items'][0]['properties']
+        )
+
+    @browsing
+    def test_layout_properties_multiple_blocks_single_column(self, browser):
+        layout, block1, block2 = self._setup_blocks_with_layout()
+
+        layout = {
+            'items': [
+                {
+                    '@type': 'row',
+                    'items': [
+                        {
+                            '@type': 'col',
+                            'items': [block1.UID(), block2.UID()],
+                            'width': '12'
+                        },
+                    ]
+                }
+            ]
+        }
+        ISimplelayout(self.page).slblocks_layout = layout
+        transaction.commit()
+
+        browser.login().visit(self.page, headers=self.api_headers)
+        self.assertDictEqual(
+            {
+                'columns': 1,
+                'single_block': False,
+                'single_column': True,
+                'css_classes': ['single-column', 'columns-1']
+            },
+            browser.json['slblocks_layout']['items'][0]['properties']
+        )
+
+    @browsing
+    def test_layout_properties_single_block_multiple_rows(self, browser):
+        layout, block1, block2 = self._setup_blocks_with_layout()
+
+        layout = {
+            'items': [
+                {
+                    '@type': 'row',
+                    'items': [
+                        {
+                            '@type': 'col',
+                            'items': [block1.UID()],
+                            'width': '12'
+                        },
+                    ]
+                },
+                {
+                    '@type': 'row',
+                    'items': [
+                        {
+                            '@type': 'col',
+                            'items': [block2.UID()],
+                            'width': '12'
+                        },
+                    ]
+                }
+            ]
+        }
+        ISimplelayout(self.page).slblocks_layout = layout
+        transaction.commit()
+
+        browser.login().visit(self.page, headers=self.api_headers)
+        self.assertDictEqual(
+            {
+                'columns': 1,
+                'single_block': True,
+                'single_column': True,
+                'title_only_block': True,
+                'css_classes': ['single-column',
+                                'columns-1',
+                                'single-block',
+                                'title-only-block']
+            },
+            browser.json['slblocks_layout']['items'][0]['properties']
+        )
+        self.assertDictEqual(
+            {
+                'columns': 1,
+                'single_block': True,
+                'single_column': True,
+                'title_only_block': False,
+                'css_classes': ['single-column',
+                                'columns-1',
+                                'single-block']
+            },
+            browser.json['slblocks_layout']['items'][1]['properties']
+        )

@@ -120,6 +120,36 @@ def add_missing_blocks(obj, state):
                  f'on {obj.absolute_url()}')
 
 
+def add_layout_properties(obj, state):
+    for row in state['slblocks_layout'].get('items', []):
+        row['properties'] = {}
+        row['properties']['css_classes'] = []
+
+        row['properties']['single_column'] = len(row['items']) == 1
+        if row['properties']['single_column']:
+            row['properties']['css_classes'].append('single-column')
+        row['properties']['columns'] = len(row['items'])
+        row['properties']['css_classes'].append(f'columns-{row["properties"]["columns"]}')
+
+        for column in row['items']:
+            if row['properties']['columns'] != 1:
+                continue
+            single_block = len(column['items']) == 1
+            if single_block:
+                block_uid = column['items'][0]
+                block = state['slblocks'].get(block_uid, None)
+                row['properties']['single_block'] = True
+                row['properties']['css_classes'].append('single-block')
+                if block and not block.get('text', None):
+                    row['properties']['title_only_block'] = True
+                    row['properties']['css_classes'].append('title-only-block')
+                else:
+                    row['properties']['title_only_block'] = False
+            else:
+                row['properties']['single_block'] = False
+
+
+
 @contextmanager
 def disable_block_cache():
     os.environ['SIMPLELAYOUT_DISABLE_BLOCK_CACHE'] = '1'
