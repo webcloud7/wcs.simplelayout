@@ -30,6 +30,7 @@ from wcs.simplelayout.contenttypes.behaviors import IFilesReference
 from wcs.simplelayout.contenttypes.behaviors import IImageBlockSortOptions
 from wcs.simplelayout.contenttypes.behaviors import IMediaFolderReference
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
+from wcs.simplelayout.utils import add_layout_properties
 from wcs.simplelayout.utils import add_missing_blocks
 from wcs.simplelayout.utils import list_blocks_from_page
 from zope.component import adapter
@@ -209,6 +210,7 @@ class SimplelayoutSerializer(SerializeToJson):
 
         expand_by_querystring(self.context, self.request, result)
         insert_simplelayout_blocks(self.context, result, include_items)
+        add_layout_properties(self.context, result)
 
         return result
 
@@ -395,6 +397,7 @@ class LayoutFieldSerializer(DefaultFieldSerializer):
                 return json_compatible({})
 
             value = self.get_value()
+
             add_missing_blocks(self.context, value)
             return json_compatible(value)
         return super().__call__()

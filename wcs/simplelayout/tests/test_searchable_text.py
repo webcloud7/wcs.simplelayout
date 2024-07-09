@@ -13,11 +13,11 @@ class TestSearchableTextIndexer(FunctionalTesting):
         transaction.commit()
 
         self.contentpage = create(Builder('content page')
-                                  .titled(u'ContentPage'))
+                                  .titled('ContentPage'))
         self.textblock = create(Builder('block')
-                                .titled(u'TextBlock')
+                                .titled('TextBlock')
                                 .within(self.contentpage)
-                                .having(text=RichTextValue(u'asdf')))
+                                .having(text=RichTextValue('asdf')))
 
     def search_for(self, term, path=None):
         query = {'SearchableText': term,
@@ -41,7 +41,7 @@ class TestSearchableTextIndexer(FunctionalTesting):
 
     def test_searchable_text_is_up_to_date_on_move(self):
         second_page = create(Builder('content page')
-                             .titled(u'ContentPage2'))
+                             .titled('ContentPage2'))
 
         cut = self.contentpage.manage_cutObjects([self.textblock.getId()])
         second_page.manage_pasteObjects(cut)
@@ -51,7 +51,7 @@ class TestSearchableTextIndexer(FunctionalTesting):
 
     def test_searchable_text_is_up_to_date_on_copy(self):
         second_page = create(Builder('content page')
-                             .titled(u'ContentPage2'))
+                             .titled('ContentPage2'))
 
         copy = self.contentpage.manage_copyObjects([self.textblock.getId()])
         second_page.manage_pasteObjects(copy)
@@ -62,10 +62,10 @@ class TestSearchableTextIndexer(FunctionalTesting):
     def test_blocks_with_dates_are_not_in_page(self):
         self.add_behavior('Block', 'plone.publication')
         create(Builder('block')
-               .titled(u'TextBlock')
+               .titled('TextBlock')
                .within(self.contentpage)
                .having(effective=datetime.now(),
-                       text=RichTextValue(u'date')))
+                       text=RichTextValue('date')))
 
         result = self.search_for('date')
         self.assertEqual(0, len(result), 'Expect 0 results.')

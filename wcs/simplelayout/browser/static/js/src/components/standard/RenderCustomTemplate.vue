@@ -22,11 +22,16 @@ export default {
     const component = {
       template: this.customTemplate,
       data() {
-        return { block: blockData, items: [] };
+        return {
+          block: blockData,
+          items: [],
+          loaded: false,
+          loading: false,
+        };
       },
       methods: {
         getContents() {
-          if (this.items.length == 0) {
+          if (this.items.length == 0 && !this.loaded) {
             this.fetchData();
           }
           return this.items;
@@ -50,6 +55,7 @@ export default {
             this.sl.addErrorMessage(error);
           } finally {
             this.loading = false;
+            this.loaded = true;
           }
         },
       },
