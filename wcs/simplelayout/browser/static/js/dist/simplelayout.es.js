@@ -16012,11 +16012,16 @@ const _sfc_main$q = {
     const component = {
       template: this.customTemplate,
       data() {
-        return { block: blockData, items: [] };
+        return {
+          block: blockData,
+          items: [],
+          loaded: false,
+          loading: false
+        };
       },
       methods: {
         getContents() {
-          if (this.items.length == 0) {
+          if (this.items.length == 0 && !this.loaded) {
             this.fetchData();
           }
           return this.items;
@@ -16040,6 +16045,7 @@ const _sfc_main$q = {
             this.sl.addErrorMessage(error);
           } finally {
             this.loading = false;
+            this.loaded = true;
           }
         }
       }
