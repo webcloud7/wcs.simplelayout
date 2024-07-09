@@ -513,3 +513,61 @@ class TestRestApi(FunctionalTesting):
             },
             browser.json['slblocks_layout']['items'][1]['properties']
         )
+
+    @browsing
+    def test_layout_properties_on_other_blocks(self, browser):
+        block1 = create(Builder('news listing block').titled('News').within(self.page))
+        block2 = create(Builder('video block').titled('Video').within(self.page))
+
+        layout = {
+            'items': [
+                {
+                    '@type': 'row',
+                    'items': [
+                        {
+                            '@type': 'col',
+                            'items': [block1.UID()],
+                            'width': '12'
+                        },
+                    ]
+                },
+                {
+                    '@type': 'row',
+                    'items': [
+                        {
+                            '@type': 'col',
+                            'items': [block2.UID()],
+                            'width': '12'
+                        },
+                    ]
+                }
+            ]
+        }
+        ISimplelayout(self.page).slblocks_layout = layout
+        transaction.commit()
+
+        browser.login().visit(self.page, headers=self.api_headers)
+        self.assertDictEqual(
+            {
+                'columns': 1,
+                'single_block': True,
+                'single_column': True,
+                'title_only_block': False,
+                'css_classes': ['single-column',
+                                'columns-1',
+                                'single-block']
+            },
+            browser.json['slblocks_layout']['items'][0]['properties']
+        )
+        self.assertDictEqual(
+            {
+                'columns': 1,
+                'single_block': True,
+                'single_column': True,
+                'title_only_block': False,
+                'css_classes': ['single-column',
+                                'columns-1',
+                                'single-block']
+            },
+            browser.json['slblocks_layout']['items'][1]['properties']
+        )
