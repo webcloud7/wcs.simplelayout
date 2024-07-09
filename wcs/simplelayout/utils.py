@@ -140,14 +140,13 @@ def add_layout_properties(obj, state):
                 block = state['slblocks'].get(block_uid, None)
                 row['properties']['single_block'] = True
                 row['properties']['css_classes'].append('single-block')
-                if block and not block.get('text', None):
+                if block and 'text' in block and not block['text']:
                     row['properties']['title_only_block'] = True
                     row['properties']['css_classes'].append('title-only-block')
                 else:
                     row['properties']['title_only_block'] = False
             else:
                 row['properties']['single_block'] = False
-
 
 
 @contextmanager
