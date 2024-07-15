@@ -116,6 +116,10 @@ class EditRowForm(form.EditForm):
         self._return_json = True
         return changes
 
+    @button.buttonAndHandler(_('Cancel'), name='cancel')
+    def handleCancel(self, action):
+        self.request.response.redirect(self.nextURL())
+
     def _save_layout(self, page, layouts):
         dm = queryMultiAdapter((page, ISimplelayout.get('slblocks_layout')), IDataManager)
         validator = queryMultiAdapter(
