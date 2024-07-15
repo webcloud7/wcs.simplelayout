@@ -26,6 +26,10 @@ class SimplelayoutView(BrowserView):
     def can_edit_columns(self):
         return api.user.has_permission('wcs.simplelayout: Manage columns', obj=self.context)
 
+    def can_edit_row_data(self):
+        schema_xml = api.portal.get_registry_record('wcs.simplelayout.row_configuration.ContentPage.row_configuration', default='')
+        return self.can_edit_columns() and 'field' in schema_xml
+
     def can_add_blocks(self):
         return api.user.has_permission('wcs.simplelayout: Add Block', obj=self.context)
 

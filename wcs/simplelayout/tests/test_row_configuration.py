@@ -87,6 +87,24 @@ class TestRowConfiguration(FunctionalTesting):
             browser.css('.statusmessage-error').first.text
         )
 
+    @browsing
+    def test_simplelayout_can_edit_row_data(self, browser):
+        page = create(Builder('content page').titled('A Page'))
+        browser.login().visit(page)
+        self.assertEqual(
+            'False',
+            browser.css('.simplelayout-app').first.attrib['data-can-edit-row-data']
+        )
+
+        browser.open(self.portal.absolute_url() + '/dexterity-types/ContentPage/@@row_configuration')
+        browser.fill({'Row schema': SAMPLE_ROW_SCHEMA_XML}).submit()
+
+        browser.visit(page)
+        self.assertEqual(
+            'True',
+            browser.css('.simplelayout-app').first.attrib['data-can-edit-row-data']
+        )
+
 
 class TestEditRowForm(FunctionalTesting):
 
