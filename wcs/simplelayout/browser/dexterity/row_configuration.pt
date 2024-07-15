@@ -1,0 +1,14 @@
+<tal:form xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+          metal:use-macro="context/@@ploneform-macros/titlelessform"
+          i18n:domain="wcs.simplelayout">
+  <tal:fields metal:fill-slot="fields">
+
+    <label class="form-label" for="form-widgets-schema_xml" i18n:translate="label_schema_xml">
+      Row schema
+    </label>
+    <textarea class="form-control textarea-widget text-field pat-code-editor language-xml"
+              id="form-widgets-schema_xml"
+              name="form.widgets.schema_xml"
+              tal:content="python:view.widgets['schema_xml'].value"></textarea>
+  </tal:fields>
+</tal:form>

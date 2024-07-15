@@ -15,6 +15,7 @@ def initialize(context):
             (_("Fields"), "@@fields"),
             (_("Behaviors"), "@@behaviors"),
             (_("Block Template"), "@@block_template"),
+            (_("Row Configuration"), "@@row_configuration"),
         )
 
     TypeFormLayout.tabs = extended_tabs
