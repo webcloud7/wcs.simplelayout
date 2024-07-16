@@ -9,6 +9,7 @@
       <div class="sl-row">
         <RowControls
           :index="rowIndex"
+          :openEditRowModal="openEditRowModal"
           v-if="sl.canModify && sl.canEditColumns"
         />
 
@@ -96,6 +97,7 @@
   <DeleteBlockModal ref="delete-modal" />
   <InfoBlockModal ref="info-modal" />
   <UploadModal ref="upload-modal" />
+  <EditRowModal ref="edit-row-modal" />
 </template>
 
 <script>
@@ -108,6 +110,7 @@ import EditBlockModal from "@/components/Modals/EditBlockModal.vue";
 import DeleteBlockModal from "@/components/Modals/DeleteBlockModal.vue";
 import InfoBlockModal from "@/components/Modals/InfoBlockModal.vue";
 import UploadModal from "@/components/Modals/UploadModal.vue";
+import EditRowModal from "@/components/Modals/EditRowModal.vue";
 import draggable from "vuedraggable";
 import ErrorToasts from "@/components/ErrorToasts.vue";
 
@@ -121,6 +124,7 @@ export default {
     DeleteBlockModal,
     InfoBlockModal,
     UploadModal,
+    EditRowModal,
     draggable,
     ErrorToasts,
   },
@@ -229,6 +233,9 @@ export default {
     this.sl.setCanEditColumns(
       this.$refs.root.parentElement.getAttribute("data-can-edit-columns")
     );
+    this.sl.setCanEditRowData(
+      this.$refs.root.parentElement.getAttribute("data-can-edit-row-data")
+    );
     this.sl.setCanAddBlocks(
       this.$refs.root.parentElement.getAttribute("data-can-addblocks")
     );
@@ -276,6 +283,9 @@ export default {
     },
     openUploadModal(event) {
       this.$refs["upload-modal"].openUploadModal(event);
+    },
+    openEditRowModal(event) {
+      this.$refs["edit-row-modal"].openEditRowModal(event);
     },
     gotoFolderContents(event) {
       const button = event.currentTarget;

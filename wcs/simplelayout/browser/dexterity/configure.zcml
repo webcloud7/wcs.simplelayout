@@ -9,4 +9,10 @@
       class=".block_template.BlockTemplatePage"
       permission="plone.schemaeditor.ManageSchemata" />
 
+  <browser:page
+      name="row_configuration"
+      for="plone.app.dexterity.interfaces.ITypeSchemaContext"
+      class=".row_configuration.RowConfigurationPage"
+      permission="plone.schemaeditor.ManageSchemata" />
+
 </configure>

@@ -20,6 +20,7 @@ export const useSimplelayoutStore = defineStore({
     authToken: null,
     canModify: false,
     canEditColumns: false,
+    canEditRowData: false,
     canAddBlocks: false,
     contentTypeTitles: {},
     customTemplates: {},
@@ -70,6 +71,13 @@ export const useSimplelayoutStore = defineStore({
         this.canEditColumns = false;
       }
     },
+    setCanEditRowData(value) {
+      if (value == "True") {
+        this.canEditRowData = true;
+      } else {
+        this.canEditRowData = false;
+      }
+    },
     setCanAddBlocks(value) {
       if (value == "True") {
         this.canAddBlocks = true;
@@ -107,12 +115,15 @@ export const useSimplelayoutStore = defineStore({
         this.loading = false;
       }
     },
-    async modifyLayouts(data) {
+    async modifyLayouts(data, readonly = false) {
       this.loading = true;
       try {
         // Zope 5.8.1 (Plone => 6.0.3) does not support PATCH + querystring anymore. Thus we send a additional request.
         // headers: {Prefer: "return=representation"} only solves half the problem
-        await this.axios.patch(this.baseApiURL, data);
+        if (!readonly) {
+          await this.axios.patch(this.baseApiURL, data);
+          console.info('layout updated')
+        }
         const response = await this.axios.get(this.baseApiURL, {
           params: this.params,
         });

@@ -1,8 +1,17 @@
 <template>
-  <div class="sl-add-row-controls" :style="`z-index:${1000 - (index * 2)}`">
+  <div class="sl-add-row-controls" :style="`z-index:${1000 - index * 2}`">
     <div class="btn-group btn-group-xs">
       <button type="button" class="btn btn-primary" @click="() => createRow(1)">
         +
+      </button>
+      <button
+        class="btn btn-warning"
+        @click="openEditRowModal"
+        v-if="openEditRowModal && sl.canEditRowData"
+        :data-row="index"
+        title="Edit row settings"
+      >
+        <img v-bind="editIcon" />
       </button>
       <button
         class="btn btn-secondary dropdown-toggle"
@@ -39,6 +48,11 @@ export default {
       type: Number,
       required: true,
     },
+    openEditRowModal: {
+      type: Function,
+      required: false,
+      default: null,
+    },
   },
   setup() {
     const sl = useSimplelayoutStore();
@@ -55,12 +69,19 @@ export default {
   },
   methods: {
     createRow(cols) {
-      this.sl.addRowToLayout(row(cols), this.index)
+      this.sl.addRowToLayout(row(cols), this.index);
     },
   },
   computed: {
     dropdownId() {
       return `dropdownMenu_${this.index}`;
+    },
+    editIcon() {
+      return {
+        src: `${this.sl.portalURL}/iconresolver/pencil`,
+        alt: "Edit row",
+        width: "15",
+      };
     },
   },
 };

@@ -94,4 +94,11 @@
         class=".menu.SimplelayoutFactoriesMenu"
     />
 
+    <browser:page
+        name="edit-row"
+        for="wcs.simplelayout.contenttypes.behaviors.ISimplelayout"
+        class=".overlays.EditRowFormView"
+        permission="wcs.simplelayout.ManageColumns"
+        />
+
 </configure>

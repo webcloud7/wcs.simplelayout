@@ -17,7 +17,7 @@ class TestCustomBlockTemplateStorage(FunctionalTesting):
         browser.exception_bubbling = True
         browser.login().open(self.portal.absolute_url() + '/@@dexterity-types/Block')
 
-        link = browser.css('.nav-link')[-1]
+        link = browser.css('.nav-link')[-2]
         self.assertEqual(
             self.portal.absolute_url() + '/dexterity-types/Block/@@block_template',
             link.attrib['href'].replace(':80', '')
