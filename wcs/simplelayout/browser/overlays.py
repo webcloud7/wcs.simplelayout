@@ -1,6 +1,5 @@
 from plone import api
 from plone.app.content.browser.folderfactories import _allowedTypes
-from plone.autoform.form import AutoExtensibleForm
 from plone.supermodel import loadString
 from plone.z3cform import layout
 from Products.CMFCore.Expression import Expression
@@ -11,6 +10,7 @@ from wcs.simplelayout import _
 from wcs.simplelayout.browser.dexterity.row_configuration import DEFAULT_SCHEMA
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.utils import get_block_types
+from wcs.simplelayout.utils import ROW_TEMPLATE
 from z3c.form import button
 from z3c.form import field
 from z3c.form import form
@@ -18,11 +18,9 @@ from z3c.form.form import applyChanges
 from z3c.form.interfaces import IDataManager
 from z3c.form.interfaces import IManagerValidator
 from zExceptions import BadRequest
-from zope.component import adapter
 from zope.component import queryMultiAdapter
 from zope.i18n import translate
 from zope.interface import implementer
-from zope.interface import Interface
 from zope.publisher.browser import BrowserView
 from zope.publisher.interfaces import IPublishTraverse
 import json
@@ -84,6 +82,10 @@ class EditRowForm(form.EditForm):
     def getContent(self):
         page = ISimplelayout(self.context)
         layouts = page.slblocks_layout
+
+        if len(layouts['items']) == 0:
+            layouts['items'].append(ROW_TEMPLATE)
+
         if len(layouts['items']) < self.row + 1:
             raise BadRequest('Invalid row number')
 
@@ -98,6 +100,9 @@ class EditRowForm(form.EditForm):
         if changes:
             page = ISimplelayout(self.context)
             layouts = page.slblocks_layout
+            if len(layouts['items']) == 0:
+                layouts['items'].append(ROW_TEMPLATE)
+
             row = layouts['items'][self.row]
             if 'data' in row:
                 row['data'].update(content)

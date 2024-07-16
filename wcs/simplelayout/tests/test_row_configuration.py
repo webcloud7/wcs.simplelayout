@@ -146,8 +146,8 @@ class TestEditRowForm(FunctionalTesting):
 
     @browsing
     def test_row_edit_form_no_layout(self, browser):
-        with browser.expect_http_error(code=400):
-            browser.login().open(self.page.absolute_url() + '/@@edit-row/0')
+        browser.login().open(self.page.absolute_url() + '/@@edit-row/0')
+        self.assertEqual(200, browser.status_code)
 
     @browsing
     def test_row_edit_form_row_not_there(self, browser):
