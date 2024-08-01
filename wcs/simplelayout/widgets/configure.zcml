@@ -1,0 +1,11 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:z3c="http://namespaces.zope.org/z3c"
+    >
+
+  <adapter
+      factory=".table.TableRichTextFieldWidget"
+      for="plone.app.textfield.interfaces.IRichText"
+      />
+
+</configure>

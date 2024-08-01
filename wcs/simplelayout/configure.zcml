@@ -13,6 +13,7 @@
 
     <include file="permissions.zcml" />
     <include package=".browser" />
+    <include package=".widgets" />
     <include package=".contenttypes" />
     <include package=".restapi" />
 

@@ -11,4 +11,5 @@
             <element>ContentPage</element>
         </value>
     </record>
+    <records interface="wcs.simplelayout.widgets.table.ITableRichTextWidgetConfiguration" prefix="wcs.simplelayout.table"/>
 </registry>
