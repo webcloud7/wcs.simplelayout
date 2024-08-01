@@ -1,2 +1,3 @@
 -c https://dist.plone.org/release/6.0.9/constraints.txt
 libvcs==0.11.1
+plone.staticresources==2.2.0a8
