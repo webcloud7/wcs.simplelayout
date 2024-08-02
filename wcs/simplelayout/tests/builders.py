@@ -96,3 +96,10 @@ class AllPurposeBlockBuilder(BlockBuilder):
 
 
 builder_registry.register('all purpose listing block', AllPurposeBlockBuilder)
+
+
+class TableBlockBuilder(BlockBuilder):
+    portal_type = 'TableBlock'
+
+
+builder_registry.register('table block', TableBlockBuilder)

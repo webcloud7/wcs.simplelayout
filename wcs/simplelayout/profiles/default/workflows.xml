@@ -10,5 +10,6 @@
   <type type_id="AllPurposeListingBlock"/>
   <type type_id="TeaserBlock"/>
   <type type_id="IframeBlock"/>
+  <type type_id="TableBlock"/>
  </bindings>
 </object>
