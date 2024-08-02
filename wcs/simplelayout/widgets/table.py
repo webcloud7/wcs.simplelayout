@@ -75,7 +75,7 @@ class TableRichTextWidget(RichTextWidget, BaseWidget):
                 'wcs.simplelayout.table.tiny',
                 default={}
             ).get(
-                f'{self.form.portal_type}.{self.field.__name__}', {}
+                f'{getattr(self.form, "portal_type", "")}.{self.field.__name__}', {}
             )
         )
         args['pattern_options']['tiny'] = merged_tiny_config

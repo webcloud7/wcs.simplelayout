@@ -1,0 +1,18 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    >
+    <utility
+        name="wcs.simplelayout.fields.table.TableRichText"
+        component=".table.TableRichTextHandler"
+        />
+  
+    <class class=".table.TableRichText">
+      <implements interface=".table.IEditorRichText" />
+    </class>
+  
+    <utility
+        name="wcs.simplelayout.fields.table.TableRichText"
+        component=".table.TableRichTextFactory"
+        />
+
+</configure>
