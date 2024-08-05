@@ -1,0 +1,42 @@
+<template>
+  <BlockStructure v-bind="$props">
+    <template #body>
+      <div class="sl-card-text" v-if="block.table" v-html="block.table.data" />
+    </template>
+  </BlockStructure>
+</template>
+<script>
+import { useSimplelayoutStore } from "@/store.js";
+import BlockStructure from "@/components/standard/BlockStructure.vue";
+export default {
+  components: {
+    BlockStructure,
+  },
+  props: {
+    actions: {
+      type: Array,
+      required: true,
+    },
+    rowIndex: {
+      type: Number,
+      required: true,
+    },
+    columnIndex: {
+      type: Number,
+      required: true,
+    },
+    blockIndex: {
+      type: Number,
+      required: true,
+    },
+    block: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup() {
+    const sl = useSimplelayoutStore();
+    return { sl };
+  },
+};
+</script>

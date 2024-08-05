@@ -23,6 +23,7 @@
   <element value="RelatedContentBlock"/>
   <element value="TeaserBlock"/>
   <element value="IframeBlock"/>
+  <element value="TableBlock"/>
  </property>
  <property name="allow_discussion">False</property>
  <property name="default_view">@@simplelayout-view</property>

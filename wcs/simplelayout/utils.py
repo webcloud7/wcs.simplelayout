@@ -2,6 +2,7 @@ from AccessControl.SecurityManagement import getSecurityManager
 from contextlib import contextmanager
 from copy import deepcopy
 from DateTime import DateTime
+from lxml import etree
 from plone import api
 from plone.api.exc import CannotGetPortalError
 from plone.app.dexterity.behaviors.metadata import IPublication
