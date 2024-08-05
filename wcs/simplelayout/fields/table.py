@@ -10,7 +10,11 @@ from zope.interface import Invalid
 from zope.schema.interfaces import IFromUnicode
 
 
-@implementer(IRichText, IFromUnicode)
+class ITableRichText(IRichText):
+    pass
+
+
+@implementer(ITableRichText, IFromUnicode)
 class TableRichText(RichText):
 
     def _validate(self, value):

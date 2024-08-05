@@ -154,3 +154,56 @@ def disable_block_cache():
     os.environ['SIMPLELAYOUT_DISABLE_BLOCK_CACHE'] = '1'
     yield
     del os.environ['SIMPLELAYOUT_DISABLE_BLOCK_CACHE']
+
+
+def convert_table_to_json(table):
+
+    def _convert_style_attr(attrs):
+        if 'style' in attrs:
+            try:
+                attrs['style'] = dict(
+                    (key.strip(), value.strip()) for key, value in
+                    (item.split(':') for item in attrs['style'].split(';') if item))
+            except Exception:
+                pass
+
+    def _add_width_from_colgroup_to_cell(col, attrs):
+        width = None
+        col_attrs = dict(col.attrib)
+        _convert_style_attr(col_attrs)
+
+        width = col_attrs.get('style', {}).get('width', None)
+
+        if width is None:
+            return
+
+        if 'style' in attrs:
+            attrs['style']['width'] = width
+        else:
+            attrs['style'] = {'width': width}
+
+    parser = etree.HTMLParser()
+    document = etree.fromstring(table, parser=parser)
+    result = {"@type": "table", "rows": []}
+    result['attrs'] = dict(document.xpath('//table')[0].attrib)
+
+    cols = document.xpath('//col')
+
+    _convert_style_attr(result['attrs'])
+
+    for row in document.xpath('//tr'):
+        row_data = {"@type": "row", "cells": []}
+        row_data['attrs'] = dict(row.attrib)
+        _convert_style_attr(row_data['attrs'])
+
+        for index, cell in enumerate(row.xpath('.//td|.//th')):
+            cell_data = {"@type": "cell", "content": cell.text, "header": cell.tag == 'th'}
+            cell_data['attrs'] = dict(cell.attrib)
+            _convert_style_attr(cell_data['attrs'])
+
+            if len(cols) - 1 >= index:
+                _add_width_from_colgroup_to_cell(cols[index], cell_data['attrs'])
+            row_data['cells'].append(cell_data)
+
+        result['rows'].append(row_data)
+    return result

@@ -61,7 +61,7 @@ class TableRichTextWidget(RichTextWidget, BaseWidget):
         tiny['editable_class'] = 'editcontent'
         tiny['plugins'] = ['plonelink', 'table']
         tiny['menubar'] = ''
-        tiny['toolbar'] = 'table code unlink plonelink'
+        tiny['toolbar'] = 'table tablerowheader tablecolheader code unlink plonelink'
         tiny['table_column_resizing'] = 'preservetable'
         tiny['object_resizing'] = 'table'
         tiny['table_header_type'] = 'sectionCells'
