@@ -47,6 +47,7 @@ setup(
     install_requires=[
         'ftw.upgrade',
         'ftw.referencewidget >= 4.0.0b2',
+        'plone.staticresources >= 2.2.0a8',
         'Plone',
         'plone.autoinclude',
         'plone.restapi',

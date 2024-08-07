@@ -15,6 +15,7 @@ class TestUtils(FunctionalTesting):
             'RelatedContentBlock',
             'TeaserBlock',
             'IframeBlock',
+            'TableBlock',
         )
         self.assertEqual(
             block_ids,

@@ -14,4 +14,5 @@
  <object name="RelatedContentBlock" meta_type="Dexterity FTI"/>
  <object name="TeaserBlock" meta_type="Dexterity FTI"/>
  <object name="IframeBlock" meta_type="Dexterity FTI"/>
+ <object name="TableBlock" meta_type="Dexterity FTI"/>
 </object>

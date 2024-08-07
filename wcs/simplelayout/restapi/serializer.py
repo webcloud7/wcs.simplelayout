@@ -3,6 +3,7 @@ from datetime import timedelta
 from plone import api
 from plone.app.contenttypes.behaviors.collection import ISyndicatableCollection
 from plone.autoform.interfaces import READ_PERMISSIONS_KEY
+from plone.dexterity.interfaces import IDexterityContent
 from plone.dexterity.utils import iterSchemata
 from plone.restapi.batching import HypermediaBatch
 from plone.restapi.deserializer import boolean_value
@@ -12,8 +13,8 @@ from plone.restapi.interfaces import ISerializeToJson
 from plone.restapi.interfaces import ISerializeToJsonSummary
 from plone.restapi.serializer.converters import datetimelike_to_iso
 from plone.restapi.serializer.converters import json_compatible
-from plone.restapi.serializer.dxcontent import SerializeToJson
 from plone.restapi.serializer.dxcontent import SerializeFolderToJson
+from plone.restapi.serializer.dxcontent import SerializeToJson
 from plone.restapi.serializer.dxfields import CollectionFieldSerializer
 from plone.restapi.serializer.dxfields import DefaultFieldSerializer
 from plone.restapi.serializer.expansion import expandable_elements
@@ -30,8 +31,10 @@ from wcs.simplelayout.contenttypes.behaviors import IFilesReference
 from wcs.simplelayout.contenttypes.behaviors import IImageBlockSortOptions
 from wcs.simplelayout.contenttypes.behaviors import IMediaFolderReference
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
+from wcs.simplelayout.fields.table import ITableRichText
 from wcs.simplelayout.utils import add_layout_properties
 from wcs.simplelayout.utils import add_missing_blocks
+from wcs.simplelayout.utils import convert_table_to_json
 from wcs.simplelayout.utils import list_blocks_from_page
 from zope.component import adapter
 from zope.component import getMultiAdapter
@@ -477,3 +480,13 @@ class CustomViewFieldsSerializer(CollectionFieldSerializer):
                     mapping['token'] = CONVERT_TOKENS_CUSTOMVIEWFIELDS[mapping['token']]
 
             return result
+
+
+@adapter(ITableRichText, IDexterityContent, Interface)
+@implementer(IFieldSerializer)
+class TableRichTextSerializer(DefaultFieldSerializer):
+    def __call__(self):
+        value = self.get_value()
+        result = json_compatible(value, self.context)
+        result['json'] = convert_table_to_json(value.output)
+        return result
