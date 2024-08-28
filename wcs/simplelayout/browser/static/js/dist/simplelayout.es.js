@@ -11645,6 +11645,7 @@ const useSimplelayoutStore = defineStore({
     canEditRowData: false,
     canAddBlocks: false,
     contentTypeTitles: {},
+    workflowTitles: {},
     customTemplates: {},
     i18n: {},
     errors: []
@@ -11712,6 +11713,18 @@ const useSimplelayoutStore = defineStore({
       );
       response.data.items.forEach((item) => {
         this.contentTypeTitles[item.token] = item.title.replace(/(\[.+?\])/g, "").trim();
+      });
+    },
+    async fetchWorkflowTitles() {
+      console.info(Object.keys(this.workflowTitles).length);
+      if (Object.keys(this.workflowTitles).length > 0) {
+        return;
+      }
+      const response = await this.axios.get(
+        this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.WorkflowStates"
+      );
+      response.data.items.forEach((item) => {
+        this.workflowTitles[item.token] = item.title.replace(/(\[.+?\])/g, "").trim();
       });
     },
     async fetchBlocks() {
@@ -33680,6 +33693,7 @@ const _sfc_main$e = {
       this.$refs.root.parentElement.getAttribute("data-custom-templates")
     );
     this.sl.fetchContentTypeTitles();
+    this.sl.fetchWorkflowTitles();
     this.sl.fetchBlocks();
   },
   computed: {
@@ -35138,16 +35152,8 @@ const _sfc_main$3 = {
       required: true
     }
   },
-  data() {
-    return {
-      workflowTitleMapping: []
-    };
-  },
   created() {
     this.portalURL = document.body.getAttribute("data-portal-url");
-  },
-  mounted() {
-    this.fetchWorkflowTitles();
   },
   setup() {
     const sl = useSimplelayoutStore();
@@ -35156,16 +35162,6 @@ const _sfc_main$3 = {
   computed: {
     filteredItems() {
       return this.block.relatedItems.filter((item) => Boolean(item));
-    }
-  },
-  methods: {
-    async fetchWorkflowTitles() {
-      const response = await this.axios.get(
-        this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.WorkflowStates"
-      );
-      response.data.items.forEach((item) => {
-        this.workflowTitleMapping[item.token] = item.title.replace(/(\[.+?\])/g, "").trim();
-      });
     }
   }
 };
@@ -35200,7 +35196,7 @@ function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
             item["review_state"] ? (openBlock(), createElementBlock("span", _hoisted_5$1, [
               createBaseVNode("span", {
                 class: normalizeClass(`state-${item["review_state"]}`)
-              }, toDisplayString($data.workflowTitleMapping[item["review_state"]]), 3)
+              }, toDisplayString($setup.sl.workflowTitles[item["review_state"]]), 3)
             ])) : createCommentVNode("", true)
           ], 8, _hoisted_2$2);
         }), 128)),
@@ -35292,16 +35288,8 @@ const _sfc_main$1 = {
       required: true
     }
   },
-  data() {
-    return {
-      workflowTitleMapping: []
-    };
-  },
   created() {
     this.portalURL = document.body.getAttribute("data-portal-url");
-  },
-  mounted() {
-    this.fetchWorkflowTitles();
   },
   setup() {
     const sl = useSimplelayoutStore();
@@ -35324,16 +35312,6 @@ const _sfc_main$1 = {
         }
       });
       return items;
-    }
-  },
-  methods: {
-    async fetchWorkflowTitles() {
-      const response = await this.axios.get(
-        this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.WorkflowStates"
-      );
-      response.data.items.forEach((item) => {
-        this.workflowTitleMapping[item.token] = item.title.replace(/(\[.+?\])/g, "").trim();
-      });
     }
   }
 };
@@ -35396,7 +35374,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
                       item.link ? (openBlock(), createElementBlock("span", {
                         key: 0,
                         class: normalizeClass(`state-${item.link.review_state}`)
-                      }, toDisplayString($data.workflowTitleMapping[item.link.review_state]), 3)) : createCommentVNode("", true)
+                      }, toDisplayString($setup.sl.workflowTitles[item.link.review_state]), 3)) : createCommentVNode("", true)
                     ])) : createCommentVNode("", true)
                   ])) : createCommentVNode("", true)
                 ])
