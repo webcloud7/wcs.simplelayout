@@ -20,7 +20,7 @@
               v-if="item['review_state']"
             >
               <span :class="`state-${item['review_state']}`"
-                >{{ workflowTitleMapping[item["review_state"]] }}
+                >{{ sl.workflowTitles[item["review_state"]] }}
               </span>
             </span>
           </a>
@@ -64,16 +64,8 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      workflowTitleMapping: [],
-    };
-  },
   created() {
     this.portalURL = document.body.getAttribute("data-portal-url");
-  },
-  mounted() {
-    this.fetchWorkflowTitles();
   },
   setup() {
     const sl = useSimplelayoutStore();
@@ -82,18 +74,6 @@ export default {
   computed: {
     filteredItems() {
       return this.block.relatedItems.filter((item) => Boolean(item));
-    },
-  },
-  methods: {
-    async fetchWorkflowTitles() {
-      const response = await this.axios.get(
-        this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.WorkflowStates"
-      );
-      response.data.items.forEach((item) => {
-        this.workflowTitleMapping[item.token] = item.title
-          .replace(/(\[.+?\])/g, "")
-          .trim();
-      });
     },
   },
 };

@@ -246,6 +246,7 @@ export default {
       this.$refs.root.parentElement.getAttribute("data-custom-templates")
     );
     this.sl.fetchContentTypeTitles();
+    this.sl.fetchWorkflowTitles();
     this.sl.fetchBlocks();
   },
   computed: {

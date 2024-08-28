@@ -23,6 +23,7 @@ export const useSimplelayoutStore = defineStore({
     canEditRowData: false,
     canAddBlocks: false,
     contentTypeTitles: {},
+    workflowTitles: {},
     customTemplates: {},
     i18n: {},
     errors: [],
@@ -92,6 +93,22 @@ export const useSimplelayoutStore = defineStore({
       );
       response.data.items.forEach((item) => {
         this.contentTypeTitles[item.token] = item.title
+          .replace(/(\[.+?\])/g, "")
+          .trim();
+      });
+    },
+
+    async fetchWorkflowTitles() {
+      console.info(Object.keys(this.workflowTitles).length);
+      if (Object.keys(this.workflowTitles).length > 0) {
+        return;
+      }
+
+      const response = await this.axios.get(
+        this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.WorkflowStates"
+      );
+      response.data.items.forEach((item) => {
+        this.workflowTitles[item.token] = item.title
           .replace(/(\[.+?\])/g, "")
           .trim();
       });
