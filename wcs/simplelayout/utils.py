@@ -220,10 +220,9 @@ def add_sort_limit_to_query(query):
     elif b_size < 0 or b_start < 0:
         raise ValueError('Negative numbers are not supported')
 
-    page = int((b_start / b_size) + 1)
+    # page = int((b_start / b_size) + 1)
 
     if b_start == 0:
         query['sort_limit'] = b_size
-    else:
-        query['sort_limit'] = page * b_size
-
+    # else:
+    #     query['sort_limit'] = page * b_size
