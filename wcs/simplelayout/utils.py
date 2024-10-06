@@ -10,6 +10,7 @@ from plone.dexterity.interfaces import IDexterityFTI
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
 from zope.component import getUtility
+from zope.globalrequest import getRequest
 import logging
 import os
 
@@ -208,3 +209,21 @@ def convert_table_to_json(table):
 
         result['rows'].append(row_data)
     return result
+
+
+def add_sort_limit_to_query(query):
+    request = getRequest()
+    b_start = int(request.form.get('b_start', '0'))
+    b_size = int(request.form.get('b_size', '0'))
+    if b_size == 0:
+        return
+    elif b_size < 0 or b_start < 0:
+        raise ValueError('Negative numbers are not supported')
+
+    page = int((b_start / b_size) + 1)
+
+    if b_start == 0:
+        query['sort_limit'] = b_size
+    else:
+        query['sort_limit'] = page * b_size
+

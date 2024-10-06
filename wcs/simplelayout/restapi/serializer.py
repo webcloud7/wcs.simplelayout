@@ -34,6 +34,7 @@ from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.fields.table import ITableRichText
 from wcs.simplelayout.utils import add_layout_properties
 from wcs.simplelayout.utils import add_missing_blocks
+from wcs.simplelayout.utils import add_sort_limit_to_query
 from wcs.simplelayout.utils import convert_table_to_json
 from wcs.simplelayout.utils import list_blocks_from_page
 from zope.component import adapter
@@ -289,6 +290,11 @@ class NewsListingBlockSerializer(DefaultBlockSerializer):
             if original_b_size is None:
                 self.request.form['b_size'] = IBlockNewsOptions(self.context).quantity
             self.request['ACTUAL_URL'] = self.context.absolute_url()
+
+            try:
+                add_sort_limit_to_query(query)
+            except ValueError:
+                LOG.warn('Cannot set sort_limit')
 
             lazy_resultset = api.portal.get_tool('portal_catalog').searchResults(**query)
             search_result = getMultiAdapter(

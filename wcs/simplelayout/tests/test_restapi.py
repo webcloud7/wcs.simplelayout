@@ -4,15 +4,18 @@ from datetime import timedelta
 from ftw.builder import Builder
 from ftw.builder import create
 from ftw.testbrowser import browsing
+from plone.app.textfield.value import RichTextValue
+from plone.restapi.interfaces import ISerializeToJson
 from wcs.simplelayout.contenttypes.behaviors import IBlockNewsOptions
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.restapi.serializer import CONVERT_TOKENS_CUSTOMVIEWFIELDS
 from wcs.simplelayout.tests import FunctionalTesting
+from wcs.simplelayout.utils import add_sort_limit_to_query
 from z3c.relationfield.relation import RelationValue
+from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.intid.interfaces import IIntIds
 from zope.schema.interfaces import IVocabularyFactory
-from plone.app.textfield.value import RichTextValue
 import json
 import transaction
 
@@ -128,6 +131,69 @@ class TestRestApi(FunctionalTesting):
 
         browser.login().visit(self.page, headers=self.api_headers)
         self.assertEqual(30, len(tuple(browser.json['slblocks'].keys())))
+
+    @browsing
+    def test_sort_limit_on_newslistingblock(self, browser):
+        query = {}
+
+        # no sort_limit
+        add_sort_limit_to_query(query)
+        self.assertNotIn('sort_limit', query)
+
+        # page 1
+        self.portal.REQUEST.form['b_size'] = '3'
+        add_sort_limit_to_query(query)
+        self.assertEqual(query['sort_limit'], 3)
+
+        # page 2
+        self.portal.REQUEST.form['b_size'] = '3'
+        self.portal.REQUEST.form['b_start'] = '3'
+        add_sort_limit_to_query(query)
+        self.assertEqual(query['sort_limit'], 6)
+
+        # page 3
+        self.portal.REQUEST.form['b_size'] = '3'
+        self.portal.REQUEST.form['b_start'] = '6'
+        add_sort_limit_to_query(query)
+        self.assertEqual(query['sort_limit'], 9)
+
+        # page 4
+        self.portal.REQUEST.form['b_size'] = '3'
+        self.portal.REQUEST.form['b_start'] = '9'
+        add_sort_limit_to_query(query)
+        self.assertEqual(query['sort_limit'], 12)
+
+        # odd pagination
+        self.portal.REQUEST.form['b_size'] = '3'
+        self.portal.REQUEST.form['b_start'] = '7'
+        add_sort_limit_to_query(query)
+        self.assertEqual(query['sort_limit'], 9)
+
+        self.portal.REQUEST.form['b_size'] = '10'
+        self.portal.REQUEST.form['b_start'] = '33'
+        add_sort_limit_to_query(query)
+        self.assertEqual(query['sort_limit'], 40)
+
+        # bad values
+        self.portal.REQUEST.form['b_size'] = 'a'
+        with self.assertRaises(ValueError):
+            add_sort_limit_to_query(query)
+
+        self.portal.REQUEST.form['b_size'] = '3'
+        self.portal.REQUEST.form['b_start'] = 'a'
+        with self.assertRaises(ValueError):
+            add_sort_limit_to_query(query)
+
+        self.portal.REQUEST.form['b_size'] = '3'
+        self.portal.REQUEST.form['b_start'] = '-1'
+        with self.assertRaises(ValueError):
+            add_sort_limit_to_query(query)
+
+        self.portal.REQUEST.form['b_size'] = '-1'
+        self.portal.REQUEST.form['b_start'] = '3'
+        with self.assertRaises(ValueError):
+            add_sort_limit_to_query(query)
+
 
     @browsing
     def test_hypermedia_batch_urls_are_correct_on_news_listing_block(self, browser):
