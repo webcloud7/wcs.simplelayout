@@ -16,5 +16,5 @@ class TestSampleTypes(FunctionalTesting):
         newsfolder = create(Builder('news folder').titled('A News Folder'))
 
         browser.login().visit(newsfolder)
-        self.assertEqual(['Media Folder', 'News'],
+        self.assertEqual(['ContentPage', 'Media Folder', 'News'],
                          factoriesmenu.addable_types())

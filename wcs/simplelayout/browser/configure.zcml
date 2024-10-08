@@ -25,6 +25,13 @@
         />
 
     <browser:page
+        for="wcs.simplelayout.contenttypes.newsfolder.INewsFolder"
+        name="newsfolder_view"
+        class=".newsfolder.NewsFolderView"
+        permission="zope2.View"
+        />
+
+    <browser:page
         for="wcs.simplelayout.contenttypes.behaviors.IMediaFolderReference"
         name="add-and-link-mediafolder"
         class=".mediafolder.CreateAndLinkMediaFolder"

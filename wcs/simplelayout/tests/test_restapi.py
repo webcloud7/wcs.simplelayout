@@ -192,20 +192,19 @@ class TestRestApi(FunctionalTesting):
         with self.assertRaises(ValueError):
             add_sort_limit_to_query(query)
 
-
     @browsing
     def test_hypermedia_batch_urls_are_correct_on_news_listing_block(self, browser):
-
-        newsfolder = create(Builder('news folder'))
+        page = create(Builder('content page').titled('A page'))
+        newsfolder = create(Builder('news folder').within(page))
         block = create(Builder('news listing block')
                        .having(quantity=3)
-                       .within(newsfolder)
+                       .within(page)
                        .titled('News listing'))
 
         for number in range(1, 10):
             create(Builder('news').within(newsfolder))
 
-        browser.login().open(newsfolder.absolute_url() + '?include_items=1', headers=self.api_headers)
+        browser.login().open(page.absolute_url() + '?include_items=1', headers=self.api_headers)
         block_result = browser.json['slblocks'][block.UID()]
         self.assertEqual(
             block.absolute_url() + '?include_items=1',
@@ -246,10 +245,11 @@ class TestRestApi(FunctionalTesting):
     @browsing
     def test_news_listing_block_filter_by_subject(self, browser):
         self.add_behavior('News', 'plone.categorization')
-        newsfolder = create(Builder('news folder'))
+        page = create(Builder('content page'))
+        newsfolder = create(Builder('news folder').within(page))
         block = create(Builder('news listing block')
                        .having(quantity=3)
-                       .within(newsfolder)
+                       .within(page)
                        .titled('News listing'))
 
         news_with_subject = create(Builder('news')
@@ -278,10 +278,11 @@ class TestRestApi(FunctionalTesting):
     @browsing
     def test_news_listing_block_filter_by_age(self, browser):
         self.add_behavior('News', 'plone.categorization')
-        newsfolder = create(Builder('news folder'))
+        page = create(Builder('content page').titled('A title'))
+        newsfolder = create(Builder('news folder').within(page))
         block = create(Builder('news listing block')
                        .having(quantity=3)
-                       .within(newsfolder)
+                       .within(page)
                        .titled('News listing'))
 
         old_news = create(Builder('news')

@@ -1,0 +1,45 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="ftw.news">
+
+  <metal:title fill-slot="content-title">
+    <h1 class="documentFirstHeading" tal:content="here/Title"></h1>
+  </metal:title>
+
+  <metal:description fill-slot="content-description">
+    <metal:comment>
+      <div class="documentDescription description"
+           tal:condition="here/description"
+           tal:content="here/description" />
+    </metal:comment>
+  </metal:description>
+
+  <metal:main fill-slot="content-core" tal:define="batch view/batch">
+    <div metal:use-macro="context/batch_macros/macros/navigation" />
+    <div class="list-group">
+      <tal:news repeat="news batch">
+        <a tal:attributes="href python:news.getURL()" class="list-group-item list-group-item-action">
+          <div class="d-flex w-100 justify-content-between">
+            <h2 class="mb-1 h5" tal:content="python:view.format_date(news.Date)"/>
+            <small class="badge bg-primary rounded-pill pt-2">
+              <div tal:attributes="class python:view.review_state_class(news.review_state)"
+                    i18n:translate="" i18n:domain="plone" tal:content="python:news.review_state">
+                    
+              </div>
+            </small>
+          </div>
+          <p tal:content="news/Title" class="h2" />
+          <p tal:condition="news/Description" class="mb-1" tal:content="news/Description" />
+        </a>
+      </tal:news>
+    </div>
+
+    <div class="mt-3">
+      <div metal:use-macro="context/batch_macros/macros/navigation" />
+    </div>
+
+  </metal:main>
+</html>

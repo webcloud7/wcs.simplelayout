@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object name="NewsFolder" meta_type="Dexterity FTI" i18n:domain="plone"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <property name="immediate_view">@@newsfolder_view</property>
+ <property name="allowed_content_types" purge="False">
+  <element value="ContentPage"/>
+  <element value="Block" remove="True" />
+  <element value="VideoBlock" remove="True"/>
+  <element value="FileListingBlock" remove="True"/>
+  <element value="ImageListingBlock" remove="True"/>
+  <element value="NewsListingBlock" remove="True"/>
+ </property>
+ <property name="default_view">@@newsfolder_view</property>
+ <property name="view_methods" purge="True">
+  <element value="@@newsfolder_view"/>
+ </property>
+ <property name="behaviors" purge="False">
+   <element value="wcs.simplelayout.contenttypes.behaviors.ISimplelayout" remove="True"/>
+ </property>
+</object>
