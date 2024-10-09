@@ -574,12 +574,12 @@ msgstr "Anzahl News"
 #. Default: "Only news with the selected subjects will be shown."
 #: wcs/simplelayout/contenttypes/behaviors.py:312
 msgid "news_listing_config_subjects_description"
-msgstr "Nur News mit den auswgewählten Stichwörter werden angezeigt."
+msgstr "Nur News mit den auswgewählten Schlagwörter werden angezeigt."
 
 #. Default: "Filter by subject"
 #: wcs/simplelayout/contenttypes/behaviors.py:310
 msgid "news_listing_config_subjects_label"
-msgstr "Stichwort filter"
+msgstr "Schlagwort filter"
 
 #. Default: "You can mix and match invididual files and files from a mediafolder reference."
 #: wcs/simplelayout/contenttypes/behaviors.py:368
