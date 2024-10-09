@@ -26,6 +26,6 @@ class SimplelayoutSearchableText(object):
         searchable_text = ''
         for content in self.context.objectValues():
             if IBlockMarker.providedBy(content) and not block_has_dates(content):
-                searchable_text += dynamic_searchable_text_indexer(
+                searchable_text += " " + dynamic_searchable_text_indexer(
                     content)()
         return searchable_text
