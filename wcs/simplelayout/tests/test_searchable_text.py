@@ -61,6 +61,7 @@ class TestSearchableTextIndexer(FunctionalTesting):
 
     def test_blocks_with_dates_are_not_in_page(self):
         self.add_behavior('Block', 'plone.publication')
+        transaction.commit()
         create(Builder('block')
                .titled('TextBlock')
                .within(self.contentpage)
