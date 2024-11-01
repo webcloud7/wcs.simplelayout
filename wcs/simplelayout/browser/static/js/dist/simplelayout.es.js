@@ -26770,7 +26770,11 @@ const _sfc_main$m = {
         body.removeChild(parent.firstChild);
       }
       body.innerHTML = doc2.getElementById("content").innerHTML;
+      const select2Pattern = registry.patterns["select2"];
+      delete registry.patterns["select2"];
       registry.scan(body);
+      registry.patterns["select2"] = select2Pattern;
+      registry.patterns["select2"].init(".pat-select2");
       executeScriptElements(body);
       document.querySelectorAll(".ordered-selection-field").forEach((element2) => {
         const destination = element2.querySelector("[id$='toDataContainer']");

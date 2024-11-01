@@ -41,6 +41,7 @@ import { useSimplelayoutStore } from "@/store.js";
 import registry from "@patternslib/patternslib/src/core/registry";
 import { executeScriptElements, copyDataForSubmit } from "@/utils.js";
 
+
 export default {
   name: "base-modal",
   props: {
@@ -164,7 +165,12 @@ export default {
       }
 
       body.innerHTML = doc.getElementById("content").innerHTML;
+      const select2Pattern = registry.patterns["select2"]
+      delete registry.patterns["select2"]
       registry.scan(body);
+      registry.patterns["select2"] = select2Pattern;
+      registry.patterns["select2"].init(".pat-select2");
+
       executeScriptElements(body);
 
       // hack for oderselect_input.js
