@@ -30,20 +30,23 @@ export default {
         };
       },
       methods: {
-        getContents() {
+        getContents(additionalParams) {
           if (this.items.length == 0 && !this.loaded) {
-            this.fetchData();
+            this.fetchData(null, additionalParams);
           }
           return this.items;
         },
-        async fetchData(url) {
+        async fetchData(url, additionalParams) {
           this.loading = true;
           try {
             let response;
             if (!url) {
-              const params = {
+              let params = {
                 params: { fullobjects: true, include_items: true },
               };
+              if (additionalParams) {
+                params.params = { ...params.params, ...additionalParams };
+              }
               response = await this.axios.get(this.block["@id"], params);
             } else {
               response = await this.axios.get(url);
