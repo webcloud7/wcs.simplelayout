@@ -132,6 +132,21 @@ def expand_by_querystring(context, request, result):
 
 
 def get_newslisting_query(newslisting):
+
+    def _get_current_path_for_staging(newslisting):
+        obj = newslisting.aq_parent
+        parent = newslisting.aq_parent
+
+        try:
+            from wcs.backend.staging.interfaces import IStaging
+            staging = IStaging(parent, None)
+            if staging and staging.is_working_copy() and staging.get_baseline():
+                obj = staging.get_baseline()
+        except ImportError:
+            pass
+
+        return '/'.join(obj.getPhysicalPath())
+
     sort_order = 'descending'
     sort_on = 'Date'
 
@@ -139,7 +154,7 @@ def get_newslisting_query(newslisting):
     current_context = IBlockNewsOptions(newslisting).current_context
     paths = ''
     if current_context:
-        paths = '/'.join(newslisting.aq_parent.getPhysicalPath())
+        paths = _get_current_path_for_staging(newslisting)
     elif relations:
         paths = ['/'.join(item.to_object.getPhysicalPath()) for item in relations if item.to_object]
     else:
