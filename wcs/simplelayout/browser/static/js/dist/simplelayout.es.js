@@ -33626,6 +33626,20 @@ const _sfc_main$e = {
           }
         },
         {
+          label: "Crop",
+          action: this.gotoEndpoint("@@croppingeditor"),
+          enabled: (rowIndex, columnIndex, blockIndex) => {
+            const hasBlock = this.sl.layouts.items[rowIndex].items[columnIndex].items.length;
+            if (!hasBlock) {
+              return false;
+            }
+            const uid2 = this.sl.layouts.items[rowIndex].items[columnIndex].items[blockIndex];
+            const actionIds = this.sl.blocks[uid2]["@components"]["actions"]["object"].map((item) => item.id);
+            const croppable = actionIds.indexOf("cropping") != -1;
+            return croppable;
+          }
+        },
+        {
           label: "Delete",
           action: this.openDeleteBlocksModal,
           enabled: (rowIndex, columnIndex, blockIndex) => {
@@ -33662,7 +33676,7 @@ const _sfc_main$e = {
         },
         {
           label: "Contents (Listing)",
-          action: this.gotoFolderContents,
+          action: this.gotoEndpoint("folder_contents"),
           enabled: (rowIndex, columnIndex, blockIndex) => {
             const uid2 = this.sl.layouts.items[rowIndex].items[columnIndex].items[blockIndex];
             if (!uid2) {
@@ -33740,13 +33754,15 @@ const _sfc_main$e = {
     openEditRowModal(event2) {
       this.$refs["edit-row-modal"].openEditRowModal(event2);
     },
-    gotoFolderContents(event2) {
-      const button = event2.currentTarget;
-      const rowIndex = parseInt(button.getAttribute("data-row"));
-      const columnIndex = parseInt(button.getAttribute("data-col"));
-      const blockIndex = parseInt(button.getAttribute("data-block"));
-      const uid2 = this.sl.layouts.items[rowIndex].items[columnIndex].items[blockIndex];
-      window.open(this.sl.blocks[uid2]["@id"] + "/folder_contents", "_self");
+    gotoEndpoint(endpoint) {
+      return (event2) => {
+        const button = event2.currentTarget;
+        const rowIndex = parseInt(button.getAttribute("data-row"));
+        const columnIndex = parseInt(button.getAttribute("data-col"));
+        const blockIndex = parseInt(button.getAttribute("data-block"));
+        const uid2 = this.sl.layouts.items[rowIndex].items[columnIndex].items[blockIndex];
+        window.open(this.sl.blocks[uid2]["@id"] + "/" + endpoint, "_self");
+      };
     },
     saveLayout: function() {
       this.sl.modifyLayouts({
