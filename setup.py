@@ -48,6 +48,7 @@ setup(
         'ftw.upgrade',
         'ftw.referencewidget >= 4.0.0b2',
         'plone.staticresources >= 2.2.0a8',
+        'plone.app.imagecropping >= 3.0.3',
         'Plone',
         'plone.autoinclude',
         'plone.restapi',
