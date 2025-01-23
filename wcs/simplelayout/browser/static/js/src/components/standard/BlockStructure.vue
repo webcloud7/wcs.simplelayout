@@ -125,7 +125,10 @@ export default {
   computed: {
     hasCustomTemplate() {
       const type = this.block["@type"];
-      return type in this.sl.customTemplates;
+      return (
+        type in this.sl.customTemplates &&
+        this.sl.customTemplates[type].template
+      );
     },
     replaceCustomTemplate() {
       return (

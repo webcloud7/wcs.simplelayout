@@ -80,6 +80,7 @@ class SimplelayoutView(BrowserView):
             'Validity': self._translate(_('label_validity', default='Validity')),
             'Effective date': self._translate(_('label_effective_date', default='Effective date')),
             'Expiration date': self._translate(_('label_expiration_date', default='Expiration date')),
+            'Crop': self._translate(_('label_crop', default='Crop')),
         }
         return json.dumps(messages)
 

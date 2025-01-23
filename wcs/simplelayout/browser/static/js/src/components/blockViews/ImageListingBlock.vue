@@ -7,24 +7,12 @@
             <div class="sl-image-wrapper">
               <template v-if="getLink(image)">
                 <a :href="getLink(image)">
-                  <ImageListingImage :image="image" />
+                  <ImageListingImage :image="image" :block="block" />
                 </a>
               </template>
               <template v-else>
-                <ImageListingImage :image="image" />
+                <ImageListingImage :image="image" :block="block" />
               </template>
-
-<!--               <div class="actions position-absolute sl-img-actions me-4 mt-2">
-                <button
-                  v-if="canEditImage(image)"
-                  class="btn btn-light"
-                  @click="openImageEditModal"
-                  :data-url="image['@id']"
-                >
-                  Edit
-                </button>
-              </div>
- -->
             </div>
           </div>
         </template>

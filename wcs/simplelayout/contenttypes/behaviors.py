@@ -220,6 +220,12 @@ class IVideoUrl(model.Schema):
 
 @provider(IFormFieldProvider)
 class IImageBlockSortOptions(model.Schema, IBlockMarker):
+    model.fieldset(
+        'advanced',
+        label=_('Advanced'),
+        fields=['default_scale',]
+    )
+
     sort_on = schema.Choice(
         title=_('label_sort_on', default='Sort by'),
         required=True,
@@ -238,6 +244,12 @@ class IImageBlockSortOptions(model.Schema, IBlockMarker):
         required=True,
         default=["Image"],
         value_type=schema.TextLine())
+
+    default_scale = schema.Choice(
+        title=_('label_default_scale', default='Default scale for this block'),
+        required=False,
+        default='review',
+        vocabulary='plone.app.imagecropping.all_sizes')
 
 
 @provider(IFormFieldProvider)
