@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2025-01-23 17:52+0000\n"
+"POT-Creation-Date: 2025-01-24 13:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -195,7 +195,7 @@ msgstr ""
 #: wcs/simplelayout/browser/dexterity/row_configuration.py:73
 #: wcs/simplelayout/browser/overlays.py:114
 msgid "Save"
-msgstr Speichern""
+msgstr "Speichern"
 
 #: wcs/simplelayout/contenttypes/configure.zcml:24
 msgid "Simplelayout Block"
