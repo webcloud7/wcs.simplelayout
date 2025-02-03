@@ -41,7 +41,6 @@ import { useSimplelayoutStore } from "@/store.js";
 import registry from "@patternslib/patternslib/src/core/registry";
 import { executeScriptElements, copyDataForSubmit } from "@/utils.js";
 
-
 export default {
   name: "base-modal",
   props: {
@@ -165,11 +164,15 @@ export default {
       }
 
       body.innerHTML = doc.getElementById("content").innerHTML;
-      const select2Pattern = registry.patterns["select2"]
-      delete registry.patterns["select2"]
+      const select2Pattern = registry.patterns["select2"];
+      delete registry.patterns["select2"];
+
       registry.scan(body);
       registry.patterns["select2"] = select2Pattern;
-      registry.patterns["select2"].init(".pat-select2");
+
+      if (body.querySelector(".pat-select2")) {
+        registry.patterns["select2"].init(".pat-select2");
+      }
 
       executeScriptElements(body);
 
@@ -219,13 +222,12 @@ export default {
       this.modal.hide();
     },
     handleTinyMCE() {
-      [
-        ...this.modal._element.querySelectorAll(
-          "textarea.pat-tinymce.richTextWidget"
-        ),
-      ].forEach((element) => {
-        tinyMCE.get(element.id).save();
-      });
+      [...this.modal._element.querySelectorAll("textarea.pat-tinymce")].forEach(
+        (element) => {
+          tinyMCE.get(element.id).save();
+          tinyMCE.get(element.id).destroy();
+        }
+      );
     },
     cleanBody() {
       if (!this.cleanUpBody) {
