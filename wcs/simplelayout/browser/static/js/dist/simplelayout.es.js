@@ -26904,7 +26904,9 @@ const _sfc_main$l = {
       delete registry.patterns["select2"];
       registry.scan(body);
       registry.patterns["select2"] = select2Pattern;
-      registry.patterns["select2"].init(".pat-select2");
+      if (body.querySelector(".pat-select2")) {
+        registry.patterns["select2"].init(".pat-select2");
+      }
       executeScriptElements(body);
       document.querySelectorAll(".ordered-selection-field").forEach((element2) => {
         const destination = element2.querySelector("[id$='toDataContainer']");
@@ -26944,13 +26946,12 @@ const _sfc_main$l = {
       this.modal.hide();
     },
     handleTinyMCE() {
-      [
-        ...this.modal._element.querySelectorAll(
-          "textarea.pat-tinymce.richTextWidget"
-        )
-      ].forEach((element2) => {
-        tinyMCE.get(element2.id).save();
-      });
+      [...this.modal._element.querySelectorAll("textarea.pat-tinymce")].forEach(
+        (element2) => {
+          tinyMCE.get(element2.id).save();
+          tinyMCE.get(element2.id).destroy();
+        }
+      );
     },
     cleanBody() {
       if (!this.cleanUpBody) {

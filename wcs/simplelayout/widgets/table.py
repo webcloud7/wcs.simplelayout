@@ -1,8 +1,6 @@
 from plone import api
-from plone.app.textfield.value import RichTextValue
 from plone.app.z3cform.interfaces import IRichTextWidget
 from plone.app.z3cform.utils import dict_merge
-from plone.app.z3cform.widgets.base import BaseWidget
 from plone.app.z3cform.widgets.richtext import RichTextWidget
 from plone.schema import JSONField
 from wcs.simplelayout import _
@@ -29,31 +27,12 @@ class ITableRichTextWidget(IRichTextWidget):
 
 
 @implementer_only(ITableRichTextWidget)
-class TableRichTextWidget(RichTextWidget, BaseWidget):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class TableRichTextWidget(RichTextWidget):
 
-    def render(self):
-        """Render widget.
-
-        :returns: Widget's HTML.
-        :rtype: string
-        """
-        if self.mode != "display":
-            return self.renderer_input()
-
-        if not self.value:
-            return ""
-
-        if isinstance(self.value, RichTextValue):
-            return self.value.output_relative_to(self.context)
-
-        return super().render()
-
-    def _base_args(self):
-        args = super()._base_args()
-        del args['pattern_options']['upload']
-        tiny = args['pattern_options']['tiny']
+    def get_pattern_options(self):
+        options = super().get_pattern_options()
+        del options['upload']
+        tiny = options['tiny']
         tiny.pop('templates', None)
 
         # Default tiny table configuration
@@ -78,15 +57,12 @@ class TableRichTextWidget(RichTextWidget, BaseWidget):
                 f'{getattr(self.form, "portal_type", "")}.{self.field.__name__}', {}
             )
         )
-        args['pattern_options']['tiny'] = merged_tiny_config
+        options['tiny'] = merged_tiny_config
 
-        return args
+        return options
 
     def allowedMimeTypes(self):
         return ['text/html']
-
-    def renderer_input(self):
-        return BaseWidget.render(self)
 
 
 @implementer(IFieldWidget)
