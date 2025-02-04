@@ -147,7 +147,6 @@ export const useSimplelayoutStore = defineStore({
         // headers: {Prefer: "return=representation"} only solves half the problem
         if (!readonly) {
           await this.axios.patch(this.baseApiURL, data);
-          console.info("layout updated");
         }
         const response = await this.axios.get(this.baseApiURL, {
           params: this.params,

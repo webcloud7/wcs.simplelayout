@@ -11756,7 +11756,6 @@ const useSimplelayoutStore = defineStore({
       try {
         if (!readonly2) {
           await this.axios.patch(this.baseApiURL, data2);
-          console.info("layout updated");
         }
         const response = await this.axios.get(this.baseApiURL, {
           params: this.params
