@@ -7,11 +7,11 @@ fixture `test_simplelayout`
         await setup.call();
 
         await t
-            .click(Selector('header a').withText('Log in'))
+            .navigateTo('/plone/login')
             .typeText('#__ac_name', 'admin')
             .pressKey('tab')
             .typeText('#__ac_password', 'secret')
-            .click('.pattern-modal-buttons [name="buttons.login"]')
+            .click('[name="buttons.login"]')
             .resizeWindow(1800, 1500);
     })
     .afterEach(async t => {
