@@ -351,3 +351,73 @@ class TestBlocksCache(FunctionalTesting):
 
         self.assertIn(block3.UID(), ISimplelayout(self.page).slblocks_cache)
         self.assertIn(block4.UID(), ISimplelayout(self.page).slblocks_cache)
+
+
+class TestMakeBlockIncludeItems(FunctionalTesting):
+
+    def setUp(self):
+        super().setUp()
+        self.intids = getUtility(IIntIds)
+        self.add_behavior('FileListingBlock', 'wcs.simplelayout.contenttypes.behaviors.IBlockAlwaysIncludeItems')
+        self.add_behavior('ImageListingBlock', 'wcs.simplelayout.contenttypes.behaviors.IBlockAlwaysIncludeItems')
+        self.add_behavior('Block', 'wcs.simplelayout.contenttypes.behaviors.IBlockAlwaysIncludeItems')
+
+        self.page = create(Builder('content page').titled('Test page'))
+        transaction.commit()
+
+    def test_block_always_include_items_never_caches(self):
+        block = create(Builder('block').titled('Block 1').within(self.page))
+        image1 = create(Builder('image').within(block).with_dummy_content())
+        image2 = create(Builder('image').within(block).with_dummy_content())
+
+        blocks_cached = get_blocks(self.page, for_cache=True)
+        self.assertEqual(2, len(blocks_cached[0]['items']))
+        self.assertEqual(image1.UID(), blocks_cached[0]['items'][0]['UID'])
+        self.assertEqual(image2.UID(), blocks_cached[0]['items'][1]['UID'])
+
+        blocks_not_cached = get_blocks(self.page, for_cache=False)
+        self.assertEqual(2, len(blocks_not_cached[0]['items']))
+        self.assertEqual(image1.UID(), blocks_not_cached[0]['items'][0]['UID'])
+        self.assertEqual(image2.UID(), blocks_not_cached[0]['items'][1]['UID'])
+
+        self.assertEqual(blocks_cached, blocks_not_cached)
+
+    def test_file_listing_block_always_inlcudes_items(self):
+
+        mediafolder = create(Builder('mediafolder')
+                             .titled('Mediafolder')
+                             .within(self.page))
+        create(Builder('file').within(mediafolder).with_dummy_content())
+        create(Builder('image').within(mediafolder).with_dummy_content())
+        listing = create(Builder('file listing block')
+                         .titled('Listing')
+                         .having(mediafolder=RelationValue(self.intids.getId(mediafolder)))
+                         .within(self.page))
+
+        blocks_cached = get_blocks(self.page, for_cache=True)
+        self.assertEqual(2, len(blocks_cached[0]['items']))
+
+        blocks_not_cached = get_blocks(self.page, for_cache=False)
+        self.assertEqual(2, len(blocks_not_cached[0]['items']))
+
+        self.assertEqual(blocks_cached, blocks_not_cached)
+
+    def test_image_listing_block_always_inlcudes_items(self):
+
+        mediafolder = create(Builder('mediafolder')
+                             .titled('Mediafolder')
+                             .within(self.page))
+        create(Builder('image').within(mediafolder).with_dummy_content())
+        create(Builder('image').within(mediafolder).with_dummy_content())
+        listing = create(Builder('image listing block')
+                         .titled('Listing')
+                         .having(mediafolder=RelationValue(self.intids.getId(mediafolder)))
+                         .within(self.page))
+
+        blocks_cached = get_blocks(self.page, for_cache=True)
+        self.assertEqual(2, len(blocks_cached[0]['items']))
+
+        blocks_not_cached = get_blocks(self.page, for_cache=False)
+        self.assertEqual(2, len(blocks_not_cached[0]['items']))
+
+        self.assertEqual(blocks_cached, blocks_not_cached)
