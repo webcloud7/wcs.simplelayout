@@ -24,6 +24,12 @@
         />
 
     <plone:behavior
+        title="Make a block return its items by default"
+        description="This makes a block returns it items the payload via restapi - always"
+        provides="wcs.simplelayout.contenttypes.behaviors.IBlockAlwaysIncludeItems"
+        />
+
+    <plone:behavior
         title="Simplelayout Block Title"
         description="Default Block title with (Show title option)"
         provides="wcs.simplelayout.contenttypes.behaviors.IBlockTitle"

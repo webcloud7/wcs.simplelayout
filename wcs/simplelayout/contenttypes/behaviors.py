@@ -112,6 +112,10 @@ class IBlockMarker(Interface):
     """Marker interface for simplelayout blocks"""
 
 
+class IBlockAlwaysIncludeItems(Interface):
+    """Marker interface for blocks, which always include their items"""
+
+
 @provider(IFormFieldProvider)
 class ISimplelayout(model.Schema):
 

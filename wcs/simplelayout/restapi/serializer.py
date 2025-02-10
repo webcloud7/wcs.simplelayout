@@ -24,6 +24,7 @@ from plone.schema import IJSONField
 from plone.supermodel.utils import mergedTaggedValueDict
 from Products.CMFCore.utils import getToolByName
 from urllib import parse
+from wcs.simplelayout.contenttypes.behaviors import IBlockAlwaysIncludeItems
 from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
 from wcs.simplelayout.contenttypes.behaviors import IBlockNewsOptions
 from wcs.simplelayout.contenttypes.behaviors import IFileBlockSortOptions
@@ -241,8 +242,10 @@ class DefaultBlockSerializer(SerializeFolderToJson):
     return minimal set of data for caching purposes.
     """
     def __call__(self, version=None, include_items=True, for_cache=False):
-        if not for_cache:
-            return super().__call__(version=version, include_items=include_items)
+        if not for_cache or IBlockAlwaysIncludeItems.providedBy(self.context):
+            result = super().__call__(version=version, include_items=include_items)
+            self._add_items(result)
+            return result
 
         # Optimized version for caching purposes
         obj = self.context
@@ -283,8 +286,24 @@ class DefaultBlockSerializer(SerializeFolderToJson):
         )()
         if target_url:
             result["targetUrl"] = target_url
-
         return result
+
+    def _add_items(self, result):
+        if IBlockAlwaysIncludeItems.providedBy(self.context):
+            query = self._build_query()
+
+            catalog = getToolByName(self.context, "portal_catalog")
+            brains = catalog(query)
+
+            batch = HypermediaBatch(self.request, brains)
+
+            result["items_total"] = batch.items_total
+            if batch.links:
+                result["batching"] = batch.links
+
+            result["items"] = getMultiAdapter(
+                (brains, self.request), ISerializeToJson
+            )(fullobjects=True)["items"]
 
 
 @implementer(ISerializeToJson)
@@ -293,40 +312,43 @@ class NewsListingBlockSerializer(DefaultBlockSerializer):
     def __call__(self, version=None, include_items=True, for_cache=False):
         result = super().__call__(version=version, for_cache=for_cache)
 
+        # No support for always include items
         if for_cache:
             return result
 
         include_items = self.request.form.get("include_items", include_items)
         include_items = boolean_value(include_items)
         if include_items:
-            query = get_newslisting_query(self.context)
-            original_b_size = self.request.form.get('b_size', None)
-            original_actual_url = self.request['ACTUAL_URL']
-            if original_b_size is None:
-                self.request.form['b_size'] = IBlockNewsOptions(self.context).quantity
-            self.request['ACTUAL_URL'] = self.context.absolute_url()
-
-            try:
-                add_sort_limit_to_query(query)
-            except ValueError:
-                LOG.warn('Cannot set sort_limit')
-
-            lazy_resultset = api.portal.get_tool('portal_catalog').searchResults(**query)
-            search_result = getMultiAdapter(
-                (lazy_resultset, self.request), ISerializeToJson)(
-                    fullobjects="fullobjects" in list(self.request.form)
-            )
-            if original_b_size is None:
-                del self.request.form['b_size']
-            else:
-                self.request.form['b_size'] = original_b_size
-
-            self.request['ACTUAL_URL'] = original_actual_url
-
-            del search_result['@id']
-            result.update(search_result)
+            self._add_items(result)
 
         return result
+
+    def _add_items(self, result):
+        query = get_newslisting_query(self.context)
+        original_b_size = self.request.form.get('b_size', None)
+        original_actual_url = self.request['ACTUAL_URL']
+        if original_b_size is None:
+            self.request.form['b_size'] = IBlockNewsOptions(self.context).quantity
+        self.request['ACTUAL_URL'] = self.context.absolute_url()
+
+        try:
+            add_sort_limit_to_query(query)
+        except ValueError:
+            LOG.warn('Cannot set sort_limit')
+
+        lazy_resultset = api.portal.get_tool('portal_catalog').searchResults(**query)
+        search_result = getMultiAdapter(
+            (lazy_resultset, self.request), ISerializeToJson)(
+                fullobjects="fullobjects" in list(self.request.form)
+        )
+        if original_b_size is None:
+            del self.request.form['b_size']
+        else:
+            self.request.form['b_size'] = original_b_size
+
+        self.request['ACTUAL_URL'] = original_actual_url
+        del search_result['@id']
+        result.update(search_result)
 
 
 @implementer(ISerializeToJson)
@@ -338,44 +360,47 @@ class FileBlockSortOptionsSerializer(DefaultBlockSerializer):
     def __call__(self, version=None, include_items=True, for_cache=False):
         result = super().__call__(version=version, for_cache=for_cache)
 
-        if for_cache:
+        if for_cache and not IBlockAlwaysIncludeItems.providedBy(self.context):
             return result
 
         include_items = self.request.form.get("include_items", include_items)
         include_items = boolean_value(include_items)
-        if include_items:
-            sort_on = self.behavior(self.context).sort_on
-            sort_order = self.behavior(self.context).sort_order
-            portal_types = self.behavior(self.context).portal_types
-            query = {
-                'path': {'query': self._get_paths()},
-                'sort_on': sort_on,
-                'sort_order': sort_order,
-                'portal_type': portal_types
-            }
-            original_b_size = self.request.form.get('b_size', None)
-            original_actual_url = self.request['ACTUAL_URL']
-            if original_b_size is None:
-                self.request.form['b_size'] = 10
-            self.request['ACTUAL_URL'] = self.context.absolute_url()
-
-            lazy_resultset = api.portal.get_tool('portal_catalog').searchResults(**query)
-            search_result = getMultiAdapter(
-                (lazy_resultset, self.request), ISerializeToJson)(
-                    fullobjects="fullobjects" in list(self.request.form)
-            )
-
-            if original_b_size is None:
-                del self.request.form['b_size']
-            else:
-                self.request.form['b_size'] = original_b_size
-
-            self.request['ACTUAL_URL'] = original_actual_url
-
-            del search_result['@id']
-            result.update(search_result)
+        if include_items or IBlockAlwaysIncludeItems.providedBy(self.context):
+            self._add_items(result)
 
         return result
+
+    def _add_items(self, result):
+        sort_on = self.behavior(self.context).sort_on
+        sort_order = self.behavior(self.context).sort_order
+        portal_types = self.behavior(self.context).portal_types
+        query = {
+            'path': {'query': self._get_paths()},
+            'sort_on': sort_on,
+            'sort_order': sort_order,
+            'portal_type': portal_types
+        }
+        original_b_size = self.request.form.get('b_size', None)
+        original_actual_url = self.request['ACTUAL_URL']
+        if original_b_size is None:
+            self.request.form['b_size'] = 10
+        self.request['ACTUAL_URL'] = self.context.absolute_url()
+
+        lazy_resultset = api.portal.get_tool('portal_catalog').searchResults(**query)
+        search_result = getMultiAdapter(
+            (lazy_resultset, self.request), ISerializeToJson)(
+                fullobjects="fullobjects" in list(self.request.form)
+        )
+
+        if original_b_size is None:
+            del self.request.form['b_size']
+        else:
+            self.request.form['b_size'] = original_b_size
+
+        self.request['ACTUAL_URL'] = original_actual_url
+
+        del search_result['@id']
+        result.update(search_result)
 
     def _get_paths(self):
         paths = []
@@ -436,6 +461,7 @@ class AllPurposeListingBlockSerializer(DefaultBlockSerializer):
     # Plus it avoids a recursion if the collection lists itself
     def __call__(self, version=None, include_items=True, for_cache=False):
         result = super().__call__(version=version, for_cache=for_cache)
+        # No support for always include items
         if for_cache:
             return result
 
