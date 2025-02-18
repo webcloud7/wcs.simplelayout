@@ -102,7 +102,11 @@ def cache_blocks(block, event):
             dm.set({})
             return
 
-        blocks = get_blocks(parent, for_cache=True)
+        blocks = []
+        try:
+            blocks = get_blocks(parent, for_cache=True)
+        except Exception as e:
+            LOG.warn(f'Error while caching blocks: {e}')
         result = {block['UID']: block for block in blocks}
 
         validator = queryMultiAdapter(
