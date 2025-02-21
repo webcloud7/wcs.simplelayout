@@ -2,8 +2,6 @@ import { defineStore } from "pinia";
 import { row } from "@/template.js";
 
 const portalURL = document.body.getAttribute("data-portal-url");
-const baseURL = document.body.getAttribute("data-base-url");
-const baseApiURL = baseURL.replace(portalURL, portalURL + "/++api++");
 
 export const useSimplelayoutStore = defineStore({
   // id is required so that Pinia can connect the store to the devtools
@@ -13,8 +11,8 @@ export const useSimplelayoutStore = defineStore({
     blocks: {},
     addableTypes: [],
     loading: false,
-    baseURL: baseURL,
-    baseApiURL: baseApiURL,
+    baseURL: null,
+    baseApiURL: null,
     portalURL: portalURL,
     params: { expand: ["types", "actions"] },
     authToken: null,
@@ -56,6 +54,10 @@ export const useSimplelayoutStore = defineStore({
 
     setAuthenticatorToken(token) {
       this.authToken = token;
+    },
+    setBaseUrl(url) {
+      this.baseURL = url;
+      this.baseApiURL = this.baseURL.replace(portalURL, portalURL + "/++api++");
     },
     setCanModify(value) {
       if (value == "True") {
