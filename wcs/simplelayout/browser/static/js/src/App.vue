@@ -246,6 +246,9 @@ export default {
     };
   },
   mounted() {
+    this.sl.setBaseUrl(
+      this.$refs.root.parentElement.getAttribute("data-base-url")
+    );
     this.sl.setAuthenticatorToken(
       this.$refs.root.parentElement.getAttribute("data-token")
     );
