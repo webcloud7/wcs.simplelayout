@@ -61,7 +61,8 @@ setup(
     entry_points="""
     [console_scripts]
     test-server = wcs.simplelayout.tests.server:server [test]
-    [z3c.autoinclude.plugin]
+    [plone.autoinclude.plugin]
     target = plone
+    module = wcs.simplelayout    
     """,
 )
