@@ -26,33 +26,27 @@ class LayoutFieldDeserializer(DefaultFieldDeserializer):
             can_manage_cols = api.user.has_permission('wcs.simplelayout: Manage columns', obj=self.context)
             can_add_blocks = api.user.has_permission('wcs.simplelayout: Add Block', obj=self.context)
             if can_manage_cols and can_add_blocks:
-                return super().__call__(value)                
+                return super().__call__(value)
 
             if not can_manage_cols:
                 self._ensure_cols_did_not_change(value)
 
             if not can_add_blocks:
-                self._ensure_block_order_did_no_change(value)
+                self._ensure_block_order_did_not_change(value)
 
         return super().__call__(value)
 
     def _ensure_cols_did_not_change(self, value):
         error = False
         current_value = self.field.get(self.context)
-        if len(current_value['items']) != len(value['items']):
+        if str(current_value['items']).count("'col'") != str(value['items']).count("'col'"):
             error = True
-            if value['items'] == 1:
+            if str(value['items']).count("'col'") == 1:
                 error = False
-        if str(current_value['items']).count('col') != str(value['items']).count('col'):
-            error = True
-            if str(value['items']).count('col') == 1:
-                error = False
-
         if error:
             raise ValueError('You cannot change the layout')
 
-    def _ensure_block_order_did_no_change(self, value):
+    def _ensure_block_order_did_not_change(self, value):
         current_value = self.field.get(self.context)
         if str(value) != str(current_value):
             raise ValueError('You cannot change the block order')
-
