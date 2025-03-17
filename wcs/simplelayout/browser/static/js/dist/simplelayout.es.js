@@ -18030,7 +18030,8 @@ const _sfc_main$s = {
           block: blockData,
           items: [],
           loaded: false,
-          loading: false
+          loading: false,
+          allData: {}
         };
       },
       methods: {
@@ -18039,6 +18040,14 @@ const _sfc_main$s = {
             this.fetchData(null, additionalParams);
           }
           return this.items;
+        },
+        async fetchAllData() {
+          let response = await this.axios.get(this.block["@id"], {
+            params: { fullobjects: true, include_items: true }
+          });
+          if (Object.keys(this.allData).length == 0) {
+            this.allData = Object.assign({}, response.data);
+          }
         },
         async fetchData(url, additionalParams) {
           this.loading = true;
