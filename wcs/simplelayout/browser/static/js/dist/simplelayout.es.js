@@ -18008,6 +18008,55 @@ function _sfc_render$s(_ctx, _cache, $props, $setup, $data, $options) {
 var BlockControls = /* @__PURE__ */ _export_sfc(_sfc_main$t, [["render", _sfc_render$s]]);
 const _sfc_main$s = {
   props: {
+    batching: {
+      type: Object,
+      required: true,
+      default: () => {
+        return null;
+      }
+    }
+  },
+  methods: {
+    triggerNext() {
+      this.$emit("next", this.batching.next);
+    },
+    triggerPrevious() {
+      this.$emit("previous", this.batching.prev);
+    }
+  }
+};
+const _hoisted_1$j = {
+  key: 0,
+  "aria-label": "Pagination for this listing"
+};
+const _hoisted_2$h = { class: "pagination" };
+function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
+  return $props.batching ? (openBlock(), createElementBlock("nav", _hoisted_1$j, [
+    createBaseVNode("ul", _hoisted_2$h, [
+      createBaseVNode("li", {
+        class: normalizeClass($props.batching.prev ? "page-item" : "page-item disabled")
+      }, [
+        createBaseVNode("a", {
+          href: "#",
+          onClick: _cache[0] || (_cache[0] = withModifiers((...args) => $options.triggerPrevious && $options.triggerPrevious(...args), ["prevent"])),
+          class: "page-link"
+        }, " Previous ")
+      ], 2),
+      createBaseVNode("li", {
+        class: normalizeClass($props.batching.next ? "page-item" : "page-item disabled")
+      }, [
+        createBaseVNode("a", {
+          href: "#",
+          onClick: _cache[1] || (_cache[1] = withModifiers((...args) => $options.triggerNext && $options.triggerNext(...args), ["prevent"])),
+          class: "page-link"
+        }, " Next ")
+      ], 2)
+    ])
+  ])) : createCommentVNode("", true);
+}
+var Pagination = /* @__PURE__ */ _export_sfc(_sfc_main$s, [["render", _sfc_render$r]]);
+const _sfc_main$r = {
+  props: {
     customTemplate: {
       type: String,
       required: true
@@ -18024,11 +18073,16 @@ const _sfc_main$s = {
   render() {
     const blockData = this.block;
     const component = {
+      components: {
+        Pagination
+      },
       template: this.customTemplate,
       data() {
         return {
           block: blockData,
           items: [],
+          batching: null,
+          items_total: null,
           loaded: false,
           loading: false,
           allData: {}
@@ -18067,12 +18121,24 @@ const _sfc_main$s = {
             if (response.data["items"]) {
               this.items = response.data["items"];
             }
+            if (response.data["batching"]) {
+              this.batching = response.data["batching"];
+            }
+            if (response.data["items_total"]) {
+              this.items_total = response.data["items_total"];
+            }
           } catch (error) {
             this.sl.addErrorMessage(error);
           } finally {
             this.loading = false;
             this.loaded = true;
           }
+        },
+        fetchNext(url) {
+          this.fetchData(url);
+        },
+        fetchPrevious(url) {
+          this.fetchData(url);
         }
       }
     };
@@ -18080,10 +18146,10 @@ const _sfc_main$s = {
   }
 };
 var BlockStructure_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$r = {
+const _sfc_main$q = {
   components: {
     BlockControls,
-    RenderCustomTemplate: _sfc_main$s
+    RenderCustomTemplate: _sfc_main$r
   },
   props: {
     actions: {
@@ -18137,8 +18203,8 @@ const _sfc_main$r = {
     }
   }
 };
-const _hoisted_1$j = { class: "card" };
-const _hoisted_2$h = ["id"];
+const _hoisted_1$i = { class: "card" };
+const _hoisted_2$g = ["id"];
 const _hoisted_3$e = { class: "card-header d-flex" };
 const _hoisted_4$e = ["data-bs-target"];
 const _hoisted_5$d = ["id"];
@@ -18160,13 +18226,13 @@ const _hoisted_13$2 = {
   class: "figure-caption mt-1"
 };
 const _hoisted_14$2 = ["innerHTML"];
-function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockControls = resolveComponent("BlockControls");
   const _component_RenderCustomTemplate = resolveComponent("RenderCustomTemplate");
-  return openBlock(), createElementBlock("div", _hoisted_1$j, [
+  return openBlock(), createElementBlock("div", _hoisted_1$i, [
     createBaseVNode("a", {
       id: $props.block["id"]
-    }, null, 8, _hoisted_2$h),
+    }, null, 8, _hoisted_2$g),
     createBaseVNode("div", _hoisted_3$e, [
       $props.block.collapsable ? (openBlock(), createElementBlock("button", {
         key: 0,
@@ -18229,8 +18295,8 @@ function _sfc_render$r(_ctx, _cache, $props, $setup, $data, $options) {
     renderSlot(_ctx.$slots, "footer")
   ]);
 }
-var BlockStructure = /* @__PURE__ */ _export_sfc(_sfc_main$r, [["render", _sfc_render$r]]);
-const _sfc_main$q = {
+var BlockStructure = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$q]]);
+const _sfc_main$p = {
   components: {
     BlockStructure
   },
@@ -18257,16 +18323,16 @@ const _sfc_main$q = {
     }
   }
 };
-function _sfc_render$q(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockStructure = resolveComponent("BlockStructure");
   return openBlock(), createBlock(_component_BlockStructure, normalizeProps(guardReactiveProps(_ctx.$props)), null, 16);
 }
-var BlockFallbackView = /* @__PURE__ */ _export_sfc(_sfc_main$q, [["render", _sfc_render$q]]);
+var BlockFallbackView = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$p]]);
 var __glob_0_2 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   "default": BlockFallbackView
 }, Symbol.toStringTag, { value: "Module" }));
-const _sfc_main$p = {
+const _sfc_main$o = {
   components: {
     BlockFallbackView
   },
@@ -18303,19 +18369,19 @@ const _sfc_main$p = {
     }
   }
 };
-const _hoisted_1$i = { key: 0 };
-const _hoisted_2$g = { key: 1 };
-function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
+const _hoisted_1$h = { key: 0 };
+const _hoisted_2$f = { key: 1 };
+function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BlockFallbackView = resolveComponent("BlockFallbackView");
-  return $options.getBlockViewComponentByName !== void 0 ? (openBlock(), createElementBlock("div", _hoisted_1$i, [
+  return $options.getBlockViewComponentByName !== void 0 ? (openBlock(), createElementBlock("div", _hoisted_1$h, [
     (openBlock(), createBlock(resolveDynamicComponent($options.getBlockViewComponentByName), normalizeProps(guardReactiveProps(_ctx.$props)), null, 16))
-  ])) : (openBlock(), createElementBlock("div", _hoisted_2$g, [
+  ])) : (openBlock(), createElementBlock("div", _hoisted_2$f, [
     createVNode(_component_BlockFallbackView, normalizeProps(guardReactiveProps(_ctx.$props)), null, 16)
   ]));
 }
-var BlockRenderer = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$p]]);
+var BlockRenderer = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$o]]);
 var RowControls_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$o = {
+const _sfc_main$n = {
   props: {
     index: {
       type: Number,
@@ -18358,8 +18424,8 @@ const _sfc_main$o = {
     }
   }
 };
-const _hoisted_1$h = { class: "btn-group btn-group-xs" };
-const _hoisted_2$f = ["data-row"];
+const _hoisted_1$g = { class: "btn-group btn-group-xs" };
+const _hoisted_2$e = ["data-row"];
 const _hoisted_3$d = ["id"];
 const _hoisted_4$d = /* @__PURE__ */ createBaseVNode("span", {
   "aria-haspopup": "true",
@@ -18372,12 +18438,12 @@ const _hoisted_6$a = [
 ];
 const _hoisted_7$7 = ["aria-labelledby"];
 const _hoisted_8$6 = ["onClick"];
-function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("div", {
     class: "sl-add-row-controls",
     style: normalizeStyle(`z-index:${1e3 - $props.index * 2}`)
   }, [
-    createBaseVNode("div", _hoisted_1$h, [
+    createBaseVNode("div", _hoisted_1$g, [
       createBaseVNode("button", {
         type: "button",
         class: "btn btn-primary",
@@ -18391,7 +18457,7 @@ function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
         title: "Edit row settings"
       }, [
         createBaseVNode("img", normalizeProps(guardReactiveProps($options.editIcon)), null, 16)
-      ], 8, _hoisted_2$f)) : createCommentVNode("", true),
+      ], 8, _hoisted_2$e)) : createCommentVNode("", true),
       createBaseVNode("button", {
         class: "btn btn-secondary dropdown-toggle",
         type: "button",
@@ -18419,7 +18485,7 @@ function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ], 4);
 }
-var RowControls = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$o]]);
+var RowControls = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$n]]);
 function ColWidths(asMapping) {
   const widths = [
     { cols: 12, label: "100%" },
@@ -18435,7 +18501,7 @@ function ColWidths(asMapping) {
   return widths;
 }
 var ColControls_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$n = {
+const _sfc_main$m = {
   setup() {
     const sl = useSimplelayoutStore();
     return { sl };
@@ -18497,19 +18563,19 @@ const _sfc_main$n = {
     }
   }
 };
-const _hoisted_1$g = { class: "btn-group btn-group-xs" };
-const _hoisted_2$e = ["id"];
+const _hoisted_1$f = { class: "btn-group btn-group-xs" };
+const _hoisted_2$d = ["id"];
 const _hoisted_3$c = ["aria-labelledby"];
 const _hoisted_4$c = ["onClick"];
 const _hoisted_5$b = { class: "btn-group btn-group-xs sl-row-controls" };
-function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock(Fragment, null, [
     $props.currentWidth ? (openBlock(), createElementBlock("div", {
       key: 0,
       class: "sl-remove-col-controls",
       style: normalizeStyle(`z-index:${1e3 - 1 - $props.rowIndex * 2}`)
     }, [
-      createBaseVNode("div", _hoisted_1$g, [
+      createBaseVNode("div", _hoisted_1$f, [
         !$options.hasBlocks ? (openBlock(), createElementBlock("button", {
           key: 0,
           class: "btn btn-xs btn-danger",
@@ -18523,7 +18589,7 @@ function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
           "data-bs-toggle": "dropdown",
           "data-bs-auto-close": "true",
           "aria-expanded": "false"
-        }, toDisplayString(_ctx.$i18n("Width")) + ": " + toDisplayString($options.widthsMapping[$props.currentWidth]), 9, _hoisted_2$e),
+        }, toDisplayString(_ctx.$i18n("Width")) + ": " + toDisplayString($options.widthsMapping[$props.currentWidth]), 9, _hoisted_2$d),
         createBaseVNode("ul", {
           class: "dropdown-menu",
           "aria-labelledby": $options.dropdownId
@@ -18555,7 +18621,7 @@ function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
     ], 2)
   ], 64);
 }
-var ColControls = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$n]]);
+var ColControls = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$m]]);
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 function getDefaultExportFromCjs(x) {
   return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
@@ -28775,7 +28841,7 @@ function copyDataForSubmit(name) {
   }
 }
 var BaseModal_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$m = {
+const _sfc_main$l = {
   name: "base-modal",
   props: {
     cleanUpBody: {
@@ -28959,14 +29025,14 @@ const _sfc_main$m = {
     }
   }
 };
-const _hoisted_1$f = {
+const _hoisted_1$e = {
   class: "modal fade sl-base-modal",
   tabindex: "-1",
   "aria-labelledby": "modal-title",
   "aria-hidden": "true",
   ref: "sl-base-modal"
 };
-const _hoisted_2$d = { class: "modal-dialog modal-dialog-scrollable modal-xl" };
+const _hoisted_2$c = { class: "modal-dialog modal-dialog-scrollable modal-xl" };
 const _hoisted_3$b = { class: "modal-content position-relative" };
 const _hoisted_4$b = { class: "modal-header" };
 const _hoisted_5$a = {
@@ -28994,9 +29060,9 @@ const _hoisted_9$5 = /* @__PURE__ */ createBaseVNode("div", { class: "modal-foot
     value: "Cancel"
   }, " Close ")
 ], -1);
-function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$f, [
-    createBaseVNode("div", _hoisted_2$d, [
+function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$e, [
+    createBaseVNode("div", _hoisted_2$c, [
       createBaseVNode("div", _hoisted_3$b, [
         createBaseVNode("div", _hoisted_4$b, [
           createBaseVNode("h4", _hoisted_5$a, [
@@ -29014,8 +29080,8 @@ function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ], 512);
 }
-var BaseModal = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$m]]);
-const _sfc_main$l = {
+var BaseModal = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l]]);
+const _sfc_main$k = {
   name: "add-modal",
   components: {
     BaseModal
@@ -29064,15 +29130,15 @@ const _sfc_main$l = {
     }
   }
 };
-function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     storeAction: $options.storeAction,
     ref: "modal"
   }, null, 8, ["storeAction"]);
 }
-var AddBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l]]);
-const _sfc_main$k = {
+var AddBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k]]);
+const _sfc_main$j = {
   name: "edit-modal",
   components: {
     BaseModal
@@ -29111,15 +29177,15 @@ const _sfc_main$k = {
     }
   }
 };
-function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     storeAction: $options.storeAction,
     ref: "modal"
   }, null, 8, ["storeAction"]);
 }
-var EditBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k]]);
-const _sfc_main$j = {
+var EditBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j]]);
+const _sfc_main$i = {
   name: "delete-modal",
   components: {
     BaseModal
@@ -29158,15 +29224,15 @@ const _sfc_main$j = {
     }
   }
 };
-function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     storeAction: $options.storeAction,
     ref: "modal"
   }, null, 8, ["storeAction"]);
 }
-var DeleteBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j]]);
-const _sfc_main$i = {
+var DeleteBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i]]);
+const _sfc_main$h = {
   name: "info-modal",
   components: {
     BaseModal
@@ -29206,15 +29272,15 @@ const _sfc_main$i = {
     }
   }
 };
-function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     modalOptions: $data.options,
     ref: "modal"
   }, null, 8, ["modalOptions"]);
 }
-var InfoBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i]]);
-const _sfc_main$h = {
+var InfoBlockModal = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h]]);
+const _sfc_main$g = {
   name: "upload-modal",
   components: {
     BaseModal
@@ -29267,11 +29333,11 @@ const _sfc_main$h = {
     }
   }
 };
-const _hoisted_1$e = {
+const _hoisted_1$d = {
   class: "upload",
   ref: "upload"
 };
-function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     cleanUpBody: false,
@@ -29281,13 +29347,13 @@ function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
       createTextVNode("Upload")
     ]),
     body: withCtx(() => [
-      createBaseVNode("div", _hoisted_1$e, null, 512)
+      createBaseVNode("div", _hoisted_1$d, null, 512)
     ]),
     _: 1
   }, 512);
 }
-var UploadModal = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h]]);
-const _sfc_main$g = {
+var UploadModal = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$g]]);
+const _sfc_main$f = {
   name: "edit-row-modal",
   components: {
     BaseModal
@@ -29324,14 +29390,14 @@ const _sfc_main$g = {
     }
   }
 };
-function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_BaseModal = resolveComponent("BaseModal");
   return openBlock(), createBlock(_component_BaseModal, {
     storeAction: $options.storeAction,
     ref: "modal"
   }, null, 8, ["storeAction"]);
 }
-var EditRowModal = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$g]]);
+var EditRowModal = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$f]]);
 var vuedraggable_umd = { exports: {} };
 var require$$0 = /* @__PURE__ */ getAugmentedNamespace(vue_esmBundler);
 /**!
@@ -35644,7 +35710,7 @@ var require$$1 = /* @__PURE__ */ getAugmentedNamespace(sortable_esm);
   });
 })(vuedraggable_umd);
 var draggable = /* @__PURE__ */ getDefaultExportFromCjs(vuedraggable_umd.exports);
-const _sfc_main$f = {
+const _sfc_main$e = {
   setup() {
     const sl = useSimplelayoutStore();
     return { sl };
@@ -35668,11 +35734,11 @@ const _sfc_main$f = {
     }
   }
 };
-const _hoisted_1$d = {
+const _hoisted_1$c = {
   class: "toast-container position-fixed top-0 start-50 p-3 mt-8",
   ref: "toasts"
 };
-const _hoisted_2$c = { class: "toast-header" };
+const _hoisted_2$b = { class: "toast-header" };
 const _hoisted_3$a = { class: "me-auto" };
 const _hoisted_4$a = /* @__PURE__ */ createBaseVNode("small", { class: "text-muted" }, "just now", -1);
 const _hoisted_5$9 = /* @__PURE__ */ createBaseVNode("button", {
@@ -35682,8 +35748,8 @@ const _hoisted_5$9 = /* @__PURE__ */ createBaseVNode("button", {
   "aria-label": "Close"
 }, null, -1);
 const _hoisted_6$8 = { class: "toast-body" };
-function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
-  return openBlock(), createElementBlock("div", _hoisted_1$d, [
+function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", _hoisted_1$c, [
     (openBlock(true), createElementBlock(Fragment, null, renderList($setup.sl.errors, (message, index2) => {
       return openBlock(), createElementBlock("div", {
         class: normalizeClass(`toast fade show ${$options.getTypeClass(message)}`),
@@ -35694,7 +35760,7 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
         "data-has-event": false,
         key: index2
       }, [
-        createBaseVNode("div", _hoisted_2$c, [
+        createBaseVNode("div", _hoisted_2$b, [
           createBaseVNode("strong", _hoisted_3$a, toDisplayString(message.title), 1),
           _hoisted_4$a,
           _hoisted_5$9
@@ -35704,9 +35770,9 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
     }), 128))
   ], 512);
 }
-var ErrorToasts = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$f]]);
+var ErrorToasts = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e]]);
 var App_vue_vue_type_style_index_0_lang = "";
-const _sfc_main$e = {
+const _sfc_main$d = {
   components: {
     BlockRenderer,
     RowControls,
@@ -35896,8 +35962,8 @@ const _sfc_main$e = {
     }
   }
 };
-const _hoisted_1$c = { class: "sl-row" };
-const _hoisted_2$b = { class: "row" };
+const _hoisted_1$b = { class: "sl-row" };
+const _hoisted_2$a = { class: "row" };
 const _hoisted_3$9 = {
   key: 0,
   class: "sl-block"
@@ -35921,7 +35987,7 @@ const _hoisted_6$7 = /* @__PURE__ */ createBaseVNode("div", { class: "text-cente
 const _hoisted_7$5 = [
   _hoisted_6$7
 ];
-function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_ErrorToasts = resolveComponent("ErrorToasts");
   const _component_RowControls = resolveComponent("RowControls");
   const _component_ColControls = resolveComponent("ColControls");
@@ -35944,13 +36010,13 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
           class: normalizeClass(`${$options.loadingClass}`),
           key: `layout_${rowIndex}`
         }, [
-          createBaseVNode("div", _hoisted_1$c, [
+          createBaseVNode("div", _hoisted_1$b, [
             $setup.sl.canModify && $setup.sl.canEditColumns ? (openBlock(), createBlock(_component_RowControls, {
               key: 0,
               index: rowIndex,
               openEditRowModal: $options.openEditRowModal
             }, null, 8, ["index", "openEditRowModal"])) : createCommentVNode("", true),
-            createBaseVNode("div", _hoisted_2$b, [
+            createBaseVNode("div", _hoisted_2$a, [
               (openBlock(true), createElementBlock(Fragment, null, renderList(row2.items, (column2, columnIndex) => {
                 return openBlock(), createElementBlock("div", {
                   key: `column_${columnIndex}_${rowIndex}`,
@@ -36018,7 +36084,7 @@ function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
     createVNode(_component_EditRowModal, { ref: "edit-row-modal" }, null, 512)
   ], 64);
 }
-var App = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e]]);
+var App = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d]]);
 function _typeof(e) {
   return (_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(e2) {
     return typeof e2;
@@ -36067,55 +36133,6 @@ function getVueVersion(e) {
 "object" == ("undefined" == typeof exports ? "undefined" : _typeof(exports)) ? module.exports = plugin : "function" == typeof define && define.amd ? define([], function() {
   return plugin;
 }) : window.Vue && window.axios && window.Vue.use && Vue.use(plugin, window.axios);
-const _sfc_main$d = {
-  props: {
-    batching: {
-      type: Object,
-      required: true,
-      default: () => {
-        return null;
-      }
-    }
-  },
-  methods: {
-    triggerNext() {
-      this.$emit("next", this.batching.next);
-    },
-    triggerPrevious() {
-      this.$emit("previous", this.batching.prev);
-    }
-  }
-};
-const _hoisted_1$b = {
-  key: 0,
-  "aria-label": "Pagination for this listing"
-};
-const _hoisted_2$a = { class: "pagination" };
-function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
-  return $props.batching ? (openBlock(), createElementBlock("nav", _hoisted_1$b, [
-    createBaseVNode("ul", _hoisted_2$a, [
-      createBaseVNode("li", {
-        class: normalizeClass($props.batching.prev ? "page-item" : "page-item disabled")
-      }, [
-        createBaseVNode("a", {
-          href: "#",
-          onClick: _cache[0] || (_cache[0] = withModifiers((...args) => $options.triggerPrevious && $options.triggerPrevious(...args), ["prevent"])),
-          class: "page-link"
-        }, " Previous ")
-      ], 2),
-      createBaseVNode("li", {
-        class: normalizeClass($props.batching.next ? "page-item" : "page-item disabled")
-      }, [
-        createBaseVNode("a", {
-          href: "#",
-          onClick: _cache[1] || (_cache[1] = withModifiers((...args) => $options.triggerNext && $options.triggerNext(...args), ["prevent"])),
-          class: "page-link"
-        }, " Next ")
-      ], 2)
-    ])
-  ])) : createCommentVNode("", true);
-}
-var Pagination = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d]]);
 var AllPurposeListingBlock_vue_vue_type_style_index_0_lang = "";
 const _sfc_main$c = {
   components: {

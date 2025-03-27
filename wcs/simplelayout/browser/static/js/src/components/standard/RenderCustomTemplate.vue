@@ -1,6 +1,7 @@
 <script>
 import { h } from "vue";
 import { useSimplelayoutStore } from "@/store.js";
+import Pagination from "@/components/Pagination.vue";
 
 export default {
   props: {
@@ -20,11 +21,16 @@ export default {
   render() {
     const blockData = this.block;
     const component = {
+      components: {
+        Pagination,
+      },
       template: this.customTemplate,
       data() {
         return {
           block: blockData,
           items: [],
+          batching: null,
+          items_total: null,
           loaded: false,
           loading: false,
           allData: {},
@@ -63,12 +69,24 @@ export default {
             if (response.data["items"]) {
               this.items = response.data["items"];
             }
+            if (response.data["batching"]) {
+              this.batching = response.data["batching"];
+            }
+            if (response.data["items_total"]) {
+              this.items_total = response.data["items_total"];
+            }
           } catch (error) {
             this.sl.addErrorMessage(error);
           } finally {
             this.loading = false;
             this.loaded = true;
           }
+        },
+        fetchNext(url) {
+          this.fetchData(url);
+        },
+        fetchPrevious(url) {
+          this.fetchData(url);
         },
       },
     };
