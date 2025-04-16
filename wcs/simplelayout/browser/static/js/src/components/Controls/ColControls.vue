@@ -38,7 +38,7 @@
     </div>
   </div>
 
-  <div :class="cssClasses">
+  <div :class="cssClasses" v-if="showAddColButton">
     <div class="btn-group btn-group-xs sl-row-controls">
       <button
         type="button"
@@ -90,6 +90,13 @@ export default {
     },
   },
   computed: {
+    showAddColButton() {
+      if (Object.keys(this.sl.defaultConfig).includes("add-single-col")) {
+        return this.sl.defaultConfig["add-single-col"];
+      } else {
+        return true;
+      }
+    },
     widths() {
       return ColWidths();
     },

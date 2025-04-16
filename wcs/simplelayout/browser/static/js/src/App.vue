@@ -249,6 +249,9 @@ export default {
     this.sl.setBaseUrl(
       this.$refs.root.parentElement.getAttribute("data-base-url")
     );
+    this.sl.setDefaultConfig(
+      this.$refs.root.parentElement.getAttribute("data-default-config")
+    );
     this.sl.setAuthenticatorToken(
       this.$refs.root.parentElement.getAttribute("data-token")
     );

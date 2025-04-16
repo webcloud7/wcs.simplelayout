@@ -20,6 +20,14 @@ class SimplelayoutView(BrowserView):
     def _translate(self, msg):
         return translate(msg, context=self.request)
 
+    def get_default_config(self):
+        config = api.portal.get_registry_record(
+            'wcs.simplelayout.config.config',
+            default={}
+        )
+
+        return json.dumps(config.get(self.context.portal_type, {}))
+
     def can_modify(self):
         return api.user.has_permission('Modify portal content', obj=self.context)
 
@@ -27,7 +35,8 @@ class SimplelayoutView(BrowserView):
         return api.user.has_permission('wcs.simplelayout: Manage columns', obj=self.context)
 
     def can_edit_row_data(self):
-        schema_xml = api.portal.get_registry_record('wcs.simplelayout.row_configuration.ContentPage.row_configuration', default='')
+        schema_xml = api.portal.get_registry_record(
+            'wcs.simplelayout.row_configuration.ContentPage.row_configuration', default='')
         return self.can_edit_columns() and 'field' in schema_xml
 
     def can_add_blocks(self):
