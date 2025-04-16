@@ -14,7 +14,8 @@
                              data-can-addblocks view/can_add_blocks;
                              data-can-edit-columns view/can_edit_columns;
                              data-can-edit-row-data view/can_edit_row_data;
-                             data-custom-templates view/custom_templates"
+                             data-custom-templates view/custom_templates;
+                             data-default-config view/get_default_config"
                              id="app" class="simplelayout-app"></div>
         <tal:script replace="structure view/script_resource" />
     </div>
