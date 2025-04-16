@@ -7,6 +7,7 @@ export const useSimplelayoutStore = defineStore({
   // id is required so that Pinia can connect the store to the devtools
   id: "simplelayoutStore",
   state: () => ({
+    defaultConfig: {},
     layouts: { items: [row(1)] },
     blocks: {},
     addableTypes: [],
@@ -54,6 +55,9 @@ export const useSimplelayoutStore = defineStore({
 
     setAuthenticatorToken(token) {
       this.authToken = token;
+    },
+    setDefaultConfig(config) {
+      this.defaultConfig = JSON.parse(config);
     },
     setBaseUrl(url) {
       this.baseURL = url;
