@@ -95,7 +95,8 @@ export const useSimplelayoutStore = defineStore({
 
     async fetchContentTypeTitles() {
       const response = await this.axios.get(
-        this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.PortalTypes?b_size=100"
+        this.portalURL +
+          "/++api++/@vocabularies/plone.app.vocabularies.PortalTypes?b_size=100"
       );
       response.data.items.forEach((item) => {
         this.contentTypeTitles[item.token] = item.title
@@ -111,7 +112,8 @@ export const useSimplelayoutStore = defineStore({
       }
 
       const response = await this.axios.get(
-        this.portalURL + "/++api++/@vocabularies/plone.app.vocabularies.WorkflowStates"
+        this.portalURL +
+          "/++api++/@vocabularies/plone.app.vocabularies.WorkflowStates"
       );
       response.data.items.forEach((item) => {
         this.workflowTitles[item.token] = item.title
@@ -145,7 +147,7 @@ export const useSimplelayoutStore = defineStore({
         // headers: {Prefer: "return=representation"} only solves half the problem
         if (!readonly) {
           await this.axios.patch(this.baseApiURL, data);
-          console.info('layout updated')
+          console.info("layout updated");
         }
         const response = await this.axios.get(this.baseApiURL, {
           params: this.params,
@@ -179,7 +181,12 @@ export const useSimplelayoutStore = defineStore({
       } else {
         const colWidth = 12 / (row.length - 1);
         row.splice(colIndex, 1);
-        row.map((col) => (col.width = colWidth));
+        if (
+          "add-single-col" in this.defaultConfig &&
+          this.defaultConfig["add-single-col"]
+        ) {
+          row.map((col) => (col.width = colWidth));
+        }
       }
       const data = { slblocks_layout: { items: newLayouts } };
       this.modifyLayouts(data);
@@ -210,7 +217,9 @@ export const useSimplelayoutStore = defineStore({
     },
     async modifyBlock(data) {
       this.blocks[data.UID] = data;
-      const SimplelayoutBlockUpdateEvent = new Event("simplelayout-block-update");
+      const SimplelayoutBlockUpdateEvent = new Event(
+        "simplelayout-block-update"
+      );
       document.body
         .querySelector("#app.simplelayout-app")
         .dispatchEvent(SimplelayoutBlockUpdateEvent);

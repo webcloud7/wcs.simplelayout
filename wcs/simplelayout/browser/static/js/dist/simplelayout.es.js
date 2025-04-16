@@ -11788,7 +11788,9 @@ const useSimplelayoutStore = defineStore({
       } else {
         const colWidth = 12 / (row2.length - 1);
         row2.splice(colIndex, 1);
-        row2.map((col) => col.width = colWidth);
+        if ("add-single-col" in this.defaultConfig && this.defaultConfig["add-single-col"]) {
+          row2.map((col) => col.width = colWidth);
+        }
       }
       const data2 = { slblocks_layout: { items: newLayouts } };
       this.modifyLayouts(data2);
@@ -11817,7 +11819,9 @@ const useSimplelayoutStore = defineStore({
     },
     async modifyBlock(data2) {
       this.blocks[data2.UID] = data2;
-      const SimplelayoutBlockUpdateEvent = new Event("simplelayout-block-update");
+      const SimplelayoutBlockUpdateEvent = new Event(
+        "simplelayout-block-update"
+      );
       document.body.querySelector("#app.simplelayout-app").dispatchEvent(SimplelayoutBlockUpdateEvent);
     },
     async deleteBlock(position) {
