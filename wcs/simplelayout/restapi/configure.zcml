@@ -27,5 +27,7 @@
       name="@create-link-mediafolder"
       />
 
+  <adapter factory=".schema.FixedSerializeSchemaToJson" />
+
 </configure>
  
