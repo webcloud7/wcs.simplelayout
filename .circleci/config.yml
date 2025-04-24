@@ -18,7 +18,7 @@ jobs:
   build_backend:
     resource_class: medium
     docker:
-      - image: webcloud7/plone-test:6.1.0rc1.1-py312-node20
+      - image: webcloud7/plone-test:6.1.1-py312-node20
     environment:
       PIP_FIND_LINKS: /wheelhouse/
     steps:
@@ -32,7 +32,7 @@ jobs:
   test_backend:
     resource_class: medium
     docker:
-      - image: webcloud7/plone-test:6.1.0rc1.1-py312-node20
+      - image: webcloud7/plone-test:6.1.1-py312-node20
     environment:
       zope_i18n_compile_mo_files: "true"
     steps:
@@ -43,7 +43,7 @@ jobs:
   test_frontend:
     resource_class: medium
     docker:
-      - image: webcloud7/plone-test:6.1.0rc1.1-py312-node20
+      - image: webcloud7/plone-test:6.1.1-py312-node20
     environment:
       zope_i18n_compile_mo_files: "true"
       WSGI_SERVER_PORT: 65035
