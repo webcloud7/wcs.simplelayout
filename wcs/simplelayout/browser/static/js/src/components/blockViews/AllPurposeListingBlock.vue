@@ -133,6 +133,9 @@ export default {
     async fetchPrevious(url) {
       this.fetchData(url);
     },
+    goto(url) {
+      window.location.href = url;
+    },
   },
   computed: {
     loadingClass() {
