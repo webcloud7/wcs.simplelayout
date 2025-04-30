@@ -462,36 +462,38 @@ class AllPurposeListingBlockSerializer(DefaultBlockSerializer):
     def __call__(self, version=None, include_items=True, for_cache=False):
         result = super().__call__(version=version, for_cache=for_cache)
         # No support for always include items
-        if for_cache:
+        if for_cache and not IBlockAlwaysIncludeItems.providedBy(self.context):
             return result
 
         include_items = self.request.form.get("include_items", include_items)
         include_items = boolean_value(include_items)
-        if include_items:
-            results = self.context.results(batch=False)
-            batch = HypermediaBatch(self.request, results)
-
-            if not self.request.form.get("fullobjects"):
-                result["@id"] = batch.canonical_url
-            result["items_total"] = batch.items_total
-            if batch.links:
-                result["batching"] = batch.links
-
-            if "fullobjects" in list(self.request.form):
-                result["items"] = [
-                    getMultiAdapter(
-                        (brain.getObject(), self.request), ISerializeToJson
-                    )(include_items=False)  # Prevent recursion
-                    for brain in batch
-                ]
-            else:
-                result["items"] = [
-                    getMultiAdapter((brain, self.request), ISerializeToJsonSummary)()
-                    for brain in batch
-                ]
-
+        if include_items or IBlockAlwaysIncludeItems.providedBy(self.context):
+            self._add_items(result)
         result['@id'] = self.context.absolute_url()
         return result
+
+    def _add_items(self, result):
+        results = self.context.results(batch=False)
+        batch = HypermediaBatch(self.request, results)
+
+        if not self.request.form.get("fullobjects"):
+            result["@id"] = batch.canonical_url
+        result["items_total"] = batch.items_total
+        if batch.links:
+            result["batching"] = batch.links
+
+        if "fullobjects" in list(self.request.form):
+            result["items"] = [
+                getMultiAdapter(
+                    (brain.getObject(), self.request), ISerializeToJson
+                )(include_items=False)  # Prevent recursion
+                for brain in batch
+            ]
+        else:
+            result["items"] = [
+                getMultiAdapter((brain, self.request), ISerializeToJsonSummary)()
+                for brain in batch
+            ]
 
 
 CONVERT_TOKENS_CUSTOMVIEWFIELDS = {
