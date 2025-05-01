@@ -474,7 +474,17 @@ class AllPurposeListingBlockSerializer(DefaultBlockSerializer):
 
     def _add_items(self, result):
         results = self.context.results(batch=False)
+
+        original_b_size = self.request.form.get('b_size', None)
+        if original_b_size is None:
+            self.request.form['b_size'] = self.context.item_count
+
         batch = HypermediaBatch(self.request, results)
+
+        if original_b_size is None:
+            del self.request.form['b_size']
+        else:
+            self.request.form['b_size'] = original_b_size
 
         if not self.request.form.get("fullobjects"):
             result["@id"] = batch.canonical_url
