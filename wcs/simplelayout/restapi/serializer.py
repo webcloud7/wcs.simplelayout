@@ -118,6 +118,8 @@ def insert_simplelayout_blocks(context, result, include_items):
 
     slblocks = ISimplelayout(context).slblocks_cache
     is_enabled = os.environ.get('SIMPLELAYOUT_DISABLE_BLOCK_CACHE', None) != '1'
+    print(os.environ.get('SIMPLELAYOUT_DISABLE_BLOCK_CACHE', None))
+    print(os.environ)
     if api.user.is_anonymous() and slblocks and is_enabled:
         result['slblocks'] = transform_urls(slblocks)
     else:
