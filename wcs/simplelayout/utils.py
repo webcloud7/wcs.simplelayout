@@ -1,5 +1,4 @@
 from AccessControl.SecurityManagement import getSecurityManager
-from contextlib import contextmanager
 from copy import deepcopy
 from DateTime import DateTime
 from lxml import etree
@@ -12,7 +11,6 @@ from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
 from zope.component import getUtility
 from zope.globalrequest import getRequest
 import logging
-import os
 
 
 LOG = logging.getLogger('simplelayout')
