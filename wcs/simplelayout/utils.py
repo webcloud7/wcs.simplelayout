@@ -151,13 +151,6 @@ def add_layout_properties(obj, state):
                 row['properties']['single_block'] = False
 
 
-@contextmanager
-def disable_block_cache():
-    os.environ['SIMPLELAYOUT_DISABLE_BLOCK_CACHE'] = '1'
-    yield
-    del os.environ['SIMPLELAYOUT_DISABLE_BLOCK_CACHE']
-
-
 def convert_table_to_json(table):
 
     def _convert_style_attr(attrs):

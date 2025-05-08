@@ -116,13 +116,8 @@ def insert_simplelayout_blocks(context, result, include_items):
         result['slblocks'] = {}
         return
 
-    slblocks = ISimplelayout(context).slblocks_cache
-    is_enabled = os.environ.get('SIMPLELAYOUT_DISABLE_BLOCK_CACHE', None) != '1'
-    if api.user.is_anonymous() and slblocks and is_enabled:
-        result['slblocks'] = transform_urls(slblocks)
-    else:
-        blocks = get_blocks(context)
-        result['slblocks'] = {block['UID']: block for block in blocks}
+    blocks = get_blocks(context)
+    result['slblocks'] = {block['UID']: block for block in blocks}
 
 
 def expand_by_querystring(context, request, result):
