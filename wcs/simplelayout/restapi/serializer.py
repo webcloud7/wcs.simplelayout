@@ -2,13 +2,10 @@ from datetime import datetime
 from datetime import timedelta
 from plone import api
 from plone.app.contenttypes.behaviors.collection import ISyndicatableCollection
-from plone.autoform.interfaces import READ_PERMISSIONS_KEY
 from plone.dexterity.interfaces import IDexterityContent
-from plone.dexterity.utils import iterSchemata
 from plone.restapi.batching import HypermediaBatch
 from plone.restapi.deserializer import boolean_value
 from plone.restapi.interfaces import IFieldSerializer
-from plone.restapi.interfaces import IObjectPrimaryFieldTarget
 from plone.restapi.interfaces import ISerializeToJson
 from plone.restapi.interfaces import ISerializeToJsonSummary
 from plone.restapi.serializer.converters import datetimelike_to_iso
@@ -18,10 +15,7 @@ from plone.restapi.serializer.dxcontent import SerializeToJson
 from plone.restapi.serializer.dxfields import CollectionFieldSerializer
 from plone.restapi.serializer.dxfields import DefaultFieldSerializer
 from plone.restapi.serializer.expansion import expandable_elements
-from plone.restapi.serializer.utils import get_portal_type_title
-from plone.restapi.services.locking import lock_info
 from plone.schema import IJSONField
-from plone.supermodel.utils import mergedTaggedValueDict
 from Products.CMFCore.utils import getToolByName
 from urllib import parse
 from wcs.simplelayout.contenttypes.behaviors import IBlockAlwaysIncludeItems
@@ -40,25 +34,22 @@ from wcs.simplelayout.utils import convert_table_to_json
 from wcs.simplelayout.utils import list_blocks_from_page
 from zope.component import adapter
 from zope.component import getMultiAdapter
-from zope.component import queryMultiAdapter
 from zope.interface import implementer
 from zope.interface import Interface
-from zope.schema import getFields
 from zope.schema.interfaces import IList
 import json
 import logging
-import os
 
 
 BLOCKS_SCHEMA = json.dumps({"type": "object", "properties": {}})
 LOG = logging.getLogger(__name__)
 
 
-def get_blocks(context, for_cache=False):
+def get_blocks(context):
     blocks = []
     for obj in list_blocks_from_page(context):
         block_data = getMultiAdapter((obj, context.REQUEST), ISerializeToJson)(
-            include_items=False, for_cache=for_cache,
+            include_items=False,
         )
         blocks.append(block_data)
     return blocks
@@ -66,63 +57,6 @@ def get_blocks(context, for_cache=False):
 
 def get_portal_url():
     return api.portal.get().absolute_url()
-
-
-def transform_urls(slblocks):
-    """Replaces the portal URL from the cached block representation with the
-    portal url used in this request"""
-    if not slblocks:
-        return slblocks
-
-    transformed = {}
-    current_portal_url = get_portal_url()
-    for uid, values in slblocks.items():
-        portal_url = values.get('@portal_url')
-        transformed[uid] = json.loads(
-            json.dumps(values).replace(portal_url, current_portal_url)
-        )
-    return transformed
-
-
-def insert_simplelayout_blocks(context, result, include_items):
-    """
-    Enriches the default result for simpelayout pages with slblocks.
-
-    {
-        "uuid1": {
-            "@type": "Block",
-            "Attr": "value"
-        },
-        "uuid2": {
-            "@type": "Block",
-            "Attr": "value"
-        },
-        "uuid3": {
-            "@type": "Block",
-            "Attr": "value"
-        },
-    }
-    """
-
-    if not include_items:
-        result['slblocks'] = {}
-        return
-
-    # Only insert blocks if the request was made on the content itself.
-    # This avoids a possible max recursion depth exeeded error on
-    # listings, like collections.
-    actual_url = context.REQUEST.ACTUAL_URL.replace('/++api++', '')
-    if context.absolute_url() != actual_url.removesuffix('/'):
-        result['slblocks'] = {}
-        return
-
-    slblocks = ISimplelayout(context).slblocks_cache
-    is_enabled = os.environ.get('SIMPLELAYOUT_DISABLE_BLOCK_CACHE', None) != '1'
-    if api.user.is_anonymous() and slblocks and is_enabled:
-        result['slblocks'] = transform_urls(slblocks)
-    else:
-        blocks = get_blocks(context)
-        result['slblocks'] = {block['UID']: block for block in blocks}
 
 
 def expand_by_querystring(context, request, result):
@@ -229,63 +163,51 @@ class SimplelayoutSerializer(SerializeToJson):
                 ]
 
         expand_by_querystring(self.context, self.request, result)
-        insert_simplelayout_blocks(self.context, result, include_items)
+        result['slblocks'] = self.get_sl_blocks(include_items)
         add_layout_properties(self.context, result)
-
         return result
+
+    def get_sl_blocks(self, include_items):
+        """
+        Enriches the default result for simpelayout pages with slblocks.
+
+        {
+            "uuid1": {
+                "@type": "Block",
+                "Attr": "value"
+            },
+            "uuid2": {
+                "@type": "Block",
+                "Attr": "value"
+            },
+            "uuid3": {
+                "@type": "Block",
+                "Attr": "value"
+            },
+        }
+        """
+        if not include_items:
+            return {}
+
+        # Only insert blocks if the request was made on the content itself.
+        # This avoids a possible max recursion depth exeeded error on
+        # listings, like collections.
+        actual_url = self.context.REQUEST.ACTUAL_URL.replace('/++api++', '')
+        if self.context.absolute_url() != actual_url.removesuffix('/'):
+            return {}
+
+        return {block['UID']: block for block in get_blocks(self.context)}
 
 
 @implementer(ISerializeToJson)
 @adapter(IBlockMarker, Interface)
 class DefaultBlockSerializer(SerializeFolderToJson):
-    """Serializer, which uses the restapi default serializer (slow) but can also
-    return minimal set of data for caching purposes.
+    """Serializer, which can include its own items by default
     """
-    def __call__(self, version=None, include_items=True, for_cache=False):
-        if not for_cache or IBlockAlwaysIncludeItems.providedBy(self.context):
-            result = super().__call__(version=version, include_items=include_items)
+    def __call__(self, version=None, include_items=True):
+        result = super().__call__(version=version, include_items=include_items)
+        if not include_items:
             self._add_items(result)
-            return result
-
-        # Optimized version for caching purposes
-        obj = self.context
-        result = {
-            # '@context': 'http://www.w3.org/ns/hydra/context.jsonld',
-            "@portal_url": api.portal.get().absolute_url(),
-            "@id": obj.absolute_url(),
-            "id": obj.id,
-            "@type": obj.portal_type,
-            "type_title": get_portal_type_title(obj.portal_type),
-            "created": json_compatible(obj.created()),
-            "modified": json_compatible(obj.modified()),
-            "UID": obj.UID(),
-            "is_folderish": False,
-        }
-
-        result.update({"lock": lock_info(obj)})
-
-        # Insert field values
-        for schema in iterSchemata(self.context):
-            read_permissions = mergedTaggedValueDict(schema, READ_PERMISSIONS_KEY)
-
-            for name, field in getFields(schema).items():
-                if read_permissions.get(name):
-                    # Ignore all fields with any read permission by default
-                    # This cannot be cached
-                    continue
-
-                # serialize the field
-                serializer = queryMultiAdapter(
-                    (field, obj, self.request), IFieldSerializer
-                )
-                value = serializer()
-                result[json_compatible(name)] = value
-
-        target_url = getMultiAdapter(
-            (self.context, self.request), IObjectPrimaryFieldTarget
-        )()
-        if target_url:
-            result["targetUrl"] = target_url
         return result
 
     def _add_items(self, result):
@@ -309,13 +231,8 @@ class DefaultBlockSerializer(SerializeFolderToJson):
 @implementer(ISerializeToJson)
 @adapter(IBlockNewsOptions, Interface)
 class NewsListingBlockSerializer(DefaultBlockSerializer):
-    def __call__(self, version=None, include_items=True, for_cache=False):
-        result = super().__call__(version=version, for_cache=for_cache)
-
-        # No support for always include items
-        if for_cache:
-            return result
-
+    def __call__(self, version=None, include_items=True):
+        result = super().__call__(version=version)
         include_items = self.request.form.get("include_items", include_items)
         include_items = boolean_value(include_items)
         if include_items:
@@ -357,12 +274,8 @@ class FileBlockSortOptionsSerializer(DefaultBlockSerializer):
 
     behavior = IFileBlockSortOptions
 
-    def __call__(self, version=None, include_items=True, for_cache=False):
-        result = super().__call__(version=version, for_cache=for_cache)
-
-        if for_cache and not IBlockAlwaysIncludeItems.providedBy(self.context):
-            return result
-
+    def __call__(self, version=None, include_items=True):
+        result = super().__call__(version=version)
         include_items = self.request.form.get("include_items", include_items)
         include_items = boolean_value(include_items)
         if include_items or IBlockAlwaysIncludeItems.providedBy(self.context):
@@ -459,10 +372,10 @@ class AllPurposeListingBlockSerializer(DefaultBlockSerializer):
     # Main difference is, that this block always returns the @id of of itself
     # and not the canonical id
     # Plus it avoids a recursion if the collection lists itself
-    def __call__(self, version=None, include_items=True, for_cache=False):
-        result = super().__call__(version=version, for_cache=for_cache)
+    def __call__(self, version=None, include_items=True):
+        result = super().__call__(version=version)
         # No support for always include items
-        if for_cache and not IBlockAlwaysIncludeItems.providedBy(self.context):
+        if not IBlockAlwaysIncludeItems.providedBy(self.context):
             return result
 
         include_items = self.request.form.get("include_items", include_items)

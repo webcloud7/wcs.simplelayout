@@ -1,5 +1,4 @@
 from AccessControl.SecurityManagement import getSecurityManager
-from contextlib import contextmanager
 from copy import deepcopy
 from DateTime import DateTime
 from lxml import etree
@@ -12,7 +11,6 @@ from wcs.simplelayout.contenttypes.behaviors import IBlockMarker
 from zope.component import getUtility
 from zope.globalrequest import getRequest
 import logging
-import os
 
 
 LOG = logging.getLogger('simplelayout')
@@ -149,13 +147,6 @@ def add_layout_properties(obj, state):
                     row['properties']['title_only_block'] = False
             else:
                 row['properties']['single_block'] = False
-
-
-@contextmanager
-def disable_block_cache():
-    os.environ['SIMPLELAYOUT_DISABLE_BLOCK_CACHE'] = '1'
-    yield
-    del os.environ['SIMPLELAYOUT_DISABLE_BLOCK_CACHE']
 
 
 def convert_table_to_json(table):
