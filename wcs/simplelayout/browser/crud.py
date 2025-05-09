@@ -50,6 +50,9 @@ class AddViewTraverser(object):
 
 class AddForm(DefaultAddForm):
 
+    def enable_unload_protection(self):
+        return False
+
     def add(self, obj):
 
         fti = getUtility(IDexterityFTI, name=self.portal_type)
@@ -89,6 +92,9 @@ class AddView(DefaultAddView):
 class EditForm(DefaultEditForm):
 
     _finished_edit = False
+
+    def enable_unload_protection(self):
+        return False
 
     @button.buttonAndHandler(DXMF(u'Save'), name='save')
     def handleApply(self, action):
