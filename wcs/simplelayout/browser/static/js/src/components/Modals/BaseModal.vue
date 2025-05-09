@@ -174,6 +174,13 @@ export default {
         registry.patterns["select2"].init(".pat-select2");
       }
 
+      const contentbrowser = body.querySelectorAll(".pat-contentbrowser");
+      if (contentbrowser.length > 0) {
+        contentbrowser.forEach((element) => {
+          new registry.patterns["contentbrowser"](element);
+        });
+      }
+
       executeScriptElements(body);
 
       // hack for oderselect_input.js

@@ -28991,6 +28991,12 @@ const _sfc_main$m = {
       if (body.querySelector(".pat-select2")) {
         registry.patterns["select2"].init(".pat-select2");
       }
+      const contentbrowser = body.querySelectorAll(".pat-contentbrowser");
+      if (contentbrowser.length > 0) {
+        contentbrowser.forEach((element2) => {
+          new registry.patterns["contentbrowser"](element2);
+        });
+      }
       executeScriptElements(body);
       document.querySelectorAll(".ordered-selection-field").forEach((element2) => {
         const destination = element2.querySelector("[id$='toDataContainer']");
