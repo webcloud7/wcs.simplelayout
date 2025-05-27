@@ -2,15 +2,9 @@ from Acquisition import aq_inner
 from Acquisition import aq_parent
 from plone.uuid.interfaces import IUUID
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
-from wcs.simplelayout.restapi.serializer import get_blocks
-from wcs.simplelayout.utils import any_block_has_dates
-from z3c.form.interfaces import IDataManager
-from z3c.form.interfaces import IManagerValidator
-from zope.annotation.interfaces import IAnnotations
-from zope.component import queryMultiAdapter
+from wcs.simplelayout.utils import add_missing_blocks
 import json
 import logging
-import os
 
 
 LOG = logging.getLogger(__name__)
@@ -41,6 +35,14 @@ def update_page_state_on_copy_paste_block(block, event):
     new_block_uid = IUUID(block)
     ISimplelayout(parent).slblocks_layout = json.loads(
         json.dumps(page_layout).replace(origin_block_uid, new_block_uid))
+
+
+def update_page_state_on_paste_a_block(block, event):
+    parent = aq_parent(block)
+    page_layout = ISimplelayout(parent).slblocks_layout
+    if block.UID() not in str(page_layout):
+        add_missing_blocks(parent, page_layout)
+        ISimplelayout(parent).slblocks_layout = page_layout
 
 
 def update_page_state_on_block_remove(block, event):
