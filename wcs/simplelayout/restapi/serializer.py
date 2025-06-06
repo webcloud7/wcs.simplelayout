@@ -374,10 +374,6 @@ class AllPurposeListingBlockSerializer(DefaultBlockSerializer):
     # Plus it avoids a recursion if the collection lists itself
     def __call__(self, version=None, include_items=True):
         result = super().__call__(version=version)
-        # No support for always include items
-        if not IBlockAlwaysIncludeItems.providedBy(self.context):
-            return result
-
         include_items = self.request.form.get("include_items", include_items)
         include_items = boolean_value(include_items)
         if include_items or IBlockAlwaysIncludeItems.providedBy(self.context):
