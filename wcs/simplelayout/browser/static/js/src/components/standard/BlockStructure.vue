@@ -33,26 +33,79 @@
             <slot name="body">
               <div class="d-flex flex-wrap flex-row-reverse gap-3">
                 <div class="sl-card-image" v-if="block.image">
-                  <figure class="d-table m-0 text-center">
-                    <img
-                      v-if="block.image.scales.great"
-                      class="figure-img m-0"
-                      :src="block.image.scales.great.download"
-                      :alt="block.image_alt_text"
-                    />
-                    <img
-                      v-else
-                      class="figure-img m-0"
-                      :src="block.image.download"
-                      :alt="block.image_alt_text"
-                    />
-                    <figcaption
-                      v-if="block.image_caption"
-                      class="figure-caption mt-1"
+                  <a
+                    href="#"
+                    data-bs-toggle="modal"
+                    :data-bs-target="`#image-${block.UID}`"
+                  >
+                    <i class="fa fa-search-plus" />
+                    <figure class="d-table m-0 text-center">
+                      <img
+                        v-if="block.image.scales.great"
+                        class="figure-img m-0"
+                        :src="block.image.scales.great.download"
+                        :alt="block.image_alt_text"
+                      />
+                      <img
+                        v-else
+                        class="figure-img m-0"
+                        :src="block.image.download"
+                        :alt="block.image_alt_text"
+                      />
+                      <figcaption
+                        v-if="block.image_caption"
+                        class="figure-caption mt-1"
+                      >
+                        {{ block.image_caption }}
+                      </figcaption>
+                    </figure>
+                  </a>
+                  <div
+                    class="modal fade"
+                    :id="`image-${block.UID}`"
+                    tabindex="-1"
+                    :aria-labelledby="`#image-label-${block.UID}`"
+                    aria-hidden="true"
+                  >
+                    <div
+                      class="modal-dialog modal-fullscreen modal-dialog-centered"
                     >
-                      {{ block.image_caption }}
-                    </figcaption>
-                  </figure>
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1
+                            class="modal-title fs-5"
+                            :id="`image-label-${block.UID}`"
+                          >
+                            {{ block.image.filename }}
+                          </h1>
+                          <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                          ></button>
+                        </div>
+                        <div class="modal-body">
+                          <img
+                            class="figure-img m-0"
+                            :src="block.image.download"
+                            :alt="block.image_alt_text"
+                          />
+                          <p
+                            v-if="block.image_caption"
+                            class="figure-caption mt-1"
+                          >
+                            {{ block.image_caption }}
+                            <span
+                              class="image-alt-text"
+                              v-if="block.image_alt_text"
+                              >({{ block.image_alt_text }})</span
+                            >
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div
                   class="sl-card-text"
