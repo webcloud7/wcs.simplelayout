@@ -39,6 +39,9 @@ def update_page_state_on_copy_paste_block(block, event):
 
 def update_page_state_on_paste_a_block(block, event):
     parent = aq_parent(block)
+    page = ISimplelayout(parent, None)
+    if not page:  # Nested structure in block
+        return
     page_layout = ISimplelayout(parent).slblocks_layout
     if block.UID() not in str(page_layout):
         add_missing_blocks(parent, page_layout)
