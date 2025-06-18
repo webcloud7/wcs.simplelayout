@@ -12,5 +12,5 @@
         </value>
     </record>
     <records interface="wcs.simplelayout.widgets.table.ITableRichTextWidgetConfiguration" prefix="wcs.simplelayout.table"/>
-    <records interface="wcs.simplelayout.contenttypes.contentpage.ISimplelayoutConfiguration" prefix="wcs.simplelayout"/>
+    <records interface="wcs.simplelayout.contenttypes.contentpage.ISimplelayoutConfiguration" prefix="wcs.simplelayout.config"/>
 </registry>
