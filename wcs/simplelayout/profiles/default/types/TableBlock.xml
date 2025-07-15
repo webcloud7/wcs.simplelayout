@@ -2,7 +2,7 @@
 <object name="TableBlock" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">TableBlock</property>
- <property name="icon_expr">string:file-earmark-richtext</property>
+ <property name="icon_expr">string:contenttype/table</property>
  <property name="factory">TableBlock</property>
  <property name="add_view_expr">string:${folder_url}/++add++TableBlock</property>
  <property name="link_target"></property>

@@ -2,7 +2,7 @@
 <object name="ImageListingBlock" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">ImageListingBlock</property>
- <property name="icon_expr">string:images</property>
+ <property name="icon_expr">string:contenttype/imagelistingblock</property>
  <property name="factory">ImageListingBlock</property>
  <property name="add_view_expr">string:${folder_url}/++add++ImageListingBlock</property>
  <property name="link_target"></property>

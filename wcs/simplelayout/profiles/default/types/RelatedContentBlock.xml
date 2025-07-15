@@ -2,7 +2,7 @@
 <object name="RelatedContentBlock" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">RelatedContentBlock</property>
- <property name="icon_expr">string:file-earmark-richtext</property>
+ <property name="icon_expr">string:contenttype/relatedcontentblock</property>
  <property name="factory">RelatedContentBlock</property>
  <property name="add_view_expr">string:${folder_url}/++add++RelatedContentBlock</property>
  <property name="link_target"></property>

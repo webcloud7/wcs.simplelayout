@@ -2,7 +2,7 @@
 <object name="IframeBlock" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">IframeBlock</property>
- <property name="icon_expr">string:journal-code</property>
+ <property name="icon_expr">string:contenttype/iframeblock</property>
  <property name="factory">IframeBlock</property>
  <property name="add_view_expr">string:${folder_url}/++add++IframeBlock</property>
  <property name="link_target"></property>

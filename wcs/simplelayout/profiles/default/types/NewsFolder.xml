@@ -2,7 +2,7 @@
 <object name="NewsFolder" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">News Folder</property>
- <property name="icon_expr">string:folder2-open</property>
+ <property name="icon_expr">string:contenttype/newsfolder</property>
  <property name="factory">NewsFolder</property>
  <property
     name="add_view_expr">string:${folder_url}/++add++NewsFolder</property>

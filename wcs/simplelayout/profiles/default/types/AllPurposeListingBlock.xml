@@ -2,7 +2,7 @@
 <object name="AllPurposeListingBlock" meta_type="Dexterity FTI" i18n:domain="plone"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <property name="title" i18n:translate="">AllPurposeListingBlock</property>
- <property name="icon_expr">string:card-list</property>
+ <property name="icon_expr">string:contenttype/allpurposelistingblock</property>
  <property name="factory">AllPurposeListingBlock</property>
  <property name="add_view_expr">string:${folder_url}/++add++AllPurposeListingBlock</property>
  <property name="link_target"></property>
