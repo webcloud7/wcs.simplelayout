@@ -18,9 +18,18 @@
                   <h5 class="card-title">{{ item.title }}</h5>
                   <p
                     class="card-text d-flex justify-content-between align-items-start"
-                    v-if="item.link || item.externalLink"
+                    v-if="item.link || item.externalLink || item.url"
                   >
-                    <a v-if="item.link"
+                    <a
+                      v-if="item.url"
+                      class="btn btn-success text-truncate"
+                      :href="item.url"
+                    >
+                      {{ item.url }}
+                    </a>
+
+                    <a
+                      v-if="item.link"
                       class="btn btn-success"
                       :href="item.link['@id']"
                       :title="item.link.title"
@@ -30,7 +39,8 @@
                         >({{ sl.contentTypeTitles[item.link["@type"]] }})</span
                       >
                     </a>
-                    <a v-if="item.externalLink"
+                    <a
+                      v-if="item.externalLink"
                       class="btn btn-success text-truncate"
                       :href="item.externalLink"
                     >
@@ -40,7 +50,9 @@
                       class="badge bg-primary rounded-pill"
                       v-if="item.link && item.link.review_state"
                     >
-                      <span v-if="item.link" :class="`state-${item.link.review_state}`"
+                      <span
+                        v-if="item.link"
+                        :class="`state-${item.link.review_state}`"
                         >{{ sl.workflowTitles[item.link.review_state] }}
                       </span>
                     </span>
@@ -102,6 +114,7 @@ export default {
             title: this.block[key],
             image: this.block["teaser_image_" + number],
             link: this.block["teaser_link_" + number],
+            url: this.block["teaser_url_" + number],
             externalLink: this.block["teaser_link_external_" + number],
           };
           items.push(item);
