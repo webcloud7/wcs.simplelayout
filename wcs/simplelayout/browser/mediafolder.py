@@ -4,6 +4,7 @@ from operator import attrgetter
 from plone import api
 from plone.app.layout.viewlets.common import ViewletBase
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from uuid import uuid4
 from wcs.simplelayout.contenttypes.fix_set_relations import add_behavior_relations
 from z3c.relationfield import RelationValue
 from zc.relation.interfaces import ICatalog
@@ -31,6 +32,7 @@ class CreateMediaFolderMixin:
         mediafolder = api.content.create(
             type='MediaFolder',
             title=self.context.title_or_id(),
+            id=uuid4().hex,
             container=context)
 
         intids = getUtility(IIntIds)
