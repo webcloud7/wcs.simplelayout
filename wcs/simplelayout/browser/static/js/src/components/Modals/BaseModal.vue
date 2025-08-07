@@ -226,6 +226,7 @@ export default {
     handleCancel(event) {
       event.preventDefault();
       event.stopPropagation();
+      this.handleTinyMCE()
       this.cleanBody();
       document.activeElement?.blur && document.activeElement.blur();
       this.modal.hide();
