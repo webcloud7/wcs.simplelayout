@@ -139,6 +139,7 @@ export default {
           const data = response.data;
           this.storeAction(this.position, data);
           this.cleanBody();
+          document.activeElement?.blur && document.activeElement.blur();
           this.modal.hide();
         } else {
           // Any form validation error means we got html back
@@ -226,6 +227,7 @@ export default {
       event.preventDefault();
       event.stopPropagation();
       this.cleanBody();
+      document.activeElement?.blur && document.activeElement.blur();
       this.modal.hide();
     },
     handleTinyMCE() {
