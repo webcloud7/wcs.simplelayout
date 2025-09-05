@@ -29,12 +29,17 @@
  <property name="schema"></property>
  <property
     name="model_source">&lt;?xml version=&#x27;1.0&#x27; encoding=&#x27;utf8&#x27;?&gt;
-  &lt;model xmlns:i18n=&quot;http://xml.zope.org/namespaces/i18n&quot; xmlns:marshal=&quot;http://namespaces.plone.org/supermodel/marshal&quot; xmlns:form=&quot;http://namespaces.plone.org/supermodel/form&quot; xmlns:security=&quot;http://namespaces.plone.org/supermodel/security&quot; xmlns:indexer=&quot;http://namespaces.plone.org/supermodel/indexer&quot; xmlns:lingua=&quot;http://namespaces.plone.org/supermodel/lingua&quot; xmlns:users=&quot;http://namespaces.plone.org/supermodel/users&quot; xmlns=&quot;http://namespaces.plone.org/supermodel/schema&quot;&gt;
+  &lt;model xmlns:i18n=&quot;http://xml.zope.org/namespaces/i18n&quot; xmlns:form=&quot;http://namespaces.plone.org/supermodel/form&quot; xmlns:security=&quot;http://namespaces.plone.org/supermodel/security&quot; xmlns:marshal=&quot;http://namespaces.plone.org/supermodel/marshal&quot; xmlns:indexer=&quot;http://namespaces.plone.org/supermodel/indexer&quot; xmlns:users=&quot;http://namespaces.plone.org/supermodel/users&quot; xmlns:lingua=&quot;http://namespaces.plone.org/supermodel/lingua&quot; xmlns:easyform=&quot;http://namespaces.plone.org/supermodel/easyform&quot; xmlns=&quot;http://namespaces.plone.org/supermodel/schema&quot;&gt;
     &lt;schema&gt;
-      &lt;field name=&quot;table&quot; type=&quot;wcs.simplelayout.fields.table.TableRichText&quot;&gt;
+      &lt;field name=&quot;table&quot; type=&quot;wcs.simplelayout.fields.table.TableRichText&quot; form:after=&quot;*&quot;&gt;
         &lt;description/&gt;
-        &lt;title&gt;table&lt;/title&gt;
+        &lt;title&gt;Tabelle&lt;/title&gt;
         &lt;form:widget type=&quot;wcs.simplelayout.widgets.table.TableRichTextWidget&quot;/&gt;
+      &lt;/field&gt;
+      &lt;field name=&quot;footnote&quot; type=&quot;plone.app.textfield.RichText&quot; form:after=&quot;*&quot;&gt;
+        &lt;description/&gt;
+        &lt;required&gt;False&lt;/required&gt;
+        &lt;title&gt;Fussnote&lt;/title&gt;
       &lt;/field&gt;
     &lt;/schema&gt;
   &lt;/model&gt;</property>

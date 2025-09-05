@@ -2,6 +2,12 @@
   <BlockStructure v-bind="$props">
     <template #body>
       <div class="sl-card-text" v-if="block.table" v-html="block.table.data" />
+      <div
+        class="alert alert-light"
+        role="alert"
+        v-if="block.footnote"
+        v-html="block.footnote.data"
+      ></div>
     </template>
   </BlockStructure>
 </template>
