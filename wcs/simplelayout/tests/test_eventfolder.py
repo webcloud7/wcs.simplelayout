@@ -63,5 +63,4 @@ class TestEventsFolderView(FunctionalTesting):
                        .within(self.eventsfolder))
 
         browser.login().visit(event)
-        import pdb; pdb.set_trace()
         self.assertTrue(browser.css('.simplelayout-app'), 'Expect sl app on event page')
