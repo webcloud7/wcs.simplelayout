@@ -21,3 +21,5 @@ fi
 
 ./bin/i18ndude rebuild-pot --pot $locales/$domain.pot --create $domain $maindir --exclude="node_modules"
 ./bin/i18ndude sync --pot $locales/$domain.pot $locales/*/LC_MESSAGES/$domain.po
+
+./bin/i18ndude sync --pot $locales/plone.pot $locales/*/LC_MESSAGES/plone.po

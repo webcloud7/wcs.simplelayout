@@ -2,7 +2,7 @@
 <object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
         meta_type="Dexterity FTI"
         name="EventPage"
-        i18n:domain="wcs.simplelayout"
+        i18n:domain="plone"
 >
 
   <property name="title" i18n:translate="">EventPage</property>

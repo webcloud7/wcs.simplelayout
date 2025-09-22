@@ -12,7 +12,10 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
 "Preferred-Encodings: utf-8 latin1\n"
+"Domain: DOMAIN\n"
 
 msgid "AllPurposeListingBlock"
 msgstr "Generische Auflistung"
@@ -22,6 +25,12 @@ msgstr "Text und Bild"
 
 msgid "ContentPage"
 msgstr "Inhaltsseite"
+
+msgid "EventPage"
+msgstr "Termin"
+
+msgid "Events Folder"
+msgstr "Termin Ordner"
 
 msgid "FileListingBlock"
 msgstr "Datei-Auflistung"
@@ -52,4 +61,3 @@ msgstr "Teaser Block"
 
 msgid "VideoBlock"
 msgstr "Video"
-

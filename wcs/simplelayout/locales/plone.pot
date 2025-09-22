@@ -53,3 +53,9 @@ msgstr ""
 
 msgid "RelatedContentBlock"
 msgstr ""
+
+msgid "Events Folder"
+msgstr ""
+
+msgid "EventPage"
+msgstr ""
