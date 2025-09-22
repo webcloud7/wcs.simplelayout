@@ -1,0 +1,61 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      xml:lang="en"
+      i18n:domain="plone"
+>
+  <body>
+
+    <metal:content-core fill-slot="content-core">
+      <metal:block define-macro="content-core">
+        <tal:def tal:define="
+                   data nocall:view/data;
+                 ">
+
+          <div class="event clearfix"
+               itemscope
+               itemtype="https://schema.org/Event"
+          >
+
+            <ul class="hiddenStructure">
+              <li><a class="url"
+                   href=""
+                   itemprop="url"
+                   tal:content="data/url"
+                   tal:attributes="
+                     href data/url;
+                   "
+                >url</a></li>
+              <li class="summary"
+                  itemprop="name"
+                  tal:content="data/title"
+              >title</li>
+              <li class="dtstart"
+                  itemprop="startDate"
+                  tal:content="data/start/isoformat"
+              >start</li>
+              <li class="dtend"
+                  itemprop="endDate"
+                  tal:content="data/end/isoformat"
+              >end</li>
+              <li class="description"
+                  itemprop="description"
+                  tal:content="data/description"
+              >description</li>
+            </ul>
+
+            <tal:eventsummary replace="structure context/@@event_summary" />
+
+            <div metal:use-macro="context/simplelayout-view/macros/content-core" />
+
+          </div>
+
+        </tal:def>
+      </metal:block>
+    </metal:content-core>
+
+  </body>
+</html>

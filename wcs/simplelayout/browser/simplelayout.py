@@ -131,3 +131,7 @@ class SimplelayoutView(BrowserView):
             rel="stylesheet",
         )
         return resource.render(base_url=api.portal.get().absolute_url())
+
+    @property    
+    def macros(self):
+        return self.template.macros

@@ -5,6 +5,8 @@
  <object name="MediaFolder" meta_type="Dexterity FTI"/>
  <object name="News" meta_type="Dexterity FTI"/>
  <object name="NewsFolder" meta_type="Dexterity FTI"/>
+ <object name="EventsFolder" meta_type="Dexterity FTI"/>
+ <object name="EventPage" meta_type="Dexterity FTI"/>
  <object name="Block" meta_type="Dexterity FTI"/>
  <object name="VideoBlock" meta_type="Dexterity FTI"/>
  <object name="FileListingBlock" meta_type="Dexterity FTI"/>

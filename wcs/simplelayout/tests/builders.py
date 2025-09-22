@@ -48,6 +48,20 @@ class NewsBuilder(DexterityBuilder):
 builder_registry.register('news', NewsBuilder)
 
 
+class EventsFolderBuilder(DexterityBuilder):
+    portal_type = 'EventsFolder'
+
+
+builder_registry.register('events folder', EventsFolderBuilder)
+
+
+class EventPageBuilder(DexterityBuilder):
+    portal_type = 'EventPage'
+
+
+builder_registry.register('eventpage', EventPageBuilder)
+
+
 class BlockBuilder(DexterityBuilder):
     portal_type = 'Block'
 
