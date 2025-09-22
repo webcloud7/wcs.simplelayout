@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+        meta_type="Dexterity FTI"
+        name="EventPage"
+        i18n:domain="wcs.simplelayout"
+>
+
+  <property name="title" i18n:translate="">EventPage</property>
+  <property name="allow_discussion">False</property>
+  <property name="factory">EventPage</property>
+  <property name="icon_expr">string:contenttype/eventpage</property>
+  <property name="filter_content_types">True</property>
+  <property name="global_allow">False</property>
+  <property name="allowed_content_types">
+   <element value="teaser_block"/>
+   <element value="Block"/>
+   <element value="VideoBlock"/>
+   <element value="FileListingBlock"/>
+   <element value="ImageListingBlock"/>
+  </property>
+  <property name="add_permission">cmf.AddPortalContent</property>
+  <property name="klass">wcs.simplelayout.contenttypes.contentpage.ContentPage</property>
+  <property name="model_file"></property>
+   <property
+    name="model_source">&lt;model xmlns:i18n=&quot;http://xml.zope.org/namespaces/i18n&quot; xmlns:marshal=&quot;http://namespaces.plone.org/supermodel/marshal&quot; xmlns:indexer=&quot;http://namespaces.plone.org/supermodel/indexer&quot; xmlns:form=&quot;http://namespaces.plone.org/supermodel/form&quot; xmlns:security=&quot;http://namespaces.plone.org/supermodel/security&quot; xmlns:users=&quot;http://namespaces.plone.org/supermodel/users&quot; xmlns:lingua=&quot;http://namespaces.plone.org/supermodel/lingua&quot; xmlns=&quot;http://namespaces.plone.org/supermodel/schema&quot;&gt;
+  &lt;schema/&gt;
+  &lt;/model&gt;</property>
+  <property name="schema" />
+  <property name="behaviors" purge="True">
+    <element value="plone.textindexer" />
+    <element value="plone.eventbasic" />
+    <element value="plone.eventrecurrence" />
+    <element value="plone.eventlocation" />
+    <element value="plone.eventattendees" />
+    <element value="plone.eventcontact" />
+    <element value="plone.dublincore" />
+    <element value="plone.namefromtitle" />
+    <element value="plone.allowdiscussion" />
+    <element value="plone.excludefromnavigation" />
+    <element value="plone.relateditems" />
+    <element value="wcs.simplelayout.contenttypes.behaviors.ISimplelayout"/>
+  </property>
+
+  <property name="add_view_expr">string:${folder_url}/++add++EventPage</property>
+  <property name="default_view">@@eventpage_view</property>
+  <property name="default_view_fallback">False</property>
+  <property name="immediate_view">@@eventpage_view</property>
+  <property name="view_methods">
+    <element value="@@eventpage_view" />
+  </property>
+  <property name="schema_policy">dexterity</property>
+
+
+  <!-- Actions -->
+  <action action_id="view"
+          category="object"
+          condition_expr=""
+          icon_expr="string:toolbar-action/view"
+          title="View"
+          url_expr="string:${object_url}"
+          visible="True"
+          i18n:attributes="title"
+  >
+    <permission value="View" />
+  </action>
+  <action action_id="edit"
+          category="object"
+          condition_expr="not:object/@@plone_lock_info/is_locked_for_current_user|python:True"
+          icon_expr="string:toolbar-action/edit"
+          title="Edit"
+          url_expr="string:${object_url}/edit"
+          visible="True"
+          i18n:attributes="title"
+  >
+    <permission value="Modify portal content" />
+  </action>
+
+</object>
