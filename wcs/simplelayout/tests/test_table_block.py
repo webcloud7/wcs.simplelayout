@@ -66,7 +66,7 @@ class TestTableRichTextWidget(FunctionalTesting):
         self.assertEqual('editcontent', config['editable_class'])
         self.assertEqual(['plonelink', 'table'], config['plugins'])
         self.assertEqual('', config['menubar'])
-        self.assertEqual('table tablerowheader tablecolheader code unlink plonelink', config['toolbar'])
+        self.assertEqual('bold | table tablerowheader tablecolheader code unlink plonelink', config['toolbar'])
         self.assertEqual('preservetable', config['table_column_resizing'])
         self.assertEqual('http://nohost:80/plone/++resource++simplelayout/js/src/tinymce_plugin.js',
                          config['external_plugins']['tableOnly'])
