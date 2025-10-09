@@ -42,6 +42,7 @@ class TableRichTextWidget(RichTextWidget):
         tiny['menubar'] = ''
         tiny['toolbar'] = 'bold | table tablerowheader tablecolheader code unlink plonelink'
         tiny['table_column_resizing'] = 'preservetable'
+        tiny['table_style_by_css'] = True
         tiny['object_resizing'] = 'table'
         tiny['table_header_type'] = 'sectionCells'
         tiny['valid_children'] = '-body[p|div|br|img|a|#text],+body[table],-td[table|div]'
