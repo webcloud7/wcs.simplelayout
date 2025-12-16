@@ -27,18 +27,39 @@ class MediaFolderView(BrowserView):
 
 class CreateMediaFolderMixin:
     def create_mediafolder(self):
-        context = self.context.aq_parent
+        container = self.context.aq_parent
+
+        try:
+            from wcs.backend.staging.interfaces import IStaging
+            staging = IStaging(container)
+            if staging.is_working_copy():
+                container = staging.get_baseline()
+        except ImportError:
+            pass
 
         mediafolder = api.content.create(
             type='MediaFolder',
             title=self.context.title_or_id(),
             id=uuid4().hex,
-            container=context)
+            container=container)
 
         intids = getUtility(IIntIds)
         relation = RelationValue(intids.getId(mediafolder))
         self.context.mediafolder = relation
         add_behavior_relations(self.context, None)
+
+        try:
+            from wcs.backend.utils import PRIVATE_STATE
+            from wcs.backend.utils import PUBLISHED_STATE
+            wf_tool = api.portal.get_tool('portal_workflow')
+            container_state = wf_tool.getInfoFor(container, 'review_state')
+            if container_state == PUBLISHED_STATE:
+                wf_tool.doActionFor(mediafolder, 'mediafolder_workflow--TRANSITION--veroffentlichen--entwurf_veroffentlicht')
+            elif container_state == PRIVATE_STATE:
+                wf_tool.doActionFor(mediafolder, 'mediafolder_workflow--TRANSITION--privat-schalten--entwurf_privat')
+        except ImportError:
+            pass
+
         return mediafolder 
 
 
