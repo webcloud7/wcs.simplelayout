@@ -52,15 +52,14 @@ test.describe('Simplelayout Grid', () => {
     await page.locator('main button:has-text("+")').nth(2).click();
     await expect(page.locator('.sl-row').nth(0).locator('.sl-col')).toHaveCount(2);
 
-    // Make column controls always visible for stable dropdown interactions
-    await page.addStyleTag({ content: '.sl-remove-col-controls { visibility: visible !important; }' });
-
     // Change 2nd column to 25%
+    await page.locator('.sl-row').nth(0).locator('button:has-text("Width: 50%")').nth(1).hover({ force: true });
     await page.locator('.sl-row').nth(0).locator('button:has-text("Width: 50%")').nth(1).click();
     await page.locator('.sl-row').nth(0).locator('.dropdown-menu.show a:has-text("25%")').click();
     await expect(page.locator('.sl-row').nth(0).locator('.sl-col.col-3')).toHaveCount(1);
 
     // Change 1st column to 75%
+    await page.locator('.sl-row').nth(0).locator('button:has-text("Width: 50%")').hover({ force: true });
     await page.locator('.sl-row').nth(0).locator('button:has-text("Width: 50%")').click();
     await page.locator('.sl-row').nth(0).locator('.dropdown-menu.show a:has-text("75%")').click();
 
