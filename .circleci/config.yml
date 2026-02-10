@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  browser-tools: circleci/browser-tools@1.1.0
-
 workflows:
   tests:
     jobs:
@@ -50,8 +47,8 @@ jobs:
     steps:
       - attach_workspace:
             at: .
-      - browser-tools/install-chrome
       - run: npm install
+      - run: npx playwright install --with-deps chromium
       - run:
           command: ./bin/test-server wcs.simplelayout.testing.SIMPLELAYOUT_FRONTEND_TESTING
           background: true
@@ -60,7 +57,7 @@ jobs:
           command: |
             wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 10 http://localhost:${WSGI_SERVER_PORT}/plone/ok
             :
-      - run: npm run test
+      - run: CI=true npm run test
       - store_test_results:
           path: /tmp/test-results
       - store_artifacts:
