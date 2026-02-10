@@ -6,7 +6,7 @@
     xmlns:upgrade-step="http://namespaces.zope.org/ftw.upgrade"
     i18n_domain="wcs.simplelayout">
 
-    <include package="ftw.upgrade" file="meta.zcml" />
+    <include package="collective.ftw.upgrade" file="meta.zcml" />
 
     <five:registerPackage package="." initialize=".initialize" />
     <i18n:registerTranslations directory="locales" />
