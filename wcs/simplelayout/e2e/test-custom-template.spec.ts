@@ -10,6 +10,7 @@ test.describe('Simplelayout Custom Template', () => {
 
     // Navigate to Contents and add Image
     page.on('dialog', dialog => dialog.dismiss());
+    await page.addStyleTag({ content: '.sl-add-block-controls { visibility: visible !important; }' });
     await page.hover('#app .card-header');
     await page.click('main button:has-text("Actions")');
     await page.click('main a:has-text("Contents (Listing)")');

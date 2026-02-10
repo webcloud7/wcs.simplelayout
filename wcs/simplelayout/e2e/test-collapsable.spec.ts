@@ -8,6 +8,7 @@ test.describe('Simplelayout Collapsable Block', () => {
     await addBlock(page, 'Title', 'TExt');
 
     // Edit block to enable collapsable
+    await page.addStyleTag({ content: '.sl-add-block-controls { visibility: visible !important; }' });
     await page.hover('#app .card-header');
     await page.locator('main button:has-text("Actions")').click();
     await page.locator('main a:has-text("Edit")').waitFor({ state: 'visible' });
