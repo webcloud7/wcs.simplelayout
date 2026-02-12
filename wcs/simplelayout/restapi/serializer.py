@@ -217,6 +217,10 @@ class DefaultBlockSerializer(SerializeFolderToJson):
             catalog = getToolByName(self.context, "portal_catalog")
             brains = catalog(query)
 
+            original_b_size = self.request.form.get('b_size', None)
+            if original_b_size is None:
+                self.request.form['b_size'] = len(brains)
+
             batch = HypermediaBatch(self.request, brains)
 
             result["items_total"] = batch.items_total
@@ -226,6 +230,11 @@ class DefaultBlockSerializer(SerializeFolderToJson):
             result["items"] = getMultiAdapter(
                 (brains, self.request), ISerializeToJson
             )(fullobjects=True)["items"]
+
+            if original_b_size is None:
+                del self.request.form['b_size']
+            else:
+                self.request.form['b_size'] = original_b_size
 
 
 @implementer(ISerializeToJson)
