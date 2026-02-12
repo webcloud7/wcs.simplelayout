@@ -3,7 +3,7 @@
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:i18n="http://namespaces.zope.org/i18n"
-    xmlns:upgrade-step="http://namespaces.zope.org/ftw.upgrade"
+    xmlns:upgrade-step="http://namespaces.zope.org/collective.ftw.upgrade"
     i18n_domain="wcs.simplelayout">
 
     <include package="collective.ftw.upgrade" file="meta.zcml" />
