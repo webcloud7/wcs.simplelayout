@@ -11,6 +11,7 @@ from plone.autoform.interfaces import IFormFieldProvider
 from plone.base.interfaces.syndication import ISyndicatable
 from plone.namedfile.field import NamedBlobImage
 from plone.schema import JSONField
+from wcs.simplelayout.fields.layout import LayoutField
 from plone.supermodel import model
 from plone.supermodel.directives import primary
 from wcs.simplelayout import _
@@ -121,7 +122,7 @@ class ISimplelayout(model.Schema):
 
     model.fieldset("layout", label=_("Layout"), fields=["slblocks_layout"])
     directives.omitted('slblocks_layout')
-    slblocks_layout = JSONField(
+    slblocks_layout = LayoutField(
         title="Blocks Layout",
         description="The JSON representation of the object blocks layout. Must be a JSON array.",  # noqa
         schema=LAYOUT_SCHEMA,
