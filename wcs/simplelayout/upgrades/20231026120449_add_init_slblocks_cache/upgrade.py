@@ -1,4 +1,4 @@
-from ftw.upgrade import UpgradeStep
+from collective.ftw.upgrade import UpgradeStep
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.restapi.serializer import get_blocks
 from zope.component import queryMultiAdapter

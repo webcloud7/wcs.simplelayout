@@ -15,7 +15,7 @@ from plone.restapi.serializer.dxcontent import SerializeToJson
 from plone.restapi.serializer.dxfields import CollectionFieldSerializer
 from plone.restapi.serializer.dxfields import DefaultFieldSerializer
 from plone.restapi.serializer.expansion import expandable_elements
-from plone.schema import IJSONField
+from wcs.simplelayout.fields.layout import ILayoutField
 from Products.CMFCore.utils import getToolByName
 from urllib import parse
 from wcs.simplelayout.contenttypes.behaviors import IBlockAlwaysIncludeItems
@@ -217,6 +217,10 @@ class DefaultBlockSerializer(SerializeFolderToJson):
             catalog = getToolByName(self.context, "portal_catalog")
             brains = catalog(query)
 
+            original_b_size = self.request.form.get('b_size', None)
+            if original_b_size is None:
+                self.request.form['b_size'] = len(brains)
+
             batch = HypermediaBatch(self.request, brains)
 
             result["items_total"] = batch.items_total
@@ -226,6 +230,11 @@ class DefaultBlockSerializer(SerializeFolderToJson):
             result["items"] = getMultiAdapter(
                 (brains, self.request), ISerializeToJson
             )(fullobjects=True)["items"]
+
+            if original_b_size is None:
+                del self.request.form['b_size']
+            else:
+                self.request.form['b_size'] = original_b_size
 
 
 @implementer(ISerializeToJson)
@@ -347,22 +356,19 @@ class ImageBlockSortOptionsSerializer(FileBlockSortOptionsSerializer):
     behavior = IImageBlockSortOptions
 
 
-@adapter(IJSONField, ISimplelayout, Interface)
+@adapter(ILayoutField, ISimplelayout, Interface)
 @implementer(IFieldSerializer)
 class LayoutFieldSerializer(DefaultFieldSerializer):
 
     def __call__(self, *args):
-        """ This method appends blocks missing in layout at the very end."""
-        if self.field.__name__ == 'slblocks_layout':
-            actual_url = self.context.REQUEST.ACTUAL_URL.replace('/++api++', '')
-            if self.context.absolute_url() != actual_url.removesuffix('/'):
-                return json_compatible({})
+        actual_url = self.context.REQUEST.ACTUAL_URL.replace('/++api++', '')
+        if self.context.absolute_url() != actual_url.removesuffix('/'):
+            return json_compatible({})
 
-            value = self.get_value()
+        value = self.get_value()
+        add_missing_blocks(self.context, value)
+        return json_compatible(value)
 
-            add_missing_blocks(self.context, value)
-            return json_compatible(value)
-        return super().__call__()
 
 
 @implementer(ISerializeToJson)

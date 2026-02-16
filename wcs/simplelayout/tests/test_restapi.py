@@ -580,6 +580,21 @@ class TestRestApi(FunctionalTesting):
         )
 
     @browsing
+    def test_block_with_always_include_items_returns_all_items(self, browser):
+        self.add_behavior(
+            'Block',
+            'wcs.simplelayout.contenttypes.behaviors.IBlockAlwaysIncludeItems',
+        )
+        block = create(Builder('block').titled('Block').within(self.page))
+        for number in range(30):
+            create(Builder('file').titled(f'File {number}').within(block))
+
+        browser.login().visit(self.page, headers=self.api_headers)
+        block_result = browser.json['slblocks'][block.UID()]
+        self.assertEqual(30, block_result['items_total'])
+        self.assertEqual(30, len(block_result['items']))
+
+    @browsing
     def test_layout_properties_on_other_blocks(self, browser):
         block1 = create(Builder('news listing block').titled('News').within(self.page))
         block2 = create(Builder('video block').titled('Video').within(self.page))

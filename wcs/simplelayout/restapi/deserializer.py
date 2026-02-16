@@ -1,14 +1,14 @@
 from plone import api
 from plone.restapi.deserializer.dxfields import DefaultFieldDeserializer
 from plone.restapi.interfaces import IFieldDeserializer
-from plone.schema import IJSONField
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
+from wcs.simplelayout.fields.layout import ILayoutField
 from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import Interface
 
 
-@adapter(IJSONField, ISimplelayout, Interface)
+@adapter(ILayoutField, ISimplelayout, Interface)
 @implementer(IFieldDeserializer)
 class LayoutFieldDeserializer(DefaultFieldDeserializer):
 
@@ -22,17 +22,16 @@ class LayoutFieldDeserializer(DefaultFieldDeserializer):
         also not able to move them around.
         """
 
-        if self.field.__name__ == 'slblocks_layout':
-            can_manage_cols = api.user.has_permission('wcs.simplelayout: Manage columns', obj=self.context)
-            can_add_blocks = api.user.has_permission('wcs.simplelayout: Add Block', obj=self.context)
-            if can_manage_cols and can_add_blocks:
-                return super().__call__(value)
+        can_manage_cols = api.user.has_permission('wcs.simplelayout: Manage columns', obj=self.context)
+        can_add_blocks = api.user.has_permission('wcs.simplelayout: Add Block', obj=self.context)
+        if can_manage_cols and can_add_blocks:
+            return super().__call__(value)
 
-            if not can_manage_cols:
-                self._ensure_cols_did_not_change(value)
+        if not can_manage_cols:
+            self._ensure_cols_did_not_change(value)
 
-            if not can_add_blocks:
-                self._ensure_block_order_did_not_change(value)
+        if not can_add_blocks:
+            self._ensure_block_order_did_not_change(value)
 
         return super().__call__(value)
 

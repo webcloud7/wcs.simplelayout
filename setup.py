@@ -45,8 +45,8 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'ftw.upgrade',
-        'ftw.referencewidget >= 4.0.0b2',
+        'collective.ftw.upgrade',
+        'ftw.referencewidget >= 4.5.1',
         'plone.app.imagecropping >= 3.0.3',
         'Plone',
         'plone.autoinclude',
