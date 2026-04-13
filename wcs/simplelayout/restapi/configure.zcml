@@ -7,6 +7,7 @@
   <include package="plone.restapi" />
 
 
+  <adapter factory=".catalog.CustomLazyCatalogResultSerializer" />
   <adapter factory=".serializer.SimplelayoutSerializer" />
   <adapter factory=".serializer.DefaultBlockSerializer" />
   <adapter factory=".serializer.LayoutFieldSerializer"/>
