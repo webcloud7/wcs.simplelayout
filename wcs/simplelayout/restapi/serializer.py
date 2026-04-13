@@ -50,7 +50,7 @@ def get_blocks(context):
     for obj in list_blocks_from_page(context):
         block_data = getMultiAdapter((obj, context.REQUEST), ISerializeToJson)(
             include_items=False,
-            include_expansion=False,
+            include_expansion=True,
         )
         blocks.append(block_data)
     return blocks
