@@ -50,6 +50,7 @@ def get_blocks(context):
     for obj in list_blocks_from_page(context):
         block_data = getMultiAdapter((obj, context.REQUEST), ISerializeToJson)(
             include_items=False,
+            include_expansion=False,
         )
         blocks.append(block_data)
     return blocks
@@ -59,7 +60,9 @@ def get_portal_url():
     return api.portal.get().absolute_url()
 
 
-def expand_by_querystring(context, request, result):
+def expand_by_querystring(context, request, result, include_expansion=True):
+    if not include_expansion:
+        return
     query = parse.parse_qs(request.get('QUERY_STRING', ''))
     if not request.form.get('expand') and 'expand' in query:
         request.form['expand'] = ','.join(query['expand'])
@@ -126,8 +129,10 @@ class SimplelayoutSerializer(SerializeToJson):
         }
         return query
 
-    def __call__(self, version=None, include_items=True):
-        folder_metadata = super().__call__(version=version)
+    def __call__(self, version=None, include_items=True, include_expansion=True):
+        folder_metadata = super().__call__(
+            version=version, include_expansion=include_expansion
+        )
 
         folder_metadata.update({"is_folderish": True})
         result = folder_metadata
@@ -162,7 +167,10 @@ class SimplelayoutSerializer(SerializeToJson):
                     for brain in batch
                 ]
 
-        expand_by_querystring(self.context, self.request, result)
+        expand_by_querystring(
+            self.context, self.request, result,
+            include_expansion=include_expansion,
+        )
         result['slblocks'] = self.get_sl_blocks(include_items)
         add_layout_properties(self.context, result)
         return result
@@ -204,8 +212,12 @@ class SimplelayoutSerializer(SerializeToJson):
 class DefaultBlockSerializer(SerializeFolderToJson):
     """Serializer, which can include its own items by default
     """
-    def __call__(self, version=None, include_items=True):
-        result = super().__call__(version=version, include_items=include_items)
+    def __call__(self, version=None, include_items=True, include_expansion=True):
+        result = super().__call__(
+            version=version,
+            include_items=include_items,
+            include_expansion=include_expansion,
+        )
         if not include_items:
             self._add_items(result)
         return result
@@ -240,8 +252,8 @@ class DefaultBlockSerializer(SerializeFolderToJson):
 @implementer(ISerializeToJson)
 @adapter(IBlockNewsOptions, Interface)
 class NewsListingBlockSerializer(DefaultBlockSerializer):
-    def __call__(self, version=None, include_items=True):
-        result = super().__call__(version=version)
+    def __call__(self, version=None, include_items=True, include_expansion=True):
+        result = super().__call__(version=version, include_expansion=include_expansion)
         include_items = self.request.form.get("include_items", include_items)
         include_items = boolean_value(include_items)
         if include_items:
@@ -283,8 +295,8 @@ class FileBlockSortOptionsSerializer(DefaultBlockSerializer):
 
     behavior = IFileBlockSortOptions
 
-    def __call__(self, version=None, include_items=True):
-        result = super().__call__(version=version)
+    def __call__(self, version=None, include_items=True, include_expansion=True):
+        result = super().__call__(version=version, include_expansion=include_expansion)
         include_items = self.request.form.get("include_items", include_items)
         include_items = boolean_value(include_items)
         if include_items or IBlockAlwaysIncludeItems.providedBy(self.context):
@@ -378,8 +390,8 @@ class AllPurposeListingBlockSerializer(DefaultBlockSerializer):
     # Main difference is, that this block always returns the @id of of itself
     # and not the canonical id
     # Plus it avoids a recursion if the collection lists itself
-    def __call__(self, version=None, include_items=True):
-        result = super().__call__(version=version)
+    def __call__(self, version=None, include_items=True, include_expansion=True):
+        result = super().__call__(version=version, include_expansion=include_expansion)
         include_items = self.request.form.get("include_items", include_items)
         include_items = boolean_value(include_items)
         if include_items or IBlockAlwaysIncludeItems.providedBy(self.context):
@@ -411,7 +423,7 @@ class AllPurposeListingBlockSerializer(DefaultBlockSerializer):
             result["items"] = [
                 getMultiAdapter(
                     (brain.getObject(), self.request), ISerializeToJson
-                )(include_items=False)  # Prevent recursion
+                )(include_items=False, include_expansion=False)
                 for brain in batch
             ]
         else:
