@@ -160,7 +160,7 @@ class SimplelayoutSerializer(SerializeToJson):
             if "fullobjects" in list(self.request.form):
                 result["items"] = getMultiAdapter(
                     (brains, self.request), ISerializeToJson
-                )(fullobjects=True)["items"]
+                )(fullobjects=True, include_expansion=False)["items"]
             else:
                 result["items"] = [
                     getMultiAdapter((brain, self.request), ISerializeToJsonSummary)()
@@ -241,7 +241,7 @@ class DefaultBlockSerializer(SerializeFolderToJson):
 
             result["items"] = getMultiAdapter(
                 (brains, self.request), ISerializeToJson
-            )(fullobjects=True)["items"]
+            )(fullobjects=True, include_expansion=False)["items"]
 
             if original_b_size is None:
                 del self.request.form['b_size']
@@ -277,7 +277,8 @@ class NewsListingBlockSerializer(DefaultBlockSerializer):
         lazy_resultset = api.portal.get_tool('portal_catalog').searchResults(**query)
         search_result = getMultiAdapter(
             (lazy_resultset, self.request), ISerializeToJson)(
-                fullobjects="fullobjects" in list(self.request.form)
+                fullobjects="fullobjects" in list(self.request.form),
+                include_expansion=False,
         )
         if original_b_size is None:
             del self.request.form['b_size']
@@ -323,7 +324,8 @@ class FileBlockSortOptionsSerializer(DefaultBlockSerializer):
         lazy_resultset = api.portal.get_tool('portal_catalog').searchResults(**query)
         search_result = getMultiAdapter(
             (lazy_resultset, self.request), ISerializeToJson)(
-                fullobjects="fullobjects" in list(self.request.form)
+                fullobjects="fullobjects" in list(self.request.form),
+                include_expansion=False,
         )
 
         if original_b_size is None:
