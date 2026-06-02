@@ -146,6 +146,7 @@ class INews(model.Schema):
 @provider(IFormFieldProvider)
 class IBlockTitle(model.Schema):
     """Default block title behavior"""
+    searchable('title')
     title = schema.TextLine(
         title=_('label_title', default='Title'),
         required=True)
