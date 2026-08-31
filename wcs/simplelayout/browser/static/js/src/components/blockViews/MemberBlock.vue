@@ -1,7 +1,7 @@
 <template>
   <BlockStructure v-bind="$props">
     <template #top>
-      <div class="sl-contact-title">
+      <div class="sl-contact-title" v-if="block.contact">
         <h5>
           <a :href="block.contact['@id']">{{ block.contact.title }}</a>
         </h5>
