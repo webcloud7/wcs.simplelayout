@@ -651,3 +651,14 @@ class TestRestApi(FunctionalTesting):
             },
             browser.json['slblocks_layout']['items'][1]['properties']
         )
+
+    @browsing
+    def test_types_endpoint_renders_news_listing_block_schema(self, browser):
+        browser.login().open(
+            self.portal.absolute_url() + '/@types/NewsListingBlock',
+            headers=self.api_headers)
+        self.assertEqual(200, browser.status_code)
+        self.assertEqual(
+            'Relation List',
+            browser.json['properties']['filter_by_path']['factory'],
+            'filter_by_path should be rendered as relation list in the schema')
