@@ -298,6 +298,10 @@ class IBlockNewsOptions(model.Schema, IBlockMarker):
         required=False,
         missing_value=[],
         default=[],
+        value_type=RelationChoice(
+            title=u"Relation-List",
+            source=ReferenceObjSourceBinder(),
+        ),
     )
 
     quantity = schema.Int(
