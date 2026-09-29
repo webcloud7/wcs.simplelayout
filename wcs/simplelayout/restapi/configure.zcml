@@ -28,6 +28,22 @@
       name="@create-link-mediafolder"
       />
 
+  <plone:service
+      method="GET"
+      factory=".row_configuration.RowConfigurationGet"
+      for="plone.base.interfaces.IPloneSiteRoot"
+      permission="plone.schemaeditor.ManageSchemata"
+      name="@row-configuration"
+      />
+
+  <plone:service
+      method="PATCH"
+      factory=".row_configuration.RowConfigurationPatch"
+      for="plone.base.interfaces.IPloneSiteRoot"
+      permission="plone.schemaeditor.ManageSchemata"
+      name="@row-configuration"
+      />
+
   <adapter factory=".schema.FixedSerializeSchemaToJson" />
 
 </configure>

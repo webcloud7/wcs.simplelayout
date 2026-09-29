@@ -36,26 +36,63 @@ DEFAULT_SCHEMA = """<?xml version='1.0' encoding='utf8'?>
 </model>"""
 
 
+def get_row_schema(portal_type):
+    """Returns the row schema (supermodel XML) of a content type."""
+    registry = getUtility(IRegistry)
+    return registry.get(_record_name(portal_type), DEFAULT_SCHEMA)
+
+
+def set_row_schema(portal_type, schema_xml):
+    """Stores the row schema of a content type, creating its registry record."""
+    registry = getUtility(IRegistry)
+    name = _record_name(portal_type)
+    if name not in registry:
+        title = f'Row configuration for simplelayout content: {portal_type}'
+        registry.records[name] = Record(Text(title=title), schema_xml)
+    else:
+        registry[name] = schema_xml
+
+
+def _record_name(portal_type):
+    return f'wcs.simplelayout.row_configuration.{portal_type}.row_configuration'
+
+
+def normalize_row_schema(schema_xml):
+    """Validates a row schema and returns it pretty printed.
+
+    Raises a ValueError with the reason if the XML is not a supermodel
+    model with schema elements only.
+    """
+    parser = etree.XMLParser(resolve_entities=False, remove_pis=True)
+    try:
+        root = etree.fromstring(safe_bytes(schema_xml), parser=parser)
+    except etree.XMLSyntaxError as e:
+        raise ValueError(f"XMLSyntaxError: {safe_text(e.args[0])}")
+
+    if root.tag != NAMESPACE + "model":
+        raise ValueError(_("Error: root tag must be 'model'"))
+
+    for element in root.getchildren():
+        if element.tag != NAMESPACE + "schema":
+            raise ValueError(_("Error: all model elements must be 'schema'"))
+
+    return etree.tostring(
+        root, pretty_print=True, xml_declaration=True, encoding="utf8"
+    ).decode('utf-8')
+
+
 @implementer(IRowConfiguration)
 @adapter(ITypeSchemaContext)
 class RowConfigurationAdapter:
     def __init__(self, context):
         self.context = context
         self.fti = context.fti
-        self.registry = getUtility(IRegistry)
-        self.prefix = 'wcs.simplelayout.row_configuration'
 
     def _get_schema_xml(self):
-        name = f'{self.prefix}.{self.fti.id}.row_configuration'
-        return self.registry.get(name, DEFAULT_SCHEMA)
+        return get_row_schema(self.fti.id)
 
     def _set_schema_xml(self, value):
-        name = f'{self.prefix}.{self.fti.id}.row_configuration'
-        if name not in self.registry:
-            title = f'Row configuration for simplelayout content: {self.fti.id}'
-            self.registry.records[name] = Record(Text(title=title), value)
-        else:
-            self.registry[name] = value
+        set_row_schema(self.fti.id, value)
 
     schema_xml = property(
         _get_schema_xml, _set_schema_xml
@@ -83,35 +120,11 @@ class RowConfigurationForm(form.EditForm):
     def handleApply(self, action):
         data, errors = self.extractData()
 
-        source = safe_bytes(data['schema_xml'])
-        parser = etree.XMLParser(resolve_entities=False, remove_pis=True)
         try:
-            root = etree.fromstring(source, parser=parser)
-        except etree.XMLSyntaxError as e:
-            IStatusMessage(self.request).addStatusMessage(
-                f"XMLSyntaxError: {safe_text(e.args[0])}",
-                "error",
-            )
+            data['schema_xml'] = normalize_row_schema(data['schema_xml'])
+        except ValueError as error:
+            IStatusMessage(self.request).addStatusMessage(error.args[0], "error")
             return
-
-        if root.tag != NAMESPACE + "model":
-            IStatusMessage(self.request).addStatusMessage(
-                _("Error: root tag must be 'model'"),
-                "error",
-            )
-            return
-
-        for element in root.getchildren():
-            if element.tag != NAMESPACE + "schema":
-                IStatusMessage(self.request).addStatusMessage(
-                    _("Error: all model elements must be 'schema'"),
-                    "error",
-                )
-                return
-
-        data['schema_xml'] = etree.tostring(
-                root, pretty_print=True, xml_declaration=True, encoding="utf8"
-            ).decode('utf-8')
 
         if errors:
             self.status = self.formErrorsMessage
