@@ -88,6 +88,18 @@ class TestRowConfiguration(FunctionalTesting):
         )
 
     @browsing
+    def test_form_rejects_a_schema_the_row_form_could_not_load(self, browser):
+        browser.login().open(self.portal.absolute_url() + '/dexterity-types/ContentPage/@@row_configuration')
+        browser.fill(
+            {'Row schema': ('<model xmlns="http://namespaces.plone.org/supermodel/schema"><schema>'
+                            '<field name="x" type="does.not.Exist"><title>X</title></field>'
+                            '</schema></model>')}).submit()
+
+        self.assertIn('Invalid schema', browser.css('.statusmessage-error').first.text)
+        self.assertFalse(api.portal.get_registry_record(
+            name='wcs.simplelayout.row_configuration.ContentPage.row_configuration', default=''))
+
+    @browsing
     def test_simplelayout_can_edit_row_data(self, browser):
         page = create(Builder('content page').titled('A Page'))
         browser.login().visit(page)

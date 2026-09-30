@@ -8,6 +8,8 @@ from plone.base.utils import safe_text
 from plone.registry.field import Text
 from plone.registry.interfaces import IRegistry
 from plone.registry.record import Record
+from plone.supermodel import loadString
+from plone.supermodel.parser import SupermodelParseError
 from Products.statusmessages.interfaces import IStatusMessage
 from wcs.simplelayout import _
 from z3c.form import button
@@ -61,7 +63,8 @@ def normalize_row_schema(schema_xml):
     """Validates a row schema and returns it pretty printed.
 
     Raises a ValueError with the reason if the XML is not a supermodel
-    model with schema elements only.
+    model with schema elements only, or if the row form could not load it
+    (e.g. an unknown field type).
     """
     parser = etree.XMLParser(resolve_entities=False, remove_pis=True)
     try:
@@ -76,9 +79,14 @@ def normalize_row_schema(schema_xml):
         if element.tag != NAMESPACE + "schema":
             raise ValueError(_("Error: all model elements must be 'schema'"))
 
-    return etree.tostring(
+    normalized = etree.tostring(
         root, pretty_print=True, xml_declaration=True, encoding="utf8"
     ).decode('utf-8')
+    try:
+        loadString(normalized)
+    except SupermodelParseError as error:
+        raise ValueError(f"Invalid schema: {error.args[0]}")
+    return normalized
 
 
 @implementer(IRowConfiguration)

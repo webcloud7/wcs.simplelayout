@@ -2,6 +2,7 @@ from plone import api
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.protect.interfaces import IDisableCSRFProtection
 from plone.restapi.deserializer import json_body
+from plone.restapi.exceptions import DeserializationError
 from plone.restapi.services import Service
 from wcs.simplelayout.browser.dexterity.row_configuration import get_row_schema
 from wcs.simplelayout.browser.dexterity.row_configuration import normalize_row_schema
@@ -55,9 +56,12 @@ class RowConfigurationPatch(RowConfigurationService):
     def reply(self):
         alsoProvides(self.request, IDisableCSRFProtection)
         portal_type = self.portal_type
-        schema_xml = json_body(self.request).get('schema')
-        if not schema_xml:
-            raise BadRequest('Missing "schema" (supermodel XML)')
+        try:
+            schema_xml = json_body(self.request).get('schema')
+        except DeserializationError as error:
+            raise BadRequest(str(error))
+        if not schema_xml or not isinstance(schema_xml, str):
+            raise BadRequest('Expected "schema" (supermodel XML)')
         try:
             set_row_schema(portal_type, normalize_row_schema(schema_xml))
         except ValueError as error:

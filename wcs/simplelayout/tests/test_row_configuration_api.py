@@ -79,9 +79,49 @@ class TestRowConfigurationEndpoint(FunctionalTesting):
         )
 
     @browsing
+    def test_patch_rejects_schemas_the_row_form_could_not_load(self, browser):
+        browser.login()
+        unknown_field_type = (
+            '<model xmlns="http://namespaces.plone.org/supermodel/schema"><schema>'
+            '<field name="x" type="does.not.Exist"><title>X</title></field>'
+            '</schema></model>'
+        )
+        with browser.expect_http_error(code=400):
+            self.patch(browser, {'schema': unknown_field_type})
+        self.assertIn('Invalid schema', browser.json['message'], 'Expected the reason')
+
+        self.assertIsNone(
+            api.portal.get_registry_record(name=RECORD, default=None),
+            'Expected schemas that break the row form not to be stored',
+        )
+
+    @browsing
     def test_patch_without_schema_is_a_bad_request(self, browser):
         with browser.expect_http_error(code=400):
             self.patch(browser.login(), {})
+
+    @browsing
+    def test_patch_with_a_body_that_is_no_schema_is_a_bad_request(self, browser):
+        browser.login()
+        for payload in (['not', 'an', 'object'], {'schema': 42}):
+            with browser.expect_http_error(code=400):
+                self.patch(browser, payload)
+
+    @browsing
+    def test_missing_content_type_is_a_bad_request(self, browser):
+        with browser.expect_http_error(code=400):
+            browser.login().open(
+                f'{self.portal.absolute_url()}/@row-configuration',
+                headers=self.api_headers,
+            )
+
+    @browsing
+    def test_schema_with_umlauts_round_trips(self, browser):
+        schema_xml = SAMPLE_ROW_SCHEMA_XML.replace('Show in right column', 'Grün und Weiss')
+        self.patch(browser.login(), {'schema': schema_xml})
+
+        browser.open(self.endpoint_url, headers=self.api_headers)
+        self.assertIn('<title>Grün und Weiss</title>', browser.json['schema'])
 
     @browsing
     def test_unknown_content_type_is_not_found(self, browser):
