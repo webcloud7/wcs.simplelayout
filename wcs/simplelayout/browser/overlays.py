@@ -1,4 +1,3 @@
-from plone import api
 from plone.app.content.browser.folderfactories import _allowedTypes
 from plone.supermodel import loadString
 from plone.z3cform import layout
@@ -7,7 +6,7 @@ from Products.CMFCore.Expression import getExprContext
 from Products.CMFPlone.interfaces.constrains import IConstrainTypes
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from wcs.simplelayout import _
-from wcs.simplelayout.browser.dexterity.row_configuration import DEFAULT_SCHEMA
+from wcs.simplelayout.browser.dexterity.row_configuration import get_row_schema
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
 from wcs.simplelayout.utils import get_block_types
 from wcs.simplelayout.utils import ROW_TEMPLATE
@@ -73,10 +72,7 @@ class EditRowForm(form.EditForm):
 
     @property
     def fields(self):
-        fti_name = self.context.portal_type
-        name = f'wcs.simplelayout.row_configuration.{fti_name}.row_configuration'
-        schema_xml = api.portal.get_registry_record(name, default=DEFAULT_SCHEMA)
-        schema = loadString(schema_xml).schema
+        schema = loadString(get_row_schema(self.context.portal_type)).schema
         return field.Fields(schema)
 
     def getContent(self):
