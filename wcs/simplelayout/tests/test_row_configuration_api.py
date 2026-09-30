@@ -79,6 +79,23 @@ class TestRowConfigurationEndpoint(FunctionalTesting):
         )
 
     @browsing
+    def test_patch_rejects_schemas_the_row_form_could_not_load(self, browser):
+        browser.login()
+        unknown_field_type = (
+            '<model xmlns="http://namespaces.plone.org/supermodel/schema"><schema>'
+            '<field name="x" type="does.not.Exist"><title>X</title></field>'
+            '</schema></model>'
+        )
+        with browser.expect_http_error(code=400):
+            self.patch(browser, {'schema': unknown_field_type})
+        self.assertIn('Invalid schema', browser.json['message'], 'Expected the reason')
+
+        self.assertIsNone(
+            api.portal.get_registry_record(name=RECORD, default=None),
+            'Expected schemas that break the row form not to be stored',
+        )
+
+    @browsing
     def test_patch_without_schema_is_a_bad_request(self, browser):
         with browser.expect_http_error(code=400):
             self.patch(browser.login(), {})
