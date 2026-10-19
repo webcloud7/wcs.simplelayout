@@ -5,6 +5,7 @@ from plone.app.contenttypes.behaviors.collection import ISyndicatableCollection
 from plone.dexterity.interfaces import IDexterityContent
 from plone.restapi.batching import HypermediaBatch
 from plone.restapi.deserializer import boolean_value
+from plone.restapi.interfaces import IExpandableElement
 from plone.restapi.interfaces import IFieldSerializer
 from plone.restapi.interfaces import ISerializeToJson
 from plone.restapi.interfaces import ISerializeToJsonSummary
@@ -15,6 +16,7 @@ from plone.restapi.serializer.dxcontent import SerializeToJson
 from plone.restapi.serializer.dxfields import CollectionFieldSerializer
 from plone.restapi.serializer.dxfields import DefaultFieldSerializer
 from plone.restapi.serializer.expansion import expandable_elements
+from plone.restapi.serializer.expansion import update_dict_recursively
 from wcs.simplelayout.fields.layout import ILayoutField
 from Products.CMFCore.utils import getToolByName
 from urllib import parse
@@ -33,6 +35,7 @@ from wcs.simplelayout.utils import add_sort_limit_to_query
 from wcs.simplelayout.utils import convert_table_to_json
 from wcs.simplelayout.utils import list_blocks_from_page
 from zope.component import adapter
+from zope.component import getAdapters
 from zope.component import getMultiAdapter
 from zope.interface import implementer
 from zope.interface import Interface
@@ -44,14 +47,46 @@ import logging
 BLOCKS_SCHEMA = json.dumps({"type": "object", "properties": {}})
 LOG = logging.getLogger(__name__)
 
+# These describe the position of the content in the site. They are expensive to
+# expand, and nested serializations (blocks, default pages) take them from the
+# requested content.
+SITE_STRUCTURE_EXPANSIONS = (
+    'breadcrumbs',
+    'contextnavigation',
+    'linklist',
+    'navigation',
+    'navroot',
+)
+
+
+def get_requested_expansions(request):
+    requested = request.form.get('expand', [])
+    if isinstance(requested, str):
+        requested = requested.split(',')
+    return requested
+
+
+def get_components_with_site_structure_stubs(obj, request, stubs=SITE_STRUCTURE_EXPANSIONS):
+    """Like plone.restapi's expandable_elements, but the site structure
+    components stay @id stubs. request.form is not touched, so items of obj
+    still get the requested expansions.
+    """
+    expands = set(get_requested_expansions(request)).difference(stubs)
+    components = {}
+    for name, element in getAdapters((obj, request), IExpandableElement):
+        update_dict_recursively(components, element(expand=name in expands))
+    return components
+
 
 def get_blocks(context):
     blocks = []
+    request = context.REQUEST
     for obj in list_blocks_from_page(context):
-        block_data = getMultiAdapter((obj, context.REQUEST), ISerializeToJson)(
+        block_data = getMultiAdapter((obj, request), ISerializeToJson)(
             include_items=False,
-            include_expansion=True,
+            include_expansion=False,
         )
+        block_data['@components'] = get_components_with_site_structure_stubs(obj, request)
         blocks.append(block_data)
     return blocks
 
