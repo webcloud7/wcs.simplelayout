@@ -677,6 +677,16 @@ msgstr "Definiert die maximale Anzahl News, welche aufgelistst wird. 0 bedeutet 
 msgid "news_listing_config_quantity_label"
 msgstr "Anzahl News"
 
+#. Default: "Only news in the selected workflow states will be shown. Leave empty to show all news."
+#: wcs/simplelayout/contenttypes/behaviors.py:333
+msgid "news_listing_config_review_states_description"
+msgstr "Es werden nur News mit den ausgewählten Status angezeigt. Ohne Auswahl werden alle News angezeigt."
+
+#. Default: "Filter by workflow state"
+#: wcs/simplelayout/contenttypes/behaviors.py:331
+msgid "news_listing_config_review_states_label"
+msgstr "Nach Status filtern"
+
 #. Default: "Only news with the selected subjects will be shown."
 #: wcs/simplelayout/contenttypes/behaviors.py:316
 msgid "news_listing_config_subjects_description"

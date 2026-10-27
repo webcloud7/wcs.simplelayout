@@ -327,6 +327,19 @@ class IBlockNewsOptions(model.Schema, IBlockMarker):
         missing_value=[],
     )
 
+    review_states = schema.List(
+        title=_('news_listing_config_review_states_label',
+                default='Filter by workflow state'),
+        description=_('news_listing_config_review_states_description',
+                      default='Only news in the selected workflow states will '
+                              'be shown. Leave empty to show all news.'),
+        value_type=schema.Choice(
+            vocabulary='wcs.simplelayout.vocabularies.DefaultWorkflowStates'),
+        required=False,
+        missing_value=[],
+        default=[],
+    )
+
     maximum_age = schema.Int(
         title=_('news_listing_config_maximum_age_label',
                 default='Maximum age (days)'),

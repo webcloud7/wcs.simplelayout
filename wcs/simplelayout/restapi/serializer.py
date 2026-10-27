@@ -149,6 +149,10 @@ def get_newslisting_query(newslisting):
     if len(subjects) != 0:
         query['Subject'] = subjects
 
+    review_states = IBlockNewsOptions(newslisting).review_states
+    if review_states:
+        query['review_state'] = review_states
+
     return query
 
 
