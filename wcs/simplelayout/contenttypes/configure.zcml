@@ -95,6 +95,11 @@
         provides=".behaviors.ICollapsableBlock"
         />
 
+    <utility
+        name="wcs.simplelayout.vocabularies.DefaultWorkflowStates"
+        component=".vocabs.default_workflow_states_vocabulary"
+        />
+
     <subscriber
         for=".behaviors.IMediaFolderReference
             zope.lifecycleevent.IObjectAddedEvent"

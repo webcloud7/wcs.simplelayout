@@ -4,6 +4,7 @@ from datetime import timedelta
 from ftw.builder import Builder
 from ftw.builder import create
 from ftw.testbrowser import browsing
+from plone import api
 from plone.app.textfield.value import RichTextValue
 from wcs.simplelayout.contenttypes.behaviors import IBlockNewsOptions
 from wcs.simplelayout.contenttypes.behaviors import ISimplelayout
@@ -308,6 +309,40 @@ class TestRestApi(FunctionalTesting):
             newslist[0]['@id'].replace(':80', ''),
             new_news.absolute_url()
         )
+
+    @browsing
+    def test_news_listing_block_filter_by_review_state(self, browser):
+        api.portal.get_tool('portal_workflow').setDefaultChain('simple_publication_workflow')
+        page = create(Builder('content page').titled('A page'))
+        newsfolder = create(Builder('news folder').within(page))
+        block = create(Builder('news listing block')
+                       .having(quantity=3)
+                       .within(page)
+                       .titled('News listing'))
+
+        published_news = create(Builder('news')
+                                .titled('Published news')
+                                .within(newsfolder))
+        create(Builder('news')
+               .titled('Private news')
+               .within(newsfolder))
+        api.content.transition(obj=published_news, transition='publish')
+        transaction.commit()
+
+        browser.login().open(block.absolute_url() + '?include_items=1', headers=self.api_headers)
+        self.assertEqual(
+            2,
+            len(browser.json['items']),
+            msg='Without a review state filter all news must be listed.')
+
+        IBlockNewsOptions(block).review_states = ['published']
+        transaction.commit()
+
+        browser.open(block.absolute_url() + '?include_items=1', headers=self.api_headers)
+        self.assertEqual(
+            [published_news.absolute_url()],
+            [item['@id'].replace(':80', '') for item in browser.json['items']],
+            msg='Only news in the selected review state must be listed.')
 
     @browsing
     def test_listingblock_can_include_individual_files(self, browser):
@@ -662,3 +697,19 @@ class TestRestApi(FunctionalTesting):
             'Relation List',
             browser.json['properties']['filter_by_path']['factory'],
             'filter_by_path should be rendered as relation list in the schema')
+
+    @browsing
+    def test_types_endpoint_renders_news_listing_block_review_states_as_list_of_workflow_states(self, browser):
+        browser.login().open(
+            self.portal.absolute_url() + '/@types/NewsListingBlock',
+            headers=self.api_headers)
+        review_states = browser.json['properties']['review_states']
+        self.assertEqual(
+            'array',
+            review_states['type'],
+            msg='review_states should be rendered as a multi value field in the schema')
+        self.assertEqual(
+            self.portal.absolute_url()
+            + '/@vocabularies/wcs.simplelayout.vocabularies.DefaultWorkflowStates',
+            review_states['items']['vocabulary']['@id'].replace(':80', ''),
+            msg='review_states items should use the default workflow states vocabulary')
