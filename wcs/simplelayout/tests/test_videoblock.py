@@ -55,6 +55,35 @@ class TestVideoValidators(TestCase):
         url = 'http://vimeo.com/channels/'
         self.assertFalse(utils.is_vimeo_url(url))
 
+    def test_valid_vimeo_player_url(self):
+        urls = [
+            'https://player.vimeo.com/video/722256136',
+            'http://player.vimeo.com/video/722256136',
+            'https://player.vimeo.com/video/722256136?h=abc123',
+        ]
+        for url in urls:
+            with self.subTest(url=url):
+                self.assertTrue(utils.is_vimeo_url(url),
+                                msg=f'{url} should be a valid vimeo url')
+
+    def test_valid_vimeo_url_without_channel(self):
+        url = 'https://vimeo.com/722256136'
+        self.assertTrue(utils.is_vimeo_url(url),
+                        msg=f'{url} should be a valid vimeo url')
+
+    def test_invalid_vimeo_player_url(self):
+        urls = [
+            'https://player.vimeo.com/video/abc',
+            'https://player.vimeo.com/foo/722256136',
+            'https://player.vimeo.com/video/722256136/extra',
+            'https://player.vimeo.com/722256136',
+            'https://player.vimeo.com/video/',
+        ]
+        for url in urls:
+            with self.subTest(url=url):
+                self.assertFalse(utils.is_vimeo_url(url),
+                                 msg=f'{url} should not be a valid vimeo url')
+
     def test_valid_youtube_nocookie_url(self):
         url = 'https://www.youtube-nocookie.com/embed/UUrddqT9i_s'
         self.assertTrue(utils.is_youtube_nocookie_url(url))
@@ -98,6 +127,35 @@ class TestVideoBlock(FunctionalTesting):
         self.assertEqual(1, len(blocks))
         self.assertEqual(blocks[0].Title(), 'Vimeo Video')
         self.assertEqual(blocks[0].video_url, 'https://vimeo.com/channels/staffpicks/128510631')
+
+    @browsing
+    def test_adding_vimeo_player_videoblock(self, browser):
+        url = 'https://player.vimeo.com/video/722256136'
+        browser.login().visit(self.page, view='++add++VideoBlock')
+        browser.fill(
+            {
+                'Title': 'Vimeo Player Video',
+                'Youtube, or Vimeo URL': url
+            }
+        )
+        browser.find_button_by_label('Save').click()
+
+        blocks = self.page.objectValues()
+        self.assertEqual(1, len(blocks),
+                         msg='Expected exactly one video block to be created')
+        self.assertEqual(blocks[0].Title(), 'Vimeo Player Video',
+                         msg='Video block title was not stored')
+        self.assertEqual(blocks[0].video_url, url,
+                         msg='Vimeo player url should be stored verbatim')
+
+    @browsing
+    def test_video_url_field_hints_vimeo_player_format(self, browser):
+        browser.login().visit(self.page, view='++add++VideoBlock')
+
+        help_text = browser.css(
+            '#formfield-form-widgets-IVideoUrl-video_url .form-text').first.text
+        self.assertIn('https://player.vimeo.com/video/VIDEO_ID', help_text,
+                      msg=f'Video url help text should hint the vimeo player format, got: {help_text}')
 
     @browsing
     def test_video_url_invariant(self, browser):

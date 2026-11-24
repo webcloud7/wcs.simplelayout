@@ -196,10 +196,9 @@ class IVideoUrl(model.Schema):
     video_url = schema.URI(
         title=_('label_video_url', default='Youtube, or Vimeo URL'),
         description=_('Youtube format: http(s)://youtu.be/VIDEO_ID (add start parameter to let '
-                      'the vide start at a specific position)<br/>'
+                      'the video start at a specific position)<br/>'
                       'Youtube (no-cookie) format: https://www.youtube-nocookie.com/embed/VIDEO_ID<br/>'
-                      'Vimeo format: http(s)://vimeo.com/(channels/groups)/'
-                      'VIDEO_ID'),
+                      'Vimeo format: https://player.vimeo.com/video/VIDEO_ID'),
         required=True)
 
     @invariant
