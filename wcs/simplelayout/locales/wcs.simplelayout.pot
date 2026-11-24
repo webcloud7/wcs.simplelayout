@@ -274,7 +274,7 @@ msgid "XML Schema for row configuration"
 msgstr ""
 
 #: wcs/simplelayout/contenttypes/behaviors.py:196
-msgid "Youtube format: http(s)://youtu.be/VIDEO_ID (add start parameter to let the vide start at a specific position)<br/>Youtube (no-cookie) format: https://www.youtube-nocookie.com/embed/VIDEO_ID<br/>Vimeo format: http(s)://vimeo.com/(channels/groups)/VIDEO_ID"
+msgid "Youtube format: http(s)://youtu.be/VIDEO_ID (add start parameter to let the video start at a specific position)<br/>Youtube (no-cookie) format: https://www.youtube-nocookie.com/embed/VIDEO_ID<br/>Vimeo format: https://player.vimeo.com/video/VIDEO_ID"
 msgstr ""
 
 #. Default: "Make block collapsable, for example an FAQ"

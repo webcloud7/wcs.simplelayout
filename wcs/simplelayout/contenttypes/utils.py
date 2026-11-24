@@ -7,9 +7,12 @@ import datetime
 
 
 def is_vimeo_url(url):
-    # https://vimeo.com/channels/staffpicks/128510631
+    # https://player.vimeo.com/video/722256136
+    # https://vimeo.com/channels/staffpicks/128510631 (no longer in the field hint, still accepted)
     parsed_url = urlparse(url)
     path = parsed_url.path.split('/')
+    if parsed_url.netloc == 'player.vimeo.com':
+        return len(path) == 3 and path[1] == 'video' and path[-1].isdigit()
     return parsed_url.netloc == 'vimeo.com' and path[-1].isdigit()
 
 
