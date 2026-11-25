@@ -12,37 +12,47 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in data.items" :key="item.UID" @click="goto(item['@id'])">
-              <template
-                v-for="col in this.data.customViewFields"
-                :key="col.token"
-              >
-                <td v-if="col.token == 'getObjSize'">
-                  <template v-if="item['@type'] == 'File'">
-                    {{ item.file.size }}
+            <tr v-for="item in data.items" :key="item.UID">
+              <td v-for="col in this.data.customViewFields" :key="col.token">
+                <a
+                  :href="item['@id']"
+                  class="d-block text-reset text-decoration-none"
+                >
+                  <template v-if="col.token == 'getObjSize'">
+                    <template v-if="item['@type'] == 'File'">
+                      {{ item.file.size }}
+                    </template>
+                    <template v-if="item['@type'] == 'Image'">
+                      {{ item.image.size }}
+                    </template>
                   </template>
-                  <template v-if="item['@type'] == 'Image'">
-                    {{ item.image.size }}
+                  <template v-else-if="col.token == 'mime_type'">
+                    <template v-if="item['@type'] == 'File'">
+                      <img
+                        :src="`${sl.baseURL}/@@iconresolver/mimetype-${item.file['content-type']}`"
+                      />
+                    </template>
+                    <template v-if="item['@type'] == 'Image'">
+                      <img
+                        :src="`${sl.baseURL}/@@iconresolver/mimetype-${item.image['content-type']}`"
+                      />
+                    </template>
                   </template>
-                </td>
-                <td v-else-if="col.token == 'mime_type'">
-                  <template v-if="item['@type'] == 'File'">
-                    <img
-                      :src="`${sl.baseURL}/@@iconresolver/mimetype-${item.file['content-type']}`"
-                    />
-                  </template>
-                  <template v-if="item['@type'] == 'Image'">
-                    <img
-                      :src="`${sl.baseURL}/@@iconresolver/mimetype-${item.image['content-type']}`"
-                    />
-                  </template>
-                </td>
-                <td v-else>{{ item[col.token] }}</td>
-              </template>
+                  <template v-else>{{ item[col.token] }}</template>
+                </a>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
+      <a
+        v-if="data.items_total"
+        :href="`${block['@id']}/@@csv-export`"
+        class="btn btn-sm btn-outline-secondary"
+        download
+      >
+        {{ $i18n("Export CSV") }}
+      </a>
       <Pagination
         v-if="data.batching"
         @next="fetchNext"
@@ -133,9 +143,6 @@ export default {
     async fetchPrevious(url) {
       this.fetchData(url);
     },
-    goto(url) {
-      window.location.href = url;
-    },
   },
   computed: {
     loadingClass() {
@@ -144,10 +151,3 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-.allpuropseblock-listing tbody tr {
-  &:hover {
-    cursor: pointer;
-  }
-}
-</style>

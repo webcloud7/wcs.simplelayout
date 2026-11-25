@@ -392,6 +392,11 @@ msgstr "E-Mail"
 msgid "label_expiration_date"
 msgstr "Ablaufdatum"
 
+#. Default: "Export CSV"
+#: wcs/simplelayout/browser/simplelayout.py:93
+msgid "label_export_csv"
+msgstr "CSV exportieren"
+
 #. Default: "External URL"
 #: wcs/simplelayout/contenttypes/behaviors.py:412
 msgid "label_external_link"
