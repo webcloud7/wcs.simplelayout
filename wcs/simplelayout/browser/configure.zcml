@@ -116,4 +116,11 @@
         permission="wcs.simplelayout.ManageColumns"
         />
 
+    <browser:page
+        name="csv-export"
+        for="wcs.simplelayout.contenttypes.behaviors.IBlockSyndicatableCollection"
+        class=".csv_export.AllPurposeListingBlockCsvExport"
+        permission="zope2.View"
+        />
+
 </configure>
